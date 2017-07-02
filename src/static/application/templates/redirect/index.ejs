@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title><%= title %></title>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+  <style type="text/css">
+  body {
+    background-color: rgb(232,232,232);
+  }
+  p {
+    margin: 0;
+    padding: 0.2em 0;
+  }
+  </style>
+</head>
+<body>
+<p style="font-size: 12px;"><%= message %></p>
+</body>
+
+<script>
+
+  (function () {
+
+    var init = function () {
+      var current, hash, toUrl, i;
+      current = window.location.href;
+      for (i = 0; i < <%- encodeTimes %>; i++) {
+        current = encode(current);
+      }
+
+      toUrl = '<%- toUrl %>'.replace('CURRENT_URL', current);
+      window.location.href = toUrl;
+
+      function encode (str) {
+        return encodeURIComponent(str);
+      };
+    };
+
+    window.onload = init;
+
+  })();
+
+</script>
+
+</html>
