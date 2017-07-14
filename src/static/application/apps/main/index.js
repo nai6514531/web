@@ -1,27 +1,35 @@
 import 'babel-polyfill'
-import dva from 'dva';
-import { browserHistory } from 'dva/router';
-import createLoading from 'dva-loading';
-import { message } from 'antd';
+import createHistory from 'history/createBrowserHistory'
+import {
+  ConnectedRouter,
+  routerMiddleware,
+  routerReducer as routing,
+} from 'react-router-redux'
+import createDva from 'dva/lib/createDva'
+import createLoading from 'dva-loading'
 
-const ERROR_MSG_DURATION = 3; 
+const history = createHistory()
 
-// 1. Initialize
-const app = dva({
-  history: browserHistory,
-  onError(e) {
-    message.error(e.message, ERROR_MSG_DURATION);
+const dva = createDva({
+  mobile: false,
+  initialReducer: {
+    routing,
   },
-});
+  defaultHistory: history,
+  routerMiddleware,
+  setupHistory(history) {
+    this._history = history
+  }
+})
 
-// 2. Plugins
-app.use(createLoading());
+const app = dva()
 
-// 3. Model
-// Moved to router.js
+app.use(createLoading())
 
-// 4. Router
-app.router(require('./router'));
+//一次性加载model
+// require.context('./models/', true, /\.js$/).keys().forEach( file => app.model(require(`./models/${file.slice(2)}`)) )
+// 也支持和路由的异步加载
+app.model(require('./models/ui/'))
+app.router(require('./router'))
 
-// 5. Start
-app.start('#application-container');
+app.start('#application-container')
