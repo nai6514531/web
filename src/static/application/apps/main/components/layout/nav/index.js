@@ -31,7 +31,7 @@ class Nav extends React.Component {
         <div
           className={styles.icon + ' ' + styles.fold}
           onClick={() => dispatch({ type: 'ui/foldMenu', payload: { fold: !fold } })}>
-          { fold ? <Icon type='menu-fold'/> : <Icon type='menu-unfold'/> }
+          { !fold ? <Icon type='menu-fold'/> : <Icon type='menu-unfold'/> }
         </div>
         <div className={styles.logout}>
           <span>xxx,您好！</span>

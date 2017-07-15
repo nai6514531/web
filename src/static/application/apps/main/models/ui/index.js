@@ -2,7 +2,7 @@ export default {
   namespace: 'ui',
   state: {
     visible: false,
-    fold: true
+    fold: false
   },
   reducers: {
     popMenu(state, { payload: { visible } }) {

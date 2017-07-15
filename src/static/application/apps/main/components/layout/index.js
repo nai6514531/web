@@ -5,6 +5,7 @@ import { Layout } from 'antd'
 import { connect } from 'dva'
 import Nav from './nav/'
 import SideBar from './sidebar/'
+import classNames from 'classNames'
 import './index.css'
 import ReactIScroll from 'react-iscroll'
 
@@ -17,11 +18,14 @@ const option = {
 }
 class Wrapper extends React.Component {
   render() {
+
     const { ui: { fold } } = this.props
-    console.log("fold",fold)
+    const wrapper = classNames('wrapper',{
+      'wrapper-fold': !fold,
+      'wrapper-unfold': fold
+    })
     return (
-      <div>
-        <Nav/>
+      <Layout>
         <Sider
           className='side'
           collapsible
@@ -29,18 +33,15 @@ class Wrapper extends React.Component {
           trigger={null}
           >
           <img src={require('../../assets/logo.png')} className='logo'/>
-          <SideBar />
+          <SideBar {...this.props}/>
         </Sider>
-        <div className='wrapper'>
-          <ReactIScroll
-            iScroll={iScroll}
-            options={option}>
-              <div className='main'>
-               {this.props.children}
-              </div>
-          </ReactIScroll>
-        </div>
-      </div>
+        <Layout>
+          <Nav />
+          <div className={wrapper}>
+            {this.props.children}
+          </div>
+        </Layout>
+      </Layout>
     )
   }
 }
