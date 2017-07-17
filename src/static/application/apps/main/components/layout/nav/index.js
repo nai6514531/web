@@ -18,7 +18,7 @@ class Nav extends React.Component {
       <Header className={styles.header + ' ' + styles.wrapper}>
         <Popover
           placement='bottomRight'
-          content={<SideBar {...this.props} theme='light'/>}
+          content={<SideBar {...this.props} theme='light' mode='inline'/>}
           trigger='click'
           overlayClassName={styles.popovermenu}
           visible={visible}

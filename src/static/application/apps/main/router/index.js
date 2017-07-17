@@ -39,15 +39,15 @@ for (let i = 0; i < 100; i++) {
 const columns2 = [{
   title: 'Name',
   dataIndex: 'name',
-  width: 150,
+  width: 1600,
 }, {
   title: 'Age',
   dataIndex: 'age',
-  width: 150,
+  width: 1600,
 }, {
   title: 'Address',
   dataIndex: 'address',
-  width: 150,
+  width: 3600,
 }];
 
 const data2 = [];
@@ -70,10 +70,10 @@ function RouterConfig({ history, app }) {
         <Route exact path="/login" component={getComponent(Login,app,LoginModel)}/>
         <Route path="/admin" render={ props => (
           <Layout>
-          <div style={{background: 'red'}}>132</div>
-<Table columns={columns} dataSource={data} scroll={{ x: 1500, y: 300 }} />
-<Table columns={columns2} dataSource={data2} scroll={{ y: 300 }} />
-<Table columns={columns} dataSource={data} scroll={{ x: 1500, y: 300 }} />
+            <div style={{background: 'red'}}>132</div>
+            <Table columns={columns} dataSource={data} scroll={{ x: 1500, y: 300 }} />
+            <Table columns={columns2} dataSource={data2} scroll={{ x: 1500,y: 300 }} />
+            <Table columns={columns} dataSource={data} scroll={{ x: 1500, y: 300 }} />
           </Layout>
         )}/>
         <Route component={getComponent(NotFound,app,LoginModel)} />

@@ -1,14 +1,16 @@
 import * as loginService from '../../services/login'
 import { message } from 'antd'
 import storage from '../../utils/storage.js'
+import { API_SERVER } from '../../utils/config'
 export default {
   namespace: 'login',
   state: {
     loading: false,
-    captcha: 'http://api.erp.sodalife.xyz/v1/captcha.png'
+    captcha: `${API_SERVER}/captcha.png`
   },
   reducers: {
-    captcha(state, { payload: { captcha } }) {
+    captcha(state) {
+      const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
       return { ...state, captcha }
     }
   },
@@ -26,7 +28,7 @@ export default {
         storage.val('token',data.data)
         payload.history.push('/admin')
       } else {
-        const captcha = `http://api.erp.sodalife.xyz/v1/captcha.png?${Date.now()}`
+        const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
         message.error(data.message)
         yield put({ type: 'captcha', payload: { captcha } })
       }

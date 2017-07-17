@@ -25,8 +25,7 @@ class Bundle extends Component {
   }
 
   componentDidMount() {
-    // 当前所在的页面和config下的页面做权限校验
-    // 登录完成后获取一份可以访问页面的config
+    // 当前所在的页面做权限校验 todo
     if(location.pathname !== "/login" && location.pathname !== "/main"){
       let result = this.checkOuth(location.pathname)
       this.setState({
@@ -51,7 +50,6 @@ class Bundle extends Component {
     })
     props.load((mod) => {
       this.setState({
-        // handle both es imports and cjs
         mod: mod.default ? mod.default : mod
       })
     })

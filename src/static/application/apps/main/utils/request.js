@@ -1,15 +1,16 @@
-import axios from "axios"
-import NProgress from "nprogress"
-import { Modal, message } from "antd"
+import axios from 'axios'
+import NProgress from 'nprogress'
+import { Modal, message } from 'antd'
+import { API_SERVER } from './config'
 import storage from './storage.js'
 const confirm = Modal.confirm
-const baseURL = 'http://api.erp.sodalife.xyz/v1'
+
 const api = axios.create({
-  baseURL: baseURL,
+  baseURL: API_SERVER,
   headers: {
     'Content-Type': 'application/json',
     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest',
-    // 'Authorization': 'Bearer '+ storage.val('token')
+    'Authorization': 'Bearer '+ storage.val('token') || ''
   },
   withCredentials: true,
   timeout: 1000 * 60 * 5,
@@ -20,7 +21,7 @@ const api = axios.create({
     }
     return JSON.stringify(data)
   }],
-  transformResponse: [(data)=> {
+  transformResponse: [(data) => {
     NProgress.done()
     try {
       data = JSON.parse(data)
@@ -45,7 +46,6 @@ const api = axios.create({
       //   data.status = parseInt(data.status.substr(-2))
       //   return data
       // }
-      console.log("data---",data)
       return data
     } else {
     }

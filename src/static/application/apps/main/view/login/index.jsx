@@ -6,6 +6,7 @@ import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
 import storage from '../../utils/storage.js'
 import styles from './index.pcss'
 import md5 from 'md5'
+
 const FormItem = Form.Item
 
 class Login extends Component {
@@ -25,11 +26,10 @@ class Login extends Component {
   }
   changeCaptcha = () => {
     const { dispatch } = this.props
-    const captcha = `${this.props.login.captcha.split('?')[0]}?${Date.now()}`
-    dispatch({ type: 'login/captcha', payload: { captcha } })
+    dispatch({type: 'login/captcha'})
   }
   render() {
-    const { loading, dipatch, form:{ getFieldDecorator }, login: { checked, captcha } } = this.props
+    const { loading, dipatch, form: { getFieldDecorator }, login: { checked, captcha } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
     return (
       <div>
