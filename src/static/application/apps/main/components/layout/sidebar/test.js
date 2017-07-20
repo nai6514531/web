@@ -1,31 +1,34 @@
 module.exports = [
   {
     id: 1,
+    pid: 0,
     icon: 'laptop',
     name: 'Dashboard',
-    router: '/admin',
   },
   {
     id: 11,
     pid: 1,
     icon: 'laptop',
     name: 'Dashboard',
-    router: '/admin',
+    router: '/admin/test1',
   },
   {
     id: 2,
+    pid: 0,
     name: 'Request',
     icon: 'api',
     router: '/admin',
   },
   {
     id: 3,
+    pid: 0,
     name: 'UI Element',
     icon: 'camera-o',
     router: '/UIElement/editor',
   },
   {
     id: 4,
+    pid: 0,
     name: 'IconFont',
     icon: 'heart-o',
     router: '/UIElement/iconfont',
@@ -35,7 +38,7 @@ module.exports = [
     pid: 4,
     name: 'DataTable',
     icon: 'database',
-    router: '/admin',
+    router: '/admin/test-table',
   },
   {
     id: 42,
@@ -60,6 +63,7 @@ module.exports = [
   },
   {
     id: 5,
+    pid: 0,
     name: 'Recharts',
     icon: 'code-o',
     router: '/UIElement/editor',
@@ -83,19 +87,6 @@ module.exports = [
     pid: 51,
     name: 'AreaChart',
     icon: 'area-chart',
-    router: '/chart/areaChart',
-  },
-  {
-    id: 11,
-    icon: 'laptop',
-    name: 'xxx',
-    router: '/admin',
-  },
-  {
-    id: 111,
-    pid: 11,
-    icon: 'laptop',
-    name: 'xxxxx',
-    router: '/admin',
-  },
+    router: '/admin/test2',
+  }
 ]

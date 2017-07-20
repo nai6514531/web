@@ -2,15 +2,13 @@ import axios from 'axios'
 import NProgress from 'nprogress'
 import { Modal, message } from 'antd'
 import { API_SERVER } from './config'
-import storage from './storage.js'
+import { storage, session } from './storage.js'
 const confirm = Modal.confirm
-
 const api = axios.create({
   baseURL: API_SERVER,
   headers: {
     'Content-Type': 'application/json',
-    'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest',
-    'Authorization': 'Bearer '+ storage.val('token') || ''
+    'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'
   },
   withCredentials: true,
   timeout: 1000 * 60 * 5,
@@ -28,31 +26,12 @@ const api = axios.create({
     } catch (e) {
       return Promise.reject(e)
     }
-    if (data) {
-      // redo!!!
-      // if (parseInt(data.status) < 0) {
-      //   data.status = parseInt(data.status)
-      //   if (data.status == -1) {
-      //     confirm({
-      //       title: data.msg,
-      //       onOk() {
-      //         window.location.href = '/'
-      //       },
-      //     })
-      //   } else {
-      //     message.error(data.msg, 3)
-      //   }
-      // } else {
-      //   data.status = parseInt(data.status.substr(-2))
-      //   return data
-      // }
-      return data
-    } else {
-    }
+    return data
   }]
 })
 
 api.interceptors.request.use(function (config) {
+  config.headers.Authorization = 'Bearer ' + (storage.val('token') || '')
   var timestamp = new Date().getTime()
   if (config.url.indexOf('?') > 0) {
     config.url = config.url + `&_t=${timestamp}`
@@ -63,10 +42,19 @@ api.interceptors.request.use(function (config) {
 })
 
 api.interceptors.response.use(
-  // redo!!!
   (response)=> {
     if (!response.data) {
-      // return Promise.reject('服务器返回数据异常!')
+      return Promise.reject('服务器返回数据异常!')
+    }
+    if(response.data.status === 'UNAUTHORIZED') {
+      confirm({
+        title: response.data.message,
+        onOk() {
+          storage.clear('token')
+          session.clear()
+          window.location.href = '/'
+        }
+      })
     }
     return response.data
   },
@@ -81,5 +69,4 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
 export default api

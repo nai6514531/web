@@ -29,7 +29,7 @@ app.use(createLoading())
 //一次性加载model
 // require.context('./models/', true, /\.js$/).keys().forEach( file => app.model(require(`./models/${file.slice(2)}`)) )
 // 也支持和路由的异步加载
-app.model(require('./models/ui/'))
+app.model(require('./models/common/'))
 app.router(require('./router'))
 
 app.start('#application-container')

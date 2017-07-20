@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import { Link } from 'react-router-dom'
 import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
-import storage from '../../utils/storage.js'
+import { storage } from '../../utils/storage.js'
 import styles from './index.pcss'
 import md5 from 'md5'
 
@@ -13,6 +13,12 @@ class Login extends Component {
   constructor(props) {
     super(props)
   }
+  componentWillMount() {
+    if(storage.val('token')) {
+      this.props.history.push('/admin')
+    }
+    this.changeCaptcha()
+  }
   handleOk = () => {
     const { form:{ validateFieldsAndScroll }, dipatch, history } = this.props
     validateFieldsAndScroll((errors, values) => {
@@ -21,7 +27,10 @@ class Login extends Component {
       }
       values.initPassword = values.password
       values.password = md5(values.password)
-      this.props.dispatch({ type: 'login/login', payload: { data: values, history } })
+      this.props.dispatch({
+        type: 'login/login',
+        payload: { data: values, history }
+      })
     })
   }
   changeCaptcha = () => {
@@ -29,8 +38,13 @@ class Login extends Component {
     dispatch({type: 'login/captcha'})
   }
   render() {
-    const { loading, dipatch, form: { getFieldDecorator }, login: { checked, captcha } } = this.props
+    const { loading, dipatch, form: { getFieldDecorator }, login: { checked, captcha, pageLoading } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
+    if(pageLoading) {
+      return (
+        <img className='loading' src={require('../../assets/loading.gif')} />
+      )
+    }
     return (
       <div>
         <div className={styles.form}>

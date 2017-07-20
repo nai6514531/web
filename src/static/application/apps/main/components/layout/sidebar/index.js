@@ -2,19 +2,25 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Layout } from 'antd'
-import { arrayToTree } from '../../../utils/'
-import menuData from './test.js'
+import { arrayToTree, queryArray } from '../../../utils/'
+import { storage, session } from '../../../utils/storage.js'
+
 const SubMenu = Menu.SubMenu
+
 class SideBar extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      current: '1',
-      openKeys: []
-    },
+    const userInfo = storage.val('userInfo')
     this.levelMap = {}
+    this.menu = userInfo ? userInfo.menuList : [],
+    this.defaultSelectedKeys = session.val('defaultSelectedKeys') || []
+  }
+  componentDidMount() {
+    const defaultOpenKeys = session.val('defaultOpenKeys') || []
+    this.props.changeOpenKeys(defaultOpenKeys)
   }
   getMenus = (menuData, siderFoldN) => {
+    // 生成遍历menu的数据
     const menuTree = arrayToTree(menuData, 'id', 'pid')
     return menuTree.map(item => {
       if (item.children) {
@@ -26,7 +32,7 @@ class SideBar extends React.Component {
             key={item.id}
             title={<span>
               {item.icon && <Icon type={item.icon} />}
-              {(!siderFoldN || menuTree.indexOf(item) < 0) && item.name}
+              {(!siderFoldN || item.pid !== 0) && item.name}
             </span>}
           >
             {this.getMenus(item.children, siderFoldN)}
@@ -35,22 +41,18 @@ class SideBar extends React.Component {
       }
       return (
         <Menu.Item key={item.id}>
-          <Link to={item.router}>
+          <Link to={item.url}>
             {item.icon && <Icon type={item.icon} />}
-            {(!siderFoldN || menuTree.indexOf(item) < 0) && item.name}
+            {(!siderFoldN || item.pid !== 0) && item.name}
           </Link>
         </Menu.Item>
       )
     })
   }
-  handleClick = (e) => {
-    this.props.dispatch({ type: 'ui/popMenu', payload: { visible: false } })
-    this.setState({ current: e.key })
-  }
   onOpenChange = (openKeys) => {
-    const state = this.state
-    const latestOpenKey = openKeys.find(key => !(state.openKeys.indexOf(key) > -1))
-    const latestCloseKey = state.openKeys.find(key => !(openKeys.indexOf(key) > -1))
+    const { navOpenKeys, changeOpenKeys } = this.props
+    const latestOpenKey = openKeys.find(key => !(navOpenKeys.indexOf(key) > -1))
+    const latestCloseKey = navOpenKeys.find(key => !(openKeys.indexOf(key) > -1))
 
     let nextOpenKeys = []
     if (latestOpenKey) {
@@ -59,7 +61,7 @@ class SideBar extends React.Component {
     if (latestCloseKey) {
       nextOpenKeys = this.getAncestorKeys(latestCloseKey)
     }
-    this.setState({ openKeys: nextOpenKeys })
+    changeOpenKeys(nextOpenKeys)
 
   }
   getAncestorKeys = (key) => {
@@ -79,31 +81,30 @@ class SideBar extends React.Component {
     }
     return map[key] || []
   }
+  onClick = ({item, key, keyPath}) => {
+    const { handleClick, changeOpenKeys } = this.props
+    const realPath = keyPath.reverse()
+    const selectedKeys = [realPath[realPath.length-1]]
+    const openKeys = realPath.slice(0, keyPath.length-1)
+    session.val('defaultSelectedKeys', selectedKeys)
+    session.val('defaultOpenKeys', openKeys)
+    changeOpenKeys(openKeys)
+    handleClick && handleClick()
+  }
   render() {
-    const { current, openKeys } = this.state
-    const { mode, theme } = this.props
-    const menuItems = this.getMenus(menuData, mode !== 'inline')
-    let attribute
-    if(mode == 'inline') {
-      attribute = {
-        mode,
-        openKeys,
-        theme: theme ? theme : 'dark',
-        selectedKeys: [current],
-        onClick: this.handleClick,
-        onOpenChange: this.onOpenChange
-      }
-    } else {
-      attribute = {
-        mode,
-        theme: theme ? theme : 'dark',
-        selectedKeys: [current],
-        onClick: this.handleClick,
-      }
-    }
+    const { mode, theme, common: { fold }, handleClick, navOpenKeys } = this.props
+    const menuItems = this.getMenus(this.menu, fold)
+    const menuProps = !fold ? {
+      openKeys: navOpenKeys,
+      onOpenChange: this.onOpenChange
+    } : {}
     return (
       <Menu
-        { ...attribute }
+        mode={mode}
+        theme={theme ? theme : 'dark'}
+        onClick={this.onClick}
+        defaultSelectedKeys={this.defaultSelectedKeys}
+        {...menuProps}
       >
         {menuItems}
       </Menu>

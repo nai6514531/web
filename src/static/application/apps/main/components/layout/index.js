@@ -1,16 +1,31 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { withRouter } from "react-router-dom"
 import { Layout } from 'antd'
 import { connect } from 'dva'
 import Nav from './nav/'
 import SideBar from './sidebar/'
+import { storage } from '../../utils/storage.js'
 import classNames from 'classnames'
 import './index.css'
 const { Sider } = Layout
 
 class Wrapper extends React.Component {
+  changeOpenKeys = (openKeys) => {
+    this.props.dispatch({
+      type: 'common/handleNavOpenKeys',
+      payload: {
+        navOpenKeys: openKeys
+      }
+    })
+  }
+  componentDidMount() {
+    if(!storage.val('token')) {
+      this.props.history.push('/')
+    }
+  }
   render() {
-    const { ui: { fold } } = this.props
+    const { common: { fold, navOpenKeys }, dispatch } = this.props
     const wrapper = classNames('wrapper',{
       'wrapper-fold': !fold,
       'wrapper-unfold': fold
@@ -30,10 +45,14 @@ class Wrapper extends React.Component {
           trigger={null}
           >
           <img src={imageUrl} className={logo}/>
-          <SideBar {...this.props} mode={mode}/>
+          <SideBar
+            {...this.props}
+            mode={mode}
+            navOpenKeys={navOpenKeys}
+            changeOpenKeys={this.changeOpenKeys}/>
         </Sider>
         <Layout>
-          <Nav />
+          <Nav {...this.props}/>
           <div className={wrapper}>
             {this.props.children}
           </div>
@@ -44,8 +63,8 @@ class Wrapper extends React.Component {
 }
 function mapStateToProps(state,props) {
   return {
-    ui: state.ui,
+    common: state.common,
     ...props
   }
 }
-export default connect(mapStateToProps)(Wrapper)
+export default connect(mapStateToProps)(withRouter(Wrapper))
