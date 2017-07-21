@@ -42,12 +42,13 @@ export default {
 
         if(result.status == 'OK') {
           storage.val('userInfo', result.data)
-          yield put({ type: 'hideLoading' })
           payload.history.push('/admin')
         } else {
           message.error(result.message)
-          yield put({ type: 'hideLoading' })
         }
+
+        yield put({ type: 'hideLoading' })
+
       } else {
         const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
         yield put({ type: 'captcha', payload: { captcha } })

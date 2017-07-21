@@ -13,12 +13,14 @@ class Login extends Component {
   constructor(props) {
     super(props)
   }
+
   componentWillMount() {
     if(storage.val('token')) {
       this.props.history.push('/admin')
     }
     this.changeCaptcha()
   }
+
   handleOk = () => {
     const { form:{ validateFieldsAndScroll }, dipatch, history } = this.props
     validateFieldsAndScroll((errors, values) => {
@@ -33,10 +35,12 @@ class Login extends Component {
       })
     })
   }
+
   changeCaptcha = () => {
     const { dispatch } = this.props
     dispatch({type: 'login/captcha'})
   }
+
   render() {
     const { loading, dipatch, form: { getFieldDecorator }, login: { checked, captcha, pageLoading } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
@@ -126,11 +130,6 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
-  form: PropTypes.object,
-  login: PropTypes.object,
-  dispatch: PropTypes.func,
-}
 function mapStateToProps(state,props) {
   return {
     login: state.login,

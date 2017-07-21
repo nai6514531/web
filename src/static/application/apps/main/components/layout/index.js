@@ -8,6 +8,7 @@ import SideBar from './sidebar/'
 import { storage } from '../../utils/storage.js'
 import classNames from 'classnames'
 import './index.css'
+
 const { Sider } = Layout
 
 class Wrapper extends React.Component {
@@ -16,6 +17,7 @@ class Wrapper extends React.Component {
       this.props.history.push('/')
     }
   }
+
   changeOpenKeys = (openKeys) => {
     this.props.dispatch({
       type: 'common/handleNavOpenKeys',
@@ -24,6 +26,7 @@ class Wrapper extends React.Component {
       }
     })
   }
+
   render() {
     const { common: { fold, navOpenKeys }, dispatch } = this.props
     const wrapper = classNames('wrapper',{
@@ -61,6 +64,7 @@ class Wrapper extends React.Component {
     )
   }
 }
+
 function mapStateToProps(state,props) {
   return {
     common: state.common,

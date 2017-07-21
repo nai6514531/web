@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { withRouter } from "react-router-dom"
 const cached = {}
+
 function registerModel(app, model) {
-  console.log("cached",cached)
   if (!cached[model.namespace]) {
     app.model(model);
     cached[model.namespace] = 1;
   }
 }
+
 class Bundle extends Component {
   state = {
     mod: null,
@@ -44,6 +45,7 @@ class Bundle extends Component {
       this.load(props)
     }
   }
+
   load(props) {
     this.setState({
       mod: null

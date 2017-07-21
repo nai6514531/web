@@ -15,10 +15,12 @@ class SideBar extends React.Component {
     this.menu = userInfo ? userInfo.menuList : [],
     this.defaultSelectedKeys = session.val('defaultSelectedKeys') || []
   }
+
   componentDidMount() {
     const defaultOpenKeys = session.val('defaultOpenKeys') || []
     this.props.changeOpenKeys(defaultOpenKeys)
   }
+
   getMenus = (menuData, siderFoldN) => {
     // 生成遍历menu的数据
     const menuTree = arrayToTree(menuData, 'id', 'pid')
@@ -49,6 +51,7 @@ class SideBar extends React.Component {
       )
     })
   }
+
   onOpenChange = (openKeys) => {
     const { navOpenKeys, changeOpenKeys } = this.props
     const latestOpenKey = openKeys.find(key => !(navOpenKeys.indexOf(key) > -1))
@@ -64,6 +67,7 @@ class SideBar extends React.Component {
     changeOpenKeys(nextOpenKeys)
 
   }
+
   getAncestorKeys = (key) => {
     let map = {}
     let levelMap = this.levelMap
@@ -81,6 +85,7 @@ class SideBar extends React.Component {
     }
     return map[key] || []
   }
+
   onClick = ({item, key, keyPath}) => {
     const { handleClick, changeOpenKeys } = this.props
     const realPath = keyPath.reverse()
@@ -91,6 +96,7 @@ class SideBar extends React.Component {
     changeOpenKeys(openKeys)
     handleClick && handleClick()
   }
+
   render() {
     const { mode, theme, common: { fold }, handleClick, navOpenKeys } = this.props
     const menuItems = this.getMenus(this.menu, fold)

@@ -16,6 +16,7 @@ class Nav extends React.Component {
     const userInfo = storage.val('userInfo')
     this.userName = userInfo ? userInfo.user.name : ''
   }
+
   componentDidMount() {
     const defaultFold = session.val('fold') || false
     this.props.dispatch({
@@ -23,18 +24,21 @@ class Nav extends React.Component {
       payload: { fold: defaultFold }
     })
   }
+
   handleVisibleChange = (menuPopoverVisible) => {
     this.props.dispatch({
       type: 'common/popMenu',
       payload: { menuPopoverVisible }
     })
   }
+
   changeOpenKeys = (openKeys) => {
     this.props.dispatch({
      type: 'common/handleNavOpenKeys',
      payload: { navOpenKeys: openKeys }
     })
   }
+
   foldMenu = () => {
     const { dispatch, common: {  fold } } = this.props
     dispatch({
@@ -43,6 +47,7 @@ class Nav extends React.Component {
     })
     session.val('fold',!fold)
   }
+
   showModal = () => {
     const { dispatch, history } = this.props
     confirm({
@@ -57,6 +62,7 @@ class Nav extends React.Component {
       }
     })
   }
+
   render() {
     const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys } } = this.props
     const header = classNames(styles.header,styles.wrapper)
@@ -101,6 +107,7 @@ class Nav extends React.Component {
     )
   }
 }
+
 function mapStateToProps(state,props) {
   return {
     common: state.common,
