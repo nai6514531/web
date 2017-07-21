@@ -1,5 +1,6 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import { Modal, message } from 'antd'
 import { API_SERVER } from './config'
 import { storage, session } from './storage.js'

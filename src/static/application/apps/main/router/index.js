@@ -12,17 +12,17 @@ function RouterConfig({ history, app }) {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" render={() => <Redirect to="/login"/>}/>
-        <Route exact path="/login" component={getComponent(Login,app,LoginModel)}/>
-        <Route path="/admin" render={ props => (
+        <Route exact path='/' render={() => <Redirect to='/login'/>}/>
+        <Route exact path='/login' component={getComponent(Login,app,LoginModel)}/>
+        <Route path='/admin' render={ props => (
           <Layout>
-              <Route path="/admin/test-table" component={getComponent(TestTable)} />
+              <Route path='/admin/test-table' component={getComponent(TestTable)} />
           </Layout>
         )}/>
         <Route component={getComponent(NotFound)} />
       </Switch>
     </Router>
-  );
+  )
 }
 
 export default RouterConfig;

@@ -11,6 +11,11 @@ import './index.css'
 const { Sider } = Layout
 
 class Wrapper extends React.Component {
+  componentDidMount() {
+    if(!storage.val('token')) {
+      this.props.history.push('/')
+    }
+  }
   changeOpenKeys = (openKeys) => {
     this.props.dispatch({
       type: 'common/handleNavOpenKeys',
@@ -18,11 +23,6 @@ class Wrapper extends React.Component {
         navOpenKeys: openKeys
       }
     })
-  }
-  componentDidMount() {
-    if(!storage.val('token')) {
-      this.props.history.push('/')
-    }
   }
   render() {
     const { common: { fold, navOpenKeys }, dispatch } = this.props
