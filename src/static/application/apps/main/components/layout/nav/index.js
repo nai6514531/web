@@ -77,6 +77,7 @@ class Nav extends React.Component {
               {...this.props}
               theme='light'
               mode='inline'
+              fold={false}
               navOpenKeys={navOpenKeys}
               handleClick={this.handleVisibleChange.bind(this,false)}
               changeOpenKeys={this.changeOpenKeys}

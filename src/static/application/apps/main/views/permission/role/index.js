@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 
-class NotFound extends Component {
+class Role extends Component {
   render() {
     return(
-      <p>this is 404</p>
+      <p>this is role page</p>
     )
   }
 }
-export default NotFound
+export default Role

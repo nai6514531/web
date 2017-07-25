@@ -1,7 +1,7 @@
 import request from '../utils/request'
 const userService = {
   info: () => {
-    return request.get(`/session/info`)
+    return request.get(`/profile/session`)
   },
   logout: () => {
     return request.get(`/logout`)

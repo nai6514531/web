@@ -51,6 +51,7 @@ class Wrapper extends React.Component {
           <SideBar
             {...this.props}
             mode={mode}
+            fold={fold}
             navOpenKeys={navOpenKeys}
             changeOpenKeys={this.changeOpenKeys}/>
         </Sider>

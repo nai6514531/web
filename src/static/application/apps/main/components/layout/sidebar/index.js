@@ -21,23 +21,23 @@ class SideBar extends React.Component {
     this.props.changeOpenKeys(defaultOpenKeys)
   }
 
-  getMenus = (menuData, siderFoldN) => {
+  getMenus = (menuData, fold) => {
     // 生成遍历menu的数据
-    const menuTree = arrayToTree(menuData, 'id', 'pid')
+    const menuTree = arrayToTree(menuData, 'id', 'parentId')
     return menuTree.map(item => {
       if (item.children) {
-        if (item.pid) {
-          this.levelMap[item.id] = item.pid
+        if (item.parentId) {
+          this.levelMap[item.id] = item.parentId
         }
         return (
           <SubMenu
             key={item.id}
             title={<span>
               {item.icon && <Icon type={item.icon} />}
-              {(!siderFoldN || item.pid !== 0) && item.name}
+              {(!fold || item.parentId !== 0) && item.name}
             </span>}
           >
-            {this.getMenus(item.children, siderFoldN)}
+            {this.getMenus(item.children, fold)}
           </SubMenu>
         )
       }
@@ -45,7 +45,7 @@ class SideBar extends React.Component {
         <Menu.Item key={item.id}>
           <Link to={item.url}>
             {item.icon && <Icon type={item.icon} />}
-            {(!siderFoldN || item.pid !== 0) && item.name}
+            {(!fold || item.parentId !== 0) && item.name}
           </Link>
         </Menu.Item>
       )
@@ -98,7 +98,7 @@ class SideBar extends React.Component {
   }
 
   render() {
-    const { mode, theme, common: { fold }, handleClick, navOpenKeys } = this.props
+    const { mode, theme, fold, handleClick, navOpenKeys } = this.props
     const menuItems = this.getMenus(this.menu, fold)
     const menuProps = !fold ? {
       openKeys: navOpenKeys,

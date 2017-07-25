@@ -1,13 +1,11 @@
 import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { Switch, Redirect, Route } from 'react-router-dom'
+import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
-import Login from 'bundle-loader?lazy!../view/login'
-import LoginModel from 'bundle-loader?lazy!../models/login/index.js'
+import permission from './permission/'
+import Login from 'bundle-loader?lazy!../views/login'
+import LoginModel from 'bundle-loader?lazy!../models/login/'
 import Layout from '../components/layout/'
-import NotFound from 'bundle-loader?lazy!../view/not-found'
-import TestTable from 'bundle-loader?lazy!../view/test-table'
-
+import NotFound from 'bundle-loader?lazy!../views/not-found'
 function RouterConfig({ history, app }) {
   return (
     <Router>
@@ -16,7 +14,7 @@ function RouterConfig({ history, app }) {
         <Route exact path='/login' component={getComponent(Login,app,LoginModel)}/>
         <Route path='/admin' render={ props => (
           <Layout>
-              <Route path='/admin/test-table' component={getComponent(TestTable)} />
+            { permission(history, app) }
           </Layout>
         )}/>
         <Route component={getComponent(NotFound)} />

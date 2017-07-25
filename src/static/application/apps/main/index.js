@@ -30,6 +30,6 @@ app.use(createLoading())
 // require.context('./models/', true, /\.js$/).keys().forEach( file => app.model(require(`./models/${file.slice(2)}`)) )
 // 也支持和路由的异步加载
 app.model(require('./models/common/'))
-app.router(require('./router'))
+app.router(require('./routers'))
 
 app.start('#application-container')

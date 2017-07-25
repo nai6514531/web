@@ -1,9 +1,10 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
 import { Modal, message } from 'antd'
 import { API_SERVER } from './config'
 import { storage, session } from './storage.js'
+import 'nprogress/nprogress.css'
+
 const confirm = Modal.confirm
 const api = axios.create({
   baseURL: API_SERVER,

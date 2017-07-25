@@ -4,8 +4,8 @@ import { connect } from 'dva'
 import { Link } from 'react-router-dom'
 import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
 import { storage } from '../../utils/storage.js'
-import styles from './index.pcss'
 import md5 from 'md5'
+import styles from './index.pcss'
 
 const FormItem = Form.Item
 
@@ -65,7 +65,13 @@ class Login extends Component {
                     required: true, message: '请输入注册时填写的登录账号',
                   },
                 ],
-              })(<Input size='large' placeholder='请输入登录账号' />)}
+              })(
+                <Input
+                  size='large'
+                  placeholder='请输入登录账号'
+                  onPressEnter={this.handleOk}
+                />
+              )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('password', {
@@ -75,7 +81,14 @@ class Login extends Component {
                     required: true, message: '请输入密码',
                   }
                 ],
-              })(<Input size='large' type='password' placeholder='请输入密码' />)}
+              })(
+                <Input
+                  size='large'
+                  type='password'
+                  placeholder='请输入密码'
+                  onPressEnter={this.handleOk}
+                />
+              )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('captcha', {
@@ -86,7 +99,12 @@ class Login extends Component {
                 ],
               })(
               <Row>
-                <Col span={17}><Input size='large' placeholder='请输入图形验证码' /></Col>
+                <Col span={17}>
+                  <Input
+                    size='large'
+                    placeholder='请输入图形验证码'
+                    onPressEnter={this.handleOk}/>
+                </Col>
                 <Col span={7}>
                   <img
                     className={styles.captcha}

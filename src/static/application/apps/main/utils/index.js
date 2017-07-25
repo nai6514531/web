@@ -1,6 +1,6 @@
-import lodash from 'lodash'
+import _ from 'lodash'
 const arrayToTree = (array, id = 'id', pid = 'pid', children = 'children') => {
-  let data = lodash.cloneDeep(array)
+  let data = _.cloneDeep(array)
   let result = []
   let hash = {}
   data.forEach((item, index) => {
@@ -18,15 +18,9 @@ const arrayToTree = (array, id = 'id', pid = 'pid', children = 'children') => {
   return result
 }
 
-const queryArray = (array, key, keyAlias = 'key') => {
-  if (!(array instanceof Array)) {
-    return null
-  }
-  const item = array.filter(_ => _[keyAlias] === key)
-  if (item.length) {
-    return item[0]
-  }
-  return null
+const transformUrl = (hashUrl) => {
+  const result = _.chain(hashUrl).replace('#', '').split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
+  return result
 }
 
-export { arrayToTree, queryArray }
+export { arrayToTree, transformUrl }
