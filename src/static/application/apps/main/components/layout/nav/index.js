@@ -65,7 +65,10 @@ class Nav extends React.Component {
 
   render() {
     const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys } } = this.props
-    const header = classNames(styles.header,styles.wrapper)
+    const header = classNames(styles.header,styles.wrapper,{
+      [styles['header-unfold']]: !fold,
+      [styles['header-fold']] : fold
+    })
     const iconBars = classNames(styles.icon,styles.bars)
     const iconFold = classNames(styles.icon,styles.fold)
     return (

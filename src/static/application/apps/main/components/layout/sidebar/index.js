@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Layout } from 'antd'
-import { arrayToTree, queryArray } from '../../../utils/'
+import { arrayToTree } from '../../../utils/'
 import { storage, session } from '../../../utils/storage.js'
 
 const SubMenu = Menu.SubMenu
@@ -23,7 +23,7 @@ class SideBar extends React.Component {
 
   getMenus = (menuData, fold) => {
     // 生成遍历menu的数据
-    const menuTree = arrayToTree(menuData, 'id', 'parentId')
+    const menuTree = arrayToTree(menuData)
     return menuTree.map(item => {
       if (item.children) {
         if (item.parentId) {
@@ -34,7 +34,7 @@ class SideBar extends React.Component {
             key={item.id}
             title={<span>
               {item.icon && <Icon type={item.icon} />}
-              {(!fold || item.parentId !== 0) && item.name}
+              {(!fold || item.level !== 1) && item.name}
             </span>}
           >
             {this.getMenus(item.children, fold)}

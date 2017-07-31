@@ -19,7 +19,16 @@ class DataTable extends Component {
       }
     }
   }
-  componentWillMount() {
+  handleTableChange = (pagination) => {
+    const pager = { ...this.state.pagination }
+    pager.current = pagination.current
+    pager.pageSize = pagination.pageSize
+    this.setState({
+      pagination: pager,
+    })
+    location.hash = `page=${pagination.current}&per_page=${pagination.pageSize}`
+  }
+  componentWillReceiveProps(nextProps) {
     const propPagination = this.props.pagination
     if(propPagination === false) {
       this.setState({
@@ -33,15 +42,6 @@ class DataTable extends Component {
       })
     }
   }
-  handleTableChange = (pagination) => {
-    const pager = { ...this.state.pagination }
-    pager.current = pagination.current
-    pager.pageSize = pagination.pageSize
-    this.setState({
-      pagination: pager,
-    })
-    location.hash = `page=${pagination.current}&pageSize=${pagination.pageSize}`
-  }
   render() {
     const { columns, dataSource, loading } = this.props
     const { pagination } = this.state
@@ -52,6 +52,7 @@ class DataTable extends Component {
         loading={loading}
         pagination={pagination}
         onChange={this.handleTableChange}
+        rowKey='id'
         bordered
       />
     )

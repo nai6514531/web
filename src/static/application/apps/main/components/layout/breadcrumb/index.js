@@ -10,7 +10,7 @@ class CustomBreadcrumb extends Component {
       <div className={styles.wrap}>
         <Breadcrumb>
           {items.map((item,key) => {
-            return key !== items.length-1 ?
+            return item.url ?
               <Breadcrumb.Item key={key}><Link to={item.url}>{item.title}</Link></Breadcrumb.Item> :
               <Breadcrumb.Item key={key}>{item.title}</Breadcrumb.Item>
           })}
