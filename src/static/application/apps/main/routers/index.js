@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
-import permission from './permission/'
+import settings from './settings/'
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
 import Layout from '../components/layout/'
@@ -14,7 +14,7 @@ function RouterConfig({ history, app }) {
         <Route exact path='/login' component={getComponent(Login,app,loginModel)}/>
         <Route path='/admin' render={ props => (
           <Layout>
-            { permission(history, app) }
+            { settings(history, app) }
           </Layout>
         )}/>
         <Route component={getComponent(NotFound)} />

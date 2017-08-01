@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import menuService from '../../services/permission/menu.js'
+import menuService from '../../services/settings/menu.js'
 export default {
   namespace: 'menu',
   state: {
@@ -53,8 +53,9 @@ export default {
       }
     },
     *delete({ payload }, { call, put }) {
-      const result = yield call(menuService.delete, payload.data)
+      const result = yield call(menuService.delete, payload.id)
       if(result.status == 'OK') {
+        message.success('删除成功')
         yield put({ type: 'list' })
       } else {
         message.error(result.message)

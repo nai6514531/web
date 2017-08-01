@@ -21,7 +21,7 @@ const formItemLayout = {
 }
 const breadItems = [
   {
-    title: '权限管理'
+    title: '设置'
   },
   {
     title: '菜单'
@@ -99,7 +99,7 @@ class Menu extends Component {
     this.props.dispatch({
       type: 'menu/delete',
       payload: {
-        data: id
+        id: id
       }
     })
   }
@@ -130,6 +130,7 @@ class Menu extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Button
+          type='primary'
           onClick={this.show}
           style={{marginBottom: '20px'}}
           >
@@ -157,7 +158,7 @@ class Menu extends Component {
                   rules: [{
                     required: true, message: '请输入菜单名!',
                   }],
-                  initialValue:record.name
+                  initialValue: record.name
                 })(
                   <Input />
                 )}
@@ -170,7 +171,7 @@ class Menu extends Component {
                   rules: [{
                     required: true, message: '请输入图标!',
                   }],
-                  initialValue:record.icon
+                  initialValue: record.icon
                 })(
                   <Input />
                 )}
@@ -180,7 +181,7 @@ class Menu extends Component {
                 label="路由"
               >
                 {getFieldDecorator('url', {
-                  initialValue:record.url
+                  initialValue: record.url
                 })(
                   <Input />
                 )}
@@ -190,7 +191,7 @@ class Menu extends Component {
                 label="根节点"
               >
                 {getFieldDecorator('cascader', {
-                  initialValue:record.cascader,
+                  initialValue: record.cascader,
                   rules: [{
                     required: true, message: '请选择根节点',
                   }],
