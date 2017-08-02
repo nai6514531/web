@@ -15,5 +15,8 @@ const userService = {
   delete: (id) => {
     return request.delete(`/user/${id}`)
   },
+  reset: (data) => {
+    return request.put(`/profile/password`,data)
+  }
 }
 export default userService

@@ -5,6 +5,7 @@ import { connect } from 'dva'
 import { Form, Input, Button } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
+import md5 from 'md5'
 
 const FormItem = Form.Item
 const breadItems = [
@@ -53,6 +54,8 @@ class UserEdit extends Component {
         if(id !== 'new') {
           type = 'user/update'
           values.id = id
+        } else {
+          values.password = md5(values.password)
         }
         this.props.dispatch({
           type: type,
@@ -69,6 +72,7 @@ class UserEdit extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, user: { data }, match: { params: { id } }, loading } = this.props
+    const isEdit = this.props.match.params.id !== 'new'
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -99,6 +103,20 @@ class UserEdit extends Component {
               <Input />
             )}
           </FormItem>
+          { !isEdit ? (
+            <FormItem
+              {...formItemLayout}
+              label="密码"
+            >
+              {getFieldDecorator('password', {
+                rules: [{
+                  required: true, message: '请输入密码！',
+                }]
+              })(
+                <Input />
+              )}
+            </FormItem>
+          ) : null }
           <FormItem
             {...formItemLayout}
             label="联系人"

@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Popconfirm, Button } from 'antd'
+import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl } from '../../../utils/'
 
+const FormItem = Form.Item
+const formItemLayout = {
+  labelCol: { span: 14 },
+  wrapperCol: { span: 10 },
+}
 const breadItems = [
   {
     title: '设置'
@@ -57,8 +62,9 @@ class User extends Component {
             <span>
               <Link to={`/admin/settings/user/${record.id}`}>修改</Link> |
               <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除</a>
+                <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
               </Popconfirm>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>{'\u00A0'}配置角色</a>
             </span>
           )
         }
@@ -84,8 +90,31 @@ class User extends Component {
       }
     })
   }
+  hide = () => {
+    this.props.dispatch({
+      type: 'user/hideModal'
+    })
+  }
+  show = (record) => {
+    this.props.dispatch({
+      type: 'user/showModal',
+      payload: {
+        data: record
+      }
+    })
+  }
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if(!err) {
+        console.log('values',values)
+      }
+    })
+  }
   render() {
-    const { user: { data: { objects, pagination } }, loading  } = this.props
+    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, key, visible }, loading  } = this.props
+    //todo
+    const record = {}
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -103,6 +132,33 @@ class User extends Component {
           loading={loading}
           pagination={pagination}
         />
+        <Modal
+          title="配置角色"
+          visible={visible}
+          onCancel={this.hide}
+          onOk={this.handleSubmit}
+          key={key}
+         >
+          <Form onSubmit={this.handleSubmit}>
+            <Row>
+              {
+                roleData.map((item, index) => {
+                  return(
+                    <Col span={8} key={index}>
+                      <FormItem
+                        {...formItemLayout}
+                        label={item.name}>
+                        {getFieldDecorator(`${item.id}`)(
+                          <Checkbox />
+                        )}
+                      </FormItem>
+                    </Col>
+                  )
+                })
+              }
+            </Row>
+          </Form>
+         </Modal>
       </div>
     )
   }
@@ -114,5 +170,5 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(User)
+export default connect(mapStateToProps)(Form.create()(User))
 

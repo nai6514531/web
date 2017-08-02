@@ -23,4 +23,4 @@ function RouterConfig({ history, app }) {
   )
 }
 
-export default RouterConfig;
+export default RouterConfig

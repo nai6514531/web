@@ -143,7 +143,7 @@ class Menu extends Component {
           pagination={false}
         />
         <Modal
-          title="添加用户"
+          title="添加菜单"
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
