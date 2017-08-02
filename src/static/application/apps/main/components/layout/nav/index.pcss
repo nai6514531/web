@@ -1,0 +1,72 @@
+.header {
+	height: 50px;
+	line-height: 50px;
+	padding: 0;
+	display: flex;
+	justify-content: space-between;
+	background-color: #fff;
+	box-shadow: 2px 2px 40px 0 rgba(0,0,0,.05);
+	position: fixed;
+}
+.header-fold {
+	width:calc(100% - 64px);
+}
+.header-unfold {
+	width:calc(100% - 200px);
+}
+.icon {
+	width: 47px;
+	height: 47px;
+	line-height: 47px;
+	font-size: 18px;
+	text-align: center;
+	display: inline-block;
+	cursor: pointer;
+	transition: all .3s ease-out;
+}
+.icon:hover {
+  background: #108ee9;
+}
+@media (min-width: 768px) {
+	.bars {
+	  display: none;
+	}
+	.fold {
+		display: inline-block;
+	}
+}
+@media (max-width: 768px) {
+	.bars {
+	  display: inline-block;
+	}
+	.fold {
+		display: none;
+	}
+	.wrapper {
+		width: 100vw;
+	}
+}
+.logout {
+	font-size: 14px !important;
+	display: flex;
+}
+.popovermenu {
+  width: 280px;
+  margin-left: 6px;
+
+  :global .ant-popover-inner-content {
+    padding: 0;
+
+    .ant-menu-inline .ant-menu-item,
+    .ant-menu-vertical .ant-menu-item {
+      border-right: 0;
+      height: 48px;
+      line-height: 48px;
+    }
+
+    .ant-menu-inline .ant-menu-item-selected,
+    .ant-menu-inline .ant-menu-selected {
+      border-right: 0;
+    }
+  }
+}
