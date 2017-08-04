@@ -53,7 +53,7 @@ class Login extends Component {
       <div>
         <div className={styles.form}>
           <div className={styles.logo}>
-            <img alt={'logo'} src={require('../../assets/yay.jpg')} />
+            <img alt={'logo'} src={require('../../assets/favicon.png')} />
             <span>苏打管理系统</span>
           </div>
           <form>
@@ -129,11 +129,6 @@ class Login extends Component {
                  })(
                    <Checkbox>记住密码</Checkbox>
                  )}
-              </Col>
-              <Col span={6}>
-                <Link to={`231`}>
-                忘记密码
-                </Link>
               </Col>
             </FormItem>
           </form>

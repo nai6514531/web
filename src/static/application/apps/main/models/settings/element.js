@@ -1,7 +1,7 @@
 import { message } from 'antd'
-import menuService from '../../services/settings/menu.js'
+import elementService from '../../services/settings/element'
 export default {
-  namespace: 'menu',
+  namespace: 'element',
   state: {
     key: 1,
     visible: false,
@@ -27,7 +27,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(menuService.list)
+      const result = yield call(elementService.list)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -36,7 +36,7 @@ export default {
     },
     *update({ payload }, { call, put }) {
       const { data, id } = payload
-      const result = yield call(menuService.update, data, id)
+      const result = yield call(elementService.update, data, id)
       if(result.status == 'OK') {
         yield put({ type: 'list' })
         yield put({ type: 'hideModal' })
@@ -46,7 +46,7 @@ export default {
       }
     },
     *add({ payload }, { call, put }) {
-      const result = yield call(menuService.add, payload.data)
+      const result = yield call(elementService.add, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'list' })
         yield put({ type: 'hideModal' })
@@ -56,7 +56,7 @@ export default {
       }
     },
     *delete({ payload }, { call, put }) {
-      const result = yield call(menuService.delete, payload.id)
+      const result = yield call(elementService.delete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({ type: 'list' })

@@ -68,13 +68,13 @@ class Menu extends Component {
         values.parentId = cascader[cascader.length - 1]
         values.level = cascader.length
         if(id) {
-          values.id = id
           type = 'menu/update'
         }
         this.props.dispatch({
           type: type,
           payload: {
-            data: values
+            data: values,
+            id: id
           }
         })
       }
@@ -131,7 +131,7 @@ class Menu extends Component {
         <Breadcrumb items={breadItems} />
         <Button
           type='primary'
-          onClick={this.show}
+          onClick={this.show.bind(this, {})}
           style={{marginBottom: '20px'}}
           >
           添加菜单

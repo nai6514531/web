@@ -53,7 +53,6 @@ class UserEdit extends Component {
         let type = 'user/add'
         if(id !== 'new') {
           type = 'user/update'
-          values.id = id
         } else {
           values.password = md5(values.password)
         }
@@ -61,7 +60,8 @@ class UserEdit extends Component {
           type: type,
           payload: {
             history,
-            data: values
+            data: values,
+            id: id
           }
         })
       }
