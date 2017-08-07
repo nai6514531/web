@@ -42,7 +42,7 @@ class Action extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -115,7 +115,7 @@ class Action extends Component {
           pagination={false}
         />
         <Modal
-          title="添加api"
+          title='添加api'
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -124,7 +124,7 @@ class Action extends Component {
           <Form onSubmit={this.handleSubmit}>
             <FormItem
               {...formItemLayout}
-              label="控制器名称"
+              label='控制器名称'
             >
               {getFieldDecorator('handlerName', {
                 rules: [{
@@ -137,7 +137,7 @@ class Action extends Component {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="api"
+              label='api'
             >
               {getFieldDecorator('api', {
                 rules: [{
@@ -150,7 +150,7 @@ class Action extends Component {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="请求方法"
+              label='请求方法'
             >
               {getFieldDecorator('method', {
                 rules: [{
@@ -163,7 +163,7 @@ class Action extends Component {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="描述"
+              label='描述'
             >
               {getFieldDecorator('description', {
                 rules: [{

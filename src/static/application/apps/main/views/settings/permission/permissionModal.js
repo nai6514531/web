@@ -43,7 +43,7 @@ class PermissionModal extends Component {
     const { form: { getFieldDecorator }, permission: { key, visible, record } } = this.props
     return(
       <Modal
-        title="添加权限"
+        title='添加权限'
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
@@ -52,7 +52,7 @@ class PermissionModal extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label="权限名称"
+            label='权限名称'
           >
             {getFieldDecorator('name', {
               rules: [{

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { withRouter } from "react-router-dom"
+import { withRouter } from 'react-router-dom'
 import { Layout } from 'antd'
 import { connect } from 'dva'
 import Nav from './nav/'

@@ -39,7 +39,7 @@ class Element extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -112,7 +112,7 @@ class Element extends Component {
           pagination={pagination}
         />
         <Modal
-          title="添加元素"
+          title='添加元素'
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -121,7 +121,7 @@ class Element extends Component {
           <Form onSubmit={this.handleSubmit}>
             <FormItem
               {...formItemLayout}
-              label="元素名称"
+              label='元素名称'
             >
               {getFieldDecorator('name', {
                 rules: [{

@@ -63,7 +63,7 @@ class User extends Component {
           return (
             <span>
               <Link to={`/admin/settings/user/${record.id}`}>修改</Link> |
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
               </Popconfirm>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a>
@@ -135,17 +135,17 @@ class User extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Search
-          placeholder="请输入用户名搜索"
+          placeholder='请输入用户名搜索'
           style={{ width: 200 }}
           onSearch={this.search.bind(this, 'name')}
          />
         <Search
-          placeholder="请输入用户id搜索"
+          placeholder='请输入用户id搜索'
           style={{ width: 200, marginLeft: 20 }}
           onSearch={this.search.bind(this, 'id')}
          />
         <Search
-          placeholder="请输入账号搜索"
+          placeholder='请输入账号搜索'
           style={{ width: 200, marginLeft: 20 }}
           onSearch={this.search.bind(this, 'account')}
          />
@@ -164,7 +164,7 @@ class User extends Component {
           pagination={pagination}
         />
         <Modal
-          title="配置角色"
+          title='配置角色'
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}

@@ -38,7 +38,7 @@ class ActionModal extends Component {
     const { form: { getFieldDecorator }, permission: { actionData, actionVisible, key, currentData } } = this.props
     return(
       <Modal
-        title="配置接口"
+        title='配置接口'
         visible={actionVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}

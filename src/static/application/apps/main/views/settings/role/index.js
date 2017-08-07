@@ -59,7 +59,7 @@ class RoleModal extends Component {
     const { form: { getFieldDecorator }, role: { key, visible, record } } = this.props
     return(
       <Modal
-        title="添加角色"
+        title='添加角色'
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleChange}
@@ -68,7 +68,7 @@ class RoleModal extends Component {
         <Form>
           <FormItem
             {...formItemLayout}
-            label="角色名称"
+            label='角色名称'
           >
             {getFieldDecorator('name', {
               rules: [{
@@ -114,7 +114,7 @@ class PermissionModal extends Component {
     const { form: { getFieldDecorator }, role: { permissonData: { objects }, currentPermisson, permissionVisible, key } } = this.props
     return(
       <Modal
-        title="配置权限"
+        title='配置权限'
         visible={permissionVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
@@ -173,7 +173,7 @@ class Role extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改 |</a>
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除 |</a>
               </Popconfirm>
               <a href='javascript:void(0)' onClick={ this.showPermission.bind(this,record.id) }>{'\u00A0'}配置权限</a>

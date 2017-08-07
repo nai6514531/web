@@ -94,7 +94,7 @@ class MenuModal extends Component {
     const current = this.deletePanelId(currentData)
     return(
       <Modal
-        title="配置菜单"
+        title='配置菜单'
         visible={menuVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}

@@ -79,7 +79,7 @@ class UserEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label="登录账号"
+            label='登录账号'
           >
             {getFieldDecorator('account', {
               rules: [{
@@ -92,7 +92,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="运营商名称"
+            label='运营商名称'
           >
             {getFieldDecorator('name', {
               rules: [{
@@ -106,7 +106,7 @@ class UserEdit extends Component {
           { !isEdit ? (
             <FormItem
               {...formItemLayout}
-              label="密码"
+              label='密码'
             >
               {getFieldDecorator('password', {
                 rules: [{
@@ -119,7 +119,7 @@ class UserEdit extends Component {
           ) : null }
           <FormItem
             {...formItemLayout}
-            label="联系人"
+            label='联系人'
           >
             {getFieldDecorator('contact', {
               rules: [{
@@ -132,7 +132,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="地址"
+            label='地址'
           >
             {getFieldDecorator('address', {
               rules: [{
@@ -145,7 +145,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="手机号"
+            label='手机号'
           >
             {getFieldDecorator('mobile', {
               rules: [{
@@ -158,7 +158,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="服务电话"
+            label='服务电话'
           >
             {getFieldDecorator('telephone', {
               rules: [{
@@ -177,7 +177,7 @@ class UserEdit extends Component {
               取消
             </Button>
             <Button
-              type="primary"
+              type='primary'
               loading={loading}
               onClick={this.handleSubmit}>
               保存

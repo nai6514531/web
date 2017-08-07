@@ -38,7 +38,7 @@ class ElementModal extends Component {
     const { form: { getFieldDecorator }, permission: { elementData, elementVisible, key, currentData } } = this.props
     return(
       <Modal
-        title="配置元素"
+        title='配置元素'
         visible={elementVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
