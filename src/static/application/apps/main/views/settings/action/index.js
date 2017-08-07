@@ -154,7 +154,7 @@ class Action extends Component {
             >
               {getFieldDecorator('method', {
                 rules: [{
-                  required: true, message: '请输入权限名称!',
+                  required: true, message: '请输入请求方法!',
                 }],
                 initialValue: record.method
               })(

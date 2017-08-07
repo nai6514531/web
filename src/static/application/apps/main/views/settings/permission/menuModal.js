@@ -35,18 +35,24 @@ class MenuModal extends Component {
     const menuData = this.props.permission.menuData
     const result = []
     for ( let i = 0; i < data.length; i++ ) {
+      // TreeSelect组件只支持string类型
       result.push(Number(data[i]))
     }
-    result.map( id => {
-      // 判断是否是panel,是的话找出所有panel的父节点和子节点
-      // 不是的话只找出父节点
-      menuData.map( item => {
+    result.map(id => {
+      menuData.map(item => {
+        // 寻找父节点
         if(item.id === id) {
           if(item.parentId) {
             result.push(item.parentId)
+            menuData.map( subItem => {
+              if(item.parentId === subItem.id && subItem.parentId ) {
+                result.push(subItem.parentId)
+              }
+            })
           }
         }
-        if( item.parentId === id ) {
+        // 寻找子元素
+        if(item.parentId === id) {
           result.push(item.id)
           if(!item.url) {
             menuData.map( subItem => {
