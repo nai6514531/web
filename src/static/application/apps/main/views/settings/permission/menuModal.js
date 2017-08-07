@@ -37,20 +37,26 @@ class MenuModal extends Component {
     for ( let i = 0; i < data.length; i++ ) {
       result.push(Number(data[i]))
     }
-    menuData.map( item => {
-      if( result.indexOf(item.id) > -1 ) {
-        menuData.map( subItem => {
-            if( subItem.parentId === item.id ) {
-              result.push(subItem.id)
-            }
-            if( subItem.id === item.parentId && subItem.parentId !== 0 ) {
-              result.push(subItem.parentId)
-            }
-            if( item.parentId !== 0 ) {
-              result.push(item.parentId)
-            }
-        })
-      }
+    result.map( id => {
+      // 判断是否是panel,是的话找出所有panel的父节点和子节点
+      // 不是的话只找出父节点
+      menuData.map( item => {
+        if(item.id === id) {
+          if(item.parentId) {
+            result.push(item.parentId)
+          }
+        }
+        if( item.parentId === id ) {
+          result.push(item.id)
+          if(!item.url) {
+            menuData.map( subItem => {
+              if(item.id === subItem.parentId) {
+                result.push(subItem.id)
+              }
+            })
+          }
+        }
+      })
     })
     return _.uniq(result)
   }
