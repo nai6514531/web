@@ -3,14 +3,14 @@ const menuService = {
   list: () => {
     return request.get(`/menus`)
   },
-  update: (data) => {
-    return request.put(`/menu/${data.id}`, data)
+  update: (data, id) => {
+    return request.put(`/menus/${id}`, data)
   },
   add: (data) => {
-    return request.post(`/menu`, data)
+    return request.post(`/menus`, data)
   },
   delete: (id) => {
-    return request.delete(`/menu/${id}`)
+    return request.delete(`/menus/${id}`)
   },
 }
 export default menuService

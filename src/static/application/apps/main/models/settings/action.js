@@ -1,14 +1,12 @@
 import { message } from 'antd'
-import menuService from '../../services/settings/menu.js'
+import actionService from '../../services/settings/action'
 export default {
-  namespace: 'menu',
+  namespace: 'action',
   state: {
     key: 1,
     visible: false,
     record: {},
-    data: {
-      objects: []
-    }
+    data: []
   },
   reducers: {
     showModal(state, { payload: { data } }) {
@@ -27,7 +25,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(menuService.list)
+      const result = yield call(actionService.list)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -36,7 +34,7 @@ export default {
     },
     *update({ payload }, { call, put }) {
       const { data, id } = payload
-      const result = yield call(menuService.update, data, id)
+      const result = yield call(actionService.update, data, id)
       if(result.status == 'OK') {
         yield put({ type: 'list' })
         yield put({ type: 'hideModal' })
@@ -46,7 +44,7 @@ export default {
       }
     },
     *add({ payload }, { call, put }) {
-      const result = yield call(menuService.add, payload.data)
+      const result = yield call(actionService.add, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'list' })
         yield put({ type: 'hideModal' })
@@ -56,7 +54,7 @@ export default {
       }
     },
     *delete({ payload }, { call, put }) {
-      const result = yield call(menuService.delete, payload.id)
+      const result = yield call(actionService.delete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({ type: 'list' })

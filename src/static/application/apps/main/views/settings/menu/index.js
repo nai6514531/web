@@ -44,7 +44,7 @@ class Menu extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -68,13 +68,13 @@ class Menu extends Component {
         values.parentId = cascader[cascader.length - 1]
         values.level = cascader.length
         if(id) {
-          values.id = id
           type = 'menu/update'
         }
         this.props.dispatch({
           type: type,
           payload: {
-            data: values
+            data: values,
+            id: id
           }
         })
       }
@@ -131,7 +131,7 @@ class Menu extends Component {
         <Breadcrumb items={breadItems} />
         <Button
           type='primary'
-          onClick={this.show}
+          onClick={this.show.bind(this, {})}
           style={{marginBottom: '20px'}}
           >
           添加菜单
@@ -143,7 +143,7 @@ class Menu extends Component {
           pagination={false}
         />
         <Modal
-          title="添加菜单"
+          title='添加菜单'
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -152,7 +152,7 @@ class Menu extends Component {
           <Form onSubmit={this.handleSubmit}>
               <FormItem
                 {...formItemLayout}
-                label="菜单名"
+                label='菜单名'
               >
                 {getFieldDecorator('name', {
                   rules: [{
@@ -165,7 +165,7 @@ class Menu extends Component {
               </FormItem>
               <FormItem
                 {...formItemLayout}
-                label="图标"
+                label='图标'
               >
                 {getFieldDecorator('icon', {
                   rules: [{
@@ -178,7 +178,7 @@ class Menu extends Component {
               </FormItem>
               <FormItem
                 {...formItemLayout}
-                label="路由"
+                label='路由'
               >
                 {getFieldDecorator('url', {
                   initialValue: record.url
@@ -188,7 +188,7 @@ class Menu extends Component {
               </FormItem>
               <FormItem
                 {...formItemLayout}
-                label="根节点"
+                label='根节点'
               >
                 {getFieldDecorator('cascader', {
                   initialValue: record.cascader,

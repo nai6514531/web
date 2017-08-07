@@ -1,22 +1,28 @@
 import request from '../../utils/request'
 const userService = {
   list: (data) => {
-    return request.get(`/users?page=${data.page}&per_page=${data.per_page}`)
+    return request.get(`/users?page=${data.page || 1 }&per_page=${data.per_page || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}`)
   },
   detail: (id) => {
-    return request.get(`/user/${id}`)
+    return request.get(`/users/${id}`)
   },
-  update: (data) => {
-    return request.put(`/user/${data.id}`, data)
+  update: (data, id) => {
+    return request.put(`/users/${id}`, data)
   },
   add: (data) => {
-    return request.post(`/user`, data)
+    return request.post(`/users`, data)
   },
   delete: (id) => {
-    return request.delete(`/user/${id}`)
+    return request.delete(`/users/${id}`)
+  },
+  roles: (id) => {
+    return request.get(`/users/${id}/roles`)
+  },
+  updateRoles: (data, id) => {
+    return request.put(`/users/${id}/roles`, data)
   },
   reset: (data) => {
-    return request.put(`/profile/password`,data)
+    return request.put(`/profile/password`, data)
   }
 }
 export default userService

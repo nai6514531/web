@@ -26,13 +26,13 @@ class Bundle extends Component {
   }
 
   componentDidMount() {
-    // 当前所在的页面做权限校验 todo
-    if(location.pathname !== '/login' && location.pathname !== '/main'){
-      let result = this.checkOuth(location.pathname)
-      this.setState({
-        permission : result
-      })
-    }
+    // todo 是否有资格进入该页面
+    // if(location.pathname !== '/login'){
+    //   let result = this.checkOuth(location.pathname)
+    //   this.setState({
+    //     permission : result
+    //   })
+    // }
   }
 
   loadWithModel(props) {
@@ -63,7 +63,6 @@ class Bundle extends Component {
 
   render() {
     // 可以通过this.props.match拿到路由匹配信息
-    // console.log('props',this.props)
     if( this.state.permission ) {
       return this.state.mod ? this.props.children(this.state.mod) : null
     } else {

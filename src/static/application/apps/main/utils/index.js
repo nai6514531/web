@@ -47,6 +47,10 @@ const transformMenu = (menu) => {
 
 const transformUrl = (hashUrl) => {
   const result = _.chain(hashUrl).replace('#', '').split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
+  // if( !result.page && !result.per_page ) {
+  //   result.page = 1
+  //   result.per_page = 10
+  // }
   return result
 }
 

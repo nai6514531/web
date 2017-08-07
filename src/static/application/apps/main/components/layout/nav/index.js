@@ -52,8 +52,8 @@ class Nav extends React.Component {
     const { dispatch, history } = this.props
     confirm({
       title: '确认退出吗',
-      okText: "确认",
-      cancelText: "取消",
+      okText: '确认',
+      cancelText: '取消',
       onOk() {
         dispatch({
           type: 'common/logout',

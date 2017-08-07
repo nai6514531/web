@@ -7,6 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl } from '../../../utils/'
 
+const Search = Input.Search
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: { span: 14 },
@@ -23,6 +24,7 @@ const breadItems = [
 class User extends Component {
   constructor(props) {
     super(props)
+    this.id = ''
     this.columns = [
       {
         title: '用户编号',
@@ -61,10 +63,10 @@ class User extends Component {
           return (
             <span>
               <Link to={`/admin/settings/user/${record.id}`}>修改</Link> |
-              <Popconfirm title="确认删除?" onConfirm={ this.delete.bind(this,record.id) } >
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
               </Popconfirm>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>{'\u00A0'}配置角色</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a>
             </span>
           )
         }
@@ -95,32 +97,61 @@ class User extends Component {
       type: 'user/hideModal'
     })
   }
-  show = (record) => {
+  show = (id) => {
+    this.id = id
     this.props.dispatch({
-      type: 'user/showModal',
+      type: 'user/roles',
       payload: {
-        data: record
+        id: id
       }
     })
+  }
+  search = (type, value) => {
+    location.hash = `&${type}=${value}`
   }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        console.log('values',values)
+        const checkList = []
+        for(var key in values) {
+          if(values[key]) {
+            checkList.push(Number(key))
+          }
+        }
+        this.props.dispatch({
+          type: 'user/updateRoles',
+          payload: {
+            id: this.id,
+            data: checkList
+          }
+        })
       }
     })
   }
   render() {
-    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, key, visible }, loading  } = this.props
-    //todo
-    const record = {}
+    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, currentRole, key, visible }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
+        <Search
+          placeholder='请输入用户名搜索'
+          style={{ width: 200 }}
+          onSearch={this.search.bind(this, 'name')}
+         />
+        <Search
+          placeholder='请输入用户id搜索'
+          style={{ width: 200, marginLeft: 20 }}
+          onSearch={this.search.bind(this, 'id')}
+         />
+        <Search
+          placeholder='请输入账号搜索'
+          style={{ width: 200, marginLeft: 20 }}
+          onSearch={this.search.bind(this, 'account')}
+         />
         <Button
           type='primary'
-          style={{marginBottom: '20px'}}>
+          style={{marginBottom: 20, marginLeft: 20 }}>
             <Link
               to={`/admin/settings/user/new`}>
               添加用户
@@ -133,7 +164,7 @@ class User extends Component {
           pagination={pagination}
         />
         <Modal
-          title="配置角色"
+          title='配置角色'
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -143,12 +174,16 @@ class User extends Component {
             <Row>
               {
                 roleData.map((item, index) => {
+                  const ischeck = currentRole.indexOf(item.id) > -1
                   return(
                     <Col span={8} key={index}>
                       <FormItem
                         {...formItemLayout}
                         label={item.name}>
-                        {getFieldDecorator(`${item.id}`)(
+                        {getFieldDecorator(`${item.id}`,{
+                           valuePropName: 'checked',
+                           initialValue: ischeck,
+                        })(
                           <Checkbox />
                         )}
                       </FormItem>

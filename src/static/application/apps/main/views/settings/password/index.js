@@ -11,8 +11,7 @@ const breadItems = [
     title: '设置'
   },
   {
-    title: '重置密码',
-    url: '/admin/settings/reset-password'
+    title: '设置密码'
   }
 ]
 
