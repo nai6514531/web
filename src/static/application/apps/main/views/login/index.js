@@ -42,7 +42,7 @@ class Login extends Component {
   }
 
   render() {
-    const { loading, dipatch, form: { getFieldDecorator }, login: { checked, captcha, pageLoading } } = this.props
+    const { loading, dipatch, form: { getFieldDecorator }, login: { captcha, pageLoading, accountHelp, passwordHelp, captchaHelp } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
     if(pageLoading) {
       return (
@@ -57,7 +57,8 @@ class Login extends Component {
             <span>苏打管理系统</span>
           </div>
           <form>
-            <FormItem>
+            <FormItem
+              {...accountHelp}>
               {getFieldDecorator('account', {
                 initialValue: loginInfo.account,
                 rules: [
@@ -73,7 +74,8 @@ class Login extends Component {
                 />
               )}
             </FormItem>
-            <FormItem>
+            <FormItem
+              {...passwordHelp}>
               {getFieldDecorator('password', {
                 initialValue: loginInfo.initPassword,
                 rules: [
@@ -90,7 +92,8 @@ class Login extends Component {
                 />
               )}
             </FormItem>
-            <FormItem>
+            <FormItem
+              {...captchaHelp}>
               {getFieldDecorator('captcha', {
                 rules: [
                   {
@@ -114,7 +117,7 @@ class Login extends Component {
                 </Col>
               </Row>
               )}
-              <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>
+              {/* <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>*/}
             </FormItem>
             <Row className={styles.button}>
               <Button type='primary' size='large' onClick={this.handleOk} loading={loading}>

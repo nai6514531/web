@@ -7,7 +7,10 @@ export default {
   namespace: 'login',
   state: {
     pageLoading: false,
-    captcha: `${API_SERVER}/captcha.png`
+    captcha: `${API_SERVER}/captcha.png`,
+    accountHelp: null,
+    passwordHelp: null,
+    captchaHelp: null
   },
   reducers: {
     captcha(state) {
@@ -21,6 +24,9 @@ export default {
     hideLoading(state) {
       const pageLoading = false
       return { ...state, pageLoading }
+    },
+    handleHelp(state, payload) {
+      return { ...state, ...payload.payload }
     }
   },
   effects: {
@@ -40,7 +46,7 @@ export default {
         yield put({ type: 'showLoading' })
         const result = yield call(userService.info)
 
-        if(result.status == 'OK') {
+        if(result.status === 'OK') {
           storage.val('userInfo', result.data)
           payload.history.push('/admin')
         } else {
@@ -51,8 +57,30 @@ export default {
 
       } else {
         const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
+        let accountHelp = null
+        let passwordHelp = null
+        let captchaHelp = null
+        if(data.status === 'NOT_FOUND_ENTITY' ) {
+          accountHelp = {
+            help: data.message,
+            className:'has-error'
+          }
+        }
+        if(data.status === 'UNPROCESSABLE_ENTITY' ) {
+          passwordHelp = {
+            help: data.message,
+            className:'has-error'
+          }
+        }
+        if(data.status === 'CAPTCHA_REQUIRED' ) {
+          captchaHelp = {
+            help: data.message,
+            className:'has-error'
+          }
+        }
+        const help = { accountHelp, passwordHelp, captchaHelp }
         yield put({ type: 'captcha', payload: { captcha } })
-        message.error(data.message)
+        yield put({ type: 'handleHelp', payload: help })
       }
     },
   }
