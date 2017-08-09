@@ -46,12 +46,17 @@ const transformMenu = (menu) => {
 }
 
 const transformUrl = (hashUrl) => {
-  const result = _.chain(hashUrl).replace('#', '').split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
-  // if( !result.page && !result.per_page ) {
-  //   result.page = 1
-  //   result.per_page = 10
-  // }
+  if(!hashUrl) {
+    return {}
+  }
+  const result = _.chain(hashUrl.slice(1)).split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
   return result
 }
 
-export { arrayToTree, transformMenu, transformUrl }
+function toQueryString(paramsObject) {
+  return Object
+    .keys(paramsObject)
+    .map(key => `${key}=${paramsObject[key]}`)
+    .join('&')
+}
+export { arrayToTree, transformMenu, transformUrl, toQueryString }

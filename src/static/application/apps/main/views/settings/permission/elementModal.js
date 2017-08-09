@@ -9,33 +9,30 @@ const formItemLayout = {
 }
 
 class ElementModal extends Component {
+  constructor(props) {
+    super(props)
+    this.checkList = []
+  }
   hide = () => {
     this.props.dispatch({
       type: 'permission/hideModal'
     })
   }
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!err) {
-        const checkList = []
-        for(var key in values) {
-          if(values[key]) {
-            checkList.push(Number(key))
-          }
-        }
-        this.props.dispatch({
-          type: 'permission/updateElement',
-          payload: {
-            id: this.props.permission.currentId,
-            data: checkList
-          }
-        })
+  onChange = (values) => {
+    this.checkList = values
+  }
+  handleSubmit = () => {
+    this.props.dispatch({
+      type: 'permission/updateElement',
+      payload: {
+        id: this.props.permission.currentId,
+        data: this.checkList
       }
     })
   }
   render() {
     const { form: { getFieldDecorator }, permission: { elementData, elementVisible, key, currentData } } = this.props
+    this.checkList = currentData
     return(
       <Modal
         title='配置元素'
@@ -44,29 +41,21 @@ class ElementModal extends Component {
         onOk={this.handleSubmit}
         key={key}
        >
-        <Form>
+        <Checkbox.Group onChange={this.onChange} defaultValue={currentData}>
           <Row>
             {
               elementData.map((item, index) => {
-                const ischeck = currentData.indexOf(item.id) > -1
                 return(
                   <Col span={8} key={index}>
-                    <FormItem
-                      {...formItemLayout}
-                      label={`${item.name}(${item.id})`}>
-                      {getFieldDecorator(`${item.id}`,{
-                         valuePropName: 'checked',
-                         initialValue: ischeck,
-                      })(
-                        <Checkbox />
-                      )}
-                    </FormItem>
+                      <Checkbox value={item.id} >
+                        {item.name}
+                      </Checkbox>
                   </Col>
                 )
               })
             }
           </Row>
-        </Form>
+        </Checkbox.Group>
       </Modal>
     )
   }

@@ -6,7 +6,9 @@ export default {
     key: 1,
     visible: false,
     record: {},
-    data: []
+    data: {
+      objects: []
+    }
   },
   reducers: {
     showModal(state, { payload: { data } }) {
@@ -25,7 +27,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(actionService.list)
+      const result = yield call(actionService.list, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -36,7 +38,12 @@ export default {
       const { data, id } = payload
       const result = yield call(actionService.update, data, id)
       if(result.status == 'OK') {
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
         yield put({ type: 'hideModal' })
         message.success('更新成功')
       } else {
@@ -46,7 +53,12 @@ export default {
     *add({ payload }, { call, put }) {
       const result = yield call(actionService.add, payload.data)
       if(result.status == 'OK') {
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
         yield put({ type: 'hideModal' })
         message.success('添加成功')
       } else {
@@ -57,7 +69,12 @@ export default {
       const result = yield call(actionService.delete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
       } else {
         message.error(result.message)
       }

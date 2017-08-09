@@ -5,7 +5,7 @@ import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row } from 'antd
 import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { transformUrl } from '../../../utils/'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 const Search = Input.Search
 const FormItem = Form.Item
@@ -24,7 +24,12 @@ const breadItems = [
 class User extends Component {
   constructor(props) {
     super(props)
+    const search = transformUrl(location.hash)
+    delete search.page
+    delete search.per_page
+    this.search = search
     this.id = ''
+    this.checkList = []
     this.columns = [
       {
         title: '用户编号',
@@ -106,49 +111,58 @@ class User extends Component {
       }
     })
   }
-  search = (type, value) => {
-    location.hash = `&${type}=${value}`
+  changeHandler =  (type, e) => {
+    this.search = { ...this.search, [type]: e.target.value }
   }
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!err) {
-        const checkList = []
-        for(var key in values) {
-          if(values[key]) {
-            checkList.push(Number(key))
-          }
-        }
-        this.props.dispatch({
-          type: 'user/updateRoles',
-          payload: {
-            id: this.id,
-            data: checkList
-          }
-        })
+  searchClick = () => {
+    location.hash = toQueryString({ ...this.search })
+  }
+  checkboxChange = (values) => {
+    this.checkList = values
+  }
+  handleSubmit = () => {
+    this.props.dispatch({
+      type: 'user/updateRoles',
+      payload: {
+        id: this.id,
+        data: this.checkList
       }
     })
   }
   render() {
     const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, currentRole, key, visible }, loading  } = this.props
+    this.checkList = currentRole
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Search
+        <Input
           placeholder='请输入用户名搜索'
           style={{ width: 200 }}
-          onSearch={this.search.bind(this, 'name')}
+          onChange={this.changeHandler.bind(this, 'name')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.name}
          />
-        <Search
+        <Input
           placeholder='请输入用户id搜索'
           style={{ width: 200, marginLeft: 20 }}
-          onSearch={this.search.bind(this, 'id')}
+          onChange={this.changeHandler.bind(this, 'id')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.id}
          />
-        <Search
+        <Input
           placeholder='请输入账号搜索'
           style={{ width: 200, marginLeft: 20 }}
-          onSearch={this.search.bind(this, 'account')}
+          onChange={this.changeHandler.bind(this, 'account')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.account}
          />
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          style={{marginBottom: '20px', marginLeft: 20}}
+          >
+          搜索
+        </Button>
         <Button
           type='primary'
           style={{marginBottom: 20, marginLeft: 20 }}>
@@ -170,30 +184,22 @@ class User extends Component {
           onOk={this.handleSubmit}
           key={key}
          >
-          <Form onSubmit={this.handleSubmit}>
-            <Row>
-              {
-                roleData.map((item, index) => {
-                  const ischeck = currentRole.indexOf(item.id) > -1
-                  return(
-                    <Col span={8} key={index}>
-                      <FormItem
-                        {...formItemLayout}
-                        label={item.name}>
-                        {getFieldDecorator(`${item.id}`,{
-                           valuePropName: 'checked',
-                           initialValue: ischeck,
-                        })(
-                          <Checkbox />
-                        )}
-                      </FormItem>
-                    </Col>
-                  )
-                })
-              }
-            </Row>
-          </Form>
-         </Modal>
+          <Row>
+            <Checkbox.Group onChange={this.checkboxChange} defaultValue={currentRole}>
+            {
+              roleData.map((item, index) => {
+                return(
+                  <Col span={8} key={index}>
+                      <Checkbox value={item.id} >
+                        {item.name}
+                      </Checkbox>
+                  </Col>
+                )
+              })
+            }
+            </Checkbox.Group>
+          </Row>
+        </Modal>
       </div>
     )
   }

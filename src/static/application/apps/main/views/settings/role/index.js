@@ -85,33 +85,30 @@ class RoleModal extends Component {
   }
 }
 class PermissionModal extends Component {
+  constructor(props) {
+    super(props)
+    this.checkList = []
+  }
   hide = () => {
     this.props.dispatch({
       type: 'role/hideModal'
     })
   }
+  onChange = (values) => {
+    this.checkList = values
+  }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!err) {
-        const checkList = []
-        for(var key in values) {
-          if(values[key]) {
-            checkList.push(Number(key))
-          }
-        }
-        this.props.dispatch({
-          type: 'role/updatePermissions',
-          payload: {
-            id: this.props.role.currentId,
-            data: checkList
-          }
-        })
+    this.props.dispatch({
+      type: 'role/updatePermissions',
+      payload: {
+        id: this.props.role.currentId,
+        data: this.checkList
       }
     })
   }
   render() {
     const { form: { getFieldDecorator }, role: { permissonData: { objects }, currentPermisson, permissionVisible, key } } = this.props
+    this.checkList = currentPermisson
     return(
       <Modal
         title='配置权限'
@@ -120,29 +117,21 @@ class PermissionModal extends Component {
         onOk={this.handleSubmit}
         key={key}
        >
-        <Form>
-          <Row>
-            {
-              objects.map((item, index) => {
-                const ischeck = currentPermisson.indexOf(item.id) > -1
-                return(
-                  <Col span={8} key={index}>
-                    <FormItem
-                      {...formItemLayoutWithCheckbox}
-                      label={item.name}>
-                      {getFieldDecorator(`${item.id}`,{
-                         valuePropName: 'checked',
-                         initialValue: ischeck,
-                      })(
-                        <Checkbox />
-                      )}
-                    </FormItem>
-                  </Col>
-                )
-              })
-            }
-          </Row>
-        </Form>
+        <Row>
+          <Checkbox.Group onChange={this.onChange} defaultValue={currentPermisson}>
+          {
+            objects.map((item, index) => {
+              return(
+                <Col span={8} key={index}>
+                    <Checkbox value={item.id} >
+                      {item.name}
+                    </Checkbox>
+                </Col>
+              )
+            })
+          }
+          </Checkbox.Group>
+        </Row>
       </Modal>
     )
   }
