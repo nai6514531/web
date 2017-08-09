@@ -5,6 +5,7 @@ import { connect } from 'dva'
 import { Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -29,6 +30,9 @@ const breadItems = [
 class Action extends Component {
   constructor(props) {
     super(props)
+    const search = transformUrl(location.hash)
+    delete search.page
+    delete search.per_page
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '控制器名称', dataIndex: 'handlerName',key: 'handlerName' },
@@ -50,10 +54,15 @@ class Action extends Component {
         }
       }
     ]
+    this.search = search
   }
   componentDidMount() {
+    const url = transformUrl(location.hash)
     this.props.dispatch({
-      type: 'action/list'
+      type: 'action/list',
+      payload: {
+        data: url
+      }
     })
   }
   handleSubmit = (e) => {
@@ -61,16 +70,14 @@ class Action extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.action.record.id
+        const url = transformUrl(location.hash)
         let type = 'action/add'
         if(id) {
           type = 'action/update'
         }
         this.props.dispatch({
           type: type,
-          payload: {
-            data: values,
-            id: id
-          }
+          payload: { data: values, id, url }
         })
       }
     })
@@ -89,30 +96,59 @@ class Action extends Component {
     })
   }
   delete = (id) => {
+    const url = transformUrl(location.hash)
     this.props.dispatch({
       type: 'action/delete',
       payload: {
-        id: id
+        id,
+        url
       }
     })
   }
+  changeHandler =  (type, e) => {
+    this.search = { ...this.search, [type]: e.target.value }
+  }
+  searchClick = () => {
+    location.hash = toQueryString({ ...this.search })
+  }
   render() {
-    const { form: { getFieldDecorator }, action: { key, visible, record, data }, loading  } = this.props
+    const { form: { getFieldDecorator }, action: { key, visible, record,  data: { objects, pagination } }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
+        <Input
+          placeholder='请输入控制器名称关键字'
+          style={{ width: 200, marginRight: 20 }}
+          onChange={this.changeHandler.bind(this, 'handler_name')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.handler_name}
+         />
+        <Input
+          placeholder='请输入请求方法关键字'
+          style={{ width: 200, marginRight: 20 }}
+          onChange={this.changeHandler.bind(this, 'method')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.method}
+         />
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          style={{marginBottom: '20px', marginRight: 20}}
+          >
+          搜索
+        </Button>
         <Button
           type='primary'
           onClick={this.show.bind(this,{})}
-          style={{marginBottom: '20px'}}
+          style={{marginBottom: '20px', marginRight: 20}}
           >
           添加接口
         </Button>
         <DataTable
-          dataSource={data}
+          dataSource={objects}
           columns={this.columns}
           loading={loading}
-          pagination={false}
+          pagination={pagination}
         />
         <Modal
           title='添加api'

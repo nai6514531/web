@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import PropTypes from 'prop-types'
 import { Table } from 'antd'
-import { transformUrl } from '../../utils/'
+import { transformUrl, toQueryString } from '../../utils/'
 
 class DataTable extends Component {
   constructor(props) {
@@ -21,12 +21,14 @@ class DataTable extends Component {
   }
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination }
-    pager.current = pagination.current
-    pager.pageSize = pagination.pageSize
+    const { current, pageSize } = pagination
+    const url = transformUrl(location.hash)
+    pager.current = current
+    pager.pageSize = pageSize
     this.setState({
       pagination: pager,
     })
-    location.hash = `page=${pagination.current}&per_page=${pagination.pageSize}`
+    location.hash = toQueryString({ ...url, page: current, per_page: pageSize })
   }
   componentWillReceiveProps(nextProps) {
     const propPagination = this.props.pagination
