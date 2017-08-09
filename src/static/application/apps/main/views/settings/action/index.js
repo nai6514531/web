@@ -118,14 +118,14 @@ class Action extends Component {
         <Breadcrumb items={breadItems} />
         <Input
           placeholder='请输入控制器名称关键字'
-          style={{ width: 200 }}
+          style={{ width: 200, marginRight: 20 }}
           onChange={this.changeHandler.bind(this, 'handler_name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.handler_name}
          />
         <Input
           placeholder='请输入请求方法关键字'
-          style={{ width: 200, marginLeft: 20 }}
+          style={{ width: 200, marginRight: 20 }}
           onChange={this.changeHandler.bind(this, 'method')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.method}
@@ -133,14 +133,14 @@ class Action extends Component {
         <Button
           type='primary'
           onClick={this.searchClick}
-          style={{marginBottom: '20px', marginLeft: 20}}
+          style={{marginBottom: '20px', marginRight: 20}}
           >
           搜索
         </Button>
         <Button
           type='primary'
           onClick={this.show.bind(this,{})}
-          style={{marginBottom: '20px', marginLeft: 20}}
+          style={{marginBottom: '20px', marginRight: 20}}
           >
           添加接口
         </Button>

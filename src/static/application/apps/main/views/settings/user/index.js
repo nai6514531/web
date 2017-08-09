@@ -137,21 +137,21 @@ class User extends Component {
         <Breadcrumb items={breadItems} />
         <Input
           placeholder='请输入用户名搜索'
-          style={{ width: 200 }}
+          style={{ width: 200, marginRight: 20 }}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
         <Input
           placeholder='请输入用户id搜索'
-          style={{ width: 200, marginLeft: 20 }}
+          style={{ width: 200, marginRight: 20 }}
           onChange={this.changeHandler.bind(this, 'id')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.id}
          />
         <Input
           placeholder='请输入账号搜索'
-          style={{ width: 200, marginLeft: 20 }}
+          style={{ width: 200, marginRight: 20 }}
           onChange={this.changeHandler.bind(this, 'account')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
@@ -159,13 +159,13 @@ class User extends Component {
         <Button
           type='primary'
           onClick={this.searchClick}
-          style={{marginBottom: '20px', marginLeft: 20}}
+          style={{marginBottom: '20px', marginRight: 20}}
           >
           搜索
         </Button>
         <Button
           type='primary'
-          style={{marginBottom: 20, marginLeft: 20 }}>
+          style={{marginBottom: 20, marginRight: 20 }}>
             <Link
               to={`/admin/settings/user/new`}>
               添加用户
