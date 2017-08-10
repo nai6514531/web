@@ -48,12 +48,14 @@ class Wrapper extends React.Component {
           trigger={null}
           >
           <img src={imageUrl} className={logo}/>
-          <SideBar
-            {...this.props}
-            mode={mode}
-            fold={fold}
-            navOpenKeys={navOpenKeys}
-            changeOpenKeys={this.changeOpenKeys}/>
+          <div className='side-wrap'>
+            <SideBar
+              {...this.props}
+              mode={mode}
+              fold={fold}
+              navOpenKeys={navOpenKeys}
+              changeOpenKeys={this.changeOpenKeys}/>
+          </div>
         </Sider>
         <Layout>
           <Nav {...this.props}/>
