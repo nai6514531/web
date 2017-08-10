@@ -22,11 +22,6 @@ body {
   .side {
     height: 100vh;
   }
-  .side-wrap {
-    height: 400px;
-    overflow: auto;
-  }
-  .side-wrap::-webkit-scrollbar {display:none}
   .logo {
     width: 120px;
     margin: 60px auto;
