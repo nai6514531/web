@@ -87,7 +87,7 @@ class UserEdit extends Component {
               }],
               initialValue: data.account
             })(
-              <Input />
+              <Input disabled={isEdit}/>
             )}
           </FormItem>
           <FormItem
