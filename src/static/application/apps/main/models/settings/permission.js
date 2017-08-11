@@ -3,24 +3,26 @@ import permissionService from '../../services/settings/permission'
 import menuService from '../../services/settings/menu.js'
 import actionService from '../../services/settings/action.js'
 import elementService from '../../services/settings/element.js'
+import { cloneDeep } from 'lodash'
+const model = {
+  key: 1,
+  visible: false,
+  menuVisible: false,
+  elementVisible: false,
+  actionVisible: false,
+  record: {},
+  currentData: [],
+  data: {
+    objects: []
+  },
+  actionData: [],
+  cachedActionData: [],
+  menuData: [],
+  elementData: []
+}
 export default {
   namespace: 'permission',
-  state: {
-    key: 1,
-    visible: false,
-    menuVisible: false,
-    elementVisible: false,
-    actionVisible: false,
-    record: {},
-    currentData: [],
-    data: {
-      objects: []
-    },
-    actionData: [],
-    cachedActionData: [],
-    menuData: [],
-    elementData: []
-  },
+  state: cloneDeep(model),
   reducers: {
     showMenu(state, { payload: { data, id } }) {
       const currentData = data
@@ -59,6 +61,9 @@ export default {
     updateActionData(state, { payload }) {
       const actionData = payload ? payload.actionData : state.cachedActionData
       return { ...state, actionData }
+    },
+    clear(state) {
+      return model
     }
   },
   effects: {
@@ -78,7 +83,10 @@ export default {
           }
         })
       } else {
-        message.error('请求接口出错！')
+        result.message && message.error(result.message)
+        menuData.message && message.error(menuData.message)
+        actionData.message && message.error(actionData.message)
+        elementData.message && message.error(elementData.message)
       }
     },
     *update({ payload }, { call, put }) {
