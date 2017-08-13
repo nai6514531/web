@@ -24,7 +24,7 @@ gulp.task('webpack-dev', function () {
 gulp.task('webpack', function () {
   return gulp.src('../package.json') // whatever sources
     .pipe(webpack(config({
-      ENV: 'production'
+      ENV: process.env.env || 'staging',
     })))
     .pipe(gulp.dest('../../build/static/apps'))
 })

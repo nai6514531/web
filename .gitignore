@@ -1,5 +1,6 @@
 # secret
 /config/local.json
+/config/production.json
 
 # dev
 node_modules
