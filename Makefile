@@ -14,11 +14,14 @@ node:
 development:
 	@DEBUG=${DEBUG} NODE_ENV=development node-dev ./babel-entry
 
-server: stop
-	@DEBUG=${DEBUG} NODE_ENV=${NODE_ENV} pm2 start ${PM2_PROCESS_FILE}
+server:
+	@DEBUG=${DEBUG} NODE_ENV=${NODE_ENV} node ./build/server
 
-stop:
-	-pm2 delete ${PM2_PROCESS_FILE}
+# server: stop
+# 	@DEBUG=${DEBUG} NODE_ENV=${NODE_ENV} pm2 start ${PM2_PROCESS_FILE}
+
+# stop:
+# 	-pm2 delete ${PM2_PROCESS_FILE}
 
 
 # build
