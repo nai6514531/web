@@ -14,7 +14,6 @@ class App extends Component {
 	}
 	render () {
 		const payInfo = this.props.payInfo
-		console.log(payInfo)
 		return (
 			<form name='alipayment' action={payInfo.request_url + '?_input_charset=' + payInfo._input_charset} method='post' target='_blank'>
       	<div className={styles.hidden}>
@@ -25,7 +24,7 @@ class App extends Component {
 					<input onChange={this.inputChange} value={payInfo.account_name} name='account_name' />
 					<input onChange={this.inputChange} value={payInfo.detail_data} name='detail_data' />
 					<input onChange={this.inputChange} value={payInfo.batch_no} name='batch_no' />
-					<input onChange={this.inputChange} value={payInfo.batch_num} name='batch_no' />
+					<input onChange={this.inputChange} value={payInfo.batch_num} name='batch_num' />
 					<input onChange={this.inputChange} value={payInfo.batch_fee} name='batch_fee' />
 					<input onChange={this.inputChange} value={payInfo.email} name='email' />
 					<input onChange={this.inputChange} value={payInfo.pay_date} name='pay_date' />
