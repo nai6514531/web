@@ -1,5 +1,6 @@
 # secret
 /config/local.json
+/config/production.json
 
 # dev
 node_modules
@@ -8,3 +9,8 @@ node_modules
 /build
 /logs/*
 !/logs/.gitkeep
+
+
+# deploy
+/Dockerfile
+/kubernetes
