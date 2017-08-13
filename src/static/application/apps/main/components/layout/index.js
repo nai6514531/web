@@ -49,6 +49,7 @@ class Wrapper extends React.Component {
           >
           <img src={imageUrl} className={logo}/>
           <SideBar
+            style={{ overflow: 'auto' }}
             {...this.props}
             mode={mode}
             fold={fold}
