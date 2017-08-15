@@ -37,7 +37,7 @@ class User extends Component {
         key: 'id',
       },
       {
-        title: '运营商名称',
+        title: '用户名称',
         dataIndex: 'name',
         key: 'name',
       },
@@ -202,6 +202,9 @@ class User extends Component {
         </Modal>
       </div>
     )
+  }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'user/clear'})
   }
 }
 function mapStateToProps(state,props) {

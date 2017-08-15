@@ -1,20 +1,22 @@
 import { message } from 'antd'
 import roleService from '../../services/settings/role.js'
 import permissionService from '../../services/settings/permission.js'
+import { cloneDeep } from 'lodash'
+const model = {
+  key: 1,
+  visible: false,
+  permissionVisible: false,
+  data: [],
+  permissonData: {
+    objects: []
+  },
+  currentPermisson: [],
+  currentId: '',
+  record: {}
+}
 export default {
   namespace: 'role',
-  state: {
-    key: 1,
-    visible: false,
-    permissionVisible: false,
-    data: [],
-    permissonData: {
-      objects: []
-    },
-    currentPermisson: [],
-    currentId: '',
-    record: {}
-  },
+  state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
       const record = data
@@ -40,6 +42,9 @@ export default {
       const permissonData = data
       return { ...state, permissonData }
     },
+    clear(state) {
+      return model
+    }
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -49,7 +54,8 @@ export default {
         yield put({ type: 'updateData', payload: { data: result.data } })
         yield put({ type: 'updatePermissonData', payload: { data: permissionData.data } })
       } else {
-        message.error('调用接口出错')
+        result.message && message.error(result.message)
+        permissionData.message && message.error(permissionData.message)
       }
     },
     *update({ payload }, { call, put }) {

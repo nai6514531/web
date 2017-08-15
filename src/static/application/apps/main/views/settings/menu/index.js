@@ -204,6 +204,9 @@ class Menu extends Component {
       </div>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'menu/clear'})
+  }
 }
 function mapStateToProps(state,props) {
   return {

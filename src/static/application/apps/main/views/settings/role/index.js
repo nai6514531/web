@@ -224,6 +224,9 @@ class Role extends Component {
       </div>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'role/clear'})
+  }
 }
 
 function mapStateToProps(state,props) {

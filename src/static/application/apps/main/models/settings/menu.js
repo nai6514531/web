@@ -1,15 +1,17 @@
 import { message } from 'antd'
 import menuService from '../../services/settings/menu.js'
+import { cloneDeep } from 'lodash'
+const model = {
+  key: 1,
+  visible: false,
+  record: {},
+  data: {
+    objects: []
+  }
+}
 export default {
   namespace: 'menu',
-  state: {
-    key: 1,
-    visible: false,
-    record: {},
-    data: {
-      objects: []
-    }
-  },
+  state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
       const record = data
@@ -23,6 +25,9 @@ export default {
     },
     updateData(state, { payload: { data } }) {
       return { ...state, data }
+    },
+    clear(state) {
+      return model
     }
   },
   effects: {

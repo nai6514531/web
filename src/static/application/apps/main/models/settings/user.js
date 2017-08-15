@@ -2,17 +2,19 @@ import { message } from 'antd'
 import userService from '../../services/settings/user.js'
 import roleService from '../../services/settings/role.js'
 import { storage, session } from '../../utils/storage.js'
+import { cloneDeep } from 'lodash'
+const model = {
+  key: 1,
+  visible: false,
+  data: {
+    objects: []
+  },
+  roleData: [],
+  currentRole: []
+}
 export default {
   namespace: 'user',
-  state: {
-    key: 1,
-    visible: false,
-    data: {
-      objects: []
-    },
-    roleData: [],
-    currentRole: []
-  },
+  state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
       const currentRole = data
@@ -31,6 +33,9 @@ export default {
       const roleData = data
       return { ...state, roleData }
     },
+    clear(state) {
+      return model
+    }
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -40,7 +45,8 @@ export default {
         yield put({ type: 'updateData', payload: { data: result.data } })
         yield put({ type: 'updateRoleData', payload: { data: roleData.data } })
       } else {
-        message.error('请求接口出错！')
+        result.message && message.error(result.message)
+        roleData.message && message.error(roleData.message)
       }
     },
     *detail({ payload }, { call, put }) {
