@@ -215,6 +215,9 @@ class Action extends Component {
       </div>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'action/clear'})
+  }
 }
 function mapStateToProps(state,props) {
   return {

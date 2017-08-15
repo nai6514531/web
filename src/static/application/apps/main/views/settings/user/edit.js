@@ -92,7 +92,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='运营商名称'
+            label='用户名称'
           >
             {getFieldDecorator('name', {
               rules: [{
@@ -150,6 +150,8 @@ class UserEdit extends Component {
             {getFieldDecorator('mobile', {
               rules: [{
                 required: true, message: '请输入手机号！',
+              }, {
+                len: 11, message: '请输入11位长度的手机号！',
               }],
               initialValue: data.mobile
             })(

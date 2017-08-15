@@ -107,6 +107,9 @@ class Permission extends Component {
       </div>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'permission/clear'})
+  }
 }
 function mapStateToProps(state,props) {
   return {

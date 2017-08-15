@@ -137,6 +137,9 @@ class Element extends Component {
       </div>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'element/clear'})
+  }
 }
 function mapStateToProps(state,props) {
   return {
