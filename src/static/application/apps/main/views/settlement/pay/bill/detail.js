@@ -8,12 +8,47 @@ import { Table } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import styles from '../index.pcss'
 
-const breadItems = [
+const wechatBreadItems = [
   {
-    title: '结算管理'
+    title: '财务系统'
   },
   {
-    title: '日账单明细'
+    title: '结算管理',
+  },
+  {
+    title: '微信结算',
+    url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-2)}
+  },
+  {
+    title: '账单明细',
+    url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-1)}
+  },
+  {
+    title: '明细'
+  }
+]
+
+const alipayBreadItems = [
+  {
+    title: '财务系统'
+  },
+  {
+    title: '结算管理',
+  },
+  {
+    title: '支付宝结算',
+    url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-2)}
+  },
+  {
+    title: '账单明细',
+     url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-1)}
+  },
+  {
+    title: '明细'
   }
 ]
 const SERVICE_TYPE = { 1: '单拖', 2: '快洗', 3: '标准', 4: '大物洗' }
@@ -125,6 +160,8 @@ class App extends Component {
   }
   render () {
     const self = this
+    const type = !!~this.props.location.search.indexOf('alipay') ? 1 : 
+                  !!~this.props.location.search.indexOf('wechat') ? 2 : 0
     const pagination = {
       total:this.state.pagination.total,
       showSizeChanger: true,
@@ -142,7 +179,7 @@ class App extends Component {
     }
     return(
       <div className={styles.view}>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={type === 1 ? alipayBreadItems : wechatBreadItems} />
         <Table
           dataSource={this.state.bills || []}
           rowKey={record => record.id}

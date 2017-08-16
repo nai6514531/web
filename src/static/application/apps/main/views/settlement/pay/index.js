@@ -7,6 +7,7 @@ import settlementService from '../../../services/settlement'
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
 const { RangePicker } = DatePicker
 const { Option } = Select
+const InputGroup = Input.Group
 import ConfirmForm from './alipay-confirm-form'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import styles from './index.pcss'
@@ -18,23 +19,29 @@ const formItemLayout = {
 }
 const wechatBreadItems = [
   {
+    title: '财务系统'
+  },
+  {
     title: '结算管理'
   },
   {
-    title: '微信结账'
+    title: '微信结算'
   }
 ]
 
 const alipayBreadItems = [
   {
+    title: '财务系统'
+  },
+  {
     title: '结算管理'
   },
   {
-    title: '支付宝结账'
+    title: '支付宝结算'
   }
 ]
 
-const BILLS_STATUS = {1:'等待结算', 2:'结算成功', 3:'结算中', 4:'结算失败'}
+const BILLS_STATUS = {1: '等待结算', 2: '结算成功', 3: '结算中', 4: '结算失败'}
 
 class App extends Component {
   constructor (props) {
@@ -93,22 +100,22 @@ class App extends Component {
       {
         title: '结算金额',
         dataIndex: 'totalAmount',
-        render: (totalAmount) => {
-          return `${totalAmount/100}`
+        render: (data) => {
+          return `${(data/100).toFixed(2)}`
         }
       },
       {
         title: '手续费',
         dataIndex: 'cast',
-        render: (cast) => {
-          return `${cast/100}`
+        render: (data) => {
+          return `${(data/100).toFixed(2)}`
         }
       },
       {
         title: '入账金额',
         dataIndex: 'amount',
-        render: (amount) => {
-          return `${amount/100}`
+        render: (data) => {
+          return `${(data/100).toFixed(2)}`
         }
       },
       {
@@ -130,12 +137,14 @@ class App extends Component {
         key: 'operation',
         render: (text, record, index) => {
           const disabled = !!~[0, 2, 3].indexOf(record.status)
+          const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
+            !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
           return (
             <span>
-            <Popconfirm title='结算当前账单?' onConfirm={() => this.onPay([record.id])} className={disabled ? styles.hidden : ''}>
-              <a href='#'>结算 </a>
-            </Popconfirm>| 
-            <Link to={`/admin/settlement/bills/${record.id}`}> 明细</Link> 
+            <Popconfirm title='结算当前账单?' onConfirm={() => this.onPay([record.id])}>
+              <a href='#' className={disabled ? styles.hidden : ''}>结算 |</a>
+            </Popconfirm>
+            <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
             </span>
           )
         }
@@ -147,9 +156,6 @@ class App extends Component {
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
     this.setState({search: {...this.state.search, type: payType}})
     this.getBills({type: payType})
-  }
-  componentWillMount () {
-    this.alipayInfo = { selectedCount: 0}
   }
   getBills({...options}) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
@@ -183,17 +189,16 @@ class App extends Component {
       const data = res.data
       // 支付宝账单二次确认
       if (type === 1) {
-        this.alipayInfo = data.alipay
-        this.alipayInfo.selectedCount = bills.count
+        this.alipayInfo = data 
         this.setState({ alipayConfirmShow: true })
       }
       this.getBills()
-      this.setState({ selectedPayLoading: false });
-      message.info("结账操作成功。")
+      this.setState({ selectedPayLoading: false })
+      message.info("结算操作成功。")
     }).catch((err) => {
       console.log(err)
       message.error('结帐操作异常，请稍后再试～')
-      this.setState({loading: false})
+      this.setState({loading: false, selectedPayLoading: false})
     })
   }
   handleSelectedPay () {
@@ -237,7 +242,7 @@ class App extends Component {
     this.setState({ selectedRowKeys: selectedRowKeys });
   }
   selectInit (record) {
-    // 已结帐、结账中状态不可选
+    // 已结帐、结算中状态不可选
     return { disabled: !!~[0, 2, 3].indexOf(record.status)}
   }
   hideConfirmShow () {
@@ -289,27 +294,29 @@ class App extends Component {
             defaultValue={this.state.search.status}
             style={{width: 120 }}
             onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
-            <Option value=''>请选择结账状态</Option>
+            <Option value=''>请选择结算状态</Option>
             <Option value='1'>等待结算</Option>
-            <Option value='2'>已结账</Option>
-            <Option value='3'>结账中</Option>
-            <Option value='4'>结账失败</Option>
+            <Option value='2'>已结算</Option>
+            <Option value='3'>结算中</Option>
+            <Option value='4'>结算失败</Option>
           </Select>
-          <Select
-            className={styles.item}
-            defaultValue={this.state.dateType + ''}
-            style={{width: 120 }}
-            onChange={this.changeDateType.bind(this)}>
-            <Option value='0'>申请时间／结算时间</Option>
-            <Option value='1'>申请时间</Option>
-            <Option value='2'>结算时间</Option>
-          </Select>
-          <DatePicker
-            disabledDate={this.disabledDate}
-            placeholder="时间"
-            onChange={this.changeDate.bind(this)}
-            className={styles.item}
-          />
+          <div className={styles.group}>
+            <InputGroup compact>
+              <Select
+                defaultValue={this.state.dateType + ''}
+                style={{width: 120 }}
+                onChange={this.changeDateType.bind(this)}>
+                <Option value='0'>申请时间／结算时间</Option>
+                <Option value='1'>申请时间</Option>
+                <Option value='2'>结算时间</Option>
+              </Select>
+              <DatePicker
+                disabledDate={this.disabledDate}
+                placeholder="时间"
+                onChange={this.changeDate.bind(this)}
+              />
+            </InputGroup>
+          </div>
           <Input
             placeholder='运营名称／用户名'
             style={{ width: 200 }}

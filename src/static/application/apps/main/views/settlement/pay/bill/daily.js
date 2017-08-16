@@ -14,15 +14,39 @@ const formItemLayout = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
 }
-const breadItems = [
+const wechatBreadItems = [
   {
-    title: '结算管理'
+    title: '财务系统'
+  },
+  {
+    title: '结算管理',
+  },
+  {
+    title: '微信结算',
+    url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-1)}
   },
   {
     title: '账单明细'
   }
 ]
 
+const alipayBreadItems = [
+  {
+    title: '财务系统'
+  },
+  {
+    title: '结算管理',
+  },
+  {
+    title: '支付宝结算',
+    url: '#',
+    handleClick: (e) => { e.preventDefault(); history.go(-1)}
+  },
+  {
+    title: '账单明细'
+  }
+]
 const BILLS_STATUS = {1:'等待结算', 2:'结算成功', 3:'结算中', 4:'结算失败'}
 
 class App extends Component {
@@ -94,8 +118,10 @@ class App extends Component {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
+          const type = !!~this.props.location.search.indexOf('alipay') ? 'alipay' : 
+            !!~this.props.location.search.indexOf('wechat') ? 'wechat' : ''
           return (
-            <Link to={`/admin/settlement/daily-bills/${record.id}`}>明细</Link> 
+            <Link to={`/admin/settlement/daily-bills/${record.id}?type=${type}`}>明细</Link> 
           )
         }
       }
@@ -128,6 +154,8 @@ class App extends Component {
   }
   render () {
     const self = this
+    const type = !!~this.props.location.search.indexOf('alipay') ? 1 : 
+                  !!~this.props.location.search.indexOf('wechat') ? 2 : 0
     const pagination = {
       total:this.state.pagination.total,
       showSizeChanger: true,
@@ -136,16 +164,16 @@ class App extends Component {
       },
       onShowSizeChange(current, pageSize) {
         const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
-        this.getBills(pagination)
+        self.getBills(pagination)
       },
       onChange(current, pageSize) {
         const pagination = {offset: (current - 1) * pageSize}
-        this.getBills(pagination)
+        self.getBills(pagination)
       }
     }
     return(
       <div className={styles.view}>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={type === 1 ? alipayBreadItems : wechatBreadItems} />
         <Table
           dataSource={this.state.bills || []}
           rowKey={record => record.id}
