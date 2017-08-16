@@ -91,15 +91,36 @@ class App extends Component {
         title: '账期',
         dataIndex: 'billAt',
         render: (date) => {
-          return moment(date).format('YYYY-MM-DD HH:mm')
+          return moment(date).format('YYYY-MM-DD')
         }
       },
       {
         title: '帐户信息',
         dataIndex: 'account',
         key: 'account.id',
-        render: (account) => {
-          return `${account.name} | ${account.payName}`
+        render: (account, record) => {
+          if (!!~[1].indexOf(account.type)) {
+            return _.template([
+              '<%- realName %>',
+              '账号：<%- name %>',
+              '手机号：<%- mobile %>'
+              ].join(' | '))({
+                realName: account.realName,
+                name: account.name || '-',
+                mobile: record.mobile || '-'
+              })
+          } 
+          if (!!~[2].indexOf(account.type)) {
+            return _.template([
+              '<%- realName %>',
+              '手机号：<%- mobile %>'
+              ].join(' | '))({
+                realName: account.realName,
+                name: account.name || '-',
+                mobile: record.mobile || '-'
+              })
+          } 
+          return '-'
         }
       },
      

@@ -86,7 +86,26 @@ class App extends Component {
         title: '收款帐号',
         dataIndex: 'account',
         render: (account) => {
-          return `${account.name} | ${account.payName}`
+          if (!!~[1].indexOf(account.type)) {
+            return _.template([
+              '支付宝',
+              '<%- realName %>',
+              '账号：<%- name %>'
+              ].join(' | '))({
+                realName: account.realName,
+                name: account.name || '-'
+              })
+          } 
+          if (!!~[ 2].indexOf(account.type)) {
+            return _.template([
+              '微信',
+              '<%- realName %>',
+              ].join(' | '))({
+                realName: account.realName,
+                name: account.name || '-'
+              })
+          } 
+          return '-'
         }
       },
       {
@@ -236,7 +255,8 @@ class App extends Component {
     }
   }
   changeKeys (e) {
-    this.setState({search: {...this.state.search, keys: e.target.value}})
+    const val = e.target.value
+    this.setState({search: {...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"")}})
   }
   onSelectChange (selectedRowKeys) {
     this.setState({ selectedRowKeys: selectedRowKeys });
@@ -318,7 +338,7 @@ class App extends Component {
             </InputGroup>
           </div>
           <Input
-            placeholder='运营名称／用户名'
+            placeholder='运营商名称 / 账户名'
             style={{ width: 200 }}
             className={styles.item}
             onChange={this.changeKeys.bind(this)}
