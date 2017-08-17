@@ -7,6 +7,12 @@ export default {
     menuPopoverVisible: false,
     fold: false,
     navOpenKeys: [],
+    userInfo: {
+      user: {},
+      menuList: [],
+      actionList: [],
+      elementList: []
+    }
   },
   reducers: {
     popMenu(state, { payload: { menuPopoverVisible } }) {
@@ -20,6 +26,12 @@ export default {
         ...state,
         ...navOpenKeys,
       }
+    },
+    updateUesrInfo(state, { payload: userInfo }) {
+      return {
+        ...state,
+        userInfo,
+      }
     }
   },
   effects: {
@@ -27,8 +39,24 @@ export default {
       const result = yield call(userService.logout)
       if(result.status == 'OK') {
         storage.clear('token')
+        storage.clear('userInfo')
         session.clear()
         payload.history.push('/')
+      } else {
+        message.error(result.message)
+      }
+    },
+    *info ({
+      payload,
+    }, { put, call }) {
+      // 获取用户信息
+      const result = yield call(userService.info)
+      if(result.status === 'OK') {
+        // storage.val('userInfo', result.data)
+         yield put({
+          type: 'updateUesrInfo',
+          payload: result.data
+        })
       } else {
         message.error(result.message)
       }

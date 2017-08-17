@@ -20,7 +20,7 @@ class MenuModal extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const result = this.transfromData(values.result)
+        const result = this.transfromData(values.result || [])
         this.props.dispatch({
           type: 'permission/updateMenu',
           payload: {
@@ -32,7 +32,7 @@ class MenuModal extends Component {
     })
   }
   transfromData = (data) => {
-    const menuData = this.props.permission.menuData
+    const menuData = this.props.permission.menuData || []
     const result = []
     for ( let i = 0; i < data.length; i++ ) {
       // TreeSelect组件只支持string类型

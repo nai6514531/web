@@ -6,7 +6,6 @@ import { API_SERVER } from '../../utils/config'
 export default {
   namespace: 'login',
   state: {
-    pageLoading: false,
     captcha: `${API_SERVER}/captcha.png`,
     accountHelp: null,
     passwordHelp: null,
@@ -16,14 +15,6 @@ export default {
     captcha(state) {
       const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
       return { ...state, captcha }
-    },
-    showLoading(state) {
-      const pageLoading = true
-      return { ...state, pageLoading }
-    },
-    hideLoading(state) {
-      const pageLoading = false
-      return { ...state, pageLoading }
     },
     handleHelp(state, payload) {
       return { ...state, ...payload.payload }
@@ -42,18 +33,7 @@ export default {
           storage.clear('login')
         }
         storage.val('token', data.data)
-        // 获取用户信息
-        yield put({ type: 'showLoading' })
-        const result = yield call(userService.info)
-
-        if(result.status === 'OK') {
-          storage.val('userInfo', result.data)
-          payload.history.push('/admin')
-        } else {
-          message.error(result.message)
-        }
-
-        yield put({ type: 'hideLoading' })
+        payload.history.push('/admin')
 
       } else {
         const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
@@ -82,6 +62,6 @@ export default {
         yield put({ type: 'captcha', payload: { captcha } })
         yield put({ type: 'handleHelp', payload: help })
       }
-    },
+    }
   }
 }

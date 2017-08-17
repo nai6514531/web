@@ -4,7 +4,7 @@ const userService = {
     return request.get(`/profile/session`)
   },
   logout: () => {
-    return request.get(`/logout`)
+    return request.post(`/logout`)
   }
 }
 export default userService

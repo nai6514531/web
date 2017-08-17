@@ -196,7 +196,7 @@ class Menu extends Component {
                     required: true, message: '请选择根节点',
                   }],
                 })(
-                  <Cascader options={this.options} changeOnSelect/>
+                  <Cascader options={this.options} changeOnSelect placeholder='请选择'/>
                 )}
               </FormItem>
             </Form>

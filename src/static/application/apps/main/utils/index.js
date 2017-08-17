@@ -30,7 +30,7 @@ const transformMenu = (menu) => {
     if( !item.url || item.children ) {
       formatMenu.push(item)
       if(Array.isArray(item.children)) {
-        item.children.map( subItem => {
+        item.children.map( (subItem,index) => {
           if( !subItem.url || subItem.children ) {
             formatMenu.push(subItem)
             delete subItem.children
@@ -50,13 +50,18 @@ const transformUrl = (hashUrl) => {
     return {}
   }
   const result = _.chain(hashUrl.slice(1)).split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
+  for(let key in result) {
+    result[key] = decodeURIComponent(result[key])
+  }
   return result
 }
 
 function toQueryString(paramsObject) {
   return Object
     .keys(paramsObject)
-    .map(key => `${key}=${paramsObject[key]}`)
+    .map(key => {
+      return key + '=' + encodeURIComponent(paramsObject[key])
+    })
     .join('&')
 }
 export { arrayToTree, transformMenu, transformUrl, toQueryString }

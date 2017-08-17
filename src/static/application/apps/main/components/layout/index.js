@@ -13,6 +13,8 @@ const { Sider } = Layout
 
 class Wrapper extends React.Component {
   componentDidMount() {
+    // 获取用户信息
+    this.props.dispatch({ type: 'common/info' })
     if(!storage.val('token')) {
       this.props.history.push('/')
     }
@@ -28,7 +30,7 @@ class Wrapper extends React.Component {
   }
 
   render() {
-    const { common: { fold, navOpenKeys }, dispatch } = this.props
+    const { common: { fold, navOpenKeys, userInfo }, dispatch } = this.props
     const wrapper = classNames('wrapper',{
       'wrapper-fold': !fold,
       'wrapper-unfold': fold

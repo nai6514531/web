@@ -42,13 +42,8 @@ class Login extends Component {
   }
 
   render() {
-    const { loading, dipatch, form: { getFieldDecorator }, login: { captcha, pageLoading, accountHelp, passwordHelp, captchaHelp } } = this.props
+    const { loading, dipatch, form: { getFieldDecorator }, login: { captcha, accountHelp, passwordHelp, captchaHelp } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
-    if(pageLoading) {
-      return (
-        <img className='loading' src={require('../../assets/loading.gif')} />
-      )
-    }
     return (
       <div>
         <div className={styles.form}>
