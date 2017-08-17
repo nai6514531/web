@@ -5,6 +5,7 @@ import moment from 'moment'
 import billsService from '../../../services/bills'
 import settlementService from '../../../services/settlement'
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
+const confirm = Modal.confirm;
 const { RangePicker } = DatePicker
 const { Option } = Select
 const InputGroup = Input.Group
@@ -216,14 +217,25 @@ class App extends Component {
       message.info("结算操作成功。")
     }).catch((err) => {
       console.log(err)
-      message.error('结帐操作异常，请稍后再试～')
+      message.error(err.message, '结帐操作异常，请稍后再试～')
       this.setState({loading: false, selectedPayLoading: false})
     })
   }
   handleSelectedPay () {
     const bills = this.state.selectedRowKeys
-    this.setState({ selectedPayLoading: true });
-    this.onPay(bills)
+    const self = this
+    confirm({
+      title: '',
+      content: '确认申请结算',
+      onOk() {
+        self.setState({ selectedPayLoading: true });
+        self.onPay(bills)
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+    
   }
   search () {
     this.getBills()
