@@ -26,21 +26,26 @@ const transformMenu = (menu) => {
     label: '根',
     value: 0
   }]
-  menu.map( item => {
-    if( !item.url || item.children ) {
+  menu.map(item => {
+    if(!item.url) {
       formatMenu.push(item)
-      if(Array.isArray(item.children)) {
-        item.children.map( (subItem,index) => {
-          if( !subItem.url || subItem.children ) {
-            formatMenu.push(subItem)
-            delete subItem.children
-          } else {
-            delete item.children
-          }
-        })
-      }
     }
   })
+  // menu.map( item => {
+  //   if( !item.url || item.children ) {
+  //     formatMenu.push(item)
+  //     const cloneChildren = _.cloneDeep(item.children)
+  //     delete item.children
+  //     if(Array.isArray(cloneChildren)) {
+  //       cloneChildren.map( (subItem,index) => {
+  //         if( !subItem.url || subItem.children ) {
+  //           formatMenu.push(subItem)
+  //           delete subItem.children
+  //         }
+  //       })
+  //     }
+  //   }
+  // })
   result[0].children = (arrayToTree(formatMenu))
   return result
 }

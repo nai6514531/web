@@ -13,7 +13,7 @@ const breadItems = [
     title: '设置'
   },
   {
-    title: '用户设置',
+    title: '用户',
     url: '/admin/settings/user'
   },
   {
@@ -96,7 +96,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入运营商名称！',
+                required: true, message: '请输入用户名称！',
               }],
               initialValue: data.name
             })(
@@ -111,6 +111,8 @@ class UserEdit extends Component {
               {getFieldDecorator('password', {
                 rules: [{
                   required: true, message: '请输入密码！',
+                },{
+                  min: 6, message: '密码最少6位'
                 }]
               })(
                 <Input />

@@ -57,9 +57,10 @@ class RoleModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, role: { key, visible, record } } = this.props
+    const title = record.id ? '修改角色' : '添加角色'
     return(
       <Modal
-        title='添加角色'
+        title={title}
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleChange}

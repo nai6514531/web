@@ -25,6 +25,7 @@ export default {
       payload,
     }, { put, call }) {
       const data = yield call(loginService.login, payload.data)
+      let [ accountHelp, passwordHelp, captchaHelp ] = [ null, null, null ]
       if(data.status == 'OK') {
         //登录成功后存储账户密码token等
         if(payload.data.checked) {
@@ -32,14 +33,14 @@ export default {
         } else {
           storage.clear('login')
         }
+        const help = { accountHelp, passwordHelp, captchaHelp }
+        yield put({ type: 'handleHelp', payload: help })
         storage.val('token', data.data)
         payload.history.push('/admin')
 
       } else {
         const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
-        let accountHelp = null
-        let passwordHelp = null
-        let captchaHelp = null
+
         if(data.status === 'NOT_FOUND_ENTITY' ) {
           accountHelp = {
             help: data.message,

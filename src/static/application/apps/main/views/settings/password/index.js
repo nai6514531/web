@@ -11,7 +11,7 @@ const breadItems = [
     title: '设置'
   },
   {
-    title: '设置密码'
+    title: '修改密码'
   }
 ]
 
@@ -37,6 +37,7 @@ class ResetPassword extends Component {
         const { history } = this.props
         values.oldPassword = md5(values.oldPassword)
         values.newPassword = md5(values.newPassword)
+        delete values.rePassword
         this.props.dispatch({
           type: 'user/reset',
           payload: {
@@ -47,6 +48,16 @@ class ResetPassword extends Component {
       }
     })
   }
+  handleConfirmBlur = (e) => {
+    const value = e.target.value
+    this.props.dispatch({
+      type: 'user/updateConfirmDirty',
+      payload: {
+        confirmDirty: !!value
+      }
+    })
+    this.setState({ confirmDirty: !!value })
+  }
   checkPassword = (rule, value, callback) => {
      const form = this.props.form
      if (value && value !== form.getFieldValue('newPassword')) {
@@ -55,6 +66,14 @@ class ResetPassword extends Component {
        callback()
      }
    }
+  checkConfirm = (rule, value, callback) => {
+    const form = this.props.form
+    if (value && this.props.user.confirmDirty) {
+      form.validateFields(['rePassword'], { force: true })
+    }
+    callback()
+  }
+
   render() {
     const { form: { getFieldDecorator }, loading } = this.props
     return(
@@ -84,6 +103,8 @@ class ResetPassword extends Component {
                 required: true, message: '请输入新密码！',
               }, {
                 min: 6, message: '密码最少6位'
+              }, {
+                validator: this.checkConfirm,
               }]
             })(
               <Input type='password'/>
@@ -102,7 +123,7 @@ class ResetPassword extends Component {
                 validator: this.checkPassword,
               }]
             })(
-              <Input type='password'/>
+              <Input type='password' onBlur={this.handleConfirmBlur}/>
             )}
           </FormItem>
           <FormItem style={{textAlign: 'center'}}>
@@ -121,6 +142,7 @@ class ResetPassword extends Component {
 function mapStateToProps(state,props) {
   return {
     loading: state.loading.global,
+    user: state.user,
     ...props
   }
 }
