@@ -2,21 +2,19 @@ import loginService from '../../services/login'
 import userService from '../../services/user'
 import { message } from 'antd'
 import { storage } from '../../utils/storage.js'
-import { isProduction } from '../../utils/debug'
-
-const baseURL = isProduction ? '//api.erp.sodalife.xyz/v1' : '//api.erp.sodalife.dev/v1'
+import { API_SERVER } from '../../utils/debug'
 
 export default {
   namespace: 'login',
   state: {
-    captcha: `${baseURL}/captcha.png`,
+    captcha: `${API_SERVER}/captcha.png`,
     accountHelp: null,
     passwordHelp: null,
     captchaHelp: null
   },
   reducers: {
     captcha(state) {
-      const captcha = `${baseURL}/captcha.png?${Date.now()}`
+      const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
       return { ...state, captcha }
     },
     handleHelp(state, payload) {

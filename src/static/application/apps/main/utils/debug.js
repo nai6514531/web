@@ -18,9 +18,11 @@ export const isDebug = isDevelopment || ('debug' in qs)
 
 export const __scene = qs.__scene
 
-if (isDebug) {
+export const API_SERVER = isProduction ? '//api.erp.sodalife.xyz/v1' : '//api.erp.sodalife.dev/v1'
+
+if (isDebug || isStaging) {
   console.log(
-  `-----===== ${env.PKG_NAME} =====-----
+    `-----===== ${env.PKG_NAME} =====-----
 
   [包名] ${env.PKG_NAME}
   [编译环境] ${env.ENV || '无'}
