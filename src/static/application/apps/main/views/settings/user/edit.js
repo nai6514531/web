@@ -73,7 +73,6 @@ class UserEdit extends Component {
   checkMobile = (rule, value, callback) => {
     if (isNaN(value) && value!== undefined) {
       callback('请输入正确的手机号')
-      console.log('ok')
     } else {
       callback()
     }
@@ -184,8 +183,6 @@ class UserEdit extends Component {
             {getFieldDecorator('telephone', {
               rules: [{
                 required: true, message: '请输入服务电话！',
-              }, {
-                validator: this.checkPhone
               }],
               initialValue: data.telephone
             })(

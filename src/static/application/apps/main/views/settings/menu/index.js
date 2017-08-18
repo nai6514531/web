@@ -190,7 +190,7 @@ class Menu extends Component {
               </FormItem>
               <FormItem
                 {...formItemLayout}
-                label='根节点'
+                label='父节点'
               >
                 {getFieldDecorator('cascader', {
                   initialValue: record.cascader,
