@@ -9,7 +9,7 @@ const baseURL = isProduction ? '//api.erp.sodalife.xyz/v1' : '//api.erp.sodalife
 export default {
   namespace: 'login',
   state: {
-    captcha: `${API_SERVER}/captcha.png`,
+    captcha: `${baseURL}/captcha.png`,
     accountHelp: null,
     passwordHelp: null,
     captchaHelp: null
