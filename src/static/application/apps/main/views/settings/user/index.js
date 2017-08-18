@@ -175,6 +175,7 @@ class User extends Component {
           </Button>
         </span>
         <DataTable
+          scroll={{ x: 700 }}
           dataSource={objects || []}
           columns={this.columns}
           loading={loading}

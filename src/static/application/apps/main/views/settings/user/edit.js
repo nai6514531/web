@@ -70,6 +70,21 @@ class UserEdit extends Component {
   cancelHandler = () => {
     this.props.history.goBack()
   }
+  checkMobile = (rule, value, callback) => {
+    if (isNaN(value) && value!== undefined) {
+      callback('请输入正确的手机号')
+      console.log('ok')
+    } else {
+      callback()
+    }
+  }
+  checkPhone = (rule, value, callback) => {
+    if (isNaN(value) && value!== undefined) {
+      callback('请输入正确的服务电话')
+    } else {
+      callback()
+    }
+  }
   render() {
     const { form: { getFieldDecorator }, user: { data }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
@@ -154,6 +169,8 @@ class UserEdit extends Component {
                 required: true, message: '请输入手机号！',
               }, {
                 len: 11, message: '请输入11位长度的手机号！',
+              }, {
+                validator: this.checkMobile,
               }],
               initialValue: data.mobile
             })(
@@ -167,6 +184,8 @@ class UserEdit extends Component {
             {getFieldDecorator('telephone', {
               rules: [{
                 required: true, message: '请输入服务电话！',
+              }, {
+                validator: this.checkPhone
               }],
               initialValue: data.telephone
             })(

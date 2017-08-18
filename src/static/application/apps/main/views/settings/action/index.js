@@ -149,6 +149,7 @@ class Action extends Component {
           </Button>
         </span>
         <DataTable
+          scroll={{ x: 1000 }}
           dataSource={objects}
           columns={this.columns}
           loading={loading}

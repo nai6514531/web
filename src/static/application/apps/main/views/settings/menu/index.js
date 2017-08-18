@@ -138,6 +138,7 @@ class Menu extends Component {
           添加菜单
         </Button>
         <DataTable
+          scroll={{ x: 600 }}
           dataSource={objects}
           columns={this.columns}
           loading={loading}
