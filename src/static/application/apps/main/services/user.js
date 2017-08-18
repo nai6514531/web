@@ -1,10 +1,10 @@
 import request from '../utils/request'
 const userService = {
   info: () => {
-    return request.get(`/profile/session`)
+    return request.get(`/profile`)
   },
   logout: () => {
-    return request.get(`/logout`)
+    return request.post(`/logout`)
   }
 }
 export default userService

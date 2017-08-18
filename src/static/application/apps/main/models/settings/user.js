@@ -10,7 +10,8 @@ const model = {
     objects: []
   },
   roleData: [],
-  currentRole: []
+  currentRole: [],
+  confirmDirty: false,
 }
 export default {
   namespace: 'user',
@@ -32,6 +33,9 @@ export default {
     updateRoleData(state, { payload: { data } }) {
       const roleData = data
       return { ...state, roleData }
+    },
+    updateConfirmDirty(state, { payload: { confirmDirty } }) {
+       return { ...state, confirmDirty }
     },
     clear(state) {
       return model
@@ -63,6 +67,7 @@ export default {
       if(result.status == 'OK') {
         history.goBack()
         message.success('更新成功')
+        yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
       }

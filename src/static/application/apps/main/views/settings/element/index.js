@@ -95,6 +95,7 @@ class Element extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, element: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
+    const title = record.id ? '修改元素' : '添加元素'
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -112,7 +113,7 @@ class Element extends Component {
           pagination={pagination}
         />
         <Modal
-          title='添加元素'
+          title={title}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}

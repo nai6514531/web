@@ -34,7 +34,7 @@ class Menu extends Component {
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '菜单名', dataIndex: 'name',key: 'name' },
-      { title: '层级', dataIndex: 'level', key: 'level' },
+      // { title: '层级', dataIndex: 'level', key: 'level' },
       { title: '图标', dataIndex: 'icon', key: 'icon' },
       { title: '路由', dataIndex: 'url', key: 'url' },
       {
@@ -125,7 +125,8 @@ class Menu extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, menu: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
-    this.options = transformMenu(arrayToTree(objects))
+    this.options = transformMenu(objects)
+    const title = record.id ? '修改菜单' : '添加菜单'
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -137,13 +138,14 @@ class Menu extends Component {
           添加菜单
         </Button>
         <DataTable
+          scroll={{ x: 600 }}
           dataSource={objects}
           columns={this.columns}
           loading={loading}
           pagination={false}
         />
         <Modal
-          title='添加菜单'
+          title={title}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -188,7 +190,7 @@ class Menu extends Component {
               </FormItem>
               <FormItem
                 {...formItemLayout}
-                label='根节点'
+                label='父节点'
               >
                 {getFieldDecorator('cascader', {
                   initialValue: record.cascader,
@@ -196,7 +198,7 @@ class Menu extends Component {
                     required: true, message: '请选择根节点',
                   }],
                 })(
-                  <Cascader options={this.options} changeOnSelect/>
+                  <Cascader options={this.options} changeOnSelect placeholder='请选择'/>
                 )}
               </FormItem>
             </Form>

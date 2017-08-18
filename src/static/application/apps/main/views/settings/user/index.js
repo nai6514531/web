@@ -6,6 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import styles from './index.pcss'
 
 const Search = Input.Search
 const FormItem = Form.Item
@@ -18,7 +19,7 @@ const breadItems = [
     title: '设置'
   },
   {
-    title: '用户设置'
+    title: '用户'
   }
 ]
 class User extends Component {
@@ -137,41 +138,44 @@ class User extends Component {
         <Breadcrumb items={breadItems} />
         <Input
           placeholder='请输入用户名搜索'
-          style={{ width: 200, marginRight: 20 }}
+          className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
         <Input
           placeholder='请输入用户id搜索'
-          style={{ width: 200, marginRight: 20 }}
+          className={styles.input}
           onChange={this.changeHandler.bind(this, 'id')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.id}
          />
         <Input
           placeholder='请输入账号搜索'
-          style={{ width: 200, marginRight: 20 }}
+          className={styles.input}
           onChange={this.changeHandler.bind(this, 'account')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
          />
-        <Button
-          type='primary'
-          onClick={this.searchClick}
-          style={{marginBottom: '20px', marginRight: 20}}
-          >
-          搜索
-        </Button>
-        <Button
-          type='primary'
-          style={{marginBottom: 20, marginRight: 20 }}>
-            <Link
-              to={`/admin/settings/user/new`}>
-              添加用户
-            </Link>
-        </Button>
+        <span className={styles['button-wrap']}>
+          <Button
+            type='primary'
+            onClick={this.searchClick}
+            style={{marginBottom: '20px', marginRight: 20}}
+            >
+            搜索
+          </Button>
+          <Button
+            type='primary'
+            style={{marginBottom: 20, marginRight: 20 }}>
+              <Link
+                to={`/admin/settings/user/new`}>
+                添加用户
+              </Link>
+          </Button>
+        </span>
         <DataTable
+          scroll={{ x: 700 }}
           dataSource={objects || []}
           columns={this.columns}
           loading={loading}

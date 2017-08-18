@@ -95,6 +95,7 @@ class Permission extends Component {
           添加权限
         </Button>
         <DataTable
+          scroll={{ x: 400 }}
           dataSource={objects}
           columns={this.columns}
           loading={loading}

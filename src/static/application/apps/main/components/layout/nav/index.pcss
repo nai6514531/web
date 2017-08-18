@@ -4,9 +4,11 @@
 	padding: 0;
 	display: flex;
 	justify-content: space-between;
-	background-color: #fff;
 	box-shadow: 2px 2px 40px 0 rgba(0,0,0,.05);
 	position: fixed;
+	background-color: #fff;
+  background-image: linear-gradient(0, rgba(0, 0, 0, 0.042), #fff);
+  border-bottom: 1px solid #eee;
 }
 .header-fold {
 	width:calc(100% - 64px);
@@ -51,9 +53,8 @@
 	display: flex;
 }
 .popovermenu {
-  width: 280px;
+  width: 100vw;
   margin-left: 6px;
-  height: 300px;
 	overflow: auto;
   :global .ant-popover-inner-content {
     padding: 0;

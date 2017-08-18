@@ -10,9 +10,7 @@ const SubMenu = Menu.SubMenu
 class SideBar extends React.Component {
   constructor(props) {
     super(props)
-    const userInfo = storage.val('userInfo')
     this.levelMap = {}
-    this.menu = userInfo ? userInfo.menuList : [],
     this.defaultSelectedKeys = session.val('defaultSelectedKeys') || []
   }
 
@@ -98,8 +96,8 @@ class SideBar extends React.Component {
   }
 
   render() {
-    const { mode, theme, fold, handleClick, navOpenKeys } = this.props
-    const menuItems = this.getMenus(this.menu, fold)
+    const { mode, theme, fold, handleClick, navOpenKeys, common: { userInfo } } = this.props
+    const menuItems = this.getMenus(userInfo.menuList, fold)
     const menuProps = !fold ? {
       openKeys: navOpenKeys,
       onOpenChange: this.onOpenChange
@@ -107,7 +105,7 @@ class SideBar extends React.Component {
     return (
       <Menu
         mode={mode}
-        theme={theme ? theme : 'dark'}
+        theme={'dark'}
         onClick={this.onClick}
         defaultSelectedKeys={this.defaultSelectedKeys}
         {...menuProps}

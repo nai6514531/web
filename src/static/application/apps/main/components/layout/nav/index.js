@@ -13,8 +13,6 @@ const confirm = Modal.confirm
 class Nav extends React.Component {
   constructor(props) {
     super(props)
-    const userInfo = storage.val('userInfo')
-    this.userName = userInfo ? userInfo.user.name : ''
   }
 
   componentDidMount() {
@@ -64,7 +62,7 @@ class Nav extends React.Component {
   }
 
   render() {
-    const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys } } = this.props
+    const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys, userInfo } } = this.props
     const header = classNames(styles.header,styles.wrapper,{
       [styles['header-unfold']]: !fold,
       [styles['header-fold']] : fold
@@ -100,7 +98,7 @@ class Nav extends React.Component {
           { !fold ? <Icon type='menu-fold'/> : <Icon type='menu-unfold'/> }
         </div>
         <div className={styles.logout}>
-          <span>{this.userName},您好！</span>
+          <span>{userInfo.user.name},您好！</span>
           <div
             className={styles.icon}
             onClick={this.showModal}>

@@ -186,6 +186,7 @@ export default {
       const result = yield call(permissionService.updateMenu, data, id)
       if(result.status == 'OK') {
         yield put({ type: 'hideModal' })
+        yield put({ type: 'common/info' })
         message.success('更新成功')
       } else {
         message.error(result.message)
@@ -196,6 +197,7 @@ export default {
       const result = yield call(permissionService.updateElement, data, id)
       if(result.status == 'OK') {
         yield put({ type: 'hideModal' })
+        yield put({ type: 'common/info' })
         message.success('更新成功')
       } else {
         message.error(result.message)
@@ -206,6 +208,7 @@ export default {
       const result = yield call(permissionService.updateAction, data, id)
       if(result.status == 'OK') {
         yield put({ type: 'hideModal' })
+        yield put({ type: 'common/info' })
         message.success('更新成功')
       } else {
         message.error(result.message)

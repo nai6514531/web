@@ -26,21 +26,26 @@ const transformMenu = (menu) => {
     label: '根',
     value: 0
   }]
-  menu.map( item => {
-    if( !item.url || item.children ) {
+  menu.map(item => {
+    if(!item.url) {
       formatMenu.push(item)
-      if(Array.isArray(item.children)) {
-        item.children.map( subItem => {
-          if( !subItem.url || subItem.children ) {
-            formatMenu.push(subItem)
-            delete subItem.children
-          } else {
-            delete item.children
-          }
-        })
-      }
     }
   })
+  // menu.map( item => {
+  //   if( !item.url || item.children ) {
+  //     formatMenu.push(item)
+  //     const cloneChildren = _.cloneDeep(item.children)
+  //     delete item.children
+  //     if(Array.isArray(cloneChildren)) {
+  //       cloneChildren.map( (subItem,index) => {
+  //         if( !subItem.url || subItem.children ) {
+  //           formatMenu.push(subItem)
+  //           delete subItem.children
+  //         }
+  //       })
+  //     }
+  //   }
+  // })
   result[0].children = (arrayToTree(formatMenu))
   return result
 }
@@ -50,13 +55,18 @@ const transformUrl = (hashUrl) => {
     return {}
   }
   const result = _.chain(hashUrl.slice(1)).split('&').map(_.ary(_.partial(_.split, _, '='), 1)).fromPairs().value()
+  for(let key in result) {
+    result[key] = decodeURIComponent(result[key])
+  }
   return result
 }
 
 function toQueryString(paramsObject) {
   return Object
     .keys(paramsObject)
-    .map(key => `${key}=${paramsObject[key]}`)
+    .map(key => {
+      return key + '=' + encodeURIComponent(paramsObject[key])
+    })
     .join('&')
 }
 export { arrayToTree, transformMenu, transformUrl, toQueryString }

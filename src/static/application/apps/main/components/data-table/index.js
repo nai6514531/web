@@ -45,10 +45,11 @@ class DataTable extends Component {
     }
   }
   render() {
-    const { columns, dataSource, loading } = this.props
+    const { columns, dataSource, loading, scroll } = this.props
     const { pagination } = this.state
     return(
       <Table
+        scroll={scroll}
         columns={columns}
         dataSource={dataSource}
         loading={loading}

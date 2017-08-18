@@ -61,13 +61,13 @@ class ActionModal extends Component {
         <Row>
           <Input
             placeholder='请输入控制器名称关键字'
-            style={{ width: 200, marginRight: 20 }}
+            style={{ width: 200, marginRight: 20, marginTop: 10 }}
             onChange={this.changeHandler.bind(this, 'handler_name')}
             onPressEnter={this.searchClick}
            />
           <Input
             placeholder='请输入请求方法关键字'
-            style={{ width: 200, marginRight: 20 }}
+            style={{ width: 200, marginRight: 20, marginTop: 10 }}
             onChange={this.changeHandler.bind(this, 'method')}
             onPressEnter={this.searchClick}
            />
