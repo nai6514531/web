@@ -143,7 +143,7 @@ class App extends Component {
     this.setState({ loading: true , pagination: pagination})
     dailyBillsService.getDetail(search).then((res) => {
       if (res.status !== 'OK') {
-        return new Promise.reject()
+        throw new Error()
       }
       const data = res.data
       this.setState({

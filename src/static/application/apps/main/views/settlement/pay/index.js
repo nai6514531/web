@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Promise from 'bluebird'
 import moment from 'moment'
+import _ from 'underscore'
 import billsService from '../../../services/bills'
 import settlementService from '../../../services/settlement'
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
@@ -51,7 +52,7 @@ class App extends Component {
       bills: [],
       pagination: {
         total: 0,
-        limit: 10,
+        limit: 100,
         offset: 0
       },
       search: {
@@ -80,16 +81,15 @@ class App extends Component {
         title: '申请人',
         dataIndex: 'user',
         render: (user) => {
-          return `${user.name} | ${user.mobile}`
+          return `${user.name} | ${user.accountName}`
         }
       },
       {
         title: '收款帐号',
         dataIndex: 'account',
-        render: (account) => {
+        render: (account, record) => {
           if (!!~[1].indexOf(account.type)) {
             return _.template([
-              '支付宝',
               '<%- realName %>',
               '账号：<%- name %>'
               ].join(' | '))({
@@ -97,11 +97,11 @@ class App extends Component {
                 name: account.name || '-'
               })
           } 
-          if (!!~[ 2].indexOf(account.type)) {
+          if (!!~[2].indexOf(account.type)) {
             return _.template([
-              '微信',
               '<%- realName %>',
               ].join(' | '))({
+                nickName: record.user.nickName || '-',
                 realName: account.realName,
                 name: account.name || '-'
               })
@@ -148,20 +148,27 @@ class App extends Component {
       {
         title: '结算时间',
         dataIndex: 'settledAt',
-        render: (date) => {
-          return date ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
+        render: (date, record) => {
+          return date && record.status === 2 ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
+        }
+      },
+      {
+        title: '是否自动结算',
+        render: (record) => {
+          return record.isMode === 0 ? '是' : '否'
         }
       },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          const disabled = !!~[0, 2, 3].indexOf(record.status)
+          const disabled = !!~[0, 2, 3, 4].indexOf(record.status)
           const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
             !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
+          const count = record.count / 100
           return (
             <span>
-            <Popconfirm title='结算当前账单?' onConfirm={() => this.onPay([record.id])}>
+            <Popconfirm title='确认结算吗?' onConfirm={() => this.onPay([record.id])}>
               <a href='#' className={disabled ? styles.hidden : ''}>结算 |</a>
             </Popconfirm>
             <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
@@ -183,7 +190,7 @@ class App extends Component {
     const search = _.extend(pagination, this.state.search, options || {})
     billsService.get(search).then((res) => {
       if (res.status !== 'OK') {
-        return new Promise.reject()
+        throw new Error(res.message)
       }
       const data = res.data
       this.setState({
@@ -197,14 +204,14 @@ class App extends Component {
         loading: false
       })
     }).catch((err) => {
-      this.setState({loading: false})
+      this.setState({loading: false, searchLoading: false})
     })
   }
   onPay (bills) {
     const { type } = this.state.search
     settlementService.pay(bills).then((res) => {
       if (res.status !== 'OK') {
-        return new Promise.reject(new Error(res.message || ''))
+        throw new Error(res.message)
       }
       const data = res.data
       // 支付宝账单二次确认
@@ -216,20 +223,22 @@ class App extends Component {
       this.setState({ selectedPayLoading: false })
       message.info("结算操作成功。")
     }).catch((err) => {
-      console.log(err)
-      message.error(err.message, '结帐操作异常，请稍后再试～')
+      message.error(err.message || '结帐操作异常，请稍后再试～')
       this.setState({loading: false, selectedPayLoading: false})
     })
   }
   handleSelectedPay () {
-    const bills = this.state.selectedRowKeys
     const self = this
+    const billsId = this.state.selectedRowKeys
+    const bills =  _.filter(this.state.bills, (bill) => { return !!~billsId.indexOf(bill.id) })
+    const total = _.chain(bills).pluck('amount').reduce((memo, num) => { return memo + num; }, 0).value()
+    const count = bills.length
     confirm({
       title: '',
-      content: '确认申请结算',
+      content: `已勾选${count}个订单，共${total/100}元进行结算，确认结算吗`,
       onOk() {
         self.setState({ selectedPayLoading: true });
-        self.onPay(bills)
+        self.onPay(billsId)
       },
       onCancel() {
         console.log('Cancel');
@@ -275,7 +284,7 @@ class App extends Component {
   }
   selectInit (record) {
     // 已结帐、结算中状态不可选
-    return { disabled: !!~[0, 2, 3].indexOf(record.status)}
+    return { disabled: !!~[0, 2, 3, 4].indexOf(record.status)}
   }
   hideConfirmShow () {
     this.setState({alipayConfirmShow: false})
@@ -293,6 +302,8 @@ class App extends Component {
     const hasSelected = selectedCount > 0
     const pagination = {
       total: this.state.pagination.total,
+      pageSize: 100,
+      pageSizeOptions: ["100", "150", "200", "250"],
       showSizeChanger: true,
       showTotal (total) {
         return <span>总计 {total} 条</span>
@@ -328,7 +339,7 @@ class App extends Component {
             onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
             <Option value=''>请选择结算状态</Option>
             <Option value='1'>等待结算</Option>
-            <Option value='2'>已结算</Option>
+            <Option value='2'>结算成功</Option>
             <Option value='3'>结算中</Option>
             <Option value='4'>结算失败</Option>
           </Select>
@@ -350,7 +361,7 @@ class App extends Component {
             </InputGroup>
           </div>
           <Input
-            placeholder='运营商名称 / 账户名'
+            placeholder='运营商名称 / 登录账号'
             style={{ width: 200 }}
             className={styles.item}
             onChange={this.changeKeys.bind(this)}

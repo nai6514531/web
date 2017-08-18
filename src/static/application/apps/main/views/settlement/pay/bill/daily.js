@@ -113,7 +113,6 @@ class App extends Component {
           if (!!~[2].indexOf(account.type)) {
             return _.template([
               '<%- realName %>',
-              '手机号：<%- mobile %>'
               ].join(' | '))({
                 realName: account.realName,
                 name: account.name || '-',
@@ -158,7 +157,7 @@ class App extends Component {
     this.setState({ loading: true, pagination: pagination })
     billsService.getDetail(search).then((res) => {
       if (res.status !== 'OK') {
-        return reject()
+        throw new Error()
       }
       const data = res.data
       this.setState({
@@ -170,7 +169,7 @@ class App extends Component {
         loading: false
       })
     }).catch((err) => {
-      this.setState({loading: true})
+      this.setState({loading: false})
     })
   }
   render () {

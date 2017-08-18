@@ -2,12 +2,12 @@ import request from '../utils/request'
 
 const billsService = {
   get: (data) => {
-    return request.get(`/api/bills`, {
+    return request.get(`/bills`, {
     	params: data
     })
   },
   getDetail: (options) => {
-    return request.get(`/api/bills/${options.id}`, {
+    return request.get(`/bills/${options.id}`, {
     	params: options
     })
   }
