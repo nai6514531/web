@@ -11,7 +11,7 @@ class CustomBreadcrumb extends Component {
         <Breadcrumb>
           {items.map((item,key) => {
             return item.url ?
-              <Breadcrumb.Item key={key}><Link to={item.url}>{item.title}</Link></Breadcrumb.Item> :
+              <Breadcrumb.Item key={key}><Link to={item.url} onClick={item.handleClick}>{item.title}</Link></Breadcrumb.Item> :
               <Breadcrumb.Item key={key}>{item.title}</Breadcrumb.Item>
           })}
         </Breadcrumb>

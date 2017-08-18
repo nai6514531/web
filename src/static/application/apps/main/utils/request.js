@@ -1,13 +1,14 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
 import { Modal, message } from 'antd'
-import { API_SERVER } from './config'
+import { isProduction } from './debug'
+
 import { storage, session } from './storage.js'
 import 'nprogress/nprogress.css'
 
 const confirm = Modal.confirm
 const api = axios.create({
-  baseURL: API_SERVER,
+  baseURL: isProduction ? '//api.erp.sodalife.xyz/v1' : '//api.erp.sodalife.dev/v1',
   headers: {
     'Content-Type': 'application/json',
     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'

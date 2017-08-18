@@ -7,6 +7,7 @@ import {
 } from 'react-router-redux'
 import createDva from 'dva/lib/createDva'
 import createLoading from 'dva-loading'
+import './utils/debug'
 
 const history = createHistory()
 

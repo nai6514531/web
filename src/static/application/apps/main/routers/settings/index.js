@@ -15,6 +15,10 @@ import Action from 'bundle-loader?lazy!../../views/settings/action'
 import actionModel from 'bundle-loader?lazy!../../models/settings/action.js'
 import Element from 'bundle-loader?lazy!../../views/settings/element'
 import elementModel from 'bundle-loader?lazy!../../models/settings/element.js'
+import settlementPay from 'bundle-loader?lazy!../../views/settlement/pay'
+import billsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/daily'
+import dailyBillsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/detail'
+
 export default function (history, app) {
   return (
     <Switch>
@@ -26,6 +30,10 @@ export default function (history, app) {
       <Route path='/admin/settings/change-password' component={getComponent(Password,app,userModel)} />
       <Route path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
       <Route path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
+      <Route path='/admin/settlement/alipay' component={getComponent(settlementPay,app,elementModel)} />
+      <Route path='/admin/settlement/wechat' component={getComponent(settlementPay,app,elementModel)} />
+      <Route path='/admin/settlement/bills/:id' component={getComponent(billsDetail,app,elementModel)} />
+      <Route path='/admin/settlement/daily-bills/:id' component={getComponent(dailyBillsDetail,app,elementModel)} />
     </Switch>
   )
 }

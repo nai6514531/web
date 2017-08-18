@@ -9,7 +9,8 @@ gulp.task('webpack-dev', function () {
     watch: true,
     output: {
       chunkFilename: 'chunk/[name].js',
-    }
+    },
+    devtool: '#eval-source-map'
   }, config()))
   pack.on('error', function (err) {
     console.log('[webpack error] %s', err)
