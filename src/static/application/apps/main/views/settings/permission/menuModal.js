@@ -3,6 +3,8 @@ import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Checkbox, TreeSelect } from 'antd'
 import { arrayToTree } from '../../../utils/index.js'
 import _ from 'lodash'
+import { transformUrl, toQueryString } from '../../../utils/'
+
 const FormItem = Form.Item
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 const formItemLayout = {
@@ -18,6 +20,7 @@ class MenuModal extends Component {
   }
   handleSubmit = (e) => {
     e.preventDefault();
+    const url = transformUrl(location.hash)
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const result = this.transfromData(values.result || [])
@@ -25,7 +28,8 @@ class MenuModal extends Component {
           type: 'permission/updateMenu',
           payload: {
             id: this.props.permission.currentId,
-            data: result
+            data: result,
+            url: url
           }
         })
       }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Checkbox } from 'antd'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -22,11 +23,13 @@ class ElementModal extends Component {
     this.checkList = values
   }
   handleSubmit = () => {
+    const url = transformUrl(location.hash)
     this.props.dispatch({
       type: 'permission/updateElement',
       payload: {
         id: this.props.permission.currentId,
-        data: this.checkList
+        data: this.checkList,
+        url: url
       }
     })
   }

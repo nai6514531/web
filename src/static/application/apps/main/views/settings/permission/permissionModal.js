@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Checkbox } from 'antd'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -22,6 +23,7 @@ class PermissionModal extends Component {
   }
   handleSubmit = (e) => {
     e.preventDefault();
+    const url = transformUrl(location.hash)
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.permission.record.id
@@ -33,7 +35,8 @@ class PermissionModal extends Component {
           type: type,
           payload: {
             data: values,
-            id: id
+            id: id,
+            url: url
           }
         })
       }

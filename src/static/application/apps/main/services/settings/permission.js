@@ -1,7 +1,13 @@
 import request from '../../utils/request'
 const permissionService = {
-  list: () => {
-    return request.get(`/permissions`)
+  list: (data) => {
+    let url
+    if(!data) {
+      url = `/permissions`
+    } else {
+      url = `/permissions?page=${data.page || 1 }&per_page=${data.per_page || 10 }`
+    }
+    return request.get(url)
   },
   update: (data, id) => {
     return request.put(`/permissions/${id}`, data)

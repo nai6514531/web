@@ -108,9 +108,8 @@ export default {
       const result = yield call(roleService.updatePermissions, data, id)
       if(result.status == 'OK') {
         message.success('更新成功')
-        yield put({
-          type: 'hideModal',
-        })
+        yield put({ type: 'hideModal' })
+        yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
       }

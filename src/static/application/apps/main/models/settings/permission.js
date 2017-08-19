@@ -68,7 +68,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(permissionService.list)
+      const result = yield call(permissionService.list, payload.data)
       const menuData = yield call(menuService.list)
       const actionData = yield call(actionService.list)
       const elementData = yield call(elementService.list)
@@ -90,10 +90,15 @@ export default {
       }
     },
     *update({ payload }, { call, put }) {
-      const { data, id } = payload
+      const { data, id, url } = payload
       const result = yield call(permissionService.update, data, id)
       if(result.status == 'OK') {
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
         yield put({ type: 'hideModal' })
         message.success('更新成功')
       } else {
@@ -103,7 +108,12 @@ export default {
     *add({ payload }, { call, put }) {
       const result = yield call(permissionService.add, payload.data)
       if(result.status == 'OK') {
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
         yield put({ type: 'hideModal' })
         message.success('添加成功')
       } else {
@@ -114,7 +124,12 @@ export default {
       const result = yield call(permissionService.delete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
       } else {
         message.error(result.message)
       }
