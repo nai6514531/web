@@ -5,6 +5,7 @@ import { connect } from 'dva'
 import { Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
+import { transformUrl, toQueryString } from '../../../utils/'
 import ActionModal from './actionModal.js'
 import ElementModal from './elementModal.js'
 import MenuModal from './menuModal.js'
@@ -44,8 +45,12 @@ class Permission extends Component {
     ]
   }
   componentDidMount() {
+    const url = transformUrl(location.hash)
     this.props.dispatch({
-      type: 'permission/list'
+      type: 'permission/list',
+      payload: {
+        data: url
+      }
     })
   }
   show = (record) => {
@@ -57,10 +62,12 @@ class Permission extends Component {
     })
   }
   delete = (id) => {
+    const url = transformUrl(location.hash)
     this.props.dispatch({
       type: 'permission/delete',
       payload: {
-        id: id
+        id: id,
+        url: url
       }
     })
   }
@@ -83,7 +90,7 @@ class Permission extends Component {
     })
   }
   render() {
-    const { permission: { key, visible, record, data: { objects } }, loading  } = this.props
+    const { permission: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -99,7 +106,7 @@ class Permission extends Component {
           dataSource={objects}
           columns={this.columns}
           loading={loading}
-          pagination={false}
+          pagination={pagination}
         />
         <PermissionModal {...this.props}/>
         <ActionModal {...this.props}/>

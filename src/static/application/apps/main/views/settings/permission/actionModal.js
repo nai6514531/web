@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Checkbox, Popover, Button } from 'antd'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -14,20 +15,30 @@ class ActionModal extends Component {
     this.search = {
       noPagination: true
     }
+    this.initCheckList = []
     this.checkList = []
   }
   hide = () => {
+    this.checkList = []
     this.search = {noPagination: true}
     this.props.dispatch({
       type: 'permission/hideModal'
     })
   }
   handleSubmit = () => {
+    const url = transformUrl(location.hash)
+    let data = []
+    if(this.checkList.length === 0) {
+      data = this.initCheckList
+    } else {
+      data = this.checkList
+    }
     this.props.dispatch({
       type: 'permission/updateAction',
       payload: {
         id: this.props.permission.currentId,
-        data: this.checkList
+        data: data,
+        url: url
       }
     })
   }
@@ -47,7 +58,7 @@ class ActionModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, permission: { actionData, actionVisible, key, currentData }, loading } = this.props
-    this.checkList = currentData
+    this.initCheckList = currentData
     return(
       <Modal
         title='配置接口'
