@@ -5,7 +5,7 @@ import moment from 'moment'
 import _ from 'underscore'
 import billsService from '../../../services/bills'
 import settlementService from '../../../services/settlement'
-import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
+import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message, Icon } from 'antd'
 const confirm = Modal.confirm;
 const { RangePicker } = DatePicker
 const { Option } = Select
@@ -52,7 +52,7 @@ class App extends Component {
       bills: [],
       pagination: {
         total: 0,
-        limit: 100,
+        limit: 10,
         offset: 0
       },
       search: {
@@ -67,7 +67,13 @@ class App extends Component {
       alipayConfirmShow: false,
       selectedPayLoading: false,
       selectedRowKeys: [],
-      dateType: 0
+      dateType: 0,
+      payConfirmShow: false,
+      confirmPay: {
+        count: 0,
+        amount: 0
+      },
+      billsId: []
     }
     this.columns = [
       {
@@ -85,7 +91,7 @@ class App extends Component {
         }
       },
       {
-        title: '收款帐号',
+        title: '收款账号',
         dataIndex: 'account',
         render: (account, record) => {
           if (!!~[1].indexOf(account.type)) {
@@ -141,7 +147,11 @@ class App extends Component {
       {
         title: '状态',
         dataIndex: 'status',
+        width: 90,
         render: (status) => {
+          if (status === 4) {
+            return <p className={styles.fail}><span>{BILLS_STATUS[status]}</span><Icon type='question-circle' onClick={this.showFailInfo.bind(this)} /></p>
+          }
           return BILLS_STATUS[status]
         }
       },
@@ -155,7 +165,7 @@ class App extends Component {
       {
         title: '是否自动结算',
         render: (record) => {
-          return record.isMode === 0 ? '是' : '否'
+          return record.isMode === 0 ? '自动结算' : '手动结算'
         }
       },
       {
@@ -168,9 +178,7 @@ class App extends Component {
           const count = record.count / 100
           return (
             <span>
-            <Popconfirm title='确认结算吗?' onConfirm={() => this.onPay([record.id])}>
-              <a href='#' className={disabled ? styles.hidden : ''}>结算 |</a>
-            </Popconfirm>
+              <a onClick={this.handlePay.bind(this, record)} className={disabled ? styles.hidden : ''}>结算 |</a>
             <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
             </span>
           )
@@ -183,6 +191,16 @@ class App extends Component {
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
     this.setState({search: {...this.state.search, type: payType}})
     this.getBills({type: payType})
+  }
+  showFailInfo () {
+    Modal.info({
+      content: (
+        <div>
+          <p>有结账失败记录很有可能是收款账号和姓名不匹配，请检查后修改收款方式。</p>
+        </div>
+      ),
+      onOk() {},
+    });
   }
   getBills({...options}) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
@@ -207,9 +225,11 @@ class App extends Component {
       this.setState({loading: false, searchLoading: false})
     })
   }
-  onPay (bills) {
+  onPay () {
     const { type } = this.state.search
-    settlementService.pay(bills).then((res) => {
+    console.log(this.state.billsId)
+    this.setState({ selectedPayLoading: true });
+    settlementService.pay(this.state.billsId).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -217,34 +237,25 @@ class App extends Component {
       // 支付宝账单二次确认
       if (type === 1) {
         this.alipayInfo = data 
-        this.setState({ alipayConfirmShow: true })
+        this.setState({ alipayConfirmShow: true, payConfirmShow: false })
       }
       this.getBills()
-      this.setState({ selectedPayLoading: false })
+      this.setState({ selectedPayLoading: false, payConfirmShow: false })
       message.info("结算操作成功。")
     }).catch((err) => {
-      message.error(err.message || '结帐操作异常，请稍后再试～')
-      this.setState({loading: false, selectedPayLoading: false})
+      message.error(err.message || '结账操作异常，请稍后再试～')
+      this.setState({loading: false, selectedPayLoading: false, payConfirmShow: false})
     })
   }
   handleSelectedPay () {
-    const self = this
     const billsId = this.state.selectedRowKeys
     const bills =  _.filter(this.state.bills, (bill) => { return !!~billsId.indexOf(bill.id) })
-    const total = _.chain(bills).pluck('amount').reduce((memo, num) => { return memo + num; }, 0).value()
+    const amount = _.chain(bills).pluck('amount').reduce((memo, num) => { return memo + num; },  0).value()
     const count = bills.length
-    confirm({
-      title: '',
-      content: `已勾选${count}个订单，共${total/100}元进行结算，确认结算吗`,
-      onOk() {
-        self.setState({ selectedPayLoading: true });
-        self.onPay(billsId)
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-    
+    this.setState({payConfirmShow: true, confirmPay: { count: count, amount: amount/100}, billsId: billsId})
+  }
+  handlePay (bill) {
+    this.setState({payConfirmShow: true, confirmPay: { count: bill.count, amount: bill.amount/100}, billsId: [bill.id]})
   }
   search () {
     this.getBills()
@@ -283,7 +294,7 @@ class App extends Component {
     this.setState({ selectedRowKeys: selectedRowKeys });
   }
   selectInit (record) {
-    // 已结帐、结算中状态不可选
+    // 已结账、结算中状态不可选
     return { disabled: !!~[0, 2, 3, 4].indexOf(record.status)}
   }
   hideConfirmShow () {
@@ -302,8 +313,6 @@ class App extends Component {
     const hasSelected = selectedCount > 0
     const pagination = {
       total: this.state.pagination.total,
-      pageSize: 100,
-      pageSizeOptions: ["100", "150", "200", "250"],
       showSizeChanger: true,
       showTotal (total) {
         return <span>总计 {total} 条</span>
@@ -376,16 +385,36 @@ class App extends Component {
             loading={this.state.loading}
             pagination={pagination}
             className={styles.table}
+            scroll={{ x: 1000 }}
           />
           <Modal
             title={null}
             wrapClassName={styles.alipay}
             footer={null}
             closable={false}
+            maskClosable={true}
             visible={this.state.alipayConfirmShow}
             onCancel={this.hideConfirmShow.bind(this)}
           >
             <ConfirmForm changeModalVisible={this.hideConfirmShow.bind(this)} onCancel={this.hideConfirmShow.bind(this)} payInfo={this.alipayInfo || {}} />
+          </Modal>
+          <Modal
+            visible={this.state.payConfirmShow}
+            title=""
+            footer={null}
+            closable={false}
+            maskClosable={true}
+            className={styles.modal}
+          >
+            <p>
+              <Icon type="exclamation-circle" className={styles.icon}/>
+              已选<i className={styles.red}>{this.state.confirmPay.count}</i>个订单，共<i className={styles.red}>{this.state.confirmPay.amount}</i>元进行结算，确认结算吗
+            </p>
+            <div className={styles.button}>
+              <Button key="submit" type="primary" size="large" loading={selectedPayLoading} onClick={this.onPay.bind(this)}>
+                确认
+              </Button>
+             </div> 
           </Modal>
         </div>
       </div>
