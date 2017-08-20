@@ -165,7 +165,7 @@ class App extends Component {
       {
         title: '是否自动结算',
         render: (record) => {
-          return record.isMode === 0 ? '自动结算' : '手动结算'
+          return record.isAuto ? '自动结算' : '手动结算'
         }
       },
       {
@@ -212,7 +212,7 @@ class App extends Component {
       }
       const data = res.data
       this.setState({
-        bills: data.objects, 
+        bills: data.objects || [], 
         selectedRowKeys: [],
         pagination: {
           ...pagination,
