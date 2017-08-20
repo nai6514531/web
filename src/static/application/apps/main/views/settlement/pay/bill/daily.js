@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import billsService from '../../../../services/bills'
-import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker } from 'antd'
+import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
 const { RangePicker } = DatePicker
 const { Option } = Select
 
@@ -157,7 +157,7 @@ class App extends Component {
     this.setState({ loading: true, pagination: pagination })
     billsService.getDetail(search).then((res) => {
       if (res.status !== 'OK') {
-        throw new Error()
+        throw new Error(res.message)
       }
       const data = res.data
       this.setState({
@@ -170,6 +170,7 @@ class App extends Component {
       })
     }).catch((err) => {
       this.setState({loading: false})
+      message.error(err.message || '服务器异常，刷新重试')
     })
   }
   render () {
@@ -184,11 +185,11 @@ class App extends Component {
       },
       onShowSizeChange(current, pageSize) {
         const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
-        self.getBills(pagination)
+        self.getBillsDetail({pagination: pagination})
       },
       onChange(current, pageSize) {
         const pagination = {offset: (current - 1) * pageSize}
-        self.getBills(pagination)
+        self.getBillsDetail({pagination: pagination})
       }
     }
     return(

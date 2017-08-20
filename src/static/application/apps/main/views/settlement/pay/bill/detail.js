@@ -143,7 +143,7 @@ class App extends Component {
     this.setState({ loading: true , pagination: pagination})
     dailyBillsService.getDetail(search).then((res) => {
       if (res.status !== 'OK') {
-        throw new Error()
+        throw new Error(res.message)
       }
       const data = res.data
       this.setState({
@@ -155,8 +155,8 @@ class App extends Component {
         loading: false
       })
     }).catch((err) => {
-      message.error(err.message)
       this.setState({loading: false})
+      message.error(err.message || '服务器异常，刷新重试')
     })
   }
   render () {
@@ -171,11 +171,11 @@ class App extends Component {
       },
       onShowSizeChange(current, pageSize) {
         const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
-        self.getDailyBillsDetail(pagination)
+        self.getDailyBillsDetail({pagination: pagination})
       },
       onChange(current, pageSize) {
         const pagination = {offset: (current - 1) * pageSize}
-        self.getDailyBillsDetail(pagination)
+        self.getDailyBillsDetail({pagination: pagination})
       }
     }
     return(
