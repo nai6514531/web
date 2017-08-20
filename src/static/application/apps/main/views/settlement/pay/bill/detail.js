@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Promise from 'bluebird'
 import moment from 'moment'
 import dailyBillsService from '../../../../services/daily-bills'
-import { Table } from 'antd'
+import { Table, message} from 'antd'
 
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import styles from '../index.pcss'
@@ -155,6 +155,7 @@ class App extends Component {
         loading: false
       })
     }).catch((err) => {
+      message.error(err.message)
       this.setState({loading: false})
     })
   }
