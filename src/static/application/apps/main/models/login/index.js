@@ -24,8 +24,10 @@ export default {
     *login ({
       payload,
     }, { put, call }) {
-      const data = yield call(loginService.login, payload.data)
       let [ accountHelp, passwordHelp, captchaHelp ] = [ null, null, null ]
+      const originData = _.cloneDeep(payload.data)
+      delete originData.initPassword
+      const data = yield call(loginService.login, originData)
       if(data.status == 'OK') {
         //登录成功后存储账户密码token等
         if(payload.data.checked) {
