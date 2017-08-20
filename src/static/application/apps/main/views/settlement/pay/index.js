@@ -149,9 +149,9 @@ class App extends Component {
         dataIndex: 'status',
         width: 90,
         render: (status) => {
-          if (status === 4) {
-            return <p className={styles.fail}><span>{BILLS_STATUS[status]}</span><Icon type='question-circle' onClick={this.showFailInfo.bind(this)} /></p>
-          }
+          // if (status === 4) {
+          //   return <p className={styles.fail}><span>{BILLS_STATUS[status]}</span><Icon type='question-circle' onClick={this.showFailInfo.bind(this)} /></p>
+          // }
           return BILLS_STATUS[status]
         }
       },
@@ -223,11 +223,11 @@ class App extends Component {
       })
     }).catch((err) => {
       this.setState({loading: false, searchLoading: false})
+      message.error(err.message || '服务器异常，刷新重试')
     })
   }
   onPay () {
     const { type } = this.state.search
-    console.log(this.state.billsId)
     this.setState({ selectedPayLoading: true });
     settlementService.pay(this.state.billsId).then((res) => {
       if (res.status !== 'OK') {
@@ -243,8 +243,8 @@ class App extends Component {
       this.setState({ selectedPayLoading: false, payConfirmShow: false })
       message.info("结算操作成功。")
     }).catch((err) => {
-      message.error(err.message || '结账操作异常，请稍后再试～')
       this.setState({loading: false, selectedPayLoading: false, payConfirmShow: false})
+      message.error(err.message || '结账操作异常，请稍后再试～')
     })
   }
   handleSelectedPay () {
@@ -255,7 +255,10 @@ class App extends Component {
     this.setState({payConfirmShow: true, confirmPay: { count: count, amount: amount/100}, billsId: billsId})
   }
   handlePay (bill) {
-    this.setState({payConfirmShow: true, confirmPay: { count: bill.count, amount: bill.amount/100}, billsId: [bill.id]})
+    this.setState({payConfirmShow: true, confirmPay: { count: 1, amount: bill.amount/100}, billsId: [bill.id]})
+  }
+  hidePayConfirm() {
+    this.setState({payConfirmShow: false})
   }
   search () {
     this.getBills()
@@ -314,16 +317,17 @@ class App extends Component {
     const pagination = {
       total: this.state.pagination.total,
       showSizeChanger: true,
+      pageSizeOptions: ['10', '50', '100', '200'],
       showTotal (total) {
         return <span>总计 {total} 条</span>
       },
       onShowSizeChange(current, pageSize) {
         const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
-        self.getBills(pagination)
+        self.getBills({pagination: pagination})
       },
       onChange(current, pageSize) {
         const pagination = {offset: (current - 1) * pageSize}
-        self.getBills(pagination)
+        self.getBills({pagination: pagination})
       }
     }
     return(
@@ -376,7 +380,7 @@ class App extends Component {
             onChange={this.changeKeys.bind(this)}
            />
           <Button type='primary' icon='search' onClick={this.search.bind(this)} 
-            loading={this.state.searchLoading}>搜索</Button>
+            loading={this.state.searchLoading}>筛选</Button>
           <Table
             rowSelection={rowSelection}
             dataSource={this.state.bills || []}
@@ -408,9 +412,12 @@ class App extends Component {
           >
             <p>
               <Icon type="exclamation-circle" className={styles.icon}/>
-              已选<i className={styles.red}>{this.state.confirmPay.count}</i>个订单，共<i className={styles.red}>{this.state.confirmPay.amount}</i>元进行结算，确认结算吗
+              已选<i className={styles.red}>{this.state.confirmPay.count}</i>个订单，共<i className={styles.red}>{this.state.confirmPay.amount}</i>元进行结算，确认结算吗？
             </p>
             <div className={styles.button}>
+              <Button type="primary" size="large" disabled={selectedPayLoading} style={{ marginRight: '10px'}} onClick={this.hidePayConfirm.bind(this)}>
+                取消
+              </Button>
               <Button key="submit" type="primary" size="large" loading={selectedPayLoading} onClick={this.onPay.bind(this)}>
                 确认
               </Button>
