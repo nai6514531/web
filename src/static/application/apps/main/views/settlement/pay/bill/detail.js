@@ -53,7 +53,7 @@ const alipayBreadItems = [
 ]
 const SERVICE_TYPE = { 1: '单拖', 2: '快洗', 3: '标准', 4: '大物洗' }
 const PAY_TYPE = { 1: '微信', 2: '支付宝', 3: '账户余额', 4: 'IC卡余额' }
-const BILLS_STATUS = { 4: '正常', 7: '已退款' }
+const BILLS_STATUS = { 4: '已退款', 7: '正常' }
 
 class App extends Component {
   constructor(props) {
