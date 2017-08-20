@@ -1,5 +1,5 @@
 {
-  "prefix": "/soda/m.sodalife.xyz/static/",
+  "prefix": "/soda/erp.sodalife.xyz/static/",
 	"cwd": "build/static/",
 	"patterns": "**/*"
 }
