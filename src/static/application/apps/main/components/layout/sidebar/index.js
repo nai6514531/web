@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Layout } from 'antd'
 import { arrayToTree } from '../../../utils/'
-import { storage, session } from '../../../utils/storage.js'
+import { session } from '../../../utils/storage.js'
 
 const SubMenu = Menu.SubMenu
 

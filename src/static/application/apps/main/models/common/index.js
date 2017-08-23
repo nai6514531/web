@@ -39,7 +39,7 @@ export default {
       const result = yield call(userService.logout)
       if(result.status == 'OK') {
         storage.clear('token')
-        storage.clear('userInfo')
+        // storage.clear('userInfo')
         session.clear()
         payload.history.push('/')
       } else {

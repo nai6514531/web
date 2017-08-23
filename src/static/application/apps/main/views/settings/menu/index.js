@@ -5,7 +5,6 @@ import { connect } from 'dva'
 import { Cascader, Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { storage } from '../../../utils/storage.js'
 import { arrayToTree, transformMenu } from '../../../utils/'
 
 const FormItem = Form.Item
