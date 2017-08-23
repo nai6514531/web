@@ -18,7 +18,7 @@ class Login extends Component {
     if(storage.val('token')) {
       this.props.history.push('/admin')
     }
-    this.changeCaptcha()
+    // this.changeCaptcha()
   }
 
   handleOk = () => {
