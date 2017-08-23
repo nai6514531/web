@@ -12,7 +12,7 @@ class DataTable extends Component {
     this.state = {
       pagination: {
         total: dataSource.length,
-        pageSize: Number(url.pageSize) || 10,
+        pageSize: Number(url.per_page) || 10,
         current: Number(url.page) || 1,
         showTotal: total => `总共 ${total} 条`,
         showSizeChanger: false
