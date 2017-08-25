@@ -3,6 +3,7 @@ import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-d
 import { getComponent } from '../components/bundle/'
 import settings from './settings/'
 import finance from './finance/'
+import idle from './2/'
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
 import Layout from '../components/layout/'
@@ -20,6 +21,11 @@ function RouterConfig({ history, app }) {
         <Route path='/finance' render={ props => (
           <Layout>
             { finance(history, app) }
+          </Layout>
+        )}/>
+        <Route path='/2' render={ props => (
+          <Layout>
+            { idle(history, app) }
           </Layout>
         )}/>
         <Route component={getComponent(NotFound)} />

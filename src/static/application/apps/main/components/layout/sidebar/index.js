@@ -41,7 +41,13 @@ class SideBar extends React.Component {
       }
       return (
         <Menu.Item key={item.id}>
-          <Link to={item.url}>
+          <Link
+            to={item.url}
+            onClick={()=>{
+              this.props.dispatch({
+                type: 'common/resetIndex'
+              })
+            }}>
             {item.icon && <Icon type={item.icon} />}
             {(!fold || item.parentId !== 0) && item.name}
           </Link>

@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import PropTypes from 'prop-types'
 import { Table } from 'antd'
+import { connect } from 'dva'
 import { transformUrl, toQueryString } from '../../utils/'
-
+import styles from './index.pcss'
 class DataTable extends Component {
   constructor(props) {
     super(props)
@@ -15,8 +16,9 @@ class DataTable extends Component {
         pageSize: Number(url.per_page) || 10,
         current: Number(url.page) || 1,
         showTotal: total => `总共 ${total} 条`,
-        showSizeChanger: false
-      }
+        showSizeChanger: false,
+      },
+      index: -1
     }
   }
   handleTableChange = (pagination) => {
@@ -27,6 +29,9 @@ class DataTable extends Component {
     pager.pageSize = pageSize
     this.setState({
       pagination: pager,
+    })
+    this.props.dispatch({
+      type: 'common/resetIndex'
     })
     location.hash = toQueryString({ ...url, page: current, per_page: pageSize })
   }
@@ -45,7 +50,7 @@ class DataTable extends Component {
     }
   }
   render() {
-    const { columns, dataSource, loading, scroll } = this.props
+    const { columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
     const { pagination } = this.state
     return(
       <Table
@@ -55,8 +60,15 @@ class DataTable extends Component {
         loading={loading}
         pagination={pagination}
         onChange={this.handleTableChange}
-        rowKey='id'
+        rowKey= { rowKey || 'id' }
         bordered
+        rowClassName={(record, index)=>  index === clickedIndex ? styles.clicked : ''}
+        onRowClick={(record,index)=>{
+          this.props.dispatch({
+            type: 'common/updateIndex',
+            payload: index
+          })
+        }}
       />
     )
   }
@@ -71,5 +83,9 @@ DataTable.propTypes = {
     PropTypes.bool,
   ])
 }
-
-export default DataTable
+function mapStateToProps(state,props) {
+  return {
+    common: state.common
+  }
+}
+export default connect(mapStateToProps)(DataTable)

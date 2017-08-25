@@ -110,6 +110,9 @@ class Action extends Component {
     this.search = { ...this.search, [type]: e.target.value }
   }
   searchClick = () => {
+    this.props.dispatch({
+      type: 'common/resetIndex'
+    })
     location.hash = toQueryString({ ...this.search })
   }
   render() {

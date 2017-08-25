@@ -102,7 +102,7 @@ class App extends Component {
                 realName: account.realName,
                 name: account.name || '-'
               })
-          } 
+          }
           if (!!~[2].indexOf(account.type)) {
             return _.template([
               '<%- realName %>',
@@ -111,7 +111,7 @@ class App extends Component {
                 realName: account.realName,
                 name: account.name || '-'
               })
-          } 
+          }
           return '-'
         }
       },
@@ -173,13 +173,13 @@ class App extends Component {
         key: 'operation',
         render: (text, record, index) => {
           const disabled = !!~[0, 2, 3, 4].indexOf(record.status)
-          const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
+          const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
             !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
           const count = record.count / 100
           return (
             <span>
               <a onClick={this.handlePay.bind(this, record)} className={disabled ? styles.hidden : ''}>结算 |</a>
-            <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
+            <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link>
             </span>
           )
         }
@@ -187,7 +187,7 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
+    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 :
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
     this.setState({search: {...this.state.search, type: payType}})
     this.getBills({type: payType})
@@ -212,13 +212,13 @@ class App extends Component {
       }
       const data = res.data
       this.setState({
-        bills: data.objects || [], 
+        bills: data.objects || [],
         selectedRowKeys: [],
         pagination: {
           ...pagination,
           total: data.pagination.total
-        }, 
-        searchLoading: false, 
+        },
+        searchLoading: false,
         loading: false
       })
     }).catch((err) => {
@@ -236,7 +236,7 @@ class App extends Component {
       const data = res.data
       // 支付宝账单二次确认
       if (type === 1) {
-        this.alipayInfo = data 
+        this.alipayInfo = data
         this.setState({ alipayConfirmShow: true, payConfirmShow: false })
       }
       this.getBills()
@@ -269,7 +269,7 @@ class App extends Component {
   }
   changeDate (date, dateString) {
     const type = this.state.dateType
-    date = date ? moment(date).format() : '' 
+    date = date ? moment(date).format() : ''
     this.changeSearchDate(type, date)
   }
   changeDateType (value) {
@@ -379,7 +379,7 @@ class App extends Component {
             className={styles.item}
             onChange={this.changeKeys.bind(this)}
            />
-          <Button type='primary' icon='search' onClick={this.search.bind(this)} 
+          <Button type='primary' icon='search' onClick={this.search.bind(this)}
             loading={this.state.searchLoading}>筛选</Button>
           <Table
             rowSelection={rowSelection}
@@ -421,7 +421,7 @@ class App extends Component {
               <Button key="submit" type="primary" size="large" loading={selectedPayLoading} onClick={this.onPay.bind(this)}>
                 确认
               </Button>
-             </div> 
+             </div>
           </Modal>
         </div>
       </div>

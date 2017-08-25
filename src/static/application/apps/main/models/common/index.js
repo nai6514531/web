@@ -7,6 +7,7 @@ export default {
     menuPopoverVisible: false,
     fold: false,
     navOpenKeys: [],
+    clickedIndex: -1,
     userInfo: {
       user: {},
       menuList: [],
@@ -25,6 +26,20 @@ export default {
       return {
         ...state,
         ...navOpenKeys,
+      }
+    },
+    updateIndex(state, { payload: index }) {
+      const clickedIndex = index
+      return {
+        ...state,
+        clickedIndex
+      }
+    },
+    resetIndex(state) {
+      const clickedIndex = -1
+      return {
+        ...state,
+        clickedIndex
       }
     },
     updateUesrInfo(state, { payload: userInfo }) {
