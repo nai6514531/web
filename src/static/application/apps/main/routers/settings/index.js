@@ -30,10 +30,6 @@ export default function (history, app) {
       <Route path='/admin/settings/change-password' component={getComponent(Password,app,userModel)} />
       <Route path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
       <Route path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
-      <Route path='/admin/settlement/alipay' component={getComponent(settlementPay,app,elementModel)} />
-      <Route path='/admin/settlement/wechat' component={getComponent(settlementPay,app,elementModel)} />
-      <Route path='/admin/settlement/bills/:id' component={getComponent(billsDetail,app,elementModel)} />
-      <Route path='/admin/settlement/daily-bills/:id' component={getComponent(dailyBillsDetail,app,elementModel)} />
     </Switch>
   )
 }

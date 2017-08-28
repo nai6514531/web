@@ -34,7 +34,7 @@ class App extends Component {
 					<input onChange={this.inputChange} value={payInfo.sign} name='sign' />
 					<input onChange={this.inputChange} value={payInfo.sign_type} name='sign_type' />
         </div>
-        <Icon type='info-circle' className={styles.icon} /><span>你有<i className={styles.red}>{payInfo.batch_num}</i> 笔支付宝账单需要二次确认'}</span>
+        <Icon type='info-circle' className={styles.icon} /><span>你有<i className={styles.red}>{payInfo.batch_num}</i> 笔支付宝账单需要二次确认</span>
         <Button onClick={this.submit.bind(this)} type='primary' htmlType="submit">确认支付</Button>
       </form>
 		)

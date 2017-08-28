@@ -3,8 +3,12 @@ import { Link } from 'react-router-dom'
 import Promise from 'bluebird'
 import moment from 'moment'
 import _ from 'underscore'
+import querystring from 'querystring'
+
 import billsService from '../../../services/bills'
 import settlementService from '../../../services/settlement'
+import history from '../../../utils/history'
+
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message, Icon } from 'antd'
 const confirm = Modal.confirm;
 const { RangePicker } = DatePicker
@@ -13,6 +17,8 @@ const InputGroup = Input.Group
 import ConfirmForm from './alipay-confirm-form'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import styles from './index.pcss'
+
+const PAEG_SIZE = 10
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -52,22 +58,23 @@ class App extends Component {
       bills: [],
       pagination: {
         total: 0,
-        limit: 10,
+        limit: PAEG_SIZE,
         offset: 0
       },
       search: {
         status: '',
-        createdAt: '',
-        settledAt: '',
+        endAt: '',
+        startAt: '',
         keys: '',
-        type: 1
+        type: 1,
+        dateType: 1,
       },
       loading: false,
       searchLoading: false,
+      exportLoading: false,
       alipayConfirmShow: false,
       selectedPayLoading: false,
       selectedRowKeys: [],
-      dateType: 0,
       payConfirmShow: false,
       confirmPay: {
         count: 0,
@@ -179,7 +186,7 @@ class App extends Component {
           return (
             <span>
               <a onClick={this.handlePay.bind(this, record)} className={disabled ? styles.hidden : ''}>结算 |</a>
-            <Link to={`/admin/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
+            <Link to={`/finance/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
             </span>
           )
         }
@@ -187,10 +194,17 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
-    this.setState({search: {...this.state.search, type: payType}})
-    this.getBills({type: payType})
+
+    let query = this.props.location.search ? this.props.location.search.slice(1) : ''
+    query = querystring.parse(query)
+
+    let search = _.extend(_.pick(query, 'status', 'endAt', 'startAt', 'keys', 'dateType'), {type: payType})
+    let pagination = _.pick(query, 'limit', 'offset')
+
+    this.setState({search: {...this.state.search, ...search}, pagination: { ...this.state.pagination, pagination}})
+    this.getBills({...search, pagination: pagination})
   }
   showFailInfo () {
     Modal.info({
@@ -204,9 +218,16 @@ class App extends Component {
   }
   getBills({...options}) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
-    this.setState({ pagination: pagination , searchLoading: true, loading: true})
-    const search = _.extend(pagination, this.state.search, options || {})
-    billsService.get(search).then((res) => {
+    let search = _.clone(this.state.search)
+    options = _.pick(options, 'status', 'endAt', 'startAt', 'keys', 'type', 'dateType')
+    search = _.extend(search, options  || {})
+
+    search.startAt= search.startAt ? moment(search.startAt).format() : ''
+    search.endAt= search.endAt ? moment(search.endAt).format() : ''
+
+    this.setState({searchLoading: true, loading: true})
+
+    billsService.get({...search, ...pagination}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -261,33 +282,17 @@ class App extends Component {
     this.setState({payConfirmShow: false})
   }
   search () {
-    this.getBills()
-  }
-  disabledDate (current) {
-    // Can not select days after today and today
-    return current && current.valueOf() > Date.now();
-  }
-  changeDate (date, dateString) {
-    const type = this.state.dateType
-    date = date ? moment(date).format() : '' 
-    this.changeSearchDate(type, date)
+    const { search } = this.state
+    if (!!search.startAt && !search.endAt) {
+      return message.info('请选择时间')
+    }
+    this.getBills({pagination: { limit: PAEG_SIZE, offset: 0 }})
+    this.changeHistory()
   }
   changeDateType (value) {
     const { search } = this.state
-    const date = search.settledAt || search.createdAt
     const type = +value
-    this.setState({dateType: type})
-    this.changeSearchDate(type, date)
-  }
-   changeSearchDate (type, date) {
-    if (type === 1) {
-      this.setState({search: {...this.state.search, settledAt: '', createdAt: date}})
-    } else if (type === 2) {
-      this.setState({search: {...this.state.search, settledAt: date, createdAt: ''}})
-    } else {
-      // 没有选择筛选日期类型，默认为申请时间
-      this.setState({search: {...this.state.search, settledAt: '', createdAt: date}})
-    }
+    this.setState({search: {...search, dateType: type}})
   }
   changeKeys (e) {
     const val = e.target.value
@@ -303,6 +308,100 @@ class App extends Component {
   hideConfirmShow () {
     this.setState({alipayConfirmShow: false})
   }
+  onChangeDate (field, value) {
+    const search = _.extend(this.state.search, { endAt: !!value ? moment(value).format('YYYY-MM-DD') : ''}, {[field]: !!value ? moment(value).format('YYYY-MM-DD') : ''})
+    this.setState({search: search}); 
+  }
+  onStartChange (value) {
+    this.onChangeDate('startAt', value);
+  }
+  onEndChange (value) {
+    this.onChangeDate('endAt', value);
+  }
+  disabledStartDate (current) {
+    return current && current.valueOf() > Date.now();
+  }
+  disabledEndDate (current) {
+    const second = 31 * 24 * 60 * 60 * 1000;
+    const startAt = this.state.search.startAt ? moment(this.state.search.startAt).valueOf() : '';
+    if (!startAt) {
+      return true;
+    }
+    // 结束时间和开始时间跨度　大于等于３1天
+    // 获取截至结束时间
+    const endDate =  Date.now() < startAt + second ? Date.now() : startAt + second
+    return current && current.valueOf() < startAt || current && current.valueOf() > endDate
+  }
+  handleStartOpenChange (open) {
+    if (!open) {
+      this.setState({
+        endOpen: true
+      });
+    }
+  }
+  handleEndOpenChange (open) {
+    this.setState({
+      endOpen: open
+    });
+  }
+  exportBills() {
+    const self = this
+    confirm({
+      title: '是否导出这批账单',
+      content: '',
+      onOk() {
+        self.setState({exportLoading: true})
+        billsService.export(self.state.search).then((res) => {
+          if (res.status !== 'OK') {
+            throw new Error(res.message)
+          }
+          window.open(res.data.url);       
+          self.setState({exportLoading: false})
+        }).catch((err) => {
+          self.setState({exportLoading: false})
+          message.error(err.message || '导出失败,请重试～')
+          console.log(err)
+        })
+      },
+      onCancel() {
+      },
+    })
+  }
+  reset() {
+    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
+                    !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
+    const options = {
+      search: { 
+        status: '',
+        endAt: '',
+        startAt: '',
+        keys: '',
+        type: payType,
+        dateType: 1,
+      }, 
+      pagination: {
+        total: 0,
+        limit: PAEG_SIZE,
+        offset: 0
+      }
+    }
+    this.setState({
+      ...this.state,
+      ...options
+    })
+    this.getBills({...options.search, pagination: options.pagination})
+    this.changeHistory({...options.search, pagination: options.pagination})
+  }
+  changeHistory (options) {
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
+      !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
+    let search = _.clone(this.state.search)
+    let pagination = _.clone(this.state.pagination)
+    options = _.extend(search, pagination, options)
+
+    let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'status', 'endAt', 'startAt', 'keys', 'dateType', 'keys'))
+    history.push(`/finance/settlement/${payType}?${query}`)
+  }
   render () {
     const self = this
     const { selectedPayLoading, selectedRowKeys } = this.state
@@ -316,20 +415,28 @@ class App extends Component {
     const hasSelected = selectedCount > 0
     const pagination = {
       total: this.state.pagination.total,
+      current: parseInt(this.state.pagination.offset / this.state.pagination.limit) + 1,
+      pageSize: parseInt(this.state.pagination.limit, 10),
       showSizeChanger: true,
       pageSizeOptions: ['10', '50', '100', '200'],
+
       showTotal (total) {
         return <span>总计 {total} 条</span>
       },
       onShowSizeChange(current, pageSize) {
-        const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
+        let offset = (current - 1) * pageSize
+        let pagination = {limit: pageSize, offset: offset}
+        self.changeHistory(pagination)
         self.getBills({pagination: pagination})
       },
       onChange(current, pageSize) {
-        const pagination = {offset: (current - 1) * pageSize}
+        let offset = (current - 1) * pageSize
+        let pagination = {offset: offset}
+        self.changeHistory(pagination)
         self.getBills({pagination: pagination})
       }
     }
+
     return(
       <div className={styles.view}>
         <Breadcrumb items={type === 1 ? alipayBreadItems : wechatBreadItems} />
@@ -347,7 +454,7 @@ class App extends Component {
             </span>
           <Select
             className={styles.item}
-            defaultValue={this.state.search.status}
+            value={this.state.search.status}
             style={{width: 120 }}
             onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
             <Option value=''>请选择结算状态</Option>
@@ -357,30 +464,48 @@ class App extends Component {
             <Option value='4'>结算失败</Option>
           </Select>
           <div className={styles.group}>
-            <InputGroup compact>
-              <Select
-                defaultValue={this.state.dateType + ''}
-                style={{width: 120 }}
-                onChange={this.changeDateType.bind(this)}>
-                <Option value='0'>申请时间／结算时间</Option>
-                <Option value='1'>申请时间</Option>
-                <Option value='2'>结算时间</Option>
-              </Select>
-              <DatePicker
-                disabledDate={this.disabledDate}
-                placeholder="时间"
-                onChange={this.changeDate.bind(this)}
-              />
-            </InputGroup>
+            <Select
+              value={this.state.search.dateType + ''}
+              style={{width: 120 }}
+              onChange={this.changeDateType.bind(this)}>
+              <Option value='1'>申请时间</Option>
+              <Option value='2'>结算时间</Option>
+            </Select>
+            <DatePicker
+            style={{width:120,marginLeft:4}}
+            value={!!this.state.search.startAt ? moment(this.state.search.startAt) : null}
+            format="YYYY-MM-DD"
+            disabledDate={this.disabledStartDate}
+            placeholder="开始日期"
+            onChange={this.onStartChange.bind(this)}
+            onOpenChange={this.handleStartOpenChange.bind(this)}
+            className='item'
+          />
+          -
+          <DatePicker
+            style={{width:120,marginRight:4}}
+            disabledDate={this.disabledEndDate.bind(this)}
+            placeholder="结束日期"
+            format="YYYY-MM-DD"
+            value={!!this.state.search.endAt ? moment(this.state.search.endAt) : null}
+            onChange={this.onEndChange.bind(this)}
+            open={this.state.endOpen}
+            onOpenChange={this.handleEndOpenChange.bind(this)}
+            className='item'
+          />
           </div>
           <Input
             placeholder='运营商名称 / 登录账号'
             style={{ width: 200 }}
             className={styles.item}
             onChange={this.changeKeys.bind(this)}
+            value={this.state.search.keys}
+            onPressEnter={this.search.bind(this)}
            />
           <Button type='primary' icon='search' onClick={this.search.bind(this)} 
-            loading={this.state.searchLoading}>筛选</Button>
+            loading={this.state.searchLoading} className={styles.button}>筛选</Button>
+          <Button type='primary' icon='download' onClick={this.exportBills.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
+          <Button onClick={this.reset.bind(this)} className={styles.button}>重置</Button>
           <Table
             rowSelection={rowSelection}
             dataSource={this.state.bills || []}

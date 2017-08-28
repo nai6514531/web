@@ -2,11 +2,16 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Promise from 'bluebird'
 import moment from 'moment'
+import querystring from 'querystring'
 import dailyBillsService from '../../../../services/daily-bills'
 import { Table, message} from 'antd'
 
+import history from '../../../../utils/history'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import styles from '../index.pcss'
+
+const BILL_ID = querystring.parse(window.location.search).billId
+const PAEG_SIZE = 10
 
 const wechatBreadItems = [
   {
@@ -17,13 +22,11 @@ const wechatBreadItems = [
   },
   {
     title: '微信结算',
-    url: '#',
-    handleClick: (e) => { e.preventDefault(); history.go(-2)}
+    url: '/finance/settlement/wechat',
   },
   {
     title: '账单明细',
-    url: '#',
-    handleClick: (e) => { e.preventDefault(); history.go(-1)}
+    url: `/finance/settlement/bills/${BILL_ID}?type=wechat`,
   },
   {
     title: '明细'
@@ -39,13 +42,11 @@ const alipayBreadItems = [
   },
   {
     title: '支付宝结算',
-    url: '#',
-    handleClick: (e) => { e.preventDefault(); history.go(-2)}
+    url: '/finance/settlement/alipay',
   },
   {
     title: '账单明细',
-     url: '#',
-    handleClick: (e) => { e.preventDefault(); history.go(-1)}
+    url: `/finance/settlement/bills/${BILL_ID}?type=alipay`,
   },
   {
     title: '明细'
@@ -62,7 +63,7 @@ class App extends Component {
       bills: [],
       pagination: {
         total: 0,
-        limit: 10,
+        limit: PAEG_SIZE,
         offset: 0
       },
       loading: false
@@ -134,13 +135,16 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    this.getDailyBillsDetail()
+    let query = this.props.location.search ? this.props.location.search.slice(1) : ''
+    query = _.pick(querystring.parse(query), 'limit', 'offset') 
+
+    this.getDailyBillsDetail({pagination: {limit: parseInt(query.limit || PAEG_SIZE, 10), offset: parseInt(query.offset || 0, 10)}})
   }
   getDailyBillsDetail({ ...options }) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
     const id = this.props.match.params.id
-    const search = _.extend({id: id}, this.state.pagination, options)
-    this.setState({ loading: true , pagination: pagination})
+    const search = _.extend({id: id}, pagination)
+    this.setState({ loading: true })
     dailyBillsService.getDetail(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -159,6 +163,18 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  changeHistory (options) {
+    let payType = !!~this.props.location.search.indexOf('alipay') ? 'alipay' : 
+      !!~this.props.location.search.indexOf('wechat') ? 'wechat' : ''
+    let pagination = _.clone(this.state.pagination)
+    let id = this.props.match.params.id
+    options = _.extend(pagination, options)
+    options.type = payType
+    options.billId = BILL_ID
+
+    let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'type', 'billId'))
+    history.push(`/finance/settlement/daily-bills/${id}?${query}`)
+  }
   render () {
     const self = this
     const type = !!~this.props.location.search.indexOf('alipay') ? 1 : 
@@ -170,12 +186,16 @@ class App extends Component {
         return <span>总计 {total} 条</span>
       },
       onShowSizeChange(current, pageSize) {
-        const pagination = {limit: pageSize, offset: (current - 1) * pageSize}
-        self.getDailyBillsDetail({pagination: pagination})
+        let offset = (current - 1) * pageSize
+        let pagination = {limit: pageSize, offset: offset}
+        self.changeHistory(pagination)
+        self.getDailyBillsDetail(pagination)
       },
       onChange(current, pageSize) {
-        const pagination = {offset: (current - 1) * pageSize}
-        self.getDailyBillsDetail({pagination: pagination})
+        let offset = (current - 1) * pageSize
+        let pagination = {offset: offset}
+        self.changeHistory(pagination)
+        self.getDailyBillsDetail(pagination)
       }
     }
     return(
