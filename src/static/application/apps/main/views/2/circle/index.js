@@ -14,7 +14,7 @@ const breadItems = [
     title: '闲置系统'
   },
   {
-    title: '圈子管理'
+    title: '城市管理'
   }
 ]
 class Circle extends Component {
@@ -31,7 +31,7 @@ class Circle extends Component {
         key: 'order',
       },
       {
-        title: '圈子名',
+        title: '城市名',
         dataIndex: 'cityName',
         key: 'cityName',
       },
@@ -65,14 +65,32 @@ class Circle extends Component {
   }
   componentDidMount() {
     const url = transformUrl(location.hash)
+    if( !url.province_id ) {
+      delete url.province_id
+    }
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: url
+      }
+    })
     this.props.dispatch({
       type: 'circle/list',
       payload: {
         data: url
       }
     })
+    this.props.dispatch({ type: 'common/resetIndex' })
   }
   changeHandler =  (type, value) => {
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: {
+          [type]: value
+        }
+      }
+    })
     if(!value) {
       value = ''
     }
@@ -82,20 +100,21 @@ class Circle extends Component {
     location.hash = toQueryString({ ...this.search })
   }
   render() {
-    const { circle: { data: { objects, pagination } }, loading  } = this.props
+    const { circle: { summary, data: { objects, pagination }, provinceData }, loading, common: { search }  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Select
           placeholder='省'
-          defaultValue={this.search.province_id}
+          value={search.province_id}
           allowClear
           className={styles.input}
           onChange={this.changeHandler.bind('this','province_id')}>
-            <Option value="1">上海</Option>
-            <Option value="2">内蒙古</Option>
-            <Option value="3">广东</Option>
-            <Option value="4">福建</Option>
+            {
+              provinceData.map(value => {
+                return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+              })
+            }
         </Select>
         <span className={styles['button-wrap']}>
           <Button
@@ -103,9 +122,12 @@ class Circle extends Component {
             onClick={this.searchClick}
             style={{marginBottom: '20px', marginRight: 20}}
             >
-            查询
+            筛选
           </Button>
         </span>
+        {
+          summary ? <div className={styles.summary}>{`共计有${summary.circleCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
+        }
         <DataTable
           scroll={{ x: 700 }}
           dataSource={objects || []}
@@ -119,11 +141,14 @@ class Circle extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'circle/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
+    this.props.dispatch({ type: 'common/resetIndex' })
   }
 }
 function mapStateToProps(state,props) {
   return {
     circle: state.circle,
+    common: state.common,
     loading: state.loading.global,
     ...props
   }

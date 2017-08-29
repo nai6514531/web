@@ -2,27 +2,11 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import {Row, Col} from 'antd'
+import {Row, Col, Spin} from 'antd'
 import styles from './index.pcss'
 import moment from 'moment'
+import { status } from './dict.js'
 
-const breadItems = [
-  {
-    title: '闲置系统'
-  },
-  {
-    title: '圈子管理',
-    url: '/2/circle'
-  },
-  {
-    title: '商品管理',
-    url: '/2/topic'
-    // 需要加城市id
-  },
-  {
-    title: '商品详情'
-  }
-]
 class TopicDetail extends Component {
   constructor(props) {
     super(props)
@@ -38,15 +22,32 @@ class TopicDetail extends Component {
   }
   render() {
     const { topicDetail: { data }, loading  } = this.props
-    console.log(data)
+    const breadItems = [
+      {
+        title: '闲置系统'
+      },
+      {
+        title: '城市管理',
+        url: `/2/circle`
+      },
+      {
+        title: '商品管理',
+        url: `/2/topic/#city_id=${data.cityId}`
+      },
+      {
+        title: '商品详情'
+      }
+    ]
     return(
-      <div>
+      <Spin
+        tip='加载中...'
+        spinning={loading}>
         <Breadcrumb items={breadItems} />
-        <p className={styles.text}><span className={styles.title}>帖子标题:</span>{data.title}</p>
-        <p className={styles.text}><span className={styles.title}>帖子描述:</span>{data.description}</p>
-        <p className={styles.text}><span className={styles.title}>帖子价格:</span>{data.value / 100}</p>
+        <p className={styles.text}><span className={styles.title}>商品标题:</span>{data.title}</p>
+        <p className={styles.text}><span className={styles.title}>商品描述:</span>{data.content}</p>
+        <p className={styles.text}><span className={styles.title}>商品价格:</span>{data.value / 100}</p>
         <p className={styles.text}><span className={styles.title}>发帖时间:</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</p>
-        <p className={styles.text}><span className={styles.title}>帖子所属频道:</span>{data.channelTitle}</p>
+        <p className={styles.text}><span className={styles.title}>商品所属频道:</span>{data.channelTitle}</p>
         {
           data.images && JSON.parse(data.images).map( (value,index) => {
             return <div className={styles['img-wrap']} key={index}><img src={value.url}/></div>
@@ -54,8 +55,9 @@ class TopicDetail extends Component {
         }
         <p className={styles.text}><span className={styles.title}>浏览量:</span>{data.uniqueVisitor}</p>
         <p className={styles.text}><span className={styles.title}>评论数:</span>{data.comments}</p>
-        <p className={styles.text}><span className={styles.title}>成交状态:</span>{data.status}</p>
-      </div>
+        <p className={styles.text}><span className={styles.title}>共有多少人来询问:</span>{data.consultation}</p>
+        <p className={styles.text}><span className={styles.title}>交易状态:</span>{status[data.status]}</p>
+      </Spin>
     )
   }
   componentWillUnmount() {

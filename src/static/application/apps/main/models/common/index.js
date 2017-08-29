@@ -13,7 +13,8 @@ export default {
       menuList: [],
       actionList: [],
       elementList: []
-    }
+    },
+    search: {}
   },
   reducers: {
     popMenu(state, { payload: { menuPopoverVisible } }) {
@@ -26,6 +27,19 @@ export default {
       return {
         ...state,
         ...navOpenKeys,
+      }
+    },
+    updateSearch(state, { payload: { search } }) {
+      search = { ...state.search, ...search }
+      return {
+        ...state,
+        search
+      }
+    },
+    resetSearch(state) {
+      return {
+        ...state,
+        search: {}
       }
     },
     updateIndex(state, { payload: index }) {

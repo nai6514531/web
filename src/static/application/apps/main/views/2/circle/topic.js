@@ -6,6 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import moment from 'moment'
 import styles from './index.pcss'
 import { status } from './dict.js'
 
@@ -26,8 +27,8 @@ const breadItems = [
     title: '闲置系统'
   },
   {
-    title: '圈子管理',
-    url: '/2/circle'
+    title: '城市管理',
+    url: `/2/circle`
   },
   {
     title: '商品管理'
@@ -37,12 +38,10 @@ class Topic extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.hash)
+    // 搜索时跳到默认分页
     delete search.page
     delete search.per_page
     this.search = search
-    this.state = {
-      channel_id: search.channel_id
-    }
     this.columns = [
       {
         title: '序号',
@@ -61,8 +60,9 @@ class Topic extends Component {
       },
       {
         title: '发布时间',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
+        render: (text, record, index) => {
+          return moment(record.createdAt).format('YYYY-MM-DD HH:mm')
+        }
       },
       {
         title: '商品发布人',
@@ -105,8 +105,9 @@ class Topic extends Component {
       },
       {
         title: '交易状态',
-        dataIndex: 'status',
-        key: 'status',
+        render: (text, record) => {
+          return status[record.status]
+        }
       },
       {
         title: '操作',
@@ -114,8 +115,8 @@ class Topic extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/2/topic/${record.id}`}>查看详情|</Link>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>{'\u00A0'}移动频道|</a>
+              <Link to={`/2/topic/${record.id}`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动频道{'\u00A0'}|</a>
               {
                 (() => {
                   if(record.status === 0) {
@@ -138,6 +139,18 @@ class Topic extends Component {
   }
   componentDidMount() {
     const url = transformUrl(location.hash)
+    if( !url.channel_id ) {
+      delete url.channel_id
+    }
+    if( !url.status ) {
+      delete url.status
+    }
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: url
+      }
+    })
     this.props.dispatch({
       type: 'topic/list',
       payload: {
@@ -191,17 +204,21 @@ class Topic extends Component {
     this.search = { ...this.search, [type]: e.target.value }
   }
   selectHandler =  (type, value) => {
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: {
+          [type]: value
+        }
+      }
+    })
     if(!value) {
       value = ''
-    }
-    if(type === 'channel_id') {
-      this.setState({
-        channel_id: value
-      })
     }
     this.search = { ...this.search, [type]: value }
   }
   searchClick = () => {
+    this.props.dispatch({ type: 'common/resetIndex' })
     location.hash = toQueryString({ ...this.search })
   }
   renderStatus = (data) => {
@@ -211,15 +228,8 @@ class Topic extends Component {
     }
     return item
   }
-  renderChannel = (data) => {
-    return data.map(value => {
-      return (
-        <Option value={value.id + ''} key={value.id}>{value.title}</Option>
-      )
-    })
-  }
   render() {
-    const { form: { getFieldDecorator }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
+    const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -233,9 +243,9 @@ class Topic extends Component {
         <Input
           placeholder='商品关键字'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'key_word')}
+          onChange={this.changeHandler.bind(this, 'keywords')}
           onPressEnter={this.searchClick}
-          defaultValue={this.search.key_word}
+          defaultValue={this.search.keywords}
          />
         <Input
           placeholder='商品学校'
@@ -245,15 +255,21 @@ class Topic extends Component {
           defaultValue={this.search.school_name}
          />
         <Select
-          value={ this.state.channel_id && this.state.channel_id + '' }
+          value={ search.channel_id }
           allowClear
           className={styles.input}
           placeholder='商品频道'
           onChange={this.selectHandler.bind('this','channel_id')}>
-            { this.renderChannel(channel)}
+            {
+              channel.map(value => {
+                return (
+                  <Option value={value.id + ''} key={value.id}>{value.title}</Option>
+                )
+              })
+            }
         </Select>
         <Select
-          defaultValue={this.search.status}
+          value={search.status}
           allowClear
           className={styles.input}
           placeholder='商品状态'
@@ -266,18 +282,18 @@ class Topic extends Component {
             onClick={this.searchClick}
             style={{marginBottom: '20px', marginRight: 20}}
             >
-            查询
+            筛选
           </Button>
         </span>
         <DataTable
-          scroll={{ x: 700 }}
+          scroll={{ x: 1000 }}
           dataSource={objects || []}
           columns={this.columns}
           loading={loading}
           pagination={pagination}
         />
         <Modal
-          title={`帖子频道`}
+          title={`商品频道`}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -286,19 +302,19 @@ class Topic extends Component {
           <Form onSubmit={this.handleSubmit}>
             <FormItem
               {...formItemLayout}
-              label='帖子名称'
+              label='商品名称'
             >
-              <span>{'暂时缺少的字段'}</span>
+              <span>{record.title}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='当前帖子频道'
+              label='当前商品频道'
             >
               <span>{record.channelTitle}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='将帖子移动至'
+              label='将商品移动至'
             >
               {getFieldDecorator('channelId', {
                 rules: [{
@@ -306,7 +322,13 @@ class Topic extends Component {
                 }]
               })(
                 <Select allowClear>
-                  { this.renderChannel(channel)}
+                  {
+                    channel.map(value => {
+                      return (
+                        <Option value={value.id + ''} key={value.id}>{value.title}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>
@@ -320,11 +342,13 @@ class Topic extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'topic/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
     topic: state.topic,
+    common: state.common,
     loading: state.loading.global,
     ...props
   }
