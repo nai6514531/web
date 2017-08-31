@@ -36,7 +36,7 @@ class Circle extends Component {
         key: 'cityName',
       },
       {
-        title: '拥有学校数量',
+        title: '激活学校数量',
         dataIndex: 'schoolCount',
         key: 'schoolCount',
       },
