@@ -61,7 +61,7 @@ const transformUrl = (hashUrl) => {
   return result
 }
 
-function toQueryString(paramsObject) {
+const toQueryString = (paramsObject) => {
   return Object
     .keys(paramsObject)
     .map(key => {
@@ -69,4 +69,11 @@ function toQueryString(paramsObject) {
     })
     .join('&')
 }
-export { arrayToTree, transformMenu, transformUrl, toQueryString }
+
+const createKey = ( data ) => {
+  data.map((value, index) => {
+    value.key = index + 1
+  })
+  return data
+}
+export { arrayToTree, transformMenu, transformUrl, toQueryString, createKey }
