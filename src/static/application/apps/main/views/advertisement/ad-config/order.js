@@ -88,14 +88,22 @@ class AdOrder extends Component {
   dragulaDecorator = (componentBackingInstance) => {
     if (componentBackingInstance) {
       let drake = Dragula([componentBackingInstance])
-
+      drake.on("drag", (el, target, source, sibling) => {
+        el.className = ' ex-drag'
+      })
       drake.on("drop", (el, target, source, sibling) => {
+        el.className = el.className.replace('ex-drag', 'ex-moved')
         this._onDrop(el, target, source, sibling)
         drake.cancel(true)
       })
 
+      drake.on("over", (el, container) => {
+        container.className += ' ex-over';
+      })
+
       drake.on("cancel", (el, target) => {
          this._onCancel(el, target)
+         el.className = el.className.replace('ex-drag', 'ex-moved')
       })
     }
   }
@@ -103,6 +111,7 @@ class AdOrder extends Component {
     let sorting = []
     let id = source.getAttribute('id')
     let orders = this.props.adOrder[id]
+
     for(let i = 0; i < target.children.length; i++) {
       let child = target.children[i]
       let id = parseInt(child.children[0].innerText)
@@ -119,12 +128,16 @@ class AdOrder extends Component {
     this.ordersCopy = ordersSorted
   }
   _onCancel = (el, target) => {
-    let attr = target.getAttribute('id')
+    let id = target.getAttribute('id')
+    this.ordersCopy = this.ordersCopy || this.props.adOrder[id]
     this.props.dispatch({
       type: 'adOrder/updateData',
       payload: {
-        [attr] : this.ordersCopy
+        [id] : this.ordersCopy
       }
+    })
+    this.props.dispatch({
+      type: 'common/resetIndex'
     })
   }
   order = (attr) => {

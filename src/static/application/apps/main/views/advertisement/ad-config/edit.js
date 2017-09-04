@@ -139,7 +139,6 @@ class PlatformEdit extends Component {
           return false
         }
       }
-      console.log('file',file)
       return true
     })
     this.props.dispatch({
@@ -271,6 +270,8 @@ class PlatformEdit extends Component {
             {getFieldDecorator('name', {
               rules: [{
                 required: true, message: '请输入20字以内的广告名！',
+              },{
+                max: 20, message: '长度最多20个字符！'
               }],
               initialValue: detail.name
             })(
@@ -284,6 +285,8 @@ class PlatformEdit extends Component {
             {getFieldDecorator('title', {
               rules: [{
                 required: true, message: '请输入20字以内的广告标题！',
+              },{
+                max: 20, message: '长度最多20个字符！'
               }],
               initialValue: detail.title
             })(

@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import adConfigService from '../../../services/advertisement/ad-config.js'
 import adPositionService from '../../../services/advertisement/ad-position.js'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, orderBy } from 'lodash'
 const model = {
   postionData: [],
   visible: false,
@@ -32,7 +32,8 @@ export default {
     *list({ payload: { data, order, attr } }, { call, put }) {
       const result = yield call(adConfigService.list, data, order)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { [attr]: result.data.objects } })
+        const orderData = orderBy(result.data.objects,'order','asc')
+        yield put({ type: 'updateData', payload: { [attr]: orderData } })
       } else {
         message.error(result.message)
       }
