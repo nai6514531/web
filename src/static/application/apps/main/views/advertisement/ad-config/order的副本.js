@@ -2,12 +2,16 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal } from 'antd'
+import { Button, Popconfirm, Input, Select, Row, DatePicker } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
+import Dragula from 'react-dragula'
+import 'dragula/dist/dragula.css'
 import styles from './index.pcss'
+import './index.css'
+
 const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const breadItems = [
@@ -16,22 +20,20 @@ const breadItems = [
   },
   {
     title: '广告配置'
+  },
+  {
+    title: '广告排序'
   }
 ]
 const { Option } = Select
 
-class AdConfig extends Component {
+class AdOrder extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.hash)
-    // 搜索时跳到默认分页
-    delete search.page
-    delete search.per_page
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '所属业务', dataIndex: 'appName',key: 'appName' },
-      { title: '广告位', dataIndex: 'locationName', key: 'locationName' },
       { title: '广告名', dataIndex: 'name',key: 'name' },
       { title: '广告标题', dataIndex: 'title', key: 'title' },
       { title: '活动链接', dataIndex: 'url',key: 'url' },
@@ -51,36 +53,12 @@ class AdConfig extends Component {
         }
       },
       {
-        title: '上下架',
-        render: (text, record) => {
-          return (
-            record.status === 1 ? '下架' : '上架'
-          )
-        }
-      },
-      {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/advertisement/config/${record.id}`}>修改</Link> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
-              </Popconfirm>
-              <a
-                href='javascript:void(0)'
-                onClick={() => {
-                  this.props.dispatch({
-                    type: 'adConfig/showModal',
-                    payload: {
-                      previewImage: record.image
-                    }
-                  })
-                }}
-                >
-                {'\u00A0'}预览
-              </a>
+              <a href='javascript:void(0)'>{'\u00A0'}预览</a>
             </span>
           )
         }
@@ -98,10 +76,13 @@ class AdConfig extends Component {
     this.props.dispatch({
       type: 'adConfig/list',
       payload: {
-        data: url
+        data: url,
+        order: true
       }
     })
-    this.props.dispatch({ type: 'adConfig/appList' })
+    this.props.dispatch({
+      type: 'adConfig/appList'
+    })
     if(url.app_id) {
       this.props.dispatch({
         type: 'adConfig/postionList',
@@ -113,33 +94,7 @@ class AdConfig extends Component {
       })
     }
   }
-  delete = (id) => {
-    this.props.dispatch({
-      type: 'adConfig/delete',
-      payload: {
-        id: id
-      }
-    })
-  }
-  timeChange = (value, dateString) => {
-    let [ started_at, ended_at ] = dateString
-    if(started_at && ended_at) {
-      started_at = moment(started_at).format()
-      ended_at = moment(ended_at).format()
-      this.search = { ...this.search, started_at, ended_at }
-    } else {
-      delete this.search.started_at
-      delete this.search.ended_at
-    }
-  }
-  changeHandler = (type, e) => {
-    if(e.target.value) {
-      this.search = { ...this.search, [type]: e.target.value }
-    } else {
-      delete this.search[type]
-    }
-  }
-  selectHandler =  (type, value) => {
+  selectHandler = (type, value) => {
     this.props.dispatch({
       type: 'common/updateSearch',
       payload: {
@@ -148,8 +103,7 @@ class AdConfig extends Component {
         }
       }
     })
-    if(type === 'app_id') {
-      delete this.search.location_id
+    if( type === 'app_id' ) {
       this.props.dispatch({
         type: 'common/updateSearch',
         payload: {
@@ -166,6 +120,7 @@ class AdConfig extends Component {
           }
         }
       })
+      delete this.search.location_id
     }
     if(value) {
       this.search = { ...this.search, [type]: value }
@@ -178,19 +133,78 @@ class AdConfig extends Component {
     this.props.dispatch({ type: 'common/resetIndex' })
     location.hash = toQueryString({ ...this.search })
   }
-  hide = () => {
+  getBodyWrapper = (body) => {
+    return (
+      <tbody className='container ant-table-tbody' ref={this.dragulaDecorator}>
+        {body.props.children}
+      </tbody>
+    )
+  }
+  dragulaDecorator = (componentBackingInstance) => {
+    if (componentBackingInstance) {
+      let drake = Dragula([componentBackingInstance])
+
+      drake.on("drop", (el, target, source, sibling) => {
+        this._onDrop(el, target, source, sibling)
+        drake.cancel(true)
+      })
+
+      drake.on("cancel", (el) => {
+         this._onCancel(el)
+      })
+    }
+  }
+  _onDrop = (el, target, source, sibling) => {
+    let sorting = []
+    let orders = this.props.adConfig.data.objects
+    console.log('orders',orders)
+    for(let i = 0; i < target.children.length; i++) {
+      let child = target.children[i]
+      let id = parseInt(child.children[0].innerText)
+      sorting.push(id)
+    }
+    let i = 1
+    sorting.forEach(id => {
+      let order = orders.find(function(o) { return o.id == id })
+      order.sequence = i++
+    })
+
+    let ordersSorted = orders.sort((o1, o2) => o1.sequence - o2.sequence)
+
+    this.ordersCopy = ordersSorted
+  }
+  _onCancel = (el) => {
     this.props.dispatch({
-      type: 'adConfig/hideModal',
+      type: 'adConfig/updateData',
+      payload: {
+        data: {
+          objects: this.ordersCopy
+        }
+      }
+    })
+  }
+  order = () => {
+    const objects = this.props.adConfig.data.objects
+    let data = []
+    objects.map((value, index) => {
+      data.push({
+        id: value.id,
+        order: index + 1
+      })
+    })
+    this.props.dispatch({
+      type: 'adConfig/order',
+      payload: {
+        data
+      }
     })
   }
   render() {
-    const { common: { search }, adConfig: { data: { objects, pagination }, appData, postionData, previewImage, visible, key }, loading  } = this.props
-    const started_at = this.search.started_at ? moment(this.search.started_at, dateFormat) : null
-    const ended_at = this.search.ended_at ? moment(this.search.ended_at, dateFormat) : null
+    const { common: { search }, adConfig: { data: { objects, pagination }, appData, postionData }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row>
+        <Row className={styles['input-wrap']}>
           <Select
             value={ search.app_id }
             allowClear
@@ -205,15 +219,6 @@ class AdConfig extends Component {
                 })
               }
           </Select>
-          <span className={styles.input}>
-          <RangePicker
-            showTime
-            defaultValue={[started_at,ended_at]}
-            format={dateFormat}
-            onChange={this.timeChange} />
-          </span>
-        </Row>
-        <Row className={styles['input-wrap']}>
           <Select
             value={ search.location_id }
             allowClear
@@ -228,24 +233,6 @@ class AdConfig extends Component {
                 })
               }
           </Select>
-          <Select
-            defaultValue={this.search.display}
-            allowClear
-            className={styles.input}
-            placeholder='展示状态'
-            onChange={this.selectHandler.bind('this','display')}>
-              <Option value={'1'}>{'全部显示'}</Option>
-              <Option value={'2'}>{'按尾号显示'}</Option>
-          </Select>
-          <Select
-            defaultValue={this.search.status}
-            allowClear
-            className={styles.input}
-            placeholder='上下架'
-            onChange={this.selectHandler.bind('this','status')}>
-              <Option value={'1'}>{'下架'}</Option>
-              <Option value={'2'}>{'上架'}</Option>
-          </Select>
           <span className={styles['button-wrap']}>
             <Button
               type='primary'
@@ -257,14 +244,9 @@ class AdConfig extends Component {
             <Button
               type='primary'
               className={styles.button}
+              onClick={this.order}
               >
-              <Link to={`/advertisement/config/order`}>排序</Link>
-            </Button>
-            <Button
-              type='primary'
-              className={styles.button}
-              >
-              <Link to={`/advertisement/config/new`}>添加广告</Link>
+              同步到现网
             </Button>
           </span>
         </Row>
@@ -272,18 +254,15 @@ class AdConfig extends Component {
           dataSource={objects}
           columns={this.columns}
           loading={loading}
-          pagination={pagination}
+          pagination={false}
           scroll={{ x: 700 }}
+          getBodyWrapper={this.getBodyWrapper}
         />
-        <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
-          <img alt="暂无图片" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
       </div>
     )
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'adConfig/clear'})
-    this.props.dispatch({ type: 'common/resetSearch'})
   }
 }
 function mapStateToProps(state,props) {
@@ -294,4 +273,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(AdConfig)
+export default connect(mapStateToProps)(AdOrder)

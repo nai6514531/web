@@ -2,14 +2,16 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Button, Popconfirm, Input, Select, Row, DatePicker } from 'antd'
+import { Collapse, Button, Row, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
-const RangePicker = DatePicker.RangePicker
-const dateFormat = 'YYYY-MM-DD HH:mm:ss'
+import Dragula from 'react-dragula'
+import 'dragula/dist/dragula.css'
+import './drag.css'
+
+const Panel = Collapse.Panel
 const breadItems = [
   {
     title: '业务配置系统'
@@ -21,13 +23,10 @@ const breadItems = [
     title: '广告排序'
   }
 ]
-const { Option } = Select
-
 class AdOrder extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
-    this.search = search
+    this.activeKey
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '广告名', dataIndex: 'name',key: 'name' },
@@ -54,7 +53,19 @@ class AdOrder extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)'>{'\u00A0'}预览</a>
+              <a
+                href='javascript:void(0)'
+                onClick={() => {
+                  this.props.dispatch({
+                    type: 'adOrder/showModal',
+                    payload: {
+                      previewImage: record.image
+                    }
+                  })
+                }}
+                >
+                {'\u00A0'}预览
+              </a>
             </span>
           )
         }
@@ -62,143 +73,146 @@ class AdOrder extends Component {
     ]
   }
   componentDidMount() {
-    const url = this.search
     this.props.dispatch({
-      type: 'common/updateSearch',
-      payload: {
-        search: url
-      }
+      type: 'adOrder/postionList'
     })
-    this.props.dispatch({
-      type: 'adConfig/list',
-      payload: {
-        data: url,
-        order: true
-      }
-    })
-    this.props.dispatch({
-      type: 'adConfig/appList'
-    })
-    if(url.app_id) {
-      this.props.dispatch({
-        type: 'adConfig/postionList',
-        payload: {
-          data: {
-            app_id: url.app_id
-          }
-        }
-      })
-    }
-  }
-  selectHandler = (type, value) => {
-    this.props.dispatch({
-      type: 'common/updateSearch',
-      payload: {
-        search: {
-          [type]: value
-        }
-      }
-    })
-    if( type === 'app_id' ) {
-      this.props.dispatch({
-        type: 'common/updateSearch',
-        payload: {
-          search: {
-            location_id: undefined
-          }
-        }
-      })
-      this.props.dispatch({
-        type: 'adConfig/postionList',
-        payload: {
-          data: {
-            app_id: value
-          }
-        }
-      })
-      delete this.search.location_id
-    }
-    if(value) {
-      this.search = { ...this.search, [type]: value }
-    } else {
-      delete this.search[type]
-    }
 
   }
-  searchClick = () => {
-    this.props.dispatch({ type: 'common/resetIndex' })
-    location.hash = toQueryString({ ...this.search })
+  getBodyWrapper = (attr, body) => {
+    return (
+      <tbody className='container ant-table-tbody' id={attr} ref={this.dragulaDecorator}>
+        {body.props.children}
+      </tbody>
+    )
+  }
+  dragulaDecorator = (componentBackingInstance) => {
+    if (componentBackingInstance) {
+      let drake = Dragula([componentBackingInstance])
+
+      drake.on("drop", (el, target, source, sibling) => {
+        this._onDrop(el, target, source, sibling)
+        drake.cancel(true)
+      })
+
+      drake.on("cancel", (el, target) => {
+         this._onCancel(el, target)
+      })
+    }
+  }
+  _onDrop = (el, target, source, sibling) => {
+    let sorting = []
+    let id = source.getAttribute('id')
+    let orders = this.props.adOrder[id]
+    for(let i = 0; i < target.children.length; i++) {
+      let child = target.children[i]
+      let id = parseInt(child.children[0].innerText)
+      sorting.push(id)
+    }
+    let i = 1
+    sorting.forEach(id => {
+      let order = orders.find(function(o) { return o.id == id })
+      order.sequence = i++
+    })
+
+    let ordersSorted = orders.sort((o1, o2) => o1.sequence - o2.sequence)
+
+    this.ordersCopy = ordersSorted
+  }
+  _onCancel = (el, target) => {
+    let attr = target.getAttribute('id')
+    this.props.dispatch({
+      type: 'adOrder/updateData',
+      payload: {
+        [attr] : this.ordersCopy
+      }
+    })
+  }
+  order = (attr) => {
+    const objects = this.props.adOrder[attr]
+    let data = []
+    objects.map((value, index) => {
+      data.push({
+        id: value.id,
+        order: index + 1
+      })
+    })
+    this.props.dispatch({
+      type: 'adOrder/order',
+      payload: {
+        data
+      }
+    })
+  }
+  changeHandler = (key,o) => {
+    const { postionData } = this.props.adOrder
+    const activeKey = key[key.length - 1]
+    if(activeKey) {
+      const { appId, id } = postionData[activeKey]
+      const attr = `${appId}-${id}`
+      if(!this.props.adOrder[attr]) {
+        this.props.dispatch({
+          type: 'adOrder/list',
+          payload: {
+            attr: attr,
+            data: {
+              app_id: appId,
+              location_id: id
+            },
+            order: true
+          }
+        })
+      }
+    }
+  }
+  hide = () => {
+    this.props.dispatch({
+      type: 'adOrder/hideModal',
+    })
   }
   render() {
-    const { common: { search }, adConfig: { data: { objects, pagination }, appData, postionData }, loading  } = this.props
-    const started_at = this.search.started_at ? moment(this.search.started_at, dateFormat) : null
-    const ended_at = this.search.ended_at ? moment(this.search.ended_at, dateFormat) : null
+    const { adOrder: { postionData, previewImage, visible, key }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <Select
-            value={ search.app_id }
-            allowClear
-            className={styles.input}
-            placeholder='所属业务'
-            onChange={this.selectHandler.bind('this','app_id')}>
-              {
-                appData.map(value => {
-                  return (
-                    <Option value={value.id + ''} key={value.id}>{value.name}</Option>
-                  )
-                })
-              }
-          </Select>
-          <Select
-            value={ search.location_id }
-            allowClear
-            className={styles.input}
-            placeholder='广告位'
-            onChange={this.selectHandler.bind('this','location_id')}>
-              {
-                postionData.map(value => {
-                  return (
-                    <Option value={value.id + ''} key={value.id}>{value.name}</Option>
-                  )
-                })
-              }
-          </Select>
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              >
-              筛选
-            </Button>
-            <Button
-              type='primary'
-              className={styles.button}
-              >
-              <Link to={`/advertisement/order`}>同步到现网</Link>
-            </Button>
-          </span>
-        </Row>
-        <DataTable
-          dataSource={objects}
-          columns={this.columns}
-          loading={loading}
-          pagination={false}
-          scroll={{ x: 700 }}
-        />
+        <Collapse onChange={this.changeHandler}>
+          {
+            postionData.map((value, index) => {
+              const attr = `${value.appId}-${value.id}`
+              return (
+                <Panel header={`${value.appName}-${value.name}`} key={index}>
+                  <Button
+                    type='primary'
+                    style={{ marginBottom: 10 }}
+                    onClick={this.order.bind(this, attr)}
+                    >
+                    同步到现网
+                  </Button>
+                  <DataTable
+                    dataSource={this.props.adOrder[attr] || []}
+                    columns={this.columns}
+                    loading={loading}
+                    pagination={false}
+                    scroll={{ x: 700 }}
+                    getBodyWrapper={this.getBodyWrapper.bind(this,attr)}
+                  />
+                </Panel>
+              )
+            })
+          }
+        </Collapse>
+        <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
+          <img alt="暂无图片" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
       </div>
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'adConfig/clear'})
+    this.props.dispatch({ type: 'adOrder/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    common: state.common,
-    adConfig: state.adConfig,
+    adOrder: state.adOrder,
     loading: state.loading.global,
     ...props
   }

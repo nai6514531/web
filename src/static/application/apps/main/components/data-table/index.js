@@ -50,7 +50,7 @@ class DataTable extends Component {
     }
   }
   render() {
-    const { columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
+    const { getBodyWrapper, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
     const { pagination } = this.state
     return(
       <Table
@@ -58,6 +58,7 @@ class DataTable extends Component {
         columns={columns}
         dataSource={dataSource}
         loading={loading}
+        getBodyWrapper={getBodyWrapper}
         pagination={pagination}
         onChange={this.handleTableChange}
         rowKey= { rowKey || 'id' }

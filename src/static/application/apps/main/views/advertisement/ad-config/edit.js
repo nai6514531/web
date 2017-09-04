@@ -5,7 +5,10 @@ import { connect } from 'dva'
 import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
+import { API_SERVER } from '../../../utils/debug.js'
+import { storage } from '../../../utils/storage.js'
 import moment from 'moment'
+import './drag.css'
 
 const RangePicker = DatePicker.RangePicker
 const { Option } = Select
@@ -23,7 +26,7 @@ const breadItems = [
     title: '编辑'
   }
 ]
-
+const imageUrl = `${API_SERVER}/advertisements/images`
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -41,9 +44,9 @@ class PlatformEdit extends Component {
   }
   componentDidMount() {
     const { match: { params: { id } } } = this.props
-    this.props.dispatch({ type: 'adConfig/appList' })
+    this.props.dispatch({ type: 'adConfigDetail/appList' })
     id !== 'new' && this.props.dispatch({
-      type: 'adConfig/detail',
+      type: 'adConfigDetail/detail',
       payload: {
         id: id
       }
@@ -53,13 +56,27 @@ class PlatformEdit extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const { match: { params: { id } }, history } = this.props
-        let type = 'adConfig/add'
+        const { match: { params: { id } }, history, adConfigDetail: { fileList } } = this.props
+        let type = 'adConfigDetail/add'
         if(id !== 'new') {
-          type = 'adConfig/update'
+          type = 'adConfigDetail/update'
         }
         if(values.displayParams) {
           values.displayParams = values.displayParams.replace(/，/g,',')
+        }
+        if(fileList[0] && fileList[0].image) {
+          values.image = fileList[0].image
+        } else {
+          this.props.dispatch({
+            type: 'adConfigDetail/updateData',
+            payload: {
+              help: {
+                validateStatus: 'error',
+                help: '请选择图片上传'
+              }
+            }
+          })
+          return
         }
         values.startedAt = moment(values.time[0]).format('YYYY-MM-DDTHH:mm:ss')
         values.endedAt = moment(values.time[1]).format('YYYY-MM-DDTHH:mm:ss')
@@ -67,7 +84,6 @@ class PlatformEdit extends Component {
         values.displayStrategy = Number(values.displayStrategy)
         values.status = Number(values.status)
         values.locationId = Number(values.locationId)
-        values.image = 'http://123321321321'
         this.props.dispatch({
           type: type,
           payload: {
@@ -84,15 +100,50 @@ class PlatformEdit extends Component {
   }
   handlePreview = (file) => {
     this.props.dispatch({
-      type: 'adConfig/showModal',
+      type: 'adConfigDetail/showModal',
       payload: {
         previewImage: file.url || file.thumbUrl
       }
     })
   }
-  handleChange = ({fileList, event}) => {
+  handleChange = ({fileList, event, file}) => {
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        file.image = file.response.data
+      }
+      return file
+    })
+    fileList = fileList.filter((file) => {
+      if (file.response) {
+        if(file.response.status === 'OK') {
+          this.props.dispatch({
+            type: 'adConfigDetail/updateData',
+            payload: {
+              help: {
+                validateStatus: 'success',
+                help: '图片上传成功'
+              }
+            }
+          })
+          return file.response.status === 'OK'
+        } else {
+          this.props.dispatch({
+            type: 'adConfigDetail/updateData',
+            payload: {
+              help: {
+                validateStatus: 'error',
+                help: '图片上传失败,请重新尝试'
+              }
+            }
+          })
+          return false
+        }
+      }
+      console.log('file',file)
+      return true
+    })
     this.props.dispatch({
-      type: 'adConfig/updateData',
+      type: 'adConfigDetail/updateData',
       payload: {
         fileList: fileList
       }
@@ -100,85 +151,67 @@ class PlatformEdit extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'adConfig/hideModal'
+      type: 'adConfigDetail/hideModal'
     })
   }
   beforeUpload = (file, fileList) => {
-    // if( file.size/1000 > 200 ) {
-    //   this.props.dispatch({
-    //     type: 'adConfig/updateData',
-    //     payload: {
-    //       help: {
-    //         validateStatus: 'error',
-    //         help: '请上传200k以内的图片'
-    //       }
-    //     }
-    //   })
-    //   return false
-    // } else {
-    //   this.props.dispatch({
-    //     type: 'adConfig/updateData',
-    //     payload: {
-    //       help: {
-    //         validateStatus: '',
-    //         help: ''
-    //       }
-    //     }
-    //   })
-    // }
+    const isJPG = file.type === 'image/jpeg'
+    const isPNG = file.type === 'image/png'
+    if(!isJPG && !isPNG) {
+      Message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if(!isLt2M) {
+      Message.error('Image must smaller than 2MB!');
+    }
+    return (isJPG || isPNG) && isLt2M;
   }
   onRemove = () => {
-    // this.props.dispatch({
-    //   type: 'adConfig/updateData',
-    //   payload: {
-    //     help: {
-    //       validateStatus: 'success',
-    //       help: '图片上传成功'
-    //     }
-    //   }
-    // })
-  }
-  successHandler = () => {
-    Message.success('图片上传成功')
-  }
-  errorHandler = () => {
-    Message.error('图片上传失败,请重新尝试')
     this.props.dispatch({
-      type: 'adConfig/updateData',
+      type: 'adConfigDetail/updateData',
       payload: {
         fileList: []
+      }
+    })
+    this.props.dispatch({
+      type: 'adConfigDetail/updateData',
+      payload: {
+        help: {
+          validateStatus: '',
+          help: '请上传200k以内的图片'
+        }
       }
     })
   }
   handleAppChange = (value) => {
     this.props.dispatch({
-      type: 'adConfig/postionList',
+      type: 'adConfigDetail/postionList',
       payload: {
         data: {
           app_id: value
         }
       }
     })
-    this.props.dispatch({ type: 'adConfig/deleteLocation' })
+    this.props.dispatch({ type: 'adConfigDetail/deleteLocation' })
     this.props.form.setFieldsValue({
       locationId: undefined,
     })
   }
   selectHandler = (type, value) => {
     this.props.dispatch({
-      type: 'adConfig/updateData',
+      type: 'adConfigDetail/updateData',
       payload: {
         [type]: value
       }
     })
   }
   render() {
-    const { adConfig: { detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { adConfigDetail: { detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">Upload</div>
+        <Icon type='plus' />
+        <div className='ant-upload-text'>Upload</div>
       </div>
     )
     const { startedAt, endedAt } = detail
@@ -264,20 +297,19 @@ class PlatformEdit extends Component {
             {...help}
           >
              <Upload
-               action="//jsonplaceholder.typicode.com/posts/"
-               listType="picture-card"
+               action={imageUrl}
+               listType='picture-card'
                fileList={fileList}
                onPreview={this.handlePreview}
                onChange={this.handleChange}
                beforeUpload={this.beforeUpload}
                onRemove={this.onRemove}
-               onSuccess={this.successHandler}
-               onError={this.errorHandler}
+               headers={{ Authorization: 'Bearer ' + (storage.val('token') || '') }}
              >
                {fileList.length == 1 ? null : uploadButton}
              </Upload>
              <Modal visible={visible} footer={null} onCancel={this.hide}>
-               <img alt="example" style={{ width: '100%' }} src={previewImage} />
+               <img alt='example' style={{ width: '100%' }} src={previewImage} />
              </Modal>
            </FormItem>
           <FormItem
@@ -376,10 +408,13 @@ class PlatformEdit extends Component {
       </Spin>
     )
   }
+  componentWillUnmount() {
+    this.props.dispatch({ type: 'adConfigDetail/clear'})
+  }
 }
 function mapStateToProps(state,props) {
   return {
-    adConfig: state.adConfig,
+    adConfigDetail: state.adConfigDetail,
     loading: state.loading.global,
     ...props
   }

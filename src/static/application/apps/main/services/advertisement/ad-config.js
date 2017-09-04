@@ -25,7 +25,7 @@ const adConfigService = {
     return request.post(`/advertisements/images`, data)
   },
   order: (data) => {
-    return request.put(`/advertisements/batch/orders`, data)
+    return request.post(`/advertisements/batch/orders`, data)
   }
 }
 

@@ -119,7 +119,7 @@ class PlatformEdit extends Component {
               }],
               initialValue: detail.name
             })(
-              <Input/>
+              <Input placeholder='请输入广告位名'/>
             )}
           </FormItem>
           { isEdit ? (
@@ -144,7 +144,7 @@ class PlatformEdit extends Component {
               }],
               initialValue: detail.identifyNeeded !== undefined ? detail.identifyNeeded + '' : detail.identifyNeeded
             })(
-              <Select>
+              <Select placeholder='请选择登录状态'>
                   <Option value={'0'}>否</Option>
                   <Option value={'1'}>是</Option>
               </Select>

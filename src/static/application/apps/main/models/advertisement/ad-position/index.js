@@ -21,8 +21,8 @@ export default {
     }
   },
   effects: {
-    *list({ payload: { data } }, { call, put }) {
-      const result = yield call(adPositionService.list, data)
+    *list({ payload = {} }, { call, put }) {
+      const result = yield call(adPositionService.list, payload.data)
       yield put({ type: 'appList' })
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
