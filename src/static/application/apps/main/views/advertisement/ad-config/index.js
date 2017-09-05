@@ -25,8 +25,8 @@ class AdConfig extends Component {
     super(props)
     const search = transformUrl(location.hash)
     // 搜索时跳到默认分页
-    delete search.page
-    delete search.per_page
+    // delete search.page
+    // delete search.per_page
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
@@ -176,6 +176,8 @@ class AdConfig extends Component {
   }
   searchClick = () => {
     this.props.dispatch({ type: 'common/resetIndex' })
+    this.search.page = 1
+    // delete this.search.per_page
     location.hash = toQueryString({ ...this.search })
   }
   hide = () => {
@@ -273,7 +275,7 @@ class AdConfig extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
-          scroll={{ x: 700 }}
+          scroll={{ x: 1300 }}
         />
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
           <img alt="暂无图片" style={{ width: '100%' }} src={previewImage} />

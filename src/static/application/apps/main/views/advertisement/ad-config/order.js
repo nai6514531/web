@@ -17,7 +17,8 @@ const breadItems = [
     title: '业务配置系统'
   },
   {
-    title: '广告配置'
+    title: '广告配置',
+    url: '/advertisement/config'
   },
   {
     title: '广告排序'

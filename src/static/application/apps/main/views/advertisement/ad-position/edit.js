@@ -14,7 +14,7 @@ const breadItems = [
   },
   {
     title: '广告位管理',
-    url: ''
+    url: '/advertisement/position-manager'
   },
   {
     title: '编辑'
@@ -148,6 +148,19 @@ class PlatformEdit extends Component {
                   <Option value={'0'}>否</Option>
                   <Option value={'1'}>是</Option>
               </Select>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label='广告图规格'
+          >
+            {getFieldDecorator('standard', {
+              rules: [{
+                required: true, message: '请输入广告图规格！',
+              }],
+              initialValue: detail.standard
+            })(
+              <Input placeholder='请输入广告图规格及大小限制，例如750*210，200k以内' />
             )}
           </FormItem>
           <FormItem

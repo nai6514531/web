@@ -13,7 +13,7 @@ const breadItems = [
   },
   {
     title: '业务管理',
-    url: ''
+    url: '/platform/business'
   },
   {
     title: '编辑'
@@ -47,7 +47,6 @@ class PlatformEdit extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
-      console.log('values',values)
       if(!err) {
         const { match: { params: { id } }, history } = this.props
         let type = 'platform/add'

@@ -6,26 +6,21 @@ const model = {
   data: {
     objects: []
   },
-  initSearch: '',
   provinceData: [],
+  clonedProvinceData: [],
   summary: null
 }
 export default {
   namespace: 'circle',
   state: cloneDeep(model),
   reducers: {
-    updateData(state, { payload: { data } }) {
-      return { ...state, data }
-    },
-    updateProvinceData(state, { payload: { provinceData } }) {
-      return { ...state, provinceData }
-    },
-    updateSummary(state, { payload: { summary } }) {
-      return { ...state, summary }
+    updateData(state, { payload }) {
+      return { ...state, ...payload }
     },
     clear(state) {
       model.provinceData = state.provinceData
       model.summary = state.summary
+      model.clonedProvinceData = state.clonedProvinceData
       return model
     }
   },
@@ -41,7 +36,8 @@ export default {
       if( !circle.provinceData.length ) {
         const province = yield call(regionService.province)
         if(province.status == 'OK') {
-          yield put({ type: 'updateProvinceData', payload: { provinceData: province.data } })
+          yield put({ type: 'updateData', payload: { provinceData: province.data } })
+          yield put({ type: 'updateData', payload: { clonedProvinceData: province.data } })
         } else {
           province.message && message.error(province.message)
         }
@@ -49,7 +45,7 @@ export default {
       if( !circle.summary ) {
         const summary = yield call(circleService.summary)
         if(summary.status == 'OK') {
-          yield put({ type: 'updateSummary', payload: { summary: summary.data } })
+          yield put({ type: 'updateData', payload: { summary: summary.data } })
         } else {
           summary.message && message.error(summary.message)
         }

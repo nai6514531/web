@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Select, Button } from 'antd'
+import { Select, Button, AutoComplete } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
@@ -17,6 +17,7 @@ const breadItems = [
     title: '城市管理'
   }
 ]
+
 class Circle extends Component {
   constructor(props) {
     super(props)
@@ -96,26 +97,52 @@ class Circle extends Component {
     }
     this.search = { ...this.search, [type]: value }
   }
+  handleSearch = (filterKey) => {
+    const { provinceData, clonedProvinceData } = this.props.circle
+    const result = clonedProvinceData.filter(function( value, index ){
+        return new RegExp( filterKey , 'img' ).test( value.name );
+    });
+    this.props.dispatch({
+      type: 'circle/updateData',
+      payload: {
+        provinceData: result
+      }
+    })
+    if(!filterKey) {
+      this.props.dispatch({
+        type: 'circle/updateData',
+        payload: {
+          provinceData: clonedProvinceData
+        }
+      })
+    }
+  }
   searchClick = () => {
+    this.props.dispatch({
+      type: 'circle/updateData',
+      payload: {
+        provinceData: this.props.circle.clonedProvinceData
+      }
+    })
     location.hash = toQueryString({ ...this.search })
   }
   render() {
-    const { circle: { summary, data: { objects, pagination }, provinceData }, loading, common: { search }  } = this.props
+    const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData }, loading, common: { search }  } = this.props
+    const dataSource = this.props.circle.provinceData.map(value => {
+      return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+    })
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Select
+        <AutoComplete
           placeholder='省'
           value={search.province_id}
           allowClear
           className={styles.input}
+          dataSource={dataSource}
+          onSearch={this.handleSearch}
           onChange={this.changeHandler.bind('this','province_id')}>
-            {
-              provinceData.map(value => {
-                return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
-              })
-            }
-        </Select>
+        </AutoComplete>
         <span className={styles['button-wrap']}>
           <Button
             type='primary'

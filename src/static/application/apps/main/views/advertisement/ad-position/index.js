@@ -22,8 +22,6 @@ class AdPosition extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.hash)
-    // delete search.page
-    // delete search.per_page
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
@@ -92,6 +90,8 @@ class AdPosition extends Component {
   }
   searchClick = () => {
     this.props.dispatch({ type: 'common/resetIndex' })
+    this.search.page = 1
+    // delete this.search.per_page
     location.hash = toQueryString({ ...this.search })
   }
   render() {
@@ -122,24 +122,26 @@ class AdPosition extends Component {
             >
             筛选
           </Button>
+          <Button
+            type='primary'
+            style={{marginBottom: '20px'}}
+            >
+            <Link to={`/advertisement/position-manager/new`}>添加广告位</Link>
+          </Button>
         </span>
-        <Button
-          type='primary'
-          style={{marginBottom: '20px'}}
-          >
-          <Link to={`/advertisement/position-manager/new`}>添加广告位</Link>
-        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          scroll={{ x: 800 }}
         />
       </div>
     )
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'adPosition/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {

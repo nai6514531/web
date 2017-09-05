@@ -20,7 +20,7 @@ const breadItems = [
   },
   {
     title: '广告配置',
-    url: ''
+    url: '/advertisement/config'
   },
   {
     title: '编辑'
@@ -157,13 +157,13 @@ class PlatformEdit extends Component {
     const isJPG = file.type === 'image/jpeg'
     const isPNG = file.type === 'image/png'
     if(!isJPG && !isPNG) {
-      Message.error('You can only upload JPG/PNG file!');
+      Message.error('上传的图片格式错误');
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if(!isLt2M) {
-      Message.error('Image must smaller than 2MB!');
+    const isLt1M = file.size / 1024 / 1024 < 1;
+    if(!isLt1M) {
+      Message.error('图片过大，请压缩后再上传');
     }
-    return (isJPG || isPNG) && isLt2M;
+    return (isJPG || isPNG) && isLt1M;
   }
   onRemove = () => {
     this.props.dispatch({
@@ -177,7 +177,7 @@ class PlatformEdit extends Component {
       payload: {
         help: {
           validateStatus: '',
-          help: '请上传200k以内的图片'
+          help: '请上传1M以内的图片'
         }
       }
     })
@@ -197,6 +197,22 @@ class PlatformEdit extends Component {
     })
   }
   selectHandler = (type, value) => {
+    if(type === 'locationId') {
+      this.props.adConfigDetail.postionData.map((item) => {
+        if(value == item.id) {
+          this.props.dispatch({
+            type: 'adConfigDetail/updateData',
+            payload: {
+              help: {
+                validateStatus: '',
+                help: item.standard
+              }
+            }
+          })
+        }
+      })
+      return
+    }
     this.props.dispatch({
       type: 'adConfigDetail/updateData',
       payload: {
@@ -205,12 +221,12 @@ class PlatformEdit extends Component {
     })
   }
   render() {
-    const { adConfigDetail: { detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { adConfigDetail: { standard, detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
         <Icon type='plus' />
-        <div className='ant-upload-text'>Upload</div>
+        <div className='ant-upload-text'>图片</div>
       </div>
     )
     const { startedAt, endedAt } = detail
@@ -252,7 +268,8 @@ class PlatformEdit extends Component {
               initialValue: detail.locationId !== undefined ? detail.locationId + '' : undefined
             })(
               <Select
-                placeholder='广告位'>
+                placeholder='广告位'
+                onChange={this.selectHandler.bind(this, 'locationId')}>
                 {
                   postionData.map(value => {
                     return (
@@ -308,6 +325,7 @@ class PlatformEdit extends Component {
                beforeUpload={this.beforeUpload}
                onRemove={this.onRemove}
                headers={{ Authorization: 'Bearer ' + (storage.val('token') || '') }}
+               withCredentials={true}
              >
                {fileList.length == 1 ? null : uploadButton}
              </Upload>

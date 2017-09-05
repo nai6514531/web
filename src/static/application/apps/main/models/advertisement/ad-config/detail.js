@@ -14,7 +14,7 @@ const model = {
   displayStrategy: '0',
   help: {
     validateStatus: '',
-    help: '请上传200k以内的图片'
+    help: '请上传1M以内的图片'
   }
 }
 export default {
@@ -54,19 +54,38 @@ export default {
       const result = yield call(adPositionService.list, payload.data)
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
+        let help = ''
+        if(payload.data && payload.data.locationId) {
+          result.data.objects.map((item) => {
+            if(payload.data.locationId == item.id) {
+              help = item.standard
+            }
+          })
+        }
+        yield put({
+          type: 'updateData',
+          payload: {
+            help: {
+              validateStatus: '',
+              help: help
+            }
+          }
+        })
+
       } else {
         message.error(result.message)
       }
     },
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(adConfigService.detail, id)
-      const image = result.data.image.split('/')
       if(result.status == 'OK') {
+        const image = result.data.image.split('/')
         yield put({
           type: 'postionList',
           payload: {
             data: {
-              app_id: result.data.appId
+              app_id: result.data.appId,
+              locationId: result.data.locationId
             }
           }
         })
