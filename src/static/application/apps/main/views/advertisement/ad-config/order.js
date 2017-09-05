@@ -222,6 +222,7 @@ class AdOrder extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'adOrder/clear'})
+    this.props.dispatch({ type: 'common/resetSearch'})
   }
 }
 function mapStateToProps(state,props) {

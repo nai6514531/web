@@ -17,6 +17,7 @@ export default {
       return { ...state, ...payload }
     },
     clear(state) {
+      model.appData = state.appData
       return model
     }
   },

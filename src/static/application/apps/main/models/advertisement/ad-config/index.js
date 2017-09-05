@@ -34,6 +34,8 @@ export default {
       return { ...state }
     },
     clear(state) {
+      model.appData = state.appData
+      model.postionData = state.postionData
       return model
     }
   },
