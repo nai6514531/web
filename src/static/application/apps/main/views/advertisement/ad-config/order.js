@@ -34,14 +34,14 @@ class AdOrder extends Component {
       { title: '广告标题', dataIndex: 'title', key: 'title' },
       { title: '活动链接', dataIndex: 'url',key: 'url' },
       {
-        title: '显示时间',
+        title: '展示时间',
         render: (text, record) => {
           return (
             `${moment(record.startedAt).format('YYYY-MM-DD HH:mm')}  ~  ${moment(record.endedAt).format('YYYY-MM-DD HH:mm')}`
           )
         }
       },
-      { title: '显示状态',
+      { title: '展示状态',
         render: (text, record) => {
           return (
             record.displayStrategy === 1 ? '全部显示' : '按尾号显示'
