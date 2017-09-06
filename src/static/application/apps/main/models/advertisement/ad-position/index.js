@@ -68,11 +68,14 @@ export default {
         message.error(result.message)
       }
     },
-    *delete({ payload }, { call, put }) {
-      const result = yield call(adPositionService.delete, payload.id)
+    *delete({ payload: { id, data } }, { call, put }) {
+      const result = yield call(adPositionService.delete, id)
       if(result.status == 'OK') {
         message.success('删除成功')
-        yield put({ type: 'list' })
+        yield put({
+          type: 'list',
+          payload: { data }
+        })
       } else {
         message.error(result.message)
       }

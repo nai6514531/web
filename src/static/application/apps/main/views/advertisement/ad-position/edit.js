@@ -5,22 +5,10 @@ import { connect } from 'dva'
 import { Spin, Form, Input, Button, Select } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
+import { trim } from 'lodash'
 
 const { Option } = Select
 const FormItem = Form.Item
-const breadItems = [
-  {
-    title: '业务配置系统'
-  },
-  {
-    title: '广告位管理',
-    url: '/advertisement/position-manager'
-  },
-  {
-    title: '编辑'
-  }
-]
-
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -65,6 +53,10 @@ class PlatformEdit extends Component {
         }
         values.appId = Number(values.appId)
         values.identifyNeeded = Number(values.identifyNeeded)
+        values.name = trim(values.name)
+        values.standard = trim(values.standard)
+        values.description = trim(values.description)
+
         this.props.dispatch({
           type: type,
           payload: {
@@ -79,9 +71,29 @@ class PlatformEdit extends Component {
   cancelHandler = () => {
     this.props.history.goBack()
   }
+  trim = ( description, rule, value, callback) => {
+    const result = !trim(value)
+    if ( result && value != '' ) {
+      callback(description)
+    } else {
+      callback()
+    }
+  }
   render() {
     const { form: { getFieldDecorator }, match: { params: { id } }, adPosition : { detail, appData }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
+    const breadItems = [
+      {
+        title: '业务配置系统'
+      },
+      {
+        title: '广告位管理',
+        url: '/advertisement/position-manager'
+      },
+      {
+        title: isEdit ? '编辑' : '添加'
+      }
+    ]
     return(
       <Spin spinning={loading}>
         <Breadcrumb items={breadItems} />
@@ -116,6 +128,8 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入10个字符以内广告位名！',
               },{
                 max: 10, message: '长度最多10个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入10个字符以内广告位名！' ),
               }],
               initialValue: detail.name
             })(
@@ -157,6 +171,10 @@ class PlatformEdit extends Component {
             {getFieldDecorator('standard', {
               rules: [{
                 required: true, message: '请输入广告图规格！',
+              },{
+                max: 20, message: '长度最多20个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入广告图规格！' ),
               }],
               initialValue: detail.standard
             })(
@@ -172,6 +190,8 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入50字符以内广告位说明！',
               },{
                 max: 50, message: '长度最多50个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入50字符以内广告位说明！' ),
               }],
               initialValue: detail.description
             })(

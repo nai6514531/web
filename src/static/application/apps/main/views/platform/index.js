@@ -64,15 +64,15 @@ class Platform extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Button
-          type='primary'
-          style={{marginBottom: '20px'}}
-          >
-          <Link
-            to={`/platform/business/new`}>
-            添加业务
-          </Link>
-        </Button>
+        <Link
+          to={`/platform/business/new`}>
+          <Button
+            type='primary'
+            style={{marginBottom: '20px'}}
+            >
+          添加业务
+          </Button>
+        </Link>
         <DataTable
           dataSource={objects}
           columns={this.columns}

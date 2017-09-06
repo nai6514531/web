@@ -34,16 +34,16 @@ class AdConfig extends Component {
       { title: '广告位', dataIndex: 'locationName', key: 'locationName' },
       { title: '广告名', dataIndex: 'name',key: 'name' },
       { title: '广告标题', dataIndex: 'title', key: 'title' },
-      { title: '活动链接', dataIndex: 'url',key: 'url' },
+      { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
       {
-        title: '显示时间',
+        title: '展示时间',
         render: (text, record) => {
           return (
-            `${moment(record.startedAt).format('YYYY-MM-DD HH:mm')}  ~  ${moment(record.endedAt).format('YYYY-MM-DD HH:mm')}`
+            `${moment(record.startedAt).format('YYYY-MM-DD HH:mm:ss')}  ~  ${moment(record.endedAt).format('YYYY-MM-DD HH:mm:ss')}`
           )
         }
       },
-      { title: '显示状态',
+      { title: '展示状态',
         render: (text, record) => {
           return (
             record.displayStrategy === 1 ? '全部显示' : '按尾号显示'
@@ -114,10 +114,12 @@ class AdConfig extends Component {
     }
   }
   delete = (id) => {
+    const url = this.search
     this.props.dispatch({
       type: 'adConfig/delete',
       payload: {
-        id: id
+        id: id,
+        data: url
       }
     })
   }
@@ -193,6 +195,13 @@ class AdConfig extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Row>
+          <Input
+            placeholder='广告名'
+            className={styles.input}
+            onChange={this.changeHandler.bind(this, 'title')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.title}
+           />
           <Select
             value={ search.app_id }
             allowClear
@@ -212,7 +221,11 @@ class AdConfig extends Component {
             showTime
             defaultValue={[started_at,ended_at]}
             format={dateFormat}
-            onChange={this.timeChange} />
+            onChange={this.timeChange}
+            showTime={{
+              hideDisabledOptions: true,
+              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+            }} />
           </span>
         </Row>
         <Row className={styles['input-wrap']}>
@@ -245,8 +258,8 @@ class AdConfig extends Component {
             className={styles.input}
             placeholder='上下架'
             onChange={this.selectHandler.bind('this','status')}>
-              <Option value={'1'}>{'下架'}</Option>
               <Option value={'2'}>{'上架'}</Option>
+              <Option value={'1'}>{'下架'}</Option>
           </Select>
           <span className={styles['button-wrap']}>
             <Button
@@ -256,18 +269,22 @@ class AdConfig extends Component {
               >
               筛选
             </Button>
-            <Button
-              type='primary'
-              className={styles.button}
-              >
-              <Link to={`/advertisement/config/order`}>排序</Link>
-            </Button>
-            <Button
-              type='primary'
-              className={styles.button}
-              >
-              <Link to={`/advertisement/config/new`}>添加广告</Link>
-            </Button>
+            <Link to={`/advertisement/config/order`}>
+              <Button
+                type='primary'
+                className={styles.button}
+                >
+               排序
+              </Button>
+            </Link>
+            <Link
+              to={`/advertisement/config/new`}>
+              <Button
+                type='primary'
+                className={styles.button}>
+                添加广告
+              </Button>
+            </Link>
           </span>
         </Row>
         <DataTable
@@ -275,7 +292,7 @@ class AdConfig extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
-          scroll={{ x: 1300 }}
+          scroll={{ x: 1000 }}
         />
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
           <img alt="暂无图片" style={{ width: '100%' }} src={previewImage} />

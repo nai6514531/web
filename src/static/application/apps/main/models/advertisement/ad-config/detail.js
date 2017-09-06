@@ -11,7 +11,7 @@ const model = {
   fileList: [],
   key: 0,
   detail: {},
-  displayStrategy: '0',
+  displayStrategy: 1,
   help: {
     validateStatus: '',
     help: '请上传1M以内的图片'
@@ -95,22 +95,18 @@ export default {
             help: {
               validateStatus: 'success',
               help: '图片上传成功'
-            }
-          }
-        })
-        yield put({
-          type: 'updateData',
-          payload: {
+            },
             fileList: [{
               image: image[image.length - 1],
               url: result.data.image,
               uid: -1,
               status: 'done',
               percent: 100,
-            }]
+            }],
+            detail: result.data,
+            displayStrategy: result.data.displayStrategy
           }
         })
-        yield put({ type: 'updateData', payload: { detail: result.data } })
       } else {
         message.error(result.message)
       }

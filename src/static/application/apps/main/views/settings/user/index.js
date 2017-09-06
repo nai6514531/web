@@ -168,14 +168,14 @@ class User extends Component {
             >
             搜索
           </Button>
-          <Button
-            type='primary'
-            style={{marginBottom: 20, marginRight: 20 }}>
-              <Link
-                to={`/admin/settings/user/new`}>
+          <Link
+            to={`/admin/settings/user/new`}>
+            <Button
+              type='primary'
+              style={{marginBottom: 20, marginRight: 20 }}>
                 添加用户
-              </Link>
-          </Button>
+            </Button>
+          </Link>
         </span>
         <DataTable
           scroll={{ x: 700 }}

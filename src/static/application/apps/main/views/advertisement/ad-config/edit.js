@@ -7,6 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../utils/debug.js'
 import { storage } from '../../../utils/storage.js'
+import { trim } from 'lodash'
 import moment from 'moment'
 import './drag.css'
 
@@ -14,18 +15,6 @@ const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
-const breadItems = [
-  {
-    title: '业务配置系统'
-  },
-  {
-    title: '广告配置',
-    url: '/advertisement/config'
-  },
-  {
-    title: '编辑'
-  }
-]
 const imageUrl = `${API_SERVER}/advertisements/images`
 const formItemLayout = {
   labelCol: {
@@ -78,12 +67,15 @@ class PlatformEdit extends Component {
           })
           return
         }
-        values.startedAt = moment(values.time[0]).format('YYYY-MM-DDTHH:mm:ss')
-        values.endedAt = moment(values.time[1]).format('YYYY-MM-DDTHH:mm:ss')
+        values.startedAt = moment(values.time[0],moment.ISO_8601).format()
+        values.endedAt = moment(values.time[1],moment.ISO_8601).format()
         values.appId = Number(values.appId)
         values.displayStrategy = Number(values.displayStrategy)
         values.status = Number(values.status)
         values.locationId = Number(values.locationId)
+        values.name = trim(values.name)
+        values.title = trim(values.title)
+        values.url = trim(values.url)
         this.props.dispatch({
           type: type,
           payload: {
@@ -220,6 +212,14 @@ class PlatformEdit extends Component {
       }
     })
   }
+  trim = ( description, rule, value, callback) => {
+    const result = !trim(value)
+    if ( result && value != '' ) {
+      callback(description)
+    } else {
+      callback()
+    }
+  }
   render() {
     const { adConfigDetail: { standard, detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
@@ -229,6 +229,18 @@ class PlatformEdit extends Component {
         <div className='ant-upload-text'>图片</div>
       </div>
     )
+    const breadItems = [
+      {
+        title: '业务配置系统'
+      },
+      {
+        title: '广告配置',
+        url: '/advertisement/config'
+      },
+      {
+        title: isEdit ? '编辑' : '添加'
+      }
+    ]
     const { startedAt, endedAt } = detail
     return(
       <Spin spinning={loading}>
@@ -289,6 +301,8 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入20字以内的广告名！',
               },{
                 max: 20, message: '长度最多20个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入20字以内的广告名！'),
               }],
               initialValue: detail.name
             })(
@@ -304,6 +318,8 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入20字以内的广告标题！',
               },{
                 max: 20, message: '长度最多20个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入20字以内的广告标题！'),
               }],
               initialValue: detail.title
             })(
@@ -340,6 +356,10 @@ class PlatformEdit extends Component {
             {getFieldDecorator('url', {
               rules: [{
                 required: true, message: '请输入广告跳转链接，以http://或https://开头!',
+              },{
+                max: 255, message: '长度最多255个字符！'
+              },{
+                validator: this.trim.bind(this,'请输入广告跳转链接，以http://或https://开头!'),
               }],
               initialValue: detail.url
             })(
@@ -357,7 +377,13 @@ class PlatformEdit extends Component {
               }],
               initialValue: (startedAt && endedAt) ? [ moment(startedAt, dateFormat), moment(endedAt, dateFormat) ]: undefined
             })(
-              <RangePicker showTime format={dateFormat}/>
+              <RangePicker
+                showTime
+                format={dateFormat}
+                showTime={{
+                  hideDisabledOptions: true,
+                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                }}/>
             )}
           </FormItem>
           <FormItem
@@ -379,7 +405,7 @@ class PlatformEdit extends Component {
             )}
           </FormItem>
           {
-            (displayStrategy === '2' || detail.displayStrategy == 2) ? (
+            (displayStrategy == 2) ? (
               <FormItem
                 {...formItemLayout}
                 label='用户号码尾号'
@@ -387,6 +413,8 @@ class PlatformEdit extends Component {
                 {getFieldDecorator('displayParams', {
                   rules: [{
                     required: true, message: '请输入用户号码尾号!',
+                  },{
+                    validator: this.trim.bind(this,'请输入用户号码尾号!'),
                   }],
                   initialValue: detail.displayParams
                 })(
@@ -406,8 +434,8 @@ class PlatformEdit extends Component {
               initialValue: detail.status !== undefined ? detail.status + '' : undefined
             })(
               <Select placeholder='请选择上下架'>
-                  <Option value={'1'}>下架</Option>
-                  <Option value={'2'}>上架</Option>
+                <Option value={'2'}>上架</Option>
+                <Option value={'1'}>下架</Option>
               </Select>
             )}
           </FormItem>

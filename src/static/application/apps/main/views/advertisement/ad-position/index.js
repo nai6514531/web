@@ -66,10 +66,12 @@ class AdPosition extends Component {
     })
   }
   delete = (id) => {
+    const url = this.search
     this.props.dispatch({
       type: 'adPosition/delete',
       payload: {
-        id: id
+        id: id,
+        data: url
       }
     })
   }
@@ -122,12 +124,14 @@ class AdPosition extends Component {
             >
             筛选
           </Button>
-          <Button
-            type='primary'
-            style={{marginBottom: '20px'}}
-            >
-            <Link to={`/advertisement/position-manager/new`}>添加广告位</Link>
-          </Button>
+          <Link
+            to={`/advertisement/position-manager/new`}>
+              <Button
+                type='primary'
+                style={{marginBottom: '20px'}}>
+                添加广告位
+              </Button>
+          </Link>
         </span>
         <DataTable
           dataSource={objects}
