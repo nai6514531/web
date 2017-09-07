@@ -32,7 +32,7 @@ class AdOrder extends Component {
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '广告名', dataIndex: 'name',key: 'name' },
       { title: '广告标题', dataIndex: 'title', key: 'title' },
-      { title: '活动链接', dataIndex: 'url',key: 'url' },
+      { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
       {
         title: '展示时间',
         render: (text, record) => {

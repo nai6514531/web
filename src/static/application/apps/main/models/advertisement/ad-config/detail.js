@@ -15,7 +15,8 @@ const model = {
   help: {
     validateStatus: '',
     help: '请上传1M以内的图片'
-  }
+  },
+  identifyNeeded: 0
 }
 export default {
   namespace: 'adConfigDetail',
@@ -55,10 +56,12 @@ export default {
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
         let help = ''
+        let identifyNeeded = 0
         if(payload.data && payload.data.locationId) {
           result.data.objects.map((item) => {
             if(payload.data.locationId == item.id) {
-              help = item.standard
+              help = item.standard,
+              identifyNeeded = item.identifyNeeded
             }
           })
         }
@@ -68,7 +71,8 @@ export default {
             help: {
               validateStatus: '',
               help: help
-            }
+            },
+            identifyNeeded: identifyNeeded
           }
         })
 

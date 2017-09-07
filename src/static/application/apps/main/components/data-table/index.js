@@ -36,22 +36,24 @@ class DataTable extends Component {
     location.hash = toQueryString({ ...url, page: current, per_page: pageSize })
   }
   componentWillReceiveProps(nextProps) {
-    const propPagination = this.props.pagination
-    if(propPagination === false) {
-      this.setState({
-        pagination: false
-      })
-    }
-    if(propPagination) {
-      const pager = { ...this.state.pagination, ...propPagination }
-      this.setState({
-        pagination: pager
-      })
-    }
+    // const propPagination = this.props.pagination
+    // console.log('pagination3',this.props.pagination)
+    // if(propPagination === false) {
+    //   this.setState({
+    //     pagination: false
+    //   })
+    // }
+    // if(propPagination) {
+
+    //   const pager = { ...this.state.pagination, ...propPagination }
+    //   this.setState({
+    //     pagination: pager
+    //   })
+    // }
   }
   render() {
     const { getBodyWrapper, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
-    const { pagination } = this.state
+    const pagination = this.props.pagination ? { ...this.state.pagination, ...this.props.pagination } : false
     return(
       <Table
         scroll={scroll}

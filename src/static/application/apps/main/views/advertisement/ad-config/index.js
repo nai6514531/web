@@ -24,9 +24,6 @@ class AdConfig extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.hash)
-    // 搜索时跳到默认分页
-    // delete search.page
-    // delete search.per_page
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },

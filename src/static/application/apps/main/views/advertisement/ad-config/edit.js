@@ -198,7 +198,8 @@ class PlatformEdit extends Component {
               help: {
                 validateStatus: '',
                 help: item.standard
-              }
+              },
+              identifyNeeded: item.identifyNeeded
             }
           })
         }
@@ -221,7 +222,7 @@ class PlatformEdit extends Component {
     }
   }
   render() {
-    const { adConfigDetail: { standard, detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { adConfigDetail: { standard, detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList, identifyNeeded  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
@@ -229,6 +230,7 @@ class PlatformEdit extends Component {
         <div className='ant-upload-text'>图片</div>
       </div>
     )
+    const displayOption = identifyNeeded === 0 ? <Option value={'1'}>全部显示</Option> : [ <Option value={'1'} key={1}>全部显示</Option>,<Option value={'2'} key={2}>按尾号显示</Option> ]
     const breadItems = [
       {
         title: '业务配置系统'
@@ -399,8 +401,7 @@ class PlatformEdit extends Component {
               <Select
                 placeholder='请选择展示状态'
                 onChange={this.selectHandler.bind(this, 'displayStrategy')}>
-                  <Option value={'1'}>全部显示</Option>
-                  <Option value={'2'}>按尾号显示</Option>
+                  { displayOption }
               </Select>
             )}
           </FormItem>
