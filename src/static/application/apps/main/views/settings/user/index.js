@@ -6,6 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const Search = Input.Search
@@ -25,9 +26,7 @@ const breadItems = [
 class User extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
-    delete search.page
-    delete search.per_page
+    const search = transformUrl(location.search)
     this.search = search
     this.id = ''
     this.checkList = []
@@ -68,7 +67,7 @@ class User extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/admin/settings/user/${record.id}`}>修改</Link> |
+              <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
               </Popconfirm>
@@ -80,16 +79,19 @@ class User extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
+    this.fetch(url)
+  }
+  fetch = (params) => {
     this.props.dispatch({
       type: 'user/list',
       payload: {
-        data: url
+        data: params
       }
     })
   }
   delete = (id) => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'user/delete',
       payload: {
@@ -116,10 +118,14 @@ class User extends Component {
     this.search = { ...this.search, [type]: e.target.value }
   }
   searchClick = () => {
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    location.hash = toQueryString({ ...this.search })
+    history.push(`${location.pathname}?${queryString}`)
+    this.fetch(this.search)
   }
   checkboxChange = (values) => {
     this.checkList = values
@@ -132,6 +138,9 @@ class User extends Component {
         data: this.checkList
       }
     })
+  }
+  change = (url) => {
+   this.fetch(url)
   }
   render() {
     const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, currentRole, key, visible }, loading  } = this.props
@@ -183,6 +192,7 @@ class User extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
         <Modal
           title='配置角色'

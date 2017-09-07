@@ -73,7 +73,7 @@ class ActionModal extends Component {
           <Input
             placeholder='请输入控制器名称关键字'
             style={{ width: 200, marginRight: 20, marginTop: 10 }}
-            onChange={this.changeHandler.bind(this, 'handler_name')}
+            onChange={this.changeHandler.bind(this, 'handlerName')}
             onPressEnter={this.searchClick}
            />
           <Input

@@ -6,6 +6,7 @@ import { Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const FormItem = Form.Item
@@ -31,9 +32,8 @@ const breadItems = [
 class Action extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
-    delete search.page
-    delete search.per_page
+    const search = transformUrl(location.search)
+    this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '控制器名称', dataIndex: 'handlerName',key: 'handlerName' },
@@ -46,7 +46,7 @@ class Action extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -55,10 +55,12 @@ class Action extends Component {
         }
       }
     ]
-    this.search = search
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
+    this.fetch(url)
+  }
+  fetch = (url) => {
     this.props.dispatch({
       type: 'action/list',
       payload: {
@@ -71,7 +73,7 @@ class Action extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.action.record.id
-        const url = transformUrl(location.hash)
+        const url = transformUrl(location.search)
         let type = 'action/add'
         if(id) {
           type = 'action/update'
@@ -97,7 +99,7 @@ class Action extends Component {
     })
   }
   delete = (id) => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'action/delete',
       payload: {
@@ -110,23 +112,30 @@ class Action extends Component {
     this.search = { ...this.search, [type]: e.target.value }
   }
   searchClick = () => {
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    location.hash = toQueryString({ ...this.search })
+    history.push(`${location.pathname}?${queryString}`)
+    this.fetch(this.search)
+  }
+  change = (url) => {
+   this.fetch(url)
   }
   render() {
     const { form: { getFieldDecorator }, action: { key, visible, record,  data: { objects, pagination } }, loading  } = this.props
-    const title = record.id ? '修改api' : '添加api'
+    const title = record.id ? '编辑api' : '添加api'
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Input
           placeholder='请输入控制器名称关键字'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'handler_name')}
+          onChange={this.changeHandler.bind(this, 'handlerName')}
           onPressEnter={this.searchClick}
-          defaultValue={this.search.handler_name}
+          defaultValue={this.search.handlerName}
          />
         <Input
           placeholder='请输入请求方法关键字'
@@ -157,6 +166,7 @@ class Action extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
         <Modal
           title={title}

@@ -1,7 +1,7 @@
 import request from '../../utils/request'
 const userService = {
   list: (data) => {
-    return request.get(`/users?page=${data.page || 1 }&per_page=${data.per_page || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}`)
+    return request.get(`/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}`)
   },
   detail: (id) => {
     return request.get(`/users/${id}`)

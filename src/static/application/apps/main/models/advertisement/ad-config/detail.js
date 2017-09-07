@@ -88,7 +88,7 @@ export default {
           type: 'postionList',
           payload: {
             data: {
-              app_id: result.data.appId,
+              appId: result.data.appId,
               locationId: result.data.locationId
             }
           }

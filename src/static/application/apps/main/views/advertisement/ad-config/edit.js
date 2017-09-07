@@ -3,7 +3,6 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal } from 'antd'
-import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../utils/debug.js'
 import { storage } from '../../../utils/storage.js'
@@ -179,7 +178,7 @@ class PlatformEdit extends Component {
       type: 'adConfigDetail/postionList',
       payload: {
         data: {
-          app_id: value
+          appId: value
         }
       }
     })
@@ -254,11 +253,12 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('appId', {
               rules: [{
-                required: true, message: '请选择业务！',
+                required: true, message: '请选择业务',
               }],
               initialValue: detail.appId !== undefined ? detail.appId + '' : undefined
             })(
               <Select
+                disabled={isEdit}
                 placeholder='请选择业务'
                 onChange={this.handleAppChange}>
                 {
@@ -277,11 +277,12 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('locationId', {
               rules: [{
-                required: true, message: '请选择广告位！',
+                required: true, message: '请选择广告位',
               }],
               initialValue: detail.locationId !== undefined ? detail.locationId + '' : undefined
             })(
               <Select
+                disabled={isEdit}
                 placeholder='广告位'
                 onChange={this.selectHandler.bind(this, 'locationId')}>
                 {
@@ -300,11 +301,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入20字以内的广告名！',
+                required: true, message: '请输入20字以内的广告名',
               },{
-                max: 20, message: '长度最多20个字符！'
+                max: 20, message: '长度最多20个字符'
               },{
-                validator: this.trim.bind(this,'请输入20字以内的广告名！'),
+                validator: this.trim.bind(this,'请输入20字以内的广告名'),
               }],
               initialValue: detail.name
             })(
@@ -317,11 +318,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('title', {
               rules: [{
-                required: true, message: '请输入20字以内的广告标题！',
+                required: true, message: '请输入20字以内的广告标题',
               },{
-                max: 20, message: '长度最多20个字符！'
+                max: 20, message: '长度最多20个字符'
               },{
-                validator: this.trim.bind(this,'请输入20字以内的广告标题！'),
+                validator: this.trim.bind(this,'请输入20字以内的广告标题'),
               }],
               initialValue: detail.title
             })(
@@ -357,11 +358,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('url', {
               rules: [{
-                required: true, message: '请输入广告跳转链接，以http://或https://开头!',
+                required: true, message: '请输入广告跳转链接，以http://或https://开头',
               },{
-                max: 255, message: '长度最多255个字符！'
+                max: 255, message: '长度最多255个字符'
               },{
-                validator: this.trim.bind(this,'请输入广告跳转链接，以http://或https://开头!'),
+                validator: this.trim.bind(this,'请输入广告跳转链接，以http://或https://开头'),
               }],
               initialValue: detail.url
             })(
@@ -375,7 +376,7 @@ class PlatformEdit extends Component {
            >
             {getFieldDecorator('time', {
               rules: [{
-                type: 'array', required: true, message: '请选择时间!'
+                type: 'array', required: true, message: '请选择时间'
               }],
               initialValue: (startedAt && endedAt) ? [ moment(startedAt, dateFormat), moment(endedAt, dateFormat) ]: undefined
             })(
@@ -394,7 +395,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('displayStrategy', {
               rules: [{
-                required: true, message: '请选择展示状态！',
+                required: true, message: '请选择展示状态',
               }],
               initialValue: detail.displayStrategy !== undefined ? detail.displayStrategy + '' : undefined
             })(
@@ -413,9 +414,11 @@ class PlatformEdit extends Component {
               >
                 {getFieldDecorator('displayParams', {
                   rules: [{
-                    required: true, message: '请输入用户号码尾号!',
+                    required: true, message: '请输入用户号码尾号',
                   },{
-                    validator: this.trim.bind(this,'请输入用户号码尾号!'),
+                    max: 20, message: '长度最多20个字符'
+                  },{
+                    validator: this.trim.bind(this,'请输入用户号码尾号'),
                   }],
                   initialValue: detail.displayParams
                 })(
@@ -430,7 +433,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('status', {
               rules: [{
-                required: true, message: '请选择上下架！',
+                required: true, message: '请选择上下架',
               }],
               initialValue: detail.status !== undefined ? detail.status + '' : undefined
             })(

@@ -5,7 +5,7 @@ const adPositionService = {
     if(!data) {
       url = `/ad-spaces`
     } else {
-      url = `/ad-spaces?page=${data.page || 1 }&per_page=${data.per_page || 10 }&app_id=${data.app_id || '' }`
+      url = `/ad-spaces?offset=${data.offset || 0 }&limit=${data.limit || 10 }&appId=${data.appId || '' }`
     }
     return request.get(url)
   },

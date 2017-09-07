@@ -7,6 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
+import history from '../../../utils/history.js'
 import styles from './index.pcss'
 import { status } from './dict.js'
 
@@ -37,10 +38,10 @@ const breadItems = [
 class Topic extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
+    const search = transformUrl(location.search)
     // 搜索时跳到默认分页
-    delete search.page
-    delete search.per_page
+    // delete search.page
+    // delete search.per_page
     this.search = search
     this.columns = [
       {
@@ -138,9 +139,9 @@ class Topic extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
-    if( !url.channel_id ) {
-      delete url.channel_id
+    const url = transformUrl(location.search)
+    if( !url.channelId ) {
+      delete url.channelId
     }
     if( !url.status ) {
       delete url.status
@@ -151,6 +152,9 @@ class Topic extends Component {
         search: url
       }
     })
+    this.fetch(url)
+  }
+  fetch = (url) => {
     this.props.dispatch({
       type: 'topic/list',
       payload: {
@@ -176,7 +180,7 @@ class Topic extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.topic.record.id
-        const url = transformUrl(location.hash)
+        const url = transformUrl(location.search)
         values.channelId = Number(values.channelId)
         this.props.dispatch({
           type: 'topic/moveTopic',
@@ -190,7 +194,7 @@ class Topic extends Component {
     })
   }
   updateStatus = (id, status) => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'topic/updateStatus',
       payload: {
@@ -218,8 +222,17 @@ class Topic extends Component {
     this.search = { ...this.search, [type]: value }
   }
   searchClick = () => {
-    this.props.dispatch({ type: 'common/resetIndex' })
-    location.hash = toQueryString({ ...this.search })
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
+    this.props.dispatch({
+      type: 'common/resetIndex'
+    })
+    history.push(`${location.pathname}?${queryString}`)
+    this.fetch(this.search)
+  }
+  change = (url) => {
+   this.fetch(url)
   }
   renderStatus = (data) => {
     let item = []
@@ -250,16 +263,16 @@ class Topic extends Component {
         <Input
           placeholder='商品学校'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'school_name')}
+          onChange={this.changeHandler.bind(this, 'schoolName')}
           onPressEnter={this.searchClick}
-          defaultValue={this.search.school_name}
+          defaultValue={this.search.schoolName}
          />
         <Select
-          value={ search.channel_id }
+          value={ search.channelId }
           allowClear
           className={styles.input}
           placeholder='商品频道'
-          onChange={this.selectHandler.bind('this','channel_id')}>
+          onChange={this.selectHandler.bind('this','channelId')}>
             {
               channel.map(value => {
                 return (
@@ -291,6 +304,7 @@ class Topic extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
         <Modal
           title={`商品频道`}

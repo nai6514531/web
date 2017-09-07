@@ -42,7 +42,7 @@ class Menu extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -125,7 +125,7 @@ class Menu extends Component {
   render() {
     const { form: { getFieldDecorator }, menu: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
     this.options = transformMenu(objects)
-    const title = record.id ? '修改菜单' : '添加菜单'
+    const title = record.id ? '编辑菜单' : '添加菜单'
     return(
       <div>
         <Breadcrumb items={breadItems} />

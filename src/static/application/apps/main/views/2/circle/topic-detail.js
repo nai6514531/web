@@ -32,7 +32,7 @@ class TopicDetail extends Component {
       },
       {
         title: '商品管理',
-        url: `/2/topic/#city_id=${data.cityId}`
+        url: `/2/topic/#cityId=${data.cityId}`
       },
       {
         title: '商品详情'

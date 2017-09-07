@@ -86,7 +86,7 @@ class ResetPassword extends Component {
           >
             {getFieldDecorator('oldPassword', {
               rules: [{
-                required: true, message: '请输入原始密码！',
+                required: true, message: '请输入原始密码',
               }, {
                 min: 6, message: '密码最少6位'
               }]
@@ -100,7 +100,7 @@ class ResetPassword extends Component {
           >
             {getFieldDecorator('newPassword', {
               rules: [{
-                required: true, message: '请输入新密码！',
+                required: true, message: '请输入新密码',
               }, {
                 min: 6, message: '密码最少6位'
               }, {
@@ -116,7 +116,7 @@ class ResetPassword extends Component {
           >
             {getFieldDecorator('rePassword', {
               rules: [{
-                required: true, message: '请输入确认密码！',
+                required: true, message: '请输入确认密码',
               }, {
                 min: 6, message: '密码最少6位'
               }, {

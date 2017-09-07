@@ -3,9 +3,9 @@ const adConfigService = {
   list: (data, order) => {
     let url
     if(order) {
-      url = `/advertisements?app_id=${data.app_id || '' }&location_id=${data.location_id || '' }`
+      url = `/advertisements?appId=${data.appId || '' }&locationId=${data.locationId || '' }`
     } else {
-      url = `/advertisements?page=${data.page || 1 }&per_page=${data.per_page || 10 }&app_id=${data.app_id || '' }&location_id=${data.location_id || '' }&started_at=${data.started_at || '' }&ended_at=${data.ended_at || '' }&title=${data.title || '' }&display=${data.display || '' }&status=${data.status || '' }`
+      url = `/advertisements?offset=${data.offset || 0 }&limit=${data.limit || 10 }&appId=${data.appId || '' }&locationId=${data.locationId || '' }&startedAt=${data.startedAt || '' }&endedAt=${data.endedAt || '' }&title=${data.title || '' }&display=${data.display || '' }&status=${data.status || '' }`
     }
     return request.get(url)
   },

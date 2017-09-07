@@ -169,8 +169,8 @@ class AdOrder extends Component {
           payload: {
             attr: attr,
             data: {
-              app_id: appId,
-              location_id: id
+              appId: appId,
+              locationId: id
             },
             order: true
           }

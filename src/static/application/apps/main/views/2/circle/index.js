@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Select, Button, AutoComplete } from 'antd'
+import { Select, Button, AutoComplete, Message } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const Option = Select.Option
@@ -21,9 +22,7 @@ const breadItems = [
 class Circle extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
-    delete search.page
-    delete search.per_page
+    const search = transformUrl(location.search)
     this.search = search
     this.columns = [
       {
@@ -57,7 +56,7 @@ class Circle extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/2/topic#city_id=${record.cityId}`}>商品管理</Link>
+              <Link to={`/2/topic?cityId=${record.cityId}`}>商品管理</Link>
             </span>
           )
         }
@@ -65,9 +64,9 @@ class Circle extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
-    if( !url.province_id ) {
-      delete url.province_id
+    const url = transformUrl(location.search)
+    if( !url.provinceId ) {
+      delete url.provinceId
     }
     this.props.dispatch({
       type: 'common/updateSearch',
@@ -75,15 +74,9 @@ class Circle extends Component {
         search: url
       }
     })
-    this.props.dispatch({
-      type: 'circle/list',
-      payload: {
-        data: url
-      }
-    })
-    this.props.dispatch({ type: 'common/resetIndex' })
+    this.fetch(url)
   }
-  changeHandler =  (type, value) => {
+  changeHandler = (type, value) => {
     this.props.dispatch({
       type: 'common/updateSearch',
       payload: {
@@ -118,13 +111,35 @@ class Circle extends Component {
     }
   }
   searchClick = () => {
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
+    this.props.dispatch({
+      type: 'common/resetIndex'
+    })
     this.props.dispatch({
       type: 'circle/updateData',
       payload: {
         provinceData: this.props.circle.clonedProvinceData
       }
     })
-    location.hash = toQueryString({ ...this.search })
+    if(isNaN(this.search.provinceId)) {
+      Message.error('参数不正确')
+      return false
+    }
+    this.fetch(this.search)
+    history.push(`${location.pathname}?${queryString}`)
+  }
+  change = (url) => {
+   this.fetch(url)
+  }
+  fetch = (url) => {
+    this.props.dispatch({
+      type: 'circle/list',
+      payload: {
+        data: url
+      }
+    })
   }
   render() {
     const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData }, loading, common: { search }  } = this.props
@@ -136,12 +151,12 @@ class Circle extends Component {
         <Breadcrumb items={breadItems} />
         <AutoComplete
           placeholder='省'
-          value={search.province_id}
+          value={search.provinceId}
           allowClear
           className={styles.input}
           dataSource={dataSource}
           onSearch={this.handleSearch}
-          onChange={this.changeHandler.bind('this','province_id')}>
+          onChange={this.changeHandler.bind('this','provinceId')}>
         </AutoComplete>
         <span className={styles['button-wrap']}>
           <Button
@@ -161,6 +176,7 @@ class Circle extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
           rowKey="order"
         />
       </div>

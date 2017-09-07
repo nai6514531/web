@@ -5,7 +5,7 @@ const applicationService = {
     if(!data) {
       url = `/applications`
     } else {
-      url = `/applications?page=${data.page || 1 }&per_page=${data.per_page || 10 }`
+      url = `/applications?offset=${data.offset || 0 }&limit=${data.limit || 10 }`
     }
     return request.get(url)
   },

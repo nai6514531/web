@@ -1,14 +1,14 @@
 import request from '../../utils/request'
 const circleService = {
   list: (data) => {
-    let url = `/2/circles?page=${data.page || 1 }&per_page=${data.per_page || 10 }&province_id=${Number(data.province_id) || ''}`
+    let url = `/2/circles?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
     return request.get(url)
   },
   summary: () => {
     return request.get('/2/circles/summary')
   },
   topicList: (data) => {
-    let url = `/2/topics?page=${data.page || 1 }&per_page=${data.per_page || 10 }&name=${data.name || ''}&school_name=${data.school_name || ''}&channel_id=${ data.channel_id || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&city_id=${data.city_id || ''}`
+    let url = `/2/topics?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&schoolName=${data.schoolName || ''}&channelId=${ data.channelId || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&cityId=${data.cityId || ''}`
     return request.get(url)
   },
   topicDetail: (id) => {

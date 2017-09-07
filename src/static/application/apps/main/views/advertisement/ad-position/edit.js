@@ -108,7 +108,9 @@ class PlatformEdit extends Component {
               }],
               initialValue: detail.appId ? detail.appId + '' : detail.appId
             })(
-              <Select placeholder="请选择所属业务">
+              <Select
+                disabled={isEdit}
+                placeholder="请选择所属业务">
                 {
                   appData.map(value => {
                     return (
@@ -125,18 +127,18 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入10个字符以内广告位名！',
+                required: true, message: '请输入10个字符以内广告位名',
               },{
-                max: 10, message: '长度最多10个字符！'
+                max: 10, message: '长度最多10个字符'
               },{
-                validator: this.trim.bind(this,'请输入10个字符以内广告位名！' ),
+                validator: this.trim.bind(this,'请输入10个字符以内广告位名' ),
               }],
               initialValue: detail.name
             })(
               <Input placeholder='请输入广告位名'/>
             )}
           </FormItem>
-          { isEdit ? (
+          { /* isEdit ? (
             <FormItem
               {...formItemLayout}
               label='广告位ID'
@@ -147,7 +149,7 @@ class PlatformEdit extends Component {
                 <Input disabled={true}/>
               )}
             </FormItem>
-          ) : null }
+          ) : null */}
           <FormItem
             {...formItemLayout}
             label='登录状态'
@@ -170,11 +172,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('standard', {
               rules: [{
-                required: true, message: '请输入广告图规格！',
+                required: true, message: '请输入广告图规格',
               },{
-                max: 20, message: '长度最多20个字符！'
+                max: 20, message: '长度最多20个字符'
               },{
-                validator: this.trim.bind(this,'请输入广告图规格！' ),
+                validator: this.trim.bind(this,'请输入广告图规格' ),
               }],
               initialValue: detail.standard
             })(
@@ -187,11 +189,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内广告位说明！',
+                required: true, message: '请输入50字符以内广告位说明',
               },{
-                max: 50, message: '长度最多50个字符！'
+                max: 50, message: '长度最多50个字符'
               },{
-                validator: this.trim.bind(this,'请输入50字符以内广告位说明！' ),
+                validator: this.trim.bind(this,'请输入50字符以内广告位说明' ),
               }],
               initialValue: detail.description
             })(

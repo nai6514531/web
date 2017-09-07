@@ -5,7 +5,7 @@ const permissionService = {
     if(!data) {
       url = `/permissions`
     } else {
-      url = `/permissions?page=${data.page || 1 }&per_page=${data.per_page || 10 }`
+      url = `/permissions?offset=${data.offset || 0 }&limit=${data.limit || 10 }`
     }
     return request.get(url)
   },

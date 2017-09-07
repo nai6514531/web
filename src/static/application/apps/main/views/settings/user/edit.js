@@ -97,7 +97,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('account', {
               rules: [{
-                required: true, message: '请输入登录账号！',
+                required: true, message: '请输入登录账号',
               }],
               initialValue: data.account
             })(
@@ -110,7 +110,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入用户名称！',
+                required: true, message: '请输入用户名称',
               }],
               initialValue: data.name
             })(
@@ -124,7 +124,7 @@ class UserEdit extends Component {
             >
               {getFieldDecorator('password', {
                 rules: [{
-                  required: true, message: '请输入密码！',
+                  required: true, message: '请输入密码',
                 },{
                   min: 6, message: '密码最少6位'
                 }]
@@ -139,7 +139,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('contact', {
               rules: [{
-                required: true, message: '请输入联系人！',
+                required: true, message: '请输入联系人',
               }],
               initialValue: data.contact
             })(
@@ -152,7 +152,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('address', {
               rules: [{
-                required: true, message: '请输入地址！',
+                required: true, message: '请输入地址',
               }],
               initialValue: data.address
             })(
@@ -165,9 +165,9 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('mobile', {
               rules: [{
-                required: true, message: '请输入手机号！',
+                required: true, message: '请输入手机号',
               }, {
-                len: 11, message: '请输入11位长度的手机号！',
+                len: 11, message: '请输入11位长度的手机号',
               }, {
                 validator: this.checkMobile,
               }],
@@ -182,7 +182,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('telephone', {
               rules: [{
-                required: true, message: '请输入服务电话！',
+                required: true, message: '请输入服务电话',
               }],
               initialValue: data.telephone
             })(

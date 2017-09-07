@@ -6,6 +6,7 @@ import { Button, Popconfirm } from 'antd'
 import DataTable from '../../components/data-table/'
 import Breadcrumb from '../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../utils/'
+import history from '../../utils/history.js'
 
 const breadItems = [
   {
@@ -29,7 +30,7 @@ class Platform extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/platform/business/${record.id}`}>修改</Link> |
+              <Link to={`/platform/business/${record.id}`}>编辑</Link> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -40,16 +41,11 @@ class Platform extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
-    this.props.dispatch({
-      type: 'platform/list',
-      payload: {
-        data: url
-      }
-    })
+    const url = transformUrl(location.search)
+    this.fetch(url)
   }
   delete = (id) => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'platform/delete',
       payload: {
@@ -57,6 +53,17 @@ class Platform extends Component {
         data: url
       }
     })
+  }
+  fetch = (url) => {
+    this.props.dispatch({
+      type: 'platform/list',
+      payload: {
+        data: url
+      }
+    })
+  }
+  change = (url) => {
+   this.fetch(url)
   }
   render() {
     const { platform: { data: { objects, pagination } }, loading  } = this.props
@@ -78,6 +85,7 @@ class Platform extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
       </div>
     )

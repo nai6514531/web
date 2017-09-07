@@ -91,11 +91,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入10个字符以内业务名！',
+                required: true, message: '请输入10个字符以内业务名',
               },{
-                max: 10, message: '长度最多10个字符！'
+                max: 10, message: '长度最多10个字符'
               },{
-                validator: this.trim.bind(this,'请输入10个字符以内业务名！' ),
+                validator: this.trim.bind(this,'请输入10个字符以内业务名' ),
               }],
               initialValue: detail.name
             })(
@@ -109,7 +109,7 @@ class PlatformEdit extends Component {
             >
               {getFieldDecorator('id', {
                 rules: [{
-                  required: true, message: '请输入业务ID！',
+                  required: true, message: '请输入业务ID',
                 }],
                 initialValue: detail.id
               })(
@@ -123,11 +123,11 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内业务说明！',
+                required: true, message: '请输入50字符以内业务说明',
               },{
-                max: 50, message: '长度最多50个字符！'
+                max: 50, message: '长度最多50个字符'
               },{
-                validator: this.trim.bind(this,'请输入50字符以内业务说明！' ),
+                validator: this.trim.bind(this,'请输入50字符以内业务说明' ),
               }],
               initialValue: detail.description
             })(

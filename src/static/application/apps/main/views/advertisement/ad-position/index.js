@@ -7,6 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import styles from './index.pcss'
+import history from '../../../utils/history.js'
 
 const Option = Select.Option
 const breadItems = [
@@ -21,7 +22,7 @@ const breadItems = [
 class AdPosition extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.hash)
+    const search = transformUrl(location.search)
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
@@ -40,7 +41,7 @@ class AdPosition extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/advertisement/position-manager/${record.id}`}>修改</Link> |
+              <Link to={`/advertisement/position-manager/${record.id}`}>编辑</Link> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -58,12 +59,7 @@ class AdPosition extends Component {
         search: url
       }
     })
-    this.props.dispatch({
-      type: 'adPosition/list',
-      payload: {
-        data: url
-      }
-    })
+    this.fetch(url)
   }
   delete = (id) => {
     const url = this.search
@@ -91,10 +87,25 @@ class AdPosition extends Component {
     }
   }
   searchClick = () => {
-    this.props.dispatch({ type: 'common/resetIndex' })
-    this.search.page = 1
-    // delete this.search.per_page
-    location.hash = toQueryString({ ...this.search })
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
+    this.props.dispatch({
+      type: 'common/resetIndex'
+    })
+    history.push(`${location.pathname}?${queryString}`)
+    this.fetch(this.search)
+  }
+  fetch =(url) => {
+    this.props.dispatch({
+      type: 'adPosition/list',
+      payload: {
+        data: url
+      }
+    })
+  }
+  change = (url) => {
+   this.fetch(url)
   }
   render() {
     const { common: { search }, adPosition: { data: { objects, pagination }, appData }, loading  } = this.props
@@ -103,11 +114,11 @@ class AdPosition extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Select
-          value={ search.app_id }
+          value={ search.appId }
           allowClear
           className={styles.input}
           placeholder='所属业务'
-          onChange={this.selectHandler.bind('this','app_id')}>
+          onChange={this.selectHandler.bind('this','appId')}>
             {
               appData.map(value => {
                 return (
@@ -138,6 +149,7 @@ class AdPosition extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
           scroll={{ x: 800 }}
         />
       </div>
