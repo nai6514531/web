@@ -3,7 +3,7 @@ const adConfigService = {
   list: (data, order) => {
     let url
     if(order) {
-      url = `/advertisements?appId=${data.appId || '' }&locationId=${data.locationId || '' }`
+      url = `/advertisements?appId=${data.appId || '' }&locationId=${data.locationId || '' }&status=2`
     } else {
       url = `/advertisements?offset=${data.offset || 0 }&limit=${data.limit || 10 }&appId=${data.appId || '' }&locationId=${data.locationId || '' }&startedAt=${data.startedAt || '' }&endedAt=${data.endedAt || '' }&title=${data.title || '' }&display=${data.display || '' }&status=${data.status || '' }`
     }

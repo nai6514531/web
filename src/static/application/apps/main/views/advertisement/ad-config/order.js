@@ -44,7 +44,7 @@ class AdOrder extends Component {
       { title: '展示状态',
         render: (text, record) => {
           return (
-            record.displayStrategy === 1 ? '全部显示' : '按尾号显示'
+            record.displayStrategy === 1 ? '全部显示' : ` 用户号码尾号(${record.displayParams})`
           )
         }
       },
@@ -215,7 +215,7 @@ class AdOrder extends Component {
           }
         </Collapse>
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
-          <img alt="暂无图片" style={{ width: '100%' }} src={previewImage} />
+          <img alt='图片' style={{ padding: 15, width: '100%' }} src={previewImage} />
         </Modal>
       </div>
     )
