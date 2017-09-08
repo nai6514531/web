@@ -8,7 +8,8 @@ const model = {
   },
   provinceData: [],
   clonedProvinceData: [],
-  summary: null
+  summary: null,
+  disabled: false
 }
 export default {
   namespace: 'circle',

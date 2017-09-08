@@ -88,6 +88,21 @@ class Circle extends Component {
     if(!value) {
       value = ''
     }
+    if(isNaN(value)) {
+      this.props.dispatch({
+        type: 'circle/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'circle/updateData',
+        payload: {
+          disabled: false
+        }
+      })
+    }
     this.search = { ...this.search, [type]: value }
   }
   handleSearch = (filterKey) => {
@@ -123,10 +138,6 @@ class Circle extends Component {
         provinceData: this.props.circle.clonedProvinceData
       }
     })
-    if(isNaN(this.search.provinceId)) {
-      Message.error('参数不正确')
-      return false
-    }
     this.fetch(this.search)
     history.push(`${location.pathname}?${queryString}`)
   }
@@ -142,7 +153,7 @@ class Circle extends Component {
     })
   }
   render() {
-    const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData }, loading, common: { search }  } = this.props
+    const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData, disabled }, loading, common: { search }  } = this.props
     const dataSource = this.props.circle.provinceData.map(value => {
       return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
     })
@@ -163,6 +174,7 @@ class Circle extends Component {
             type='primary'
             onClick={this.searchClick}
             style={{marginBottom: '20px', marginRight: 20}}
+            disabled={disabled}
             >
             筛选
           </Button>
