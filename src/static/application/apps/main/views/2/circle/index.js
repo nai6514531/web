@@ -85,31 +85,27 @@ class Circle extends Component {
         }
       }
     })
-    if(!value) {
-      value = ''
-    }
-    if(isNaN(value)) {
-      this.props.dispatch({
-        type: 'circle/updateData',
-        payload: {
-          disabled: true
-        }
-      })
-    } else {
-      this.props.dispatch({
-        type: 'circle/updateData',
-        payload: {
-          disabled: false
-        }
-      })
-    }
     this.search = { ...this.search, [type]: value }
+  }
+  handleSelect = () => {
+    this.props.dispatch({
+      type: 'circle/updateData',
+      payload: {
+        disabled: false
+      }
+    })
   }
   handleSearch = (filterKey) => {
     const { provinceData, clonedProvinceData } = this.props.circle
     const result = clonedProvinceData.filter(function( value, index ){
         return new RegExp( filterKey , 'img' ).test( value.name );
-    });
+    })
+    this.props.dispatch({
+      type: 'circle/updateData',
+      payload: {
+        disabled: true
+      }
+    })
     this.props.dispatch({
       type: 'circle/updateData',
       payload: {
@@ -120,7 +116,8 @@ class Circle extends Component {
       this.props.dispatch({
         type: 'circle/updateData',
         payload: {
-          provinceData: clonedProvinceData
+          provinceData: clonedProvinceData,
+          disabled: false
         }
       })
     }
@@ -155,7 +152,7 @@ class Circle extends Component {
   render() {
     const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData, disabled }, loading, common: { search }  } = this.props
     const dataSource = this.props.circle.provinceData.map(value => {
-      return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+      return <Option value={value.code + ''} key={value.id}>{value.name}</Option>
     })
     return(
       <div>
@@ -167,6 +164,7 @@ class Circle extends Component {
           className={styles.input}
           dataSource={dataSource}
           onSearch={this.handleSearch}
+          onSelect={this.handleSelect}
           onChange={this.changeHandler.bind('this','provinceId')}>
         </AutoComplete>
         <span className={styles['button-wrap']}>

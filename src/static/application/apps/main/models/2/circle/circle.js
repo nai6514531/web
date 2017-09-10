@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import circleService from '../../../services/2/circle.js'
-import regionService from '../../../services/common/region.js'
+import addressService from '../../../services/platform/address.js'
 import { cloneDeep } from 'lodash'
 const model = {
   data: {
@@ -35,10 +35,10 @@ export default {
       }
       const circle = yield select(state => state.circle)
       if( !circle.provinceData.length ) {
-        const province = yield call(regionService.province)
+        const province = yield call(addressService.provinceList)
         if(province.status == 'OK') {
-          yield put({ type: 'updateData', payload: { provinceData: province.data } })
-          yield put({ type: 'updateData', payload: { clonedProvinceData: province.data } })
+          yield put({ type: 'updateData', payload: { provinceData: province.data.objects } })
+          yield put({ type: 'updateData', payload: { clonedProvinceData: province.data.objects } })
         } else {
           province.message && message.error(province.message)
         }
