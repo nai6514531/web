@@ -33,7 +33,7 @@ switch (env.ENV) {
 
 export const API_SERVER = _API_SERVER
 
-if (!isProduction) {
+if (isDebug || isStaging) {
   console.log(
     `-----===== ${env.PKG_NAME} =====-----
 
