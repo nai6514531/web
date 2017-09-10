@@ -15,6 +15,7 @@ const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageUrl = `${API_SERVER}/advertisements/images`
+const confirm = Modal.confirm;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -155,6 +156,15 @@ class PlatformEdit extends Component {
       Message.error('图片过大，请压缩后再上传');
     }
     return (isJPG || isPNG) && isLt1M;
+  }
+  showConfirm = () => {
+    confirm({
+      title: '是否删除该图片?',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: this.onRemove
+    })
+    return false
   }
   onRemove = () => {
     this.props.dispatch({
@@ -342,14 +352,14 @@ class PlatformEdit extends Component {
                onPreview={this.handlePreview}
                onChange={this.handleChange}
                beforeUpload={this.beforeUpload}
-               onRemove={this.onRemove}
+               onRemove={this.showConfirm}
                headers={{ Authorization: 'Bearer ' + (storage.val('token') || '') }}
                withCredentials={true}
              >
                {fileList.length == 1 ? null : uploadButton}
              </Upload>
              <Modal visible={visible} footer={null} onCancel={this.hide}>
-               <img alt='example' style={{ width: '100%' }} src={previewImage} />
+               <img alt='图片' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
            </FormItem>
           <FormItem
