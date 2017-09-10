@@ -18,9 +18,22 @@ export const isDebug = isDevelopment || ('debug' in qs)
 
 export const __scene = qs.__scene
 
-export const API_SERVER = isProduction ? '//api.erp.sodalife.xyz/v1' : '//api.erp.sodalife.dev/v1'
+let _API_SERVER = ""
 
-if (isDebug || isStaging) {
+switch (env.ENV) {
+  case isProduction:
+    _API_SERVER = '//api.erp.sodalife.xyz/v1'
+    break
+  case isStaging:
+    _API_SERVER = '//api.erp.sodalife.club/v1'
+    break
+  default:
+    _API_SERVER = '//api.erp.sodalife.dev/v1'
+}
+
+export const API_SERVER = _API_SERVER
+
+if (!isProduction) {
   console.log(
     `-----===== ${env.PKG_NAME} =====-----
 
