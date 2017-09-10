@@ -13,10 +13,11 @@ const { Sider } = Layout
 
 class Wrapper extends React.Component {
   componentDidMount() {
-    // 获取用户信息
-    this.props.dispatch({ type: 'common/info' })
     if(!storage.val('token')) {
       this.props.history.push('/')
+    } else {
+      // 获取用户信息
+      this.props.dispatch({ type: 'common/info' })
     }
   }
 

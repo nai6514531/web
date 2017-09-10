@@ -2,7 +2,10 @@ import React from 'react'
 import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
 import settings from './settings/'
-import settlement from './settlement/'
+import finance from './finance/'
+import idle from './2/'
+import advertisement from './advertisement/'
+import platform from './platform/'
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
 import Layout from '../components/layout/'
@@ -11,8 +14,7 @@ function RouterConfig({ history, app }) {
   return (
     <Router>
       <Switch>
-        <Route exact path='/' render={() => <Redirect to='/login'/>}/>
-        <Route exact path='/login' component={getComponent(Login,app,loginModel)}/>
+        <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
         <Route path='/admin' render={ props => (
           <Layout>
             { settings(history, app) }
@@ -20,7 +22,22 @@ function RouterConfig({ history, app }) {
         )}/>
         <Route path='/finance' render={ props => (
           <Layout>
-            { settlement(history, app) }
+            { finance(history, app) }
+          </Layout>
+        )}/>
+        <Route path='/2' render={ props => (
+          <Layout>
+            { idle(history, app) }
+          </Layout>
+        )}/>
+        <Route path='/advertisement' render={ props => (
+          <Layout>
+            { advertisement(history, app) }
+          </Layout>
+        )}/>
+        <Route path='/platform' render={ props => (
+          <Layout>
+            { platform(history, app) }
           </Layout>
         )}/>
         <Route component={getComponent(NotFound)} />

@@ -38,7 +38,7 @@ class Element extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改</a> |
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -49,6 +49,9 @@ class Element extends Component {
     ]
   }
   componentDidMount() {
+    this.fetch()
+  }
+  fetch = (url) => {
     this.props.dispatch({
       type: 'element/list'
     })
@@ -93,9 +96,12 @@ class Element extends Component {
       }
     })
   }
+  change = (url) => {
+   // this.fetch(url)
+  }
   render() {
     const { form: { getFieldDecorator }, element: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
-    const title = record.id ? '修改元素' : '添加元素'
+    const title = record.id ? '编辑元素' : '添加元素'
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -111,6 +117,7 @@ class Element extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
         <Modal
           title={title}

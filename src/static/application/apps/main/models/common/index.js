@@ -7,12 +7,14 @@ export default {
     menuPopoverVisible: false,
     fold: false,
     navOpenKeys: [],
+    clickedIndex: -1,
     userInfo: {
       user: {},
       menuList: [],
       actionList: [],
       elementList: []
-    }
+    },
+    search: {}
   },
   reducers: {
     popMenu(state, { payload: { menuPopoverVisible } }) {
@@ -27,6 +29,33 @@ export default {
         ...navOpenKeys,
       }
     },
+    updateSearch(state, { payload: { search } }) {
+      search = { ...state.search, ...search }
+      return {
+        ...state,
+        search
+      }
+    },
+    resetSearch(state) {
+      return {
+        ...state,
+        search: {}
+      }
+    },
+    updateIndex(state, { payload: index }) {
+      const clickedIndex = index
+      return {
+        ...state,
+        clickedIndex
+      }
+    },
+    resetIndex(state) {
+      const clickedIndex = -1
+      return {
+        ...state,
+        clickedIndex
+      }
+    },
     updateUesrInfo(state, { payload: userInfo }) {
       return {
         ...state,
@@ -39,7 +68,7 @@ export default {
       const result = yield call(userService.logout)
       if(result.status == 'OK') {
         storage.clear('token')
-        storage.clear('userInfo')
+        // storage.clear('userInfo')
         session.clear()
         payload.history.push('/')
       } else {

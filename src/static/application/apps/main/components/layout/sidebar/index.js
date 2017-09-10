@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Layout } from 'antd'
 import { arrayToTree } from '../../../utils/'
-import { storage, session } from '../../../utils/storage.js'
+import { session } from '../../../utils/storage.js'
 
 const SubMenu = Menu.SubMenu
 
@@ -41,7 +41,13 @@ class SideBar extends React.Component {
       }
       return (
         <Menu.Item key={item.id}>
-          <Link to={item.url}>
+          <Link
+            to={item.url}
+            onClick={()=>{
+              this.props.dispatch({
+                type: 'common/resetIndex'
+              })
+            }}>
             {item.icon && <Icon type={item.icon} />}
             {(!fold || item.parentId !== 0) && item.name}
           </Link>
