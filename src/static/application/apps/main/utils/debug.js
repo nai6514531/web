@@ -21,10 +21,10 @@ export const __scene = qs.__scene
 let _API_SERVER = ""
 
 switch (env.ENV) {
-  case isProduction:
+  case ENVIRONMENT.PRODUCTION:
     _API_SERVER = '//api.erp.sodalife.xyz/v1'
     break
-  case isStaging:
+  case ENVIRONMENT.STAGING:
     _API_SERVER = '//api.erp.sodalife.club/v1'
     break
   default:
