@@ -173,6 +173,7 @@ class Area extends Component {
           }
         })
       }
+      delete this.search.cityCode
     }
     this.props.dispatch({
       type: 'common/updateSearch',

@@ -28,28 +28,26 @@ export default {
   effects: {
     *list({ payload }, { call, put, select }) {
       const result = yield call(circleService.list, payload.data)
+      const province = yield call(addressService.provinceList)
+      const summary = yield call(circleService.summary)
+
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         result.message && message.error(result.message)
       }
-      const circle = yield select(state => state.circle)
-      if( !circle.provinceData.length ) {
-        const province = yield call(addressService.provinceList)
-        if(province.status == 'OK') {
-          yield put({ type: 'updateData', payload: { provinceData: province.data.objects } })
-          yield put({ type: 'updateData', payload: { clonedProvinceData: province.data.objects } })
-        } else {
-          province.message && message.error(province.message)
-        }
+
+      if(province.status == 'OK') {
+        yield put({ type: 'updateData', payload: { provinceData: province.data.objects } })
+        yield put({ type: 'updateData', payload: { clonedProvinceData: province.data.objects } })
+      } else {
+        province.message && message.error(province.message)
       }
-      if( !circle.summary ) {
-        const summary = yield call(circleService.summary)
-        if(summary.status == 'OK') {
-          yield put({ type: 'updateData', payload: { summary: summary.data } })
-        } else {
-          summary.message && message.error(summary.message)
-        }
+
+      if(summary.status == 'OK') {
+        yield put({ type: 'updateData', payload: { summary: summary.data } })
+      } else {
+        summary.message && message.error(summary.message)
       }
     }
   }

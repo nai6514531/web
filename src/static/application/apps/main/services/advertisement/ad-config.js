@@ -5,7 +5,7 @@ const adConfigService = {
     if(order) {
       url = `/advertisements?appId=${data.appId || '' }&locationId=${data.locationId || '' }&status=2`
     } else {
-      url = `/advertisements?offset=${data.offset || 0 }&limit=${data.limit || 10 }&appId=${data.appId || '' }&locationId=${data.locationId || '' }&startedAt=${data.startedAt || '' }&endedAt=${data.endedAt || '' }&title=${data.title || '' }&display=${data.display || '' }&status=${data.status || '' }`
+      url = `/advertisements?offset=${data.offset || 0 }&limit=${data.limit || 10 }&appId=${data.appId || '' }&locationId=${data.locationId || '' }&startedAt=${data.startedAt || '' }&endedAt=${data.endedAt || '' }&name=${data.name || '' }&display=${data.display || '' }&status=${data.status || '' }`
     }
     return request.get(url)
   },

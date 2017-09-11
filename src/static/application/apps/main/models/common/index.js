@@ -7,6 +7,7 @@ export default {
     menuPopoverVisible: false,
     fold: false,
     navOpenKeys: [],
+    selectedKeys: [],
     clickedIndex: -1,
     userInfo: {
       user: {},
@@ -27,6 +28,12 @@ export default {
       return {
         ...state,
         ...navOpenKeys,
+      }
+    },
+    handleSelectedKeys(state, { payload: selectedKeys }) {
+      return {
+        ...state,
+        ...selectedKeys,
       }
     },
     updateSearch(state, { payload: { search } }) {
