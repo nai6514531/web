@@ -37,6 +37,15 @@ class Nav extends React.Component {
     })
   }
 
+  changeSelectedKeys = (selectedKeys) => {
+    this.props.dispatch({
+      type: 'common/handleSelectedKeys',
+      payload: {
+        selectedKeys: selectedKeys
+      }
+    })
+  }
+
   foldMenu = () => {
     const { dispatch, common: {  fold } } = this.props
     dispatch({
@@ -62,7 +71,7 @@ class Nav extends React.Component {
   }
 
   render() {
-    const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys, userInfo } } = this.props
+    const { dispatch, common: { menuPopoverVisible, fold, navOpenKeys, selectedKeys, userInfo } } = this.props
     const header = classNames(styles.header,styles.wrapper,{
       [styles['header-unfold']]: !fold,
       [styles['header-fold']] : fold
@@ -80,8 +89,10 @@ class Nav extends React.Component {
               mode='inline'
               fold={false}
               navOpenKeys={navOpenKeys}
+              selectedKeys={selectedKeys}
               handleClick={this.handleVisibleChange.bind(this,false)}
               changeOpenKeys={this.changeOpenKeys}
+              changeSelectedKeys={this.changeSelectedKeys}
           />}
           trigger='click'
           overlayClassName={styles.popovermenu}

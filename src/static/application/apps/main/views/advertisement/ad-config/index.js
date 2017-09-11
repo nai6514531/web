@@ -236,9 +236,9 @@ class AdConfig extends Component {
           <Input
             placeholder='广告名'
             className={styles.input}
-            onChange={this.changeHandler.bind(this, 'title')}
+            onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
-            defaultValue={this.search.title}
+            defaultValue={this.search.name}
            />
           <span className={styles.input}>
           <RangePicker
