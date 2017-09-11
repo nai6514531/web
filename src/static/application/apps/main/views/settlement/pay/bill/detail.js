@@ -181,6 +181,8 @@ class App extends Component {
                   !!~this.props.location.search.indexOf('wechat') ? 2 : 0
     const pagination = {
       total:this.state.pagination.total,
+      current: parseInt(this.state.pagination.offset / this.state.pagination.limit) + 1,
+      pageSize: parseInt(this.state.pagination.limit, 10),
       showSizeChanger: true,
       showTotal (total) {
         return <span>总计 {total} 条</span>
@@ -189,13 +191,13 @@ class App extends Component {
         let offset = (current - 1) * pageSize
         let pagination = {limit: pageSize, offset: offset}
         self.changeHistory(pagination)
-        self.getDailyBillsDetail(pagination)
+        self.getDailyBillsDetail({pagination: pagination})
       },
       onChange(current, pageSize) {
         let offset = (current - 1) * pageSize
         let pagination = {offset: offset}
         self.changeHistory(pagination)
-        self.getDailyBillsDetail(pagination)
+        self.getDailyBillsDetail({pagination: pagination})
       }
     }
     return(
