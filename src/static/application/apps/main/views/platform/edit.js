@@ -13,7 +13,7 @@ const breadItems = [
     title: '平台管理'
   },
   {
-    title: '业务管理',
+    title: '应用管理',
     url: '/platform/business'
   },
   {
@@ -87,29 +87,29 @@ class PlatformEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label='业务名'
+            label='应用名'
           >
             {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入10个字符以内业务名',
+                required: true, message: '请输入10个字符以内应用名',
               },{
                 max: 10, message: '长度最多10个字符'
               },{
-                validator: this.trim.bind(this,'请输入10个字符以内业务名' ),
+                validator: this.trim.bind(this,'请输入10个字符以内应用名' ),
               }],
               initialValue: detail.name
             })(
-              <Input placeholder='请输入业务名'/>
+              <Input placeholder='请输入应用名'/>
             )}
           </FormItem>
           { isEdit ? (
             <FormItem
               {...formItemLayout}
-              label='业务ID'
+              label='应用ID'
             >
               {getFieldDecorator('id', {
                 rules: [{
-                  required: true, message: '请输入业务ID',
+                  required: true, message: '请输入应用ID',
                 }],
                 initialValue: detail.id
               })(
@@ -119,19 +119,19 @@ class PlatformEdit extends Component {
           ) : null }
           <FormItem
             {...formItemLayout}
-            label='业务说明'
+            label='应用说明'
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内业务说明',
+                required: true, message: '请输入50字符以内应用说明',
               },{
                 max: 50, message: '长度最多50个字符'
               },{
-                validator: this.trim.bind(this,'请输入50字符以内业务说明' ),
+                validator: this.trim.bind(this,'请输入50字符以内应用说明' ),
               }],
               initialValue: detail.description
             })(
-              <Input type='textarea' placeholder='请输入业务说明' rows='3'/>
+              <Input type='textarea' placeholder='请输入应用说明' rows='3'/>
             )}
           </FormItem>
           <FormItem style={{textAlign: 'center'}}>

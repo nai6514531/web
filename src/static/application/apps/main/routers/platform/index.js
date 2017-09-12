@@ -18,8 +18,8 @@ import SchoolModel from 'bundle-loader?lazy!../../models/platform/address/school
 export default function (history, app) {
   return (
     <Switch>
-      <Route exact path='/platform/business' component={getComponent(Platform,app,platformModel)} />
-      <Route exact path='/platform/business/:id' component={getComponent(PlatformEdit,app,platformModel)} />
+      <Route exact path='/platform/application' component={getComponent(Platform,app,platformModel)} />
+      <Route exact path='/platform/application/:id' component={getComponent(PlatformEdit,app,platformModel)} />
       <Route exact path='/platform/province' component={getComponent(Province,app,ProvinceModel)} />
       <Route exact path='/platform/city' component={getComponent(City,app,CityModel)} />
       <Route exact path='/platform/area' component={getComponent(Area,app,AreaModel)} />

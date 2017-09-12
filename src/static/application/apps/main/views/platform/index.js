@@ -13,7 +13,7 @@ const breadItems = [
     title: '平台管理'
   },
   {
-    title: '业务管理'
+    title: '应用管理'
   }
 ]
 
@@ -22,15 +22,15 @@ class Platform extends Component {
     super(props)
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '业务名', dataIndex: 'name',key: 'name' },
-      { title: '业务说名', dataIndex: 'description',key: 'description' },
+      { title: '应用名', dataIndex: 'name',key: 'name' },
+      { title: '应用说名', dataIndex: 'description',key: 'description' },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/platform/business/${record.id}`}>编辑</Link> |
+              <Link to={`/platform/application/${record.id}`}>编辑</Link> |
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
@@ -72,12 +72,12 @@ class Platform extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Link
-          to={`/platform/business/new`}>
+          to={`/platform/application/new`}>
           <Button
             type='primary'
             style={{marginBottom: '20px'}}
             >
-          添加业务
+          添加应用
           </Button>
         </Link>
         <DataTable
