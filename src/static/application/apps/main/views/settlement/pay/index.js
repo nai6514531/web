@@ -488,7 +488,7 @@ class App extends Component {
               <Option value='2'>结算时间</Option>
             </Select>
             <DatePicker
-            style={{width:120,marginLeft:4, marginBottom: 10}}
+            style={{width:120,marginLeft:10, marginBottom: 10}}
             value={!!startAt ? moment(startAt) : null}
             format="YYYY-MM-DD"
             disabledDate={this.disabledStartDate}
@@ -510,7 +510,7 @@ class App extends Component {
           </div>
           <Input
             placeholder='运营商名称 / 登录账号'
-            style={{ width: 200, marginRight:4, marginBottom: 10, verticalAlign: 'top'}}
+            style={{ width: 200, marginRight:10, marginBottom: 10, verticalAlign: 'top'}}
             onChange={this.changeKeys.bind(this)}
             value={keys}
             onPressEnter={this.search.bind(this)}
