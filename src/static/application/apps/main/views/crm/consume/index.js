@@ -28,12 +28,20 @@ class Consume extends Component {
     this.columns = [
       { title: '订单号', dataIndex: 'ticketId', key: 'ticketId' },
       // { title: '经销商', dataIndex: 'agency',key: 'agency' },
-      { title: '上级运营商', dataIndex: 'parentOperator', key: 'parentOperator', width: 100 },
+      {
+        title: '上级运营商',
+        width: 100,
+        render: (record) => {
+          return (
+            `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
+          )
+        }
+      },
       { title: '运营商名称', dataIndex: 'operator',key: 'operator', width: 100 },
       { title: '服务电话', dataIndex: 'telephone', key: 'telephone', width: 100 },
       { title: '模块编号', dataIndex: 'deviceSerial',key: 'deviceSerial', width: 100 },
       { title: '楼道信息', dataIndex: 'address', key: 'address', width: 100 },
-      { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
+      { title: '消费手机号', dataIndex: 'customerMobile',key: 'customerMobile', width: 100 },
       { title: '消费密码', dataIndex: 'password',key: 'password', width: 100 },
       { title: '类型', dataIndex: 'typeName', key: 'typeName', width: 50 },
       {

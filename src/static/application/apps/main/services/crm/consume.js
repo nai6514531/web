@@ -9,7 +9,7 @@ const consumeService = {
     return request.get(url)
   },
   refund: (id) => {
-    return request.put(`/consumptions/${id}`)
+    return request.post(`/consumptions/${id}/refund`)
   },
 }
 export default consumeService
