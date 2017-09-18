@@ -195,7 +195,8 @@ class AdConfig extends Component {
     })
   }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   render() {
     const { common: { search }, adConfig: { data: { objects, pagination }, appData, postionData, previewImage, visible, key }, loading  } = this.props

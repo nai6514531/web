@@ -105,7 +105,8 @@ class AdPosition extends Component {
     })
   }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   render() {
     const { common: { search }, adPosition: { data: { objects, pagination }, appData }, loading  } = this.props

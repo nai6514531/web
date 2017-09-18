@@ -81,8 +81,8 @@ class Consume extends Component {
   }
   componentDidMount() {
     const url = this.search
-    const { customerMobile, keywords, deviceSerial, startAt, endAt } = url
-    if( customerMobile || keywords || deviceSerial || startAt || endAt ) {
+    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
+    if( customerMobile || keywords || deviceSerial || startAt || limit || offset ) {
       this.fetch(url)
     }
   }
@@ -112,7 +112,8 @@ class Consume extends Component {
     })
   }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
@@ -152,7 +153,7 @@ class Consume extends Component {
           <DatePicker search={this.search}/>
           </span>
           <Input
-            placeholder='运营商名称账号'
+            placeholder='运营商名称/账号'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'keywords')}
             onPressEnter={this.searchClick}

@@ -121,7 +121,6 @@ class Consume extends Component {
     }
   }
   searchClick = () => {
-    console.log('this.search',this.search)
     const { keywords, deviceSerial } = this.search
     if(!keywords && !deviceSerial) {
       message.info('请输入筛选条件')
@@ -145,6 +144,7 @@ class Consume extends Component {
     })
   }
   change = (url) => {
+   this.search = { ...this.search, ...url }
    this.fetch(url)
    this.checkList = []
   }
