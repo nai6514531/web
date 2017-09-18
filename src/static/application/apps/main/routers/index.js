@@ -6,6 +6,7 @@ import finance from './finance/'
 import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
+import crm from './crm/'
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
 import Layout from '../components/layout/'
@@ -40,6 +41,12 @@ function RouterConfig({ history, app }) {
             { platform(history, app) }
           </Layout>
         )}/>
+        <Route path='/crm' render={ props => (
+          <Layout>
+            { crm(history, app) }
+          </Layout>
+        )}/>
+
         <Route component={getComponent(NotFound)} />
       </Switch>
     </Router>

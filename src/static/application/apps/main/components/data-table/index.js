@@ -76,6 +76,7 @@ class DataTable extends Component {
             payload: index
           })
         }}
+        rowSelection={this.props.rowSelection}
       />
     )
   }
