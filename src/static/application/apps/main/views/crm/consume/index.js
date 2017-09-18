@@ -107,7 +107,6 @@ class Consume extends Component {
    this.fetch(url)
   }
   export = () => {
-    console.log('url',this.search)
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
     if(!customerMobile && !deviceSerial && !keywords && !endAt && !startAt) {
       message.info('请先筛选再导出')
