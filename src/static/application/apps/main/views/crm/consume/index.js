@@ -65,16 +65,20 @@ class Consume extends Component {
         key: 'operation',
         width: 50,
         render: (text, record, index) => {
-          if(record.status !== 7) {
-            return
+          if(record.status === 4) {
+            return (
+              <span style={{color: '#666'}}>已退款</span>
+            )
           }
-          return (
-            <span>
-              <Popconfirm title='确认退款吗?' onConfirm={ this.refund.bind(this,record.ticketId) } >
-                <a href='javascript:void(0)'>{'\u00A0'}退款</a>
-              </Popconfirm>
-            </span>
-          )
+          if(record.status === 7) {
+            return (
+              <span>
+                <Popconfirm title='确认退款吗?' onConfirm={ this.refund.bind(this,record.ticketId) } >
+                  <a href='javascript:void(0)'>{'\u00A0'}退款</a>
+                </Popconfirm>
+              </span>
+            )
+          }
         }
       }
     ]
@@ -208,7 +212,7 @@ class Consume extends Component {
           key={key}
         >
           <form name="export" >
-            <span className="form-text">确认导出这批账单吗？</span>
+            <span className="form-text">确定导出这批订单吗？</span>
             <button onClick={this.hide} type="button" id="cancel">取消</button>
             <a href={exportUrl} target="_blank" id="submit" download onClick={this.hide}>确认</a>
           </form>
