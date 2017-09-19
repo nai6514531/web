@@ -57,7 +57,7 @@ class RoleModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, role: { key, visible, record } } = this.props
-    const title = record.id ? '修改角色' : '添加角色'
+    const title = record.id ? '编辑角色' : '添加角色'
     return(
       <Modal
         title={title}
@@ -162,7 +162,7 @@ class Role extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改 |</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑 |</a>
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除 |</a>
               </Popconfirm>

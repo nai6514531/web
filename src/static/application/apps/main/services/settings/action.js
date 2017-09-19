@@ -5,9 +5,9 @@ const actionService = {
     if(!data) {
       url = `/actions`
     } else if(data.noPagination) {
-      url = `/actions?handler_name=${data.handler_name || ''}&method=${data.method || ''}`
+      url = `/actions?handlerName=${data.handlerName || ''}&method=${data.method || ''}`
     } else {
-      url = `/actions?page=${data.page || 1 }&per_page=${data.per_page || 10 }&handler_name=${data.handler_name || ''}&method=${data.method || ''}`
+      url = `/actions?offset=${data.offset || 0 }&limit=${data.limit || 10 }&handlerName=${data.handlerName || ''}&method=${data.method || ''}`
     }
     return request.get(url)
   },

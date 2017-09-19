@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Layout } from 'antd'
 import { arrayToTree } from '../../../utils/'
-import { storage, session } from '../../../utils/storage.js'
+import { session } from '../../../utils/storage.js'
 
 const SubMenu = Menu.SubMenu
 
@@ -11,12 +11,13 @@ class SideBar extends React.Component {
   constructor(props) {
     super(props)
     this.levelMap = {}
-    this.defaultSelectedKeys = session.val('defaultSelectedKeys') || []
   }
 
   componentDidMount() {
     const defaultOpenKeys = session.val('defaultOpenKeys') || []
+    const defaultSelectedKeys = session.val('defaultSelectedKeys') || []
     this.props.changeOpenKeys(defaultOpenKeys)
+    this.props.changeSelectedKeys(defaultSelectedKeys)
   }
 
   getMenus = (menuData, fold) => {
@@ -41,7 +42,13 @@ class SideBar extends React.Component {
       }
       return (
         <Menu.Item key={item.id}>
-          <Link to={item.url}>
+          <Link
+            to={item.url}
+            onClick={()=>{
+              this.props.dispatch({
+                type: 'common/resetIndex'
+              })
+            }}>
             {item.icon && <Icon type={item.icon} />}
             {(!fold || item.parentId !== 0) && item.name}
           </Link>
@@ -85,29 +92,30 @@ class SideBar extends React.Component {
   }
 
   onClick = ({item, key, keyPath}) => {
-    const { handleClick, changeOpenKeys } = this.props
+    const { handleClick, changeOpenKeys, changeSelectedKeys } = this.props
     const realPath = keyPath.reverse()
     const selectedKeys = [realPath[realPath.length-1]]
     const openKeys = realPath.slice(0, keyPath.length-1)
     session.val('defaultSelectedKeys', selectedKeys)
     session.val('defaultOpenKeys', openKeys)
     changeOpenKeys(openKeys)
+    changeSelectedKeys(selectedKeys)
     handleClick && handleClick()
   }
 
   render() {
-    const { mode, theme, fold, handleClick, navOpenKeys, common: { userInfo } } = this.props
+    const { mode, theme, fold, handleClick, navOpenKeys, selectedKeys, common: { userInfo } } = this.props
     const menuItems = this.getMenus(userInfo.menuList, fold)
     const menuProps = !fold ? {
       openKeys: navOpenKeys,
-      onOpenChange: this.onOpenChange
+      onOpenChange: this.onOpenChange,
+      selectedKeys: selectedKeys
     } : {}
     return (
       <Menu
         mode={mode}
         theme={'dark'}
         onClick={this.onClick}
-        defaultSelectedKeys={this.defaultSelectedKeys}
         {...menuProps}
       >
         {menuItems}

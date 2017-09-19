@@ -112,7 +112,7 @@ class App extends Component {
                 realName: account.realName,
                 name: account.name || '-'
               })
-          } 
+          }
           if (!!~[2].indexOf(account.type)) {
             return _.template([
               '<%- realName %>',
@@ -121,7 +121,7 @@ class App extends Component {
                 realName: account.realName,
                 name: account.name || '-'
               })
-          } 
+          }
           return '-'
         }
       },
@@ -188,13 +188,13 @@ class App extends Component {
         width: 90,
         render: (text, record, index) => {
           const disabled = !!~[0, 2, 3, 4].indexOf(record.status)
-          const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
+          const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
             !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
           const count = record.count / 100
           return (
             <span>
               <a onClick={this.handlePay.bind(this, record)} className={disabled ? styles.hidden : ''}>结算 |</a>
-            <Link to={`/finance/settlement/bills/${record.id}?type=${type}`}> 明细</Link> 
+            <Link to={`/finance/settlement/bills/${record.id}?type=${type}`}> 明细</Link>
             </span>
           )
         }
@@ -202,7 +202,7 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 :
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
 
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
@@ -241,13 +241,13 @@ class App extends Component {
       }
       const data = res.data
       this.setState({
-        bills: data.objects || [], 
+        bills: data.objects || [],
         selectedRowKeys: [],
         pagination: {
           ...pagination,
           total: data.pagination.total
-        }, 
-        searchLoading: false, 
+        },
+        searchLoading: false,
         loading: false
       })
     }).catch((err) => {
@@ -265,7 +265,7 @@ class App extends Component {
       const data = res.data
       // 支付宝账单二次确认
       if (type === 1) {
-        this.alipayInfo = data 
+        this.alipayInfo = data
         this.setState({ alipayConfirmShow: true, payConfirmShow: false })
       }
       this.getBills()
@@ -322,7 +322,7 @@ class App extends Component {
   }
   onChangeDate (field, value) {
     const search = _.extend(this.state.search, { endAt: !!value ? moment(value).format('YYYY-MM-DD') : ''}, {[field]: !!value ? moment(value).format('YYYY-MM-DD') : ''})
-    this.setState({search: search}); 
+    this.setState({search: search});
   }
   onStartChange (value) {
     this.onChangeDate('startAt', value);
@@ -371,7 +371,7 @@ class App extends Component {
           if (res.status !== 'OK') {
             throw new Error(res.message)
           }
-          window.open(res.data.url);       
+          window.open(res.data.url);
           self.setState({exportLoading: false})
         }).catch((err) => {
           self.setState({exportLoading: false})
@@ -384,17 +384,17 @@ class App extends Component {
     })
   }
   reset() {
-    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 : 
+    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 :
                     !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
     const options = {
-      search: { 
+      search: {
         status: '',
         endAt: '',
         startAt: '',
         keys: '',
         type: payType,
         dateType: 1,
-      }, 
+      },
       pagination: {
         total: 0,
         limit: PAEG_SIZE,
@@ -409,7 +409,7 @@ class App extends Component {
     this.changeHistory({...options.search, pagination: options.pagination})
   }
   changeHistory (options) {
-    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' : 
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
       !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
     let search = _.clone(this.state.search)
     let pagination = _.clone(this.state.pagination)
@@ -517,7 +517,7 @@ class App extends Component {
             suffix={keysInputSuffix}
             ref='keysInput'
            />
-          <Button type='primary' icon='search' onClick={this.search.bind(this)} 
+          <Button type='primary' icon='search' onClick={this.search.bind(this)}
             loading={this.state.searchLoading} className={styles.button}>筛选</Button>
           <Button type='primary' icon='download' onClick={this.exportBills.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
           <Button onClick={this.reset.bind(this)} className={styles.button}>重置</Button>
@@ -561,7 +561,7 @@ class App extends Component {
               <Button key="submit" type="primary" size="large" loading={selectedPayLoading} onClick={this.onPay.bind(this)}>
                 确认
               </Button>
-             </div> 
+             </div>
           </Modal>
         </div>
       </div>

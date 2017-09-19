@@ -7,16 +7,18 @@ import Nav from './nav/'
 import SideBar from './sidebar/'
 import { storage } from '../../utils/storage.js'
 import classNames from 'classnames'
+import { Link } from 'react-router-dom'
 import './index.css'
 
 const { Sider } = Layout
 
 class Wrapper extends React.Component {
   componentDidMount() {
-    // 获取用户信息
-    this.props.dispatch({ type: 'common/info' })
     if(!storage.val('token')) {
       this.props.history.push('/')
+    } else {
+      // 获取用户信息
+      this.props.dispatch({ type: 'common/info' })
     }
   }
 
@@ -28,9 +30,20 @@ class Wrapper extends React.Component {
       }
     })
   }
-
+  changeSelectedKeys = (selectedKeys) => {
+    this.props.dispatch({
+      type: 'common/handleSelectedKeys',
+      payload: {
+        selectedKeys: selectedKeys
+      }
+    })
+  }
+  clickHandler = () => {
+    this.changeOpenKeys([])
+    this.changeSelectedKeys([])
+  }
   render() {
-    const { common: { fold, navOpenKeys, userInfo }, dispatch } = this.props
+    const { common: { fold, navOpenKeys, userInfo, selectedKeys }, dispatch } = this.props
     const wrapper = classNames('wrapper',{
       'wrapper-fold': !fold,
       'wrapper-unfold': fold
@@ -49,14 +62,16 @@ class Wrapper extends React.Component {
           collapsed={fold}
           trigger={null}
           >
-          <img src={imageUrl} className={logo}/>
+          <Link to='/admin' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link>
           <SideBar
             style={{ overflow: 'auto' }}
             {...this.props}
             mode={mode}
             fold={fold}
             navOpenKeys={navOpenKeys}
-            changeOpenKeys={this.changeOpenKeys}/>
+            selectedKeys={selectedKeys}
+            changeOpenKeys={this.changeOpenKeys}
+            changeSelectedKeys={this.changeSelectedKeys}/>
         </Sider>
         <Layout>
           <Nav {...this.props}/>

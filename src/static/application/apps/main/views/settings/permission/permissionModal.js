@@ -44,7 +44,7 @@ class PermissionModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, permission: { key, visible, record } } = this.props
-    const title = record.id ? '修改权限' : '添加权限'
+    const title = record.id ? '编辑权限' : '添加权限'
     return(
       <Modal
         title={title}

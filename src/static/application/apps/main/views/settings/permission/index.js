@@ -10,6 +10,7 @@ import ActionModal from './actionModal.js'
 import ElementModal from './elementModal.js'
 import MenuModal from './menuModal.js'
 import PermissionModal from './permissionModal.js'
+import history from '../../../utils/history.js'
 const breadItems = [
   {
     title: '设置'
@@ -31,7 +32,7 @@ class Permission extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>修改|</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑|</a>
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除|</a>
               </Popconfirm>
@@ -45,7 +46,10 @@ class Permission extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
+    this.fetch(url)
+  }
+  fetch = (url) => {
     this.props.dispatch({
       type: 'permission/list',
       payload: {
@@ -62,7 +66,7 @@ class Permission extends Component {
     })
   }
   delete = (id) => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'permission/delete',
       payload: {
@@ -89,6 +93,9 @@ class Permission extends Component {
       payload: { id }
     })
   }
+  change = (url) => {
+   this.fetch(url)
+  }
   render() {
     const { permission: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
     return(
@@ -107,6 +114,7 @@ class Permission extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
+          change={this.change}
         />
         <PermissionModal {...this.props}/>
         <ActionModal {...this.props}/>

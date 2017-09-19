@@ -30,6 +30,7 @@
     "koa-static-cache": "^4.0.0",
     "koa-views": "^6.0.1",
     "path": "^0.12.7",
+    "react-dragula": "^1.1.17",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
