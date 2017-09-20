@@ -57,6 +57,7 @@ api.interceptors.response.use(
           window.location.href = '/'
         }
       })
+      return Promise.reject(response.data)
     }
     return response.data
   },

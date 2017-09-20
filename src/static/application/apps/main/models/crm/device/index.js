@@ -4,7 +4,8 @@ import { cloneDeep } from 'lodash'
 const model = {
   data: {
     objects: []
-  }
+  },
+  selectedRowKeys: []
 }
 export default {
   namespace: 'crmDevice',

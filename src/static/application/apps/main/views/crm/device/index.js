@@ -36,11 +36,19 @@ class Consume extends Component {
         width: 100,
         render: (record) => {
           return (
-            `${record.fromUserName}(${record.fromUserMobile})`
+            `${record.assigner}(${record.assignerMobile})`
           )
         }
       },
-      { title: '运营商', dataIndex: 'userName',key: 'userName', width: 100 },
+      {
+        title: '运营商',
+        width: 150,
+        render: (record) => {
+          return (
+            `${record.userName}(${record.userMobile || '-'})`
+          )
+        }
+      },
       { title: '楼层', dataIndex: 'address', key: 'address', width: 100 },
       {
         title: '状态',
@@ -146,7 +154,13 @@ class Consume extends Component {
   change = (url) => {
    this.search = { ...this.search, ...url }
    this.fetch(url)
-   this.checkList = []
+   // 分页变化时清空checkbox
+   this.props.dispatch({
+     type: 'crmDevice/updateData',
+     payload: {
+       selectedRowKeys: []
+     }
+   })
   }
   changeStatus = (id, status) => {
     this.props.dispatch({
@@ -168,34 +182,45 @@ class Consume extends Component {
     })
   }
   batchDelete = () => {
-    const id = this.checkList
+    const checkList = this.props.crmDevice.selectedRowKeys
     const self = this
-    if(!id.length) {
+    if(!checkList.length) {
       message.info('请至少选择一个设备')
       return
     }
     Modal.confirm({
-      content: `将有${id.length}个设备被删除，是否继续？`,
+      content: `将有${checkList.length}个设备被删除，是否继续？`,
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        self.delete(id)
-        self.checkList = []
+        self.delete(checkList)
+        self.props.dispatch({
+          type: 'crmDevice/updateData',
+          payload: {
+            selectedRowKeys: []
+          }
+        })
       }
     })
   }
   rowSelection = () => {
     return {
+      selectedRowKeys: this.props.crmDevice.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        this.checkList = []
-        selectedRows.map(value => this.checkList.push(value.id))
+        this.props.dispatch({
+          type: 'crmDevice/updateData',
+          payload: {
+            selectedRowKeys
+          }
+        })
       }
     }
   }
   render() {
-    const { crmDevice: { data: { objects, pagination } }, loading  } = this.props
+    const { crmDevice: { data: { objects, pagination }, selectedRowKeys }, loading  } = this.props
     const startedAt = this.search.startedAt ? moment(this.search.startedAt, dateFormat) : null
     const endedAt = this.search.endedAt ? moment(this.search.endedAt, dateFormat) : null
+    pagination && (pagination.showSizeChanger = true)
     return(
       <div>
         <Breadcrumb items={breadItems} />
