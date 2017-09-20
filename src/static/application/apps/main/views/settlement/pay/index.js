@@ -86,6 +86,7 @@ class App extends Component {
       {
         title: '申请时间',
         dataIndex: 'createdAt',
+        width: 135,
         render: (date) => {
           return moment(date).format('YYYY-MM-DD HH:mm')
         }
@@ -93,6 +94,7 @@ class App extends Component {
       {
         title: '申请人',
         dataIndex: 'user',
+        width: 130,
         render: (user) => {
           return `${user.name} | ${user.accountName}`
         }
@@ -100,6 +102,7 @@ class App extends Component {
       {
         title: '收款账号',
         dataIndex: 'account',
+        width: 130,
         render: (account, record) => {
           if (!!~[1].indexOf(account.type)) {
             return _.template([
@@ -124,15 +127,18 @@ class App extends Component {
       },
       {
         title: '结算单号',
-        dataIndex: 'id'
+        dataIndex: 'id',
+        width: 80,
       },
       {
         title: '账单天数',
-        dataIndex: 'count'
+        dataIndex: 'count',
+        width: 50,
       },
       {
         title: '结算金额',
         dataIndex: 'totalAmount',
+        width: 80,
         render: (data) => {
           return `${(data/100).toFixed(2)}`
         }
@@ -140,6 +146,7 @@ class App extends Component {
       {
         title: '手续费',
         dataIndex: 'cast',
+        width: 60,
         render: (data) => {
           return `${(data/100).toFixed(2)}`
         }
@@ -147,6 +154,7 @@ class App extends Component {
       {
         title: '入账金额',
         dataIndex: 'amount',
+        width: 80,
         render: (data) => {
           return `${(data/100).toFixed(2)}`
         }
@@ -154,23 +162,22 @@ class App extends Component {
       {
         title: '状态',
         dataIndex: 'status',
-        width: 90,
+        width: 70,
         render: (status) => {
-          // if (status === 4) {
-          //   return <p className={styles.fail}><span>{BILLS_STATUS[status]}</span><Icon type='question-circle' onClick={this.showFailInfo.bind(this)} /></p>
-          // }
-          return BILLS_STATUS[status]
+          return BILLS_STATUS[status] || '-'
         }
       },
       {
         title: '结算时间',
         dataIndex: 'settledAt',
+        width: 135,
         render: (date, record) => {
           return date && record.status === 2 ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
         }
       },
       {
         title: '是否自动结算',
+        width: 70,
         render: (record) => {
           return record.isAuto ? '自动结算' : '手动结算'
         }
@@ -178,6 +185,7 @@ class App extends Component {
       {
         title: '操作',
         key: 'operation',
+        width: 90,
         render: (text, record, index) => {
           const disabled = !!~[0, 2, 3, 4].indexOf(record.status)
           const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
@@ -284,7 +292,7 @@ class App extends Component {
   search () {
     const { search } = this.state
     if (!!search.startAt && !search.endAt) {
-      return message.info('请选择时间')
+      return message.info('请选择结束日期')
     }
     this.getBills({pagination: { limit: PAEG_SIZE, offset: 0 }})
     this.changeHistory()
@@ -297,6 +305,10 @@ class App extends Component {
   changeKeys (e) {
     const val = e.target.value
     this.setState({search: {...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"")}})
+  }
+  emitKeysEmpty() {
+    this.refs.keysInput.focus();
+    this.setState({search: {...this.state.search, keys: ''}})
   }
   onSelectChange (selectedRowKeys) {
     this.setState({ selectedRowKeys: selectedRowKeys });
@@ -346,6 +358,10 @@ class App extends Component {
   }
   exportBills() {
     const self = this
+    let { search } = this.state
+    if (!search.startAt || !search.endAt) {
+      return message.info('请选择导出账单日期～')
+    }
     confirm({
       title: '是否导出这批账单',
       content: '',
@@ -405,7 +421,8 @@ class App extends Component {
   render () {
     const self = this
     const { selectedPayLoading, selectedRowKeys } = this.state
-    const { type } = this.state.search
+    const { type, keys, startAt, endAt, dateType } = this.state.search
+    const keysInputSuffix = keys ? <Icon type='close-circle' onClick={this.emitKeysEmpty.bind(this)} className={styles.close} /> : null;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange.bind(this),
@@ -419,7 +436,6 @@ class App extends Component {
       pageSize: parseInt(this.state.pagination.limit, 10),
       showSizeChanger: true,
       pageSizeOptions: ['10', '50', '100', '200'],
-
       showTotal (total) {
         return <span>总计 {total} 条</span>
       },
@@ -465,42 +481,41 @@ class App extends Component {
           </Select>
           <div className={styles.group}>
             <Select
-              value={this.state.search.dateType + ''}
-              style={{width: 120 }}
+              value={dateType + ''}
+              style={{width: 120, marginBottom: 10 }}
               onChange={this.changeDateType.bind(this)}>
               <Option value='1'>申请时间</Option>
               <Option value='2'>结算时间</Option>
             </Select>
             <DatePicker
-            style={{width:120,marginLeft:4}}
-            value={!!this.state.search.startAt ? moment(this.state.search.startAt) : null}
+            style={{width:120,marginLeft:4, marginBottom: 10}}
+            value={!!startAt ? moment(startAt) : null}
             format="YYYY-MM-DD"
             disabledDate={this.disabledStartDate}
             placeholder="开始日期"
             onChange={this.onStartChange.bind(this)}
             onOpenChange={this.handleStartOpenChange.bind(this)}
-            className='item'
           />
           -
           <DatePicker
-            style={{width:120,marginRight:4}}
+            style={{width:120, marginRight:4, marginBottom: 10}}
             disabledDate={this.disabledEndDate.bind(this)}
             placeholder="结束日期"
             format="YYYY-MM-DD"
-            value={!!this.state.search.endAt ? moment(this.state.search.endAt) : null}
+            value={!!endAt ? moment(endAt) : null}
             onChange={this.onEndChange.bind(this)}
             open={this.state.endOpen}
             onOpenChange={this.handleEndOpenChange.bind(this)}
-            className='item'
           />
           </div>
           <Input
             placeholder='运营商名称 / 登录账号'
-            style={{ width: 200 }}
-            className={styles.item}
+            style={{ width: 200, marginRight:4, marginBottom: 10, verticalAlign: 'top'}}
             onChange={this.changeKeys.bind(this)}
-            value={this.state.search.keys}
+            value={keys}
             onPressEnter={this.search.bind(this)}
+            suffix={keysInputSuffix}
+            ref='keysInput'
            />
           <Button type='primary' icon='search' onClick={this.search.bind(this)}
             loading={this.state.searchLoading} className={styles.button}>筛选</Button>
@@ -514,7 +529,7 @@ class App extends Component {
             loading={this.state.loading}
             pagination={pagination}
             className={styles.table}
-            scroll={{ x: 1000 }}
+            scroll={{ x: 1000, y: 800 }}
           />
           <Modal
             title={null}
