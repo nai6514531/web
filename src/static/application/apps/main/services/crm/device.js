@@ -4,8 +4,8 @@ const deviceService = {
     let url = `/devices?offset=${data.offset || 0 }&limit=${data.limit || 10 }&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}`
     return request.get(url)
   },
-  remove: (id) => {
-    let url = `/devices/batch/remove`
+  reset: (id) => {
+    let url = `/devices/batch/reset`
     return request.put(url, id)
   },
   status: (id, data) => {

@@ -106,7 +106,7 @@ class Consume extends Component {
           return (
             <span>
               {action}
-              <Popconfirm title='确认删除吗?' onConfirm={this.delete.bind(this, [record.id])}>
+              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.id])}>
                 <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -172,9 +172,9 @@ class Consume extends Component {
       }
     })
   }
-  delete = (id) => {
+  reset = (id) => {
     this.props.dispatch({
-      type: 'crmDevice/delete',
+      type: 'crmDevice/reset',
       payload: {
         id: id,
         url: this.search
@@ -193,7 +193,7 @@ class Consume extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        self.delete(checkList)
+        self.reset(checkList)
         self.props.dispatch({
           type: 'crmDevice/updateData',
           payload: {

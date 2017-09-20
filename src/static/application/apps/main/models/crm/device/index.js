@@ -43,8 +43,8 @@ export default {
         message.error(result.message)
       }
     },
-    *delete({ payload }, { call, put }) {
-      const result = yield call(deviceService.remove, payload.id)
+    *reset({ payload }, { call, put }) {
+      const result = yield call(deviceService.reset, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({
