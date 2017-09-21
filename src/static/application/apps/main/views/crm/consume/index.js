@@ -30,7 +30,7 @@ class Consume extends Component {
       // { title: '经销商', dataIndex: 'agency',key: 'agency' },
       {
         title: '上级运营商',
-        width: 100,
+        width: 150,
         render: (record) => {
           return (
             `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
@@ -68,6 +68,12 @@ class Consume extends Component {
           if(record.status === 4) {
             return (
               <span style={{color: '#666'}}>已退款</span>
+            )
+          }
+          if(record.paymentId === 4) {
+            // ic卡不支持退款
+            return (
+              <span style={{color: '#666'}}>/</span>
             )
           }
           if(record.status === 7) {
