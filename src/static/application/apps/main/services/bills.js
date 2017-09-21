@@ -18,7 +18,7 @@ const billsService = {
       keys: options.keys,
       startAt: options.startAt,
       status: parseInt(options.status, 10),
-      type: parseInt(options.type, 10)
+      type: parseInt(options.type, 10),
     })
   }
 }
