@@ -7,7 +7,7 @@ import { API_SERVER } from '../../utils/debug'
 export default {
   namespace: 'login',
   state: {
-    captcha: `${API_SERVER}/captcha.png`,
+    captcha: ``,
     accountHelp: null,
     passwordHelp: null,
     captchaHelp: null
