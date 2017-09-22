@@ -170,7 +170,7 @@ class AdOrder extends Component {
             attr: attr,
             data: {
               appId: appId,
-              locationId: id
+              adPositionId: id
             },
             order: true
           }

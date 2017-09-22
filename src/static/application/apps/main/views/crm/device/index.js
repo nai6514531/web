@@ -218,8 +218,8 @@ class Consume extends Component {
   }
   render() {
     const { crmDevice: { data: { objects, pagination }, selectedRowKeys }, loading  } = this.props
-    const startedAt = this.search.startedAt ? moment(this.search.startedAt, dateFormat) : null
-    const endedAt = this.search.endedAt ? moment(this.search.endedAt, dateFormat) : null
+    const startAt = this.search.startAt ? moment(this.search.startAt, dateFormat) : null
+    const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>

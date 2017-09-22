@@ -48,7 +48,7 @@ api.interceptors.response.use(
     if (!response.data) {
       return Promise.reject('服务器返回数据异常!')
     }
-    if(response.data.status === 'UNAUTHORIZED') {
+    if(response.data.status === 'UNAUTHORIZED' || response.data.status === 'SESSION_EXPIRED') {
       confirm({
         title: response.data.message,
         onOk() {

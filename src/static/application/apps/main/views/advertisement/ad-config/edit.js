@@ -72,7 +72,7 @@ class PlatformEdit extends Component {
         values.appId = Number(values.appId)
         values.displayStrategy = Number(values.displayStrategy)
         values.status = Number(values.status)
-        values.locationId = Number(values.locationId)
+        values.adPositionId = Number(values.adPositionId)
         values.name = trim(values.name)
         values.title = trim(values.title)
         values.url = trim(values.url)
@@ -194,11 +194,11 @@ class PlatformEdit extends Component {
     })
     this.props.dispatch({ type: 'adConfigDetail/deleteLocation' })
     this.props.form.setFieldsValue({
-      locationId: undefined,
+      adPositionId: undefined,
     })
   }
   selectHandler = (type, value) => {
-    if(type === 'locationId') {
+    if(type === 'adPositionId') {
       this.props.adConfigDetail.postionData.map((item) => {
         if(value == item.id) {
           this.props.dispatch({
@@ -285,16 +285,16 @@ class PlatformEdit extends Component {
             {...formItemLayout}
             label='广告位'
           >
-            {getFieldDecorator('locationId', {
+            {getFieldDecorator('adPositionId', {
               rules: [{
                 required: true, message: '请选择广告位',
               }],
-              initialValue: detail.locationId !== undefined ? detail.locationId + '' : undefined
+              initialValue: detail.adPositionId !== undefined ? detail.adPositionId + '' : undefined
             })(
               <Select
                 disabled={isEdit}
                 placeholder='广告位'
-                onChange={this.selectHandler.bind(this, 'locationId')}>
+                onChange={this.selectHandler.bind(this, 'adPositionId')}>
                 {
                   postionData.map(value => {
                     return (
