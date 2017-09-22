@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
 import settings from './settings/'
-import finance from './finance/'
+import settlement from './settlement/'
 import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
@@ -23,7 +23,7 @@ function RouterConfig({ history, app }) {
         )}/>
         <Route path='/finance' render={ props => (
           <Layout>
-            { finance(history, app) }
+            { settlement(history, app) }
           </Layout>
         )}/>
         <Route path='/2' render={ props => (
