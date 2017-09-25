@@ -30,19 +30,19 @@ const CustomDatePicker = React.createClass({
     // this.disabledEndDate(this.state.endAt)
   },
   onStartChange(value) {
-    this.handleBillAtChange('startAt', value);
-    this.handleBillAtChange('endAt', value);
+    this.handleAtChange('startAt', value);
+    this.handleAtChange('endAt', value);
     this.setState({
       defaultEndAt: value
     })
   },
   onEndChange(value) {
-    this.handleBillAtChange('endAt', value);
+    this.handleAtChange('endAt', value);
     this.setState({
       defaultEndAt: value
     })
   },
-  handleBillAtChange(field, value) {
+  handleAtChange(field, value) {
     this.props.search[field] = value ? moment(value).format('YYYY-MM-DD') : null
     // 此处需要对时间进行统一处理
     this.setState({
@@ -78,17 +78,6 @@ const CustomDatePicker = React.createClass({
     this.setState({
       endOpen: open
     });
-  },
-  getSearchCondition() {
-    const {
-      startAt,
-      endAt,
-    } = this.state;
-    const searchCondition = {
-      startAt: startAt,
-      endAt: endAt,
-    }
-    return searchCondition;
   },
   render() {
     return (
