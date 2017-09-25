@@ -8,6 +8,7 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import history from '../../../utils/history.js'
+import { trim } from 'lodash'
 import styles from './index.pcss'
 
 const RangePicker = DatePicker.RangePicker
@@ -123,7 +124,7 @@ class Consume extends Component {
   }
   changeHandler = (type, e) => {
     if(e.target.value) {
-      this.search = { ...this.search, [type]: e.target.value }
+      this.search = { ...this.search, [type]: trim(e.target.value) }
     } else {
       delete this.search[type]
     }

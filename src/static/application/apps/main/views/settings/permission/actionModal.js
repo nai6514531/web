@@ -15,7 +15,6 @@ class ActionModal extends Component {
     this.search = {
       noPagination: true
     }
-    this.initCheckList = []
     this.checkList = []
   }
   hide = () => {
@@ -27,17 +26,11 @@ class ActionModal extends Component {
   }
   handleSubmit = () => {
     const url = transformUrl(location.hash)
-    let data = []
-    if(this.checkList.length === 0) {
-      data = this.initCheckList
-    } else {
-      data = this.checkList
-    }
     this.props.dispatch({
       type: 'permission/updateAction',
       payload: {
         id: this.props.permission.currentId,
-        data: data,
+        data: this.checkList,
         url: url
       }
     })
@@ -58,7 +51,7 @@ class ActionModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, permission: { actionData, actionVisible, key, currentData }, loading } = this.props
-    this.initCheckList = currentData
+    this.checkList = currentData
     return(
       <Modal
         title='配置接口'

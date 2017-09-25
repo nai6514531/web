@@ -7,7 +7,8 @@ const model = {
   },
   visible: false,
   key: 0,
-  exportUrl: ''
+  exportUrl: '',
+  date: new Date()
 }
 export default {
   namespace: 'crmConsume',

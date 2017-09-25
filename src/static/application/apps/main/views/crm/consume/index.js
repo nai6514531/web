@@ -10,6 +10,8 @@ import moment from 'moment'
 import history from '../../../utils/history.js'
 import styles from './index.pcss'
 import DatePicker from '../../../components/date-picker/'
+import { trim } from 'lodash'
+
 const breadItems = [
   {
     title: '客服系统'
@@ -92,18 +94,33 @@ class Consume extends Component {
   componentDidMount() {
     const url = this.search
     const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
-    if( customerMobile || keywords || deviceSerial || startAt || limit || offset ) {
-      this.fetch(url)
+    if(!this.search.startAt || !this.search.endAt) {
+      message.info('请选择日期')
+      return
     }
+    if( !customerMobile && !keywords && !deviceSerial ) {
+      // message.info('请选择筛选条件')
+      return
+    }
+    this.fetch(url)
   }
   changeHandler = (type, e) => {
     if(e.target.value) {
-      this.search = { ...this.search, [type]: e.target.value }
+      this.search = { ...this.search, [type]: trim(e.target.value) }
     } else {
       delete this.search[type]
     }
   }
   searchClick = () => {
+    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
+    if(!startAt || !endAt) {
+      message.info('请选择日期')
+      return
+    }
+    if( !customerMobile && !keywords && !deviceSerial ) {
+      message.info('请选择筛选条件')
+      return
+    }
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
     const queryString = toQueryString({ ...this.search })
@@ -127,7 +144,11 @@ class Consume extends Component {
   }
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
-    if(!customerMobile && !deviceSerial && !keywords && !endAt && !startAt) {
+    if(!startAt || !endAt) {
+      message.info('请选择日期')
+      return
+    }
+    if( !customerMobile && !keywords && !deviceSerial ) {
       message.info('请先筛选再导出')
       return
     }
@@ -153,14 +174,16 @@ class Consume extends Component {
     })
   }
   render() {
-    const { crmConsume: { data: { objects, pagination }, key, visible, exportUrl }, loading  } = this.props
+    const { crmConsume: { date, data: { objects, pagination }, key, visible, exportUrl }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Row className={styles['input-wrap']}>
           <span className={styles.input}>
-          <DatePicker search={this.search}/>
+          <DatePicker
+            date={date}
+            search={this.search}/>
           </span>
           <Input
             placeholder='运营商名称/账号'

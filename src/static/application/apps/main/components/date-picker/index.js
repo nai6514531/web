@@ -8,9 +8,16 @@ import zhCN from 'antd/lib/date-picker/locale/zh_CN';
 
 const CustomDatePicker = React.createClass({
   getInitialState() {
-    const defaultValue = this.props.search
-    const defaultStartDate = defaultValue.startAt ? moment(defaultValue.startAt, 'YYYY-MM-DD') : null
-    const defaultEndDate = defaultValue.endAt ? moment(defaultValue.endAt, 'YYYY-MM-DD') : null
+    let { startAt, endAt } = this.props.search
+    let date = this.props.date
+    const defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 31 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
+    const defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : moment(date, 'YYYY-MM-DD')
+    if(!startAt) {
+      this.props.search.startAt = moment(defaultStartDate).format('YYYY-MM-DD')
+    }
+    if(!endAt) {
+      this.props.search.endAt = moment(defaultEndDate).format('YYYY-MM-DD')
+    }
     return {
       startAt: defaultStartDate, //搜索结账开始时间
       endAt: defaultEndDate, //搜索结账结束时间
@@ -36,8 +43,7 @@ const CustomDatePicker = React.createClass({
     })
   },
   handleBillAtChange(field, value) {
-    value = value ? moment(value).format('YYYY-MM-DD') : ""
-    this.props.search[field] = value
+    this.props.search[field] = value ? moment(value).format('YYYY-MM-DD') : null
     // 此处需要对时间进行统一处理
     this.setState({
       [field]: value
@@ -85,18 +91,11 @@ const CustomDatePicker = React.createClass({
     return searchCondition;
   },
   render() {
-    let defaultValue = this.props.search
-    const defaultStartDate = defaultValue.startAt ? {
-      defaultValue: moment(defaultValue.startAt, 'YYYY-MM-DD')
-    } : {}
-    const defaultEndDate = defaultValue.endAt ? {
-      defaultValue: moment(defaultValue.endAt, 'YYYY-MM-DD')
-    } : {}
     return (
       <span>
         <DatePicker
           style={{width:120,marginLeft:4}}
-          {...defaultStartDate}
+          value={this.state.startAt}
           disabledDate={this.disabledStartDate()}
           placeholder="开始日期"
           onChange={this.onStartChange}
@@ -107,7 +106,6 @@ const CustomDatePicker = React.createClass({
         -
         <DatePicker
           style={{width:120,marginRight:4}}
-          {...defaultEndDate}
           disabledDate={this.disabledEndDate}
           placeholder="结束日期"
           value={this.state.defaultEndAt}
