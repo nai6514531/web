@@ -10,7 +10,7 @@ const CustomDatePicker = React.createClass({
   getInitialState() {
     let { startAt, endAt } = this.props.search
     let date = this.props.date
-    const defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 31 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
+    const defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
     const defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : moment(date, 'YYYY-MM-DD')
     if(!startAt) {
       this.props.search.startAt = moment(defaultStartDate).format('YYYY-MM-DD')
