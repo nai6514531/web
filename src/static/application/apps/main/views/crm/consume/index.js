@@ -112,7 +112,7 @@ class Consume extends Component {
     }
   }
   searchClick = () => {
-    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
+    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = this.search
     if(!startAt || !endAt) {
       message.info('请选择日期')
       return

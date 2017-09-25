@@ -52,9 +52,9 @@ const CustomDatePicker = React.createClass({
   disabledStartDate(startAt) {
     const endAt = new Date(this.state.endAt ? this.state.endAt : null).getTime();
     let dateRange = startAt && startAt.valueOf() > Date.now();
-    if (!startAt || !endAt) {
-      return dateRange;
-    }
+    // if (!startAt || !endAt) {
+    //   return dateRange;
+    // }
     return dateRange;
 
   },
@@ -96,7 +96,7 @@ const CustomDatePicker = React.createClass({
         <DatePicker
           style={{width:120,marginLeft:4}}
           value={this.state.startAt}
-          disabledDate={this.disabledStartDate()}
+          disabledDate={this.disabledStartDate}
           placeholder="开始日期"
           onChange={this.onStartChange}
           onOpenChange={this.handleStartOpenChange}
