@@ -14,21 +14,43 @@
 .summary {
 	margin: 10px 0 20px 10px;
 }
-.text {
-	font-size: 16px;
-	margin: 10px;
+.wrapper {
+	font-size: 12pt;
+	display: inline-block;
+	width: 50%;
+	padding: 10px;
 	@media (max-width: 768px) {
+		display: block;
+		width: 100%;
 		font-size: 14px;
 	}
 }
 .title {
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 20px;
+	width: 30%;
+	text-align: right;
   @media (max-width: 768px) {
+		text-align: left;
 		margin-right: 5px;
 	}
 }
-.img-wrap {
+.description {
+	display: inline-table;
+	width: 60%;
+	color: rgba(53,53,53,.65);
+	@media (max-width: 768px) {
+		display: inline-table;
+		width: 65%;
+	}
+}
+.img-wrapper {
+	padding: 20px 10%;
+	@media (max-width: 768px) {
+		padding: 0;
+	}
+}
+.img-item {
 	width: 138px;
 	height: 138px;
 	@media (max-width: 768px) {
@@ -41,7 +63,7 @@
   border: 1px solid #d9d9d9;
 	display: inline-block;
 }
-.img-wrap > img{
+.img-item > img{
 	width: 120px;
 	height: 120px;
 	@media (max-width: 768px) {

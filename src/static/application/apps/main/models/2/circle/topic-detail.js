@@ -2,7 +2,9 @@ import { message } from 'antd'
 import circleService from '../../../services/2/circle.js'
 import { cloneDeep } from 'lodash'
 const model = {
-  data: {}
+  data: {},
+  visible: false,
+  previewImage: '',
 }
 export default {
   namespace: 'topicDetail',
@@ -10,6 +12,15 @@ export default {
   reducers: {
     updateData(state, { payload: { data } }) {
       return { ...state, data }
+    },
+    showModal(state, { payload: { previewImage } }) {
+      const visible = true
+      return { ...state, visible, previewImage }
+    },
+    hideModal(state) {
+      const visible = false
+      // const key = state.key + 1
+      return { ...state, visible }
     },
     clear(state) {
       return model
