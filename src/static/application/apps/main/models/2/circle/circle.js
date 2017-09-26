@@ -19,31 +19,30 @@ export default {
       return { ...state, ...payload }
     },
     clear(state) {
-      model.provinceData = state.provinceData
-      model.summary = state.summary
-      model.clonedProvinceData = state.clonedProvinceData
       return model
     }
   },
   effects: {
     *list({ payload }, { call, put, select }) {
       const result = yield call(circleService.list, payload.data)
-      const province = yield call(addressService.provinceList)
-      const summary = yield call(circleService.summary)
-
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         result.message && message.error(result.message)
       }
-
+    },
+    *provinceList({ payload }, { call, put, select }) {
+      const province = yield call(addressService.provinceList)
       if(province.status == 'OK') {
         yield put({ type: 'updateData', payload: { provinceData: province.data.objects } })
         yield put({ type: 'updateData', payload: { clonedProvinceData: province.data.objects } })
       } else {
         province.message && message.error(province.message)
       }
-
+    }
+    ,
+    *summary({ payload }, { call, put, select }) {
+      const summary = yield call(circleService.summary)
       if(summary.status == 'OK') {
         yield put({ type: 'updateData', payload: { summary: summary.data } })
       } else {

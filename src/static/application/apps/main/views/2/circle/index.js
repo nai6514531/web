@@ -74,6 +74,12 @@ class Circle extends Component {
         search: url
       }
     })
+    this.props.dispatch({
+      type: 'circle/summary'
+    })
+    this.props.dispatch({
+      type: 'circle/provinceList'
+    })
     this.fetch(url)
   }
   changeHandler = (type, value) => {
@@ -207,4 +213,3 @@ function mapStateToProps(state,props) {
   }
 }
 export default connect(mapStateToProps)(Circle)
-
