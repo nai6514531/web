@@ -15,8 +15,6 @@ export default {
       return { ...state, ...payload }
     },
     clear(state) {
-      model.appData = state.appData
-      model.postionData = state.postionData
       return model
     }
   },

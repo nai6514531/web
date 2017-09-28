@@ -9,14 +9,21 @@ import zhCN from 'antd/lib/date-picker/locale/zh_CN';
 const CustomDatePicker = React.createClass({
   getInitialState() {
     let { startAt, endAt } = this.props.search
-    let date = this.props.date
-    const defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
-    const defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : moment(date, 'YYYY-MM-DD')
-    if(!startAt) {
-      this.props.search.startAt = moment(defaultStartDate).format('YYYY-MM-DD')
-    }
-    if(!endAt) {
-      this.props.search.endAt = moment(defaultEndDate).format('YYYY-MM-DD')
+    let date = this.props.date || new Date()
+    let defaultStartDate, defaultEndDate
+
+    if(this.props.defaultTime) {
+      defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
+      defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : moment(date, 'YYYY-MM-DD')
+      if(!startAt) {
+        this.props.search.startAt = moment(defaultStartDate).format('YYYY-MM-DD')
+      }
+      if(!endAt) {
+        this.props.search.endAt = moment(defaultEndDate).format('YYYY-MM-DD')
+      }
+    } else {
+      defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : null
+      defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : null
     }
     return {
       startAt: defaultStartDate, //搜索结账开始时间
@@ -43,7 +50,12 @@ const CustomDatePicker = React.createClass({
     })
   },
   handleAtChange(field, value) {
-    this.props.search[field] = value ? moment(value).format('YYYY-MM-DD') : null
+    if(value) {
+      this.props.search[field] = moment(value).format('YYYY-MM-DD')
+    } else {
+      delete this.props.search[field]
+    }
+    // this.props.search[field] = value ? moment(value).format('YYYY-MM-DD') : null
     // 此处需要对时间进行统一处理
     this.setState({
       [field]: value

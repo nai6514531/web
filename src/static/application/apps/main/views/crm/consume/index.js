@@ -183,7 +183,8 @@ class Consume extends Component {
           <span className={styles.input}>
           <DatePicker
             date={date}
-            search={this.search}/>
+            search={this.search}
+            defaultTime={true}/>
           </span>
           <Input
             placeholder='运营商名称/账号'
