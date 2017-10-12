@@ -34,7 +34,7 @@ class Consume extends Component {
       // { title: '经销商', dataIndex: '',key: '' },
       {
         title: '分配人',
-        width: 100,
+        width: 200,
         render: (record) => {
           return (
             `${record.assigner}(${record.assignerMobile})`
@@ -53,7 +53,7 @@ class Consume extends Component {
       { title: '楼层', dataIndex: 'address', key: 'address', width: 100 },
       {
         title: '状态',
-        width: 100,
+        width: 70,
         dataIndex: 'status',
         key: 'status',
         render: (status) => {
@@ -80,10 +80,11 @@ class Consume extends Component {
           )
         }
       },
-      { title: '类型', dataIndex: 'referenceDevice',key: 'referenceDevice', width: 200 },
+      { title: '类型', dataIndex: 'referenceDevice',key: 'referenceDevice', width: 70 },
       {
         title: '操作',
         key: 'operation',
+        width: 150,
         render: (text, record, index) => {
           let action = '/'
           const status = record.status

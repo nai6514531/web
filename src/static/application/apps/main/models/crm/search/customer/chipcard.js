@@ -19,7 +19,7 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(customerService.chipcardsList, data)
+      const result = yield call(customerService.chipcardBillsList, data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

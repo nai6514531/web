@@ -6,20 +6,13 @@ const customerService = {
   updatePassword: (mobile,data) => {
     return request.put(`/crm/customers/${mobile}/password`,data)
   },
-  walletsList: (mobile) => {
-    return request.get(`/crm/wallets/${mobile}`)
+  billsList: (data) => {
+    const { mobile, url: { offset, limit, startAt, endAt, action, type } } =  data
+    return request.get(`/crm/bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}&type=${type || ''}`)
   },
-  chipcardsList: (mobile) => {
-    return request.get(`/crm/chipcards/${mobile}`)
-  },
-  ticketsList: (mobile) => {
-    return request.get(`/crm/tickets/${mobile}`)
-  },
-  billsList: () => {
-    return request.get(`/crm/bills`)
-  },
-  chipcardBillsList: (mobile) => {
-    return request.get(`/crm/chipcard-bills`)
+  chipcardBillsList: (data) => {
+    const { mobile, url: { offset, limit, startAt, endAt, action } } =  data
+    return request.get(`/crm/chipcard-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}`)
   },
 }
 export default customerService

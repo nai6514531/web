@@ -88,16 +88,16 @@ class TopicDetail extends Component {
           <p><span>评论数：</span>{data.comments}</p>
           <p><span>询问人数：</span>{data.consultation}</p>
           <p><span>交易状态：</span>{status[data.status]}</p>
-          <p><span>商品发布时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</p>
         </div>
         <hr className={styles.line}/>
         <div className={styles.wrapper}>
           <h1>商品基本信息:</h1>
-          <p><span>商品标题：</span>{data.title}</p>
-          <p><span>商品描述：</span>{data.content}</p>
-          <p><span>商品价格：</span>{(data.value / 100).toFixed(2)}</p>
-          <p><span>商品所属频道：</span>{data.channelTitle}</p>
-          <p><span>商品图片：</span></p>
+          <p><span>标题：</span>{data.title}</p>
+          <p><span>描述：</span>{data.content}</p>
+          <p><span>价格：</span>{(data.value / 100).toFixed(2)}</p>
+          <p><span>所属频道：</span>{data.channelTitle}</p>
+          <p><span>发布时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</p>
+          <p><span>图片：</span></p>
           <div className={styles['img-wrapper']}>
             {
               data.images && JSON.parse(data.images).map( (value,index) => {
@@ -112,9 +112,9 @@ class TopicDetail extends Component {
         <hr className={styles.line}/>
         <div className={styles.wrapper}>
           <h1>商品发布人信息：</h1>
-          <p><span>用户昵称：</span>这是测试</p>
-          <p><span>用户所在城市：</span>1000.00</p>
-          <p><span>用户所在学校：</span>{'朋友帮帮忙'}</p>
+          <p><span>昵称：</span>{data.userName}</p>
+          <p><span>所在城市：</span>{data.cityName}</p>
+          <p><span>所在学校：</span>{data.schoolName}</p>
         </div>
       </Spin>
     )

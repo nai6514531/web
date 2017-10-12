@@ -28,7 +28,7 @@ class Consume extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: '订单号', dataIndex: 'ticketId', key: 'ticketId' },
+      { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       // { title: '经销商', dataIndex: 'agency',key: 'agency' },
       {
         title: '上级运营商',
@@ -56,6 +56,7 @@ class Consume extends Component {
       { title: '支付方式', dataIndex: 'payment',key: 'payment', width: 70 },
       {
         title: '下单时间',
+        width: 100,
         render: (text, record) => {
           return (
             `${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`

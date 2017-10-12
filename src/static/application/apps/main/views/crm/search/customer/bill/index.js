@@ -12,7 +12,14 @@ import DatePicker from '../../../../../components/date-picker/'
 import moment from 'moment'
 
 const Option = Select.Option
-class Chipcard extends Component {
+
+const dict = {
+  1: '充值',
+  2: '洗衣/其他',
+  3: '赠送洗衣金',
+  4: '退款'
+}
+class Bill extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
@@ -29,16 +36,28 @@ class Chipcard extends Component {
         url: `/crm/search/customer?mobile=${this.props.match.params.id}`
       },
       {
-        title: 'IC卡明细'
+        title: '余额明细'
       }
     ]
     this.columns = [
       {
-        title: '充值/消费',
+        title: '收入/支出',
         dataIndex: 'action',
         key: 'action',
-        render: (text, record, index) => {
-          return record.action === 1 ? '充值' : '消费'
+        render: (text, record) => {
+          return(
+            record.action === 1 ? '收入' : '支出'
+          )
+        }
+      },
+      {
+        title: '业务名称',
+        dataIndex: 'type',
+        key: 'type',
+        render: (text, record) => {
+          return(
+            dict[record.type] || '-'
+          )
         }
       },
       {
@@ -64,15 +83,20 @@ class Chipcard extends Component {
           return`${moment(record.time).format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
-      {
-        title: '充值商家',
-        dataIndex: 'operator',
-        key: 'operator'
-      }
+      { title: '订单号', dataIndex: 'billId',key: 'billId' },
+      { title: '第三方订单号', dataIndex: 'outerBillId',key: 'outerBillId' },
     ]
   }
   componentDidMount() {
     const url = this.search
+    if(url.action) {
+      this.props.dispatch({
+        type: 'crmBill/updateAppData',
+        payload: {
+          id: url.action
+        }
+      })
+    }
     this.props.dispatch({
       type: 'common/updateSearch',
       payload: {
@@ -82,6 +106,11 @@ class Chipcard extends Component {
     this.fetch(url)
   }
   selectHandler =  (type, value) => {
+    if(value) {
+      this.search = { ...this.search, [type]: value }
+    } else {
+      delete this.search[type]
+    }
     this.props.dispatch({
       type: 'common/updateSearch',
       payload: {
@@ -90,10 +119,22 @@ class Chipcard extends Component {
         }
       }
     })
-    if(value) {
-      this.search = { ...this.search, [type]: value }
-    } else {
-      delete this.search[type]
+    if(type === 'action') {
+      delete this.search.type
+      this.props.dispatch({
+        type: 'crmBill/updateAppData',
+        payload: {
+          id: value
+        }
+      })
+      this.props.dispatch({
+        type: 'common/updateSearch',
+        payload: {
+          search: {
+            type: undefined
+          }
+        }
+      })
     }
   }
   searchClick = () => {
@@ -109,7 +150,7 @@ class Chipcard extends Component {
   fetch =(url) => {
     const mobile = this.props.match.params.id
     this.props.dispatch({
-      type: 'crmChipcard/list',
+      type: 'crmBill/list',
       payload: {
         data: {
           url,
@@ -123,7 +164,7 @@ class Chipcard extends Component {
     this.fetch(url)
   }
   render() {
-    const { crmChipcard: { data: { objects, pagination } }, loading  } = this.props
+    const {  common: { search }, crmBill: { data: { objects, pagination }, appData }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -132,13 +173,27 @@ class Chipcard extends Component {
           search={this.search}
           defaultTime={false}/>
         <Select
-          placeholder='充值/消费'
+          placeholder='收入/支出'
           className={styles.select}
           allowClear
-          defaultValue={this.search.action}
+          defaultValue={ this.search.action }
           onChange={this.selectHandler.bind(this, 'action')}>
-            <Option value={'1'}>充值</Option>
-            <Option value={'2'}>消费</Option>
+            <Option value={'1'}>收入</Option>
+            <Option value={'2'}>支出</Option>
+        </Select>
+        <Select
+          placeholder='业务名称'
+          className={styles.select}
+          allowClear
+          value={ search.type }
+          onChange={this.selectHandler.bind(this, 'type')}>
+            {
+              appData.map(value => {
+                return (
+                  <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                )
+              })
+            }
         </Select>
         <Button
           type='primary'
@@ -148,7 +203,7 @@ class Chipcard extends Component {
           筛选
         </Button>
         {/* <span className={styles.info}>
-          { `IC卡余额： xx元 \u00A0 | \u00A0 充值： xx元 \u00A0 |  \u00A0 消费： xx元` }
+          { `账户余额： xx元 \u00A0 | \u00A0 收入： xx元 \u00A0 |  \u00A0 支出： xx元` }
         </span> */}
         <DataTable
           dataSource={objects}
@@ -162,15 +217,16 @@ class Chipcard extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmChipcard/clear'})
+    this.props.dispatch({ type: 'crmBill/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmChipcard: state.crmChipcard,
+    common: state.common,
+    crmBill: state.crmBill,
     loading: state.loading.global,
     ...props
   }
 }
-export default connect(mapStateToProps)(Chipcard)
+export default connect(mapStateToProps)(Bill)
