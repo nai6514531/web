@@ -30,7 +30,7 @@ class AdConfig extends Component {
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '所属业务', dataIndex: 'appName',key: 'appName' },
-      { title: '广告位', dataIndex: 'locationName', key: 'locationName', width: 100 },
+      { title: '广告位', dataIndex: 'adPositionName', key: 'adPositionName', width: 100 },
       { title: '广告名', dataIndex: 'name',key: 'name', width: 100 },
       { title: '广告标题', dataIndex: 'title', key: 'title', width: 100 },
       { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
@@ -119,14 +119,14 @@ class AdConfig extends Component {
     })
   }
   timeChange = (value, dateString) => {
-    let [ startedAt, endedAt ] = dateString
-    if(startedAt && endedAt) {
-      startedAt = moment(startedAt).format()
-      endedAt = moment(endedAt).format()
-      this.search = { ...this.search, startedAt, endedAt }
+    let [ startAt, endAt ] = dateString
+    if(startAt && endAt) {
+      startAt = moment(startAt).format()
+      endAt = moment(endAt).format()
+      this.search = { ...this.search, startAt, endAt }
     } else {
-      delete this.search.startedAt
-      delete this.search.endedAt
+      delete this.search.startAt
+      delete this.search.endAt
     }
   }
   changeHandler = (type, e) => {
@@ -146,12 +146,12 @@ class AdConfig extends Component {
       }
     })
     if(type === 'appId') {
-      delete this.search.locationId
+      delete this.search.adPositionId
       this.props.dispatch({
         type: 'common/updateSearch',
         payload: {
           search: {
-            locationId: undefined
+            adPositionId: undefined
           }
         }
       })
@@ -195,12 +195,13 @@ class AdConfig extends Component {
     })
   }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   render() {
     const { common: { search }, adConfig: { data: { objects, pagination }, appData, postionData, previewImage, visible, key }, loading  } = this.props
-    const startedAt = this.search.startedAt ? moment(this.search.startedAt, dateFormat) : null
-    const endedAt = this.search.endedAt ? moment(this.search.endedAt, dateFormat) : null
+    const startAt = this.search.startAt ? moment(this.search.startAt, dateFormat) : null
+    const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -220,11 +221,11 @@ class AdConfig extends Component {
               }
           </Select>
           <Select
-            value={ search.locationId }
+            value={ search.adPositionId }
             allowClear
             className={styles.input}
             placeholder='广告位'
-            onChange={this.selectHandler.bind('this','locationId')}>
+            onChange={this.selectHandler.bind('this','adPositionId')}>
               {
                 postionData.map(value => {
                   return (
@@ -243,7 +244,7 @@ class AdConfig extends Component {
           <span className={styles.input}>
           <RangePicker
             showTime
-            defaultValue={[startedAt,endedAt]}
+            defaultValue={[startAt,endAt]}
             format={dateFormat}
             onChange={this.timeChange}
             showTime={{
@@ -306,7 +307,7 @@ class AdConfig extends Component {
           scroll={{ x: 1000 }}
         />
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
-          <img alt='图片' style={{ padding: 15, width: '100%' }} src={previewImage} />
+          <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
         </Modal>
       </div>
     )

@@ -18,7 +18,7 @@ class Login extends Component {
     if(storage.val('token')) {
       this.props.history.push('/admin')
     }
-    // this.changeCaptcha()
+    this.changeCaptcha()
   }
 
   handleOk = () => {
@@ -45,10 +45,10 @@ class Login extends Component {
     const { loading, dipatch, form: { getFieldDecorator }, login: { captcha, accountHelp, passwordHelp, captchaHelp } } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
     return (
-      <div>
+      <div className={styles.wrapper}>
         <div className={styles.form}>
           <div className={styles.logo}>
-            <img alt={'logo'} src={require('../../assets/favicon.png')} />
+            <img alt={'图片加载失败'} src={require('../../assets/favicon.png')} />
             <span>苏打管理系统</span>
           </div>
           <form>

@@ -53,7 +53,7 @@ class App extends Component {
     }
     this.columns = [
       {
-        title: '时间',
+        title: '日期',
         dataIndex: 'date',
         key: 'date',
         width: 135,
@@ -63,14 +63,6 @@ class App extends Component {
       }, {
         title: '平台收入',
         children: [{
-          title: '微信',
-          dataIndex: 'wechat',
-          key: 'wechat.totalAmount',
-          width: 100,
-          render: (wechat) => {
-            return `${(wechat.totalAmount/100).toFixed(2)}`
-          }
-        },{
           title: '支付宝',
           dataIndex: 'alipay',
           key: 'alipay.totalAmount',
@@ -78,18 +70,18 @@ class App extends Component {
           render: (alipay) => {
             return `${(alipay.totalAmount/100).toFixed(2)}`
           }
-        }] 
+        }, {
+          title: '微信',
+          dataIndex: 'wechat',
+          key: 'wechat.totalAmount',
+          width: 100,
+          render: (wechat) => {
+            return `${(wechat.totalAmount/100).toFixed(2)}`
+          }
+        }]
       }, {
         title: '批量付款金额',
         children: [{
-          title: '微信',
-          dataIndex: 'wechat',
-          key: 'wechat.settlement.totalAmount',
-          width: 100,
-          render: (wechat) => {
-            return `${(wechat.settlement.totalAmount/100).toFixed(2)}`
-          }
-        },{
           title: '支付宝',
           dataIndex: 'alipay',
           key: 'alipay.settlement.totalAmount',
@@ -97,18 +89,18 @@ class App extends Component {
           render: (alipay) => {
             return `${(alipay.settlement.totalAmount/100).toFixed(2)}`
           }
-        }] 
+        }, {
+          title: '微信',
+          dataIndex: 'wechat',
+          key: 'wechat.settlement.totalAmount',
+          width: 100,
+          render: (wechat) => {
+            return `${(wechat.settlement.totalAmount/100).toFixed(2)}`
+          }
+        }]
       }, {
         title: '手续费收入',
         children: [{
-          title: '微信',
-          dataIndex: 'wechat',
-          key: 'wechat.settlement.cast',
-          width: 100,
-          render: (wechat) => {
-            return `${(wechat.settlement.cast/100).toFixed(2)}`
-          }
-        },{
           title: '支付宝',
           dataIndex: 'alipay',
           key: 'alipay.settlement.cast',
@@ -116,15 +108,23 @@ class App extends Component {
           render: (alipay) => {
             return `${(alipay.settlement.cast/100).toFixed(2)}`
           }
-        },{
+        }, {
+          title: '微信',
+          dataIndex: 'wechat',
+          key: 'wechat.settlement.cast',
+          width: 100,
+          render: (wechat) => {
+            return `${(wechat.settlement.cast/100).toFixed(2)}`
+          }
+        }, {
           title: '合计',
           width: 100,
           key: 'id',
           render: (record) => {
-            let cast = record.wechat.settlement.cast + record.alipay.settlement.cast 
+            let cast = record.wechat.settlement.cast + record.alipay.settlement.cast
             return `${(cast/100).toFixed(2)}`
           }
-        }] 
+        }]
       }
     ]
   }
@@ -132,13 +132,13 @@ class App extends Component {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
 
-    let pagination = { ...this.state.pagination, ..._.pick(query, 'limit', 'offset') } 
+    let pagination = { ...this.state.pagination, ..._.pick(query, 'limit', 'offset') }
     let search = { ...this.state.search, ..._.pick(query, 'endAt', 'startAt') }
     this.setState({search, pagination})
 
      // 未选择结束时间
     if (!search.startAt || !search.endAt) {
-      return 
+      return
     }
     this.getSettlementReports(search)
   }
@@ -160,12 +160,12 @@ class App extends Component {
       }
       const data = res.data
       this.setState({
-        list: _.sortBy(data.objects, (data) => { return -moment(data.date).valueOf() }) || [], 
+        list: _.sortBy(data.objects, (data) => { return -moment(data.date).valueOf() }) || [],
         pagination: {
           ...this.state.pagination,
           total: data.objects.length.total
-        }, 
-        searchLoading: false, 
+        },
+        searchLoading: false,
         loading: false
       })
     }).catch((err) => {
@@ -187,7 +187,7 @@ class App extends Component {
   onChangeDate (field, value) {
     let date = moment(value).format('YYYY-MM-DD')
     const search = { ...this.state.search, endAt: !!value ?  date: '', [field]: !!value ? date : '' }
-    this.setState({search: search}); 
+    this.setState({search: search});
   }
   onStartChange (value) {
     this.onChangeDate('startAt', value);
@@ -236,7 +236,7 @@ class App extends Component {
           if (res.status !== 'OK') {
             throw new Error(res.message)
           }
-          window.open(res.data.url);       
+          window.open(res.data.url);
           self.setState({ exportLoading: false })
         }).catch((err) => {
           self.setState({ exportLoading: false })
@@ -304,7 +304,7 @@ class App extends Component {
             open={this.state.endOpen}
             onOpenChange={this.handleEndOpenChange.bind(this)}
           />
-          <Button type='primary' icon='search' onClick={this.search.bind(this)} 
+          <Button type='primary' icon='search' onClick={this.search.bind(this)}
             loading={this.state.searchLoading} className={styles.button}>筛选</Button>
           <Button type='primary' icon='download' onClick={this.exportSettlement.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
         </div>

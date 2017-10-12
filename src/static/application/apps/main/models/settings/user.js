@@ -11,7 +11,6 @@ const model = {
   },
   roleData: [],
   currentRole: [],
-  confirmDirty: false,
 }
 export default {
   namespace: 'user',
@@ -27,15 +26,8 @@ export default {
       const key = state.key + 1
       return { ...state, visible, key }
     },
-    updateData(state, { payload: { data } }) {
-      return { ...state, data }
-    },
-    updateRoleData(state, { payload: { data } }) {
-      const roleData = data
-      return { ...state, roleData }
-    },
-    updateConfirmDirty(state, { payload: { confirmDirty } }) {
-       return { ...state, confirmDirty }
+    updateData(state, { payload }) {
+      return { ...state, ...payload }
     },
     clear(state) {
       return model
@@ -44,13 +36,10 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       const result = yield call(userService.list, payload.data)
-      const roleData = yield call(roleService.list)
-      if(result.status == 'OK' && roleData.status == 'OK') {
+      if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
-        yield put({ type: 'updateRoleData', payload: { data: roleData.data } })
       } else {
-        result.message && message.error(result.message)
-        roleData.message && message.error(roleData.message)
+        message.error(result.message)
       }
     },
     *detail({ payload }, { call, put }) {
@@ -99,15 +88,18 @@ export default {
     *roles({ payload }, { call, put }) {
       const { id } = payload
       const result = yield call(userService.roles, id)
-      if(result.status == 'OK') {
+      const roleData = yield call(roleService.list)
+      if(result.status == 'OK' && roleData.status == 'OK') {
         yield put({
           type: 'showModal',
           payload: {
             data: result.data
           }
         })
+        yield put({ type: 'updateData', payload: { roleData: roleData.data } })
       } else {
-        message.error(result.message)
+        result.message && message.error(result.message)
+        roleData.message && message.error(roleData.message)
       }
     },
     *updateRoles({ payload }, { call, put }) {

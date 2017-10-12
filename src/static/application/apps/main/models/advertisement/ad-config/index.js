@@ -30,7 +30,7 @@ export default {
       return { ...state, visible, key }
     },
     deleteLocation(state) {
-      delete state.detail.locationId
+      delete state.detail.adPositionId
       return { ...state }
     },
     clear(state) {

@@ -55,8 +55,9 @@ export default {
       const key = state.key + 1
       return { ...state, visible, menuVisible, elementVisible, actionVisible, key }
     },
-    updateData(state, { payload: { data, menuData, cachedActionData, elementData } }) {
-      return { ...state, data, menuData, cachedActionData, elementData }
+    updateData(state, { payload }) {
+      // return { ...state, data, menuData, cachedActionData, elementData }
+      return { ...state, ...payload }
     },
     updateActionData(state, { payload }) {
       const actionData = payload ? payload.actionData : state.cachedActionData
@@ -69,24 +70,15 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       const result = yield call(permissionService.list, payload.data)
-      const menuData = yield call(menuService.list)
-      const actionData = yield call(actionService.list)
-      const elementData = yield call(elementService.list)
-      if(result.status === 'OK' && menuData.status === 'OK' && actionData.status === 'OK' && elementData.status === 'OK' ) {
+      if(result.status === 'OK') {
         yield put({
           type: 'updateData',
           payload: {
             data: result.data,
-            menuData: menuData.data.objects,
-            cachedActionData: actionData.data.objects,
-            elementData: elementData.data.objects
           }
         })
       } else {
         result.message && message.error(result.message)
-        menuData.message && message.error(menuData.message)
-        actionData.message && message.error(actionData.message)
-        elementData.message && message.error(elementData.message)
       }
     },
     *update({ payload }, { call, put }) {
@@ -136,8 +128,9 @@ export default {
     },
     *menu({ payload }, { call, put }) {
       const { id } = payload
+      const menuData = yield call(menuService.list)
       const result = yield call(permissionService.menu, id)
-      if(result.status == 'OK') {
+      if(result.status == 'OK' && menuData.status == 'OK') {
         yield put({
           type: 'showMenu',
           payload: {
@@ -145,12 +138,20 @@ export default {
             id : id
           }
         })
+        yield put({
+          type: 'updateData',
+          payload: {
+            menuData: menuData.data.objects,
+          }
+        })
       } else {
-        message.error(result.message)
+        result.message && message.error(result.message)
+        menuData.message && message.error(menuData.message)
       }
     },
     *element({ payload }, { call, put }) {
       const { id } = payload
+      const elementData = yield call(elementService.list)
       const result = yield call(permissionService.element, id)
       if(result.status === 'OK') {
         yield put({
@@ -160,17 +161,22 @@ export default {
             id : id
           }
         })
+        yield put({
+          type: 'updateData',
+          payload: {
+            elementData: elementData.data.objects,
+          }
+        })
       } else {
-        message.error(result.message)
+        result.message && message.error(result.message)
+        elementData.message && message.error(elementData.message)
       }
     },
     *action({ payload }, { call, put }) {
       const { id } = payload
+      const actionData = yield call(actionService.list)
       const result = yield call(permissionService.action, id)
-      if(result.status === 'OK') {
-        yield put({
-          type: 'updateActionData'
-        })
+      if(result.status === 'OK' && actionData.status === 'OK') {
         yield put({
           type: 'showAction',
           payload: {
@@ -178,8 +184,15 @@ export default {
             id : id
           }
         })
+        yield put({
+          type: 'updateData',
+          payload: {
+            actionData: actionData.data.objects,
+          }
+        })
       } else {
-        message.error(result.message)
+        result.message && message.error(result.message)
+        actionData.message && message.error(actionData.message)
       }
     },
     *searchAction({ payload }, { call, put }) {
@@ -187,7 +200,7 @@ export default {
       const result = yield call(actionService.list, data)
       if(result.status === 'OK') {
         yield put({
-          type: 'updateActionData',
+          type: 'updateData',
           payload: {
             actionData: result.data.objects
           }

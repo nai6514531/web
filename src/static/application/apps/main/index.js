@@ -23,7 +23,12 @@ const dva = createDva({
   }
 })
 
-const app = dva()
+const app = dva({
+  onError(e) {
+    // 可以统一处理错误
+    console.log('e',e)
+  }
+})
 
 app.use(createLoading())
 

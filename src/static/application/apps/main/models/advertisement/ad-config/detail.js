@@ -35,7 +35,7 @@ export default {
       return { ...state, visible, key }
     },
     deleteLocation(state) {
-      delete state.detail.locationId
+      delete state.detail.adPositionId
       return { ...state }
     },
     clear(state) {
@@ -57,9 +57,9 @@ export default {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
         let help = ''
         let identifyNeeded = 0
-        if(payload.data && payload.data.locationId) {
+        if(payload.data && payload.data.adPositionId) {
           result.data.objects.map((item) => {
-            if(payload.data.locationId == item.id) {
+            if(payload.data.adPositionId == item.id) {
               help = item.standard,
               identifyNeeded = item.identifyNeeded
             }
@@ -89,7 +89,7 @@ export default {
           payload: {
             data: {
               appId: result.data.appId,
-              locationId: result.data.locationId
+              adPositionId: result.data.adPositionId
             }
           }
         })

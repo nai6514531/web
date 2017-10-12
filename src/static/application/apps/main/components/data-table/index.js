@@ -56,7 +56,7 @@ class DataTable extends Component {
     this.props.change && this.props.change(transformUrl(location.search))
   }
   render() {
-    const { getBodyWrapper, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
+    const { getBodyWrapper, rowClassName, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
     const pagination = this.props.pagination ? { ...this.state.pagination, ...this.props.pagination } : false
     return(
       <Table
@@ -69,13 +69,23 @@ class DataTable extends Component {
         onChange={this.handleTableChange}
         rowKey= { rowKey || 'id' }
         bordered
-        rowClassName={(record, index)=>  index === clickedIndex ? styles.clicked : ''}
+        rowClassName={
+          (record, index) => {
+            if(rowClassName) {
+              rowClassName(record, index)
+            } else {
+              const className = index === clickedIndex ? styles.clicked : ''
+              return className
+            }
+          }
+        }
         onRowClick={(record,index)=>{
           this.props.dispatch({
             type: 'common/updateIndex',
             payload: index
           })
         }}
+        rowSelection={this.props.rowSelection}
       />
     )
   }

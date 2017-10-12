@@ -77,7 +77,7 @@ class Topic extends Component {
             return (
               <img
                 src={record.url}
-                alt='商品首图'
+                alt='图片加载失败'
                 style={{ width: '50px', height: '30px' }}
                 onClick={() => {
                   this.props.dispatch({
@@ -120,14 +120,14 @@ class Topic extends Component {
               <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动频道{'\u00A0'}|</a>
               {
                 (() => {
-                  if(record.status === 0) {
+                  if(record.status === 0 || record.status === 1 || record.status === 2) {
                     return (
-                      <Popconfirm title={`是否确定要下架该商品`} onConfirm={ this.updateStatus.bind(this,record.id,3) } >
+                      <Popconfirm title={`是否确定要下架该商品`} onConfirm={ this.updateStatus.bind(this,record.id,4) } >
                         <a href='javascript:void(0)'>{'\u00A0'}下架商品</a>
                       </Popconfirm>
                     )
                   }
-                  if(record.status === 3) {
+                  if(record.status === 3 || record.status === 4) {
                     return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上架商品</a>
                   }
                 })()
@@ -349,7 +349,7 @@ class Topic extends Component {
           </Form>
         </Modal>
         <Modal visible={previewVisible} footer={null} onCancel={this.hide}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          <img alt="图片加载失败" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </div>
     )
@@ -368,4 +368,3 @@ function mapStateToProps(state,props) {
   }
 }
 export default connect(mapStateToProps)(Form.create()(Topic))
-

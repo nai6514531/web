@@ -170,7 +170,7 @@ class AdOrder extends Component {
             attr: attr,
             data: {
               appId: appId,
-              locationId: id
+              adPositionId: id
             },
             order: true
           }
@@ -215,7 +215,7 @@ class AdOrder extends Component {
           }
         </Collapse>
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
-          <img alt='图片' style={{ padding: 15, width: '100%' }} src={previewImage} />
+          <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
         </Modal>
       </div>
     )

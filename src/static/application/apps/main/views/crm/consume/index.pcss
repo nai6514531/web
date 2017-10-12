@@ -1,0 +1,77 @@
+.input {
+	width: 150px !important;
+	margin-right: 20px;
+	@media (max-width: 768px) {
+		display: inline-block;
+		margin-bottom: 10px;
+	}
+}
+.input-wrap {
+	@media (min-width: 768px) {
+		margin: 20px 0;
+	}
+	@media (max-width: 768px) {
+		margin-bottom: 20px;
+	}
+}
+.button {
+	margin-right: 20px;
+}
+.button-wrap {
+	@media (max-width: 768px) {
+		display: block;
+		margin-top: 10px;
+	}
+}
+:global(.playModal){
+	text-align: right;
+	:global(.ant-modal-title){
+		text-align: left;
+	}
+	:global(.ant-modal-footer){
+		display: none;
+	}
+  :global(.form-text) {
+    display: block;
+    text-align: center;
+    height: 36px;
+  }
+  :global(#body){
+		display: none;
+	}
+	:global(#submit){
+		margin-right: 8px;
+    margin-bottom: 12px;
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.5;
+    padding: 4px 15px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: #2db7f5;
+    color: #fff;
+	}
+	:global(#cancel){
+		margin-right: 8px;
+    margin-bottom: 12px;
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.5;
+    padding: 4px 15px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: #d9534f;
+    color: #fff;
+
+	}
+}
