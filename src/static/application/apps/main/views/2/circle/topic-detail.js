@@ -81,41 +81,57 @@ class TopicDetail extends Component {
         </Card>
 
         */}
-        <div className={styles.wrapper}>
-          <h1>商品交易情况:</h1>
-          <p><span>浏览量：</span>{data.uniqueVisitor}</p>
-          <p><span>点赞数：</span>{data.likes}</p>
-          <p><span>评论数：</span>{data.comments}</p>
-          <p><span>询问人数：</span>{data.consultation}</p>
-          <p><span>交易状态：</span>{status[data.status]}</p>
-        </div>
-        <hr className={styles.line}/>
-        <div className={styles.wrapper}>
-          <h1>商品基本信息:</h1>
-          <p><span>标题：</span>{data.title}</p>
-          <p><span>描述：</span>{data.content}</p>
-          <p><span>价格：</span>{(data.value / 100).toFixed(2)}</p>
-          <p><span>所属频道：</span>{data.channelTitle}</p>
-          <p><span>发布时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</p>
-          <p><span>图片：</span></p>
-          <div className={styles['img-wrapper']}>
-            {
-              data.images && JSON.parse(data.images).map( (value,index) => {
-                return <div className={styles['img-item']} key={index} onClick={this.handlePreview.bind(this,value.url)}><img src={value.url}/></div>
-              })
-            }
+        <Card className={styles.card}>
+          <div className={styles.header}>
+              <h1>商品交易情况:</h1>
           </div>
-          <Modal visible={visible} footer={null} onCancel={this.hide}>
-            <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
-          </Modal>
-        </div>
-        <hr className={styles.line}/>
-        <div className={styles.wrapper}>
-          <h1>商品发布人信息：</h1>
-          <p><span>昵称：</span>{data.userName}</p>
-          <p><span>所在城市：</span>{data.cityName}</p>
-          <p><span>所在学校：</span>{data.schoolName}</p>
-        </div>
+          <div className={styles['sub-card']}>
+            <div className={styles['card-item']}>
+              <div><span className={styles.title}>浏览量：</span>{data.uniqueVisitor}</div>
+              <div><span className={styles.title}>点赞数：</span>{data.likes}</div>
+              <div><span className={styles.title}>评论数：</span>{data.comments}</div>
+              <div><span className={styles.title}>询问人数：</span>{data.consultation}</div>
+              <div><span className={styles.title}>交易状态：</span>{status[data.status]}</div>
+            </div>
+          </div>
+        </Card>
+        <Card className={styles.card}>
+          <div className={styles.header}>
+              <h1>商品基本信息:</h1>
+          </div>
+          <div className={styles['sub-card']}>
+            <div className={styles['card-item']}>
+              <div><span className={styles.title}>标题：</span>{data.title}</div>
+              <div><span className={styles.title}>描述：</span>{data.content}</div>
+              <div><span className={styles.title}>价格：</span>{(data.value / 100).toFixed(2)}</div>
+              <div><span className={styles.title}>所属频道：</span>{data.channelTitle}</div>
+              <div><span className={styles.title}>发布时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</div>
+              <div><span className={styles.title}>图片：</span></div>
+              <p>
+                {
+                  data.images && JSON.parse(data.images).map( (value,index) => {
+                    return <span className={styles['img-item']} key={index} onClick={this.handlePreview.bind(this,value.url)}><img src={value.url}/></span>
+                  })
+                }
+              </p>
+            </div>
+          </div>
+        </Card>
+        <Card className={styles.card}>
+          <div className={styles.header}>
+              <h1>商品发布人信息：</h1>
+          </div>
+          <div className={styles['sub-card']}>
+            <div className={styles['card-item']}>
+              <div><span className={styles.title}>昵称：</span>{data.userName}</div>
+              <div><span className={styles.title}>所在城市：</span>{data.cityName}</div>
+              <div><span className={styles.title}>所在学校：</span>{data.schoolName}</div>
+            </div>
+          </div>
+        </Card>
+        <Modal visible={visible} footer={null} onCancel={this.hide}>
+          <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
+        </Modal>
       </Spin>
     )
   }
