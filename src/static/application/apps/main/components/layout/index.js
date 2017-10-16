@@ -52,6 +52,10 @@ class Wrapper extends React.Component {
       'logo': !fold,
       'fold-logo': fold
     })
+    const logoWrap = classNames({
+      'fold-logo-wrap': fold,
+      'logo-wrap': !fold
+    })
     const mode = fold ? 'vertical' : 'inline'
     const imageUrl = fold ? require('../../assets/favicon.png') : require('../../assets/logo.png')
     return (
@@ -62,7 +66,7 @@ class Wrapper extends React.Component {
           collapsed={fold}
           trigger={null}
           >
-          <Link to='/admin' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link>
+          <div className={logoWrap}><Link to='/admin' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link></div>
           <SideBar
             style={{ overflow: 'auto' }}
             {...this.props}

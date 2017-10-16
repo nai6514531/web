@@ -18,18 +18,28 @@ body {
   .side {
     height: 100vh;
   }
+  .logo-wrap {
+    width: 100%;
+    display: block;
+    padding: 60px 0;
+  }
   .logo {
     width: 120px;
-    margin: 60px auto;
+    margin: 0 auto;
     display: block;
-    padding-right: 10px;
     transition: all .3s ease-out;
+
+  }
+  .fold-logo-wrap {
+    width: 100%;
+    display: block;
+    padding: 15px 0;
   }
   .fold-logo {
     width: 50px;
-    margin: 60px 0 60px 8px;
     display: block;
     transition: all .3s ease-out;
+    margin: 0 auto;
   }
   .wrapper {
     position: absolute;
@@ -94,7 +104,7 @@ body {
 /*定义滚动条的轨道，内阴影及圆角*/
 .ant-table-body::-webkit-scrollbar-track{
     width: 13px;
-    border-radius: 6px;  
+    border-radius: 6px;
     // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.1);
     background-color: #fff;
 }
@@ -102,7 +112,7 @@ body {
 .ant-table-body::-webkit-scrollbar-thumb{
     width: 6px;
     height: 6px;
-    border-radius: 6px;  
+    border-radius: 6px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: rgb(114, 114, 114);
 }

@@ -29,10 +29,10 @@ class AdOrder extends Component {
     super(props)
     this.activeKey
     this.columns = [
-      { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '广告名', dataIndex: 'name',key: 'name' },
-      { title: '广告标题', dataIndex: 'title', key: 'title' },
-      { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
+      { title: '序号', dataIndex: 'id', key: 'id', width: 100 },
+      { title: '广告名', dataIndex: 'name',key: 'name', width: 100 },
+      { title: '广告标题', dataIndex: 'title', key: 'title', width: 100 },
+      { title: '活动链接', dataIndex: 'url',key: 'url', width: 250 },
       {
         title: '展示时间',
         render: (text, record) => {

@@ -102,21 +102,19 @@ class PlatformEdit extends Component {
               <Input placeholder='请输入应用名'/>
             )}
           </FormItem>
-          { isEdit ? (
-            <FormItem
-              {...formItemLayout}
-              label='应用ID'
-            >
-              {getFieldDecorator('id', {
-                rules: [{
-                  required: true, message: '请输入应用ID',
-                }],
-                initialValue: detail.id
-              })(
-                <Input disabled={true}/>
-              )}
-            </FormItem>
-          ) : null }
+          <FormItem
+            {...formItemLayout}
+            label='应用ID'
+          >
+            {getFieldDecorator('appId', {
+              rules: [{
+                required: true, message: '请输入应用ID',
+              }],
+              initialValue: detail.appId
+            })(
+              <Input disabled={isEdit} placeholder='请输入应用ID'/>
+            )}
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label='应用说明'
