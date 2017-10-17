@@ -60,7 +60,7 @@ class AdOrder extends Component {
                   this.props.dispatch({
                     type: 'adOrder/showModal',
                     payload: {
-                      previewImage: record.image
+                      previewImage: record.imageUrl
                     }
                   })
                 }}
@@ -161,8 +161,8 @@ class AdOrder extends Component {
     const { postionData } = this.props.adOrder
     const activeKey = key[key.length - 1]
     if(activeKey) {
-      const { appId, id } = postionData[activeKey]
-      const attr = `${appId}-${id}`
+      const { appId, adPositionId } = postionData[activeKey]
+      const attr = `${appId}-${adPositionId}`
       if(!this.props.adOrder[attr]) {
         this.props.dispatch({
           type: 'adOrder/list',
@@ -170,7 +170,7 @@ class AdOrder extends Component {
             attr: attr,
             data: {
               appId: appId,
-              adPositionId: id
+              adPositionId: adPositionId
             },
             order: true
           }
@@ -191,7 +191,7 @@ class AdOrder extends Component {
         <Collapse onChange={this.changeHandler}>
           {
             postionData.map((value, index) => {
-              const attr = `${value.appId}-${value.id}`
+              const attr = `${value.appId}-${value.adPositionId}`
               return (
                 <Panel header={`${value.appName}-${value.name}`} key={index}>
                   <Button
