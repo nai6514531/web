@@ -448,7 +448,7 @@ class PlatformEdit extends Component {
               initialValue: detail.status !== undefined ? detail.status + '' : undefined
             })(
               <Select placeholder='请选择上下架'>
-                <Option value={'2'}>上架</Option>
+                <Option value={'0'}>上架</Option>
                 <Option value={'1'}>下架</Option>
               </Select>
             )}

@@ -54,7 +54,7 @@ class AdConfig extends Component {
         title: '上下架',
         render: (text, record) => {
           return (
-            record.status === 1 ? '下架' : '上架'
+            record.status === 0 ? '上架' : '下架'
           )
         }
       },
@@ -279,7 +279,7 @@ class AdConfig extends Component {
             className={styles.input}
             placeholder='上下架'
             onChange={this.selectHandler.bind('this','status')}>
-              <Option value={'2'}>{'上架'}</Option>
+              <Option value={'0'}>{'上架'}</Option>
               <Option value={'1'}>{'下架'}</Option>
           </Select>
           <span className={styles['button-wrap']}>
