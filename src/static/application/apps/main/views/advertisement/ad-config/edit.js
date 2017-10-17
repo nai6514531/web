@@ -314,8 +314,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入20字以内的广告名',
               },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入20字以内的广告名'),
               }],
               initialValue: detail.name
             })(
@@ -328,11 +326,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('title', {
               rules: [{
-                required: true, message: '请输入20字以内的广告标题',
-              },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入20字以内的广告标题'),
               }],
               initialValue: detail.title
             })(
@@ -371,8 +365,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入广告跳转链接，以http://或https://开头',
               },{
                 max: 255, message: '长度最多255个字符'
-              },{
-                validator: this.trim.bind(this,'请输入广告跳转链接，以http://或https://开头'),
               }],
               initialValue: detail.url
             })(

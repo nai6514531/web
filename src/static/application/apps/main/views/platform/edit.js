@@ -121,11 +121,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内应用说明',
-              },{
                 max: 50, message: '长度最多50个字符'
-              },{
-                validator: this.trim.bind(this,'请输入50字符以内应用说明' ),
               }],
               initialValue: detail.description
             })(

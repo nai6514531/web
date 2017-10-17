@@ -143,8 +143,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入10个字符以内广告位名',
               },{
                 max: 10, message: '长度最多10个字符'
-              },{
-                validator: this.trim.bind(this,'请输入10个字符以内广告位名' ),
               }],
               initialValue: detail.name
             })(
@@ -176,8 +174,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入广告图规格',
               },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入广告图规格' ),
               }],
               initialValue: detail.standard
             })(
@@ -190,11 +186,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内广告位说明',
-              },{
                 max: 50, message: '长度最多50个字符'
-              },{
-                validator: this.trim.bind(this,'请输入50字符以内广告位说明' ),
               }],
               initialValue: detail.description
             })(
