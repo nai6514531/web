@@ -21,7 +21,7 @@ class Platform extends Component {
   constructor(props) {
     super(props)
     this.columns = [
-      { title: '序号', dataIndex: 'id', key: 'id' },
+      { title: '应用ID', dataIndex: 'appId', key: 'appId' },
       { title: '应用名', dataIndex: 'name',key: 'name' },
       { title: '应用说名', dataIndex: 'description',key: 'description' },
       {
@@ -30,8 +30,8 @@ class Platform extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/platform/application/${record.id}`}>编辑</Link> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+              <Link to={`/platform/application/${record.appId}`}>编辑</Link> |
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.appId) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -44,12 +44,12 @@ class Platform extends Component {
     const url = transformUrl(location.search)
     this.fetch(url)
   }
-  delete = (id) => {
+  delete = (appId) => {
     const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'platform/delete',
       payload: {
-        id: id,
+        id: appId,
         data: url
       }
     })

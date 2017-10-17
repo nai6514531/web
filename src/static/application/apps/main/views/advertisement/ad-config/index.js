@@ -29,11 +29,11 @@ class AdConfig extends Component {
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '所属业务', dataIndex: 'appName',key: 'appName' },
+      { title: '所属应用', dataIndex: 'appName',key: 'appName' },
       { title: '广告位', dataIndex: 'adPositionName', key: 'adPositionName', width: 100 },
       { title: '广告名', dataIndex: 'name',key: 'name', width: 100 },
       { title: '广告标题', dataIndex: 'title', key: 'title', width: 100 },
-      { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
+      { title: '活动链接', dataIndex: 'url',key: 'url', width: 250 },
       {
         title: '展示时间',
         render: (text, record) => {
@@ -54,7 +54,7 @@ class AdConfig extends Component {
         title: '上下架',
         render: (text, record) => {
           return (
-            record.status === 1 ? '下架' : '上架'
+            record.status === 0 ? '上架' : '下架'
           )
         }
       },
@@ -74,7 +74,7 @@ class AdConfig extends Component {
                   this.props.dispatch({
                     type: 'adConfig/showModal',
                     payload: {
-                      previewImage: record.image
+                      previewImage: record.imageUrl
                     }
                   })
                 }}
@@ -146,6 +146,7 @@ class AdConfig extends Component {
       }
     })
     if(type === 'appId') {
+      console.log('value',value)
       delete this.search.adPositionId
       this.props.dispatch({
         type: 'common/updateSearch',
@@ -155,14 +156,23 @@ class AdConfig extends Component {
           }
         }
       })
-      this.props.dispatch({
-        type: 'adConfig/postionList',
-        payload: {
-          data: {
-            appId: value
+      if(value) {
+        this.props.dispatch({
+          type: 'adConfig/postionList',
+          payload: {
+            data: {
+              appId: value
+            }
           }
-        }
-      })
+        })
+      } else {
+        this.props.dispatch({
+          type: 'adConfig/updateData',
+          payload: {
+            postionData: []
+          }
+        })
+      }
     }
     if(value) {
       this.search = { ...this.search, [type]: value }
@@ -215,7 +225,7 @@ class AdConfig extends Component {
               {
                 appData.map(value => {
                   return (
-                    <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                    <Option value={value.appId + ''} key={value.appId}>{value.name}</Option>
                   )
                 })
               }
@@ -229,7 +239,7 @@ class AdConfig extends Component {
               {
                 postionData.map(value => {
                   return (
-                    <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                    <Option value={value.adPositionId + ''} key={value.adPositionId}>{value.name}</Option>
                   )
                 })
               }
@@ -269,7 +279,7 @@ class AdConfig extends Component {
             className={styles.input}
             placeholder='上下架'
             onChange={this.selectHandler.bind('this','status')}>
-              <Option value={'2'}>{'上架'}</Option>
+              <Option value={'0'}>{'上架'}</Option>
               <Option value={'1'}>{'下架'}</Option>
           </Select>
           <span className={styles['button-wrap']}>

@@ -51,7 +51,7 @@ class PlatformEdit extends Component {
         if(id !== 'new') {
           type = 'adPosition/update'
         }
-        values.appId = Number(values.appId)
+        values.appId = values.appId
         values.identifyNeeded = Number(values.identifyNeeded)
         values.name = trim(values.name)
         values.standard = trim(values.standard)
@@ -106,7 +106,7 @@ class PlatformEdit extends Component {
               rules: [{
                 required: true, message: '请选择所属业务!',
               }],
-              initialValue: detail.appId ? detail.appId + '' : detail.appId
+              initialValue: detail.appId
             })(
               <Select
                 disabled={isEdit}
@@ -114,11 +114,24 @@ class PlatformEdit extends Component {
                 {
                   appData.map(value => {
                     return (
-                      <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                      <Option value={value.appId + ''} key={value.appId}>{value.name}</Option>
                     )
                   })
                 }
               </Select>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label='广告位ID'
+          >
+            {getFieldDecorator('adPositionId', {
+              rules: [{
+                required: true, message: '请输入广告位ID!',
+              }],
+              initialValue: detail.adPositionId
+            })(
+              <Input disabled={true} disabled={isEdit} placeholder='广告位ID'/>
             )}
           </FormItem>
           <FormItem
@@ -130,26 +143,12 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入10个字符以内广告位名',
               },{
                 max: 10, message: '长度最多10个字符'
-              },{
-                validator: this.trim.bind(this,'请输入10个字符以内广告位名' ),
               }],
               initialValue: detail.name
             })(
               <Input placeholder='请输入广告位名'/>
             )}
           </FormItem>
-          { /* isEdit ? (
-            <FormItem
-              {...formItemLayout}
-              label='广告位ID'
-            >
-              {getFieldDecorator('id', {
-                initialValue: detail.id
-              })(
-                <Input disabled={true}/>
-              )}
-            </FormItem>
-          ) : null */}
           <FormItem
             {...formItemLayout}
             label='登录状态'
@@ -175,8 +174,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入广告图规格',
               },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入广告图规格' ),
               }],
               initialValue: detail.standard
             })(
@@ -189,11 +186,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入50字符以内广告位说明',
-              },{
                 max: 50, message: '长度最多50个字符'
-              },{
-                validator: this.trim.bind(this,'请输入50字符以内广告位说明' ),
               }],
               initialValue: detail.description
             })(

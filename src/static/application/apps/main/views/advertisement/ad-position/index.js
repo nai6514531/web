@@ -25,9 +25,9 @@ class AdPosition extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: '序号', dataIndex: 'id', key: 'id' },
+      { title: '广告位ID', dataIndex: 'adPositionId', key: 'adPositionId' },
       { title: '名称', dataIndex: 'name',key: 'name' },
-      { title: '所属业务', dataIndex: 'appName',key: 'appName' },
+      { title: '所属应用', dataIndex: 'appName',key: 'appName' },
       {
         title: '是否需要登录状态',
         render: (text, record, index) => {
@@ -41,8 +41,8 @@ class AdPosition extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/advertisement/position-manager/${record.id}`}>编辑</Link> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+              <Link to={`/advertisement/position-manager/${record.adPositionId}`}>编辑</Link> |
+              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.adPositionId) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
               </Popconfirm>
             </span>
@@ -61,12 +61,12 @@ class AdPosition extends Component {
     })
     this.fetch(url)
   }
-  delete = (id) => {
+  delete = (adPositionId) => {
     const url = this.search
     this.props.dispatch({
       type: 'adPosition/delete',
       payload: {
-        id: id,
+        id: adPositionId,
         data: url
       }
     })
@@ -123,7 +123,7 @@ class AdPosition extends Component {
             {
               appData.map(value => {
                 return (
-                  <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                  <Option value={value.appId + ''} key={value.appId}>{value.name}</Option>
                 )
               })
             }

@@ -59,7 +59,7 @@ export default {
         let identifyNeeded = 0
         if(payload.data && payload.data.adPositionId) {
           result.data.objects.map((item) => {
-            if(payload.data.adPositionId == item.id) {
+            if(payload.data.adPositionId == item.adPositionId) {
               help = item.standard,
               identifyNeeded = item.identifyNeeded
             }
@@ -83,7 +83,7 @@ export default {
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(adConfigService.detail, id)
       if(result.status == 'OK') {
-        const image = result.data.image.split('/')
+        const image = result.data.imageUrl.split('/')
         yield put({
           type: 'postionList',
           payload: {
@@ -102,7 +102,7 @@ export default {
             },
             fileList: [{
               image: image[image.length - 1],
-              url: result.data.image,
+              url: result.data.imageUrl,
               uid: -1,
               status: 'done',
               percent: 100,

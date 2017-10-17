@@ -29,10 +29,10 @@ class AdOrder extends Component {
     super(props)
     this.activeKey
     this.columns = [
-      { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '广告名', dataIndex: 'name',key: 'name' },
-      { title: '广告标题', dataIndex: 'title', key: 'title' },
-      { title: '活动链接', dataIndex: 'url',key: 'url', width: 100 },
+      { title: '序号', dataIndex: 'id', key: 'id', width: 100 },
+      { title: '广告名', dataIndex: 'name',key: 'name', width: 100 },
+      { title: '广告标题', dataIndex: 'title', key: 'title', width: 100 },
+      { title: '活动链接', dataIndex: 'url',key: 'url', width: 250 },
       {
         title: '展示时间',
         render: (text, record) => {
@@ -60,7 +60,7 @@ class AdOrder extends Component {
                   this.props.dispatch({
                     type: 'adOrder/showModal',
                     payload: {
-                      previewImage: record.image
+                      previewImage: record.imageUrl
                     }
                   })
                 }}
@@ -161,8 +161,8 @@ class AdOrder extends Component {
     const { postionData } = this.props.adOrder
     const activeKey = key[key.length - 1]
     if(activeKey) {
-      const { appId, id } = postionData[activeKey]
-      const attr = `${appId}-${id}`
+      const { appId, adPositionId } = postionData[activeKey]
+      const attr = `${appId}-${adPositionId}`
       if(!this.props.adOrder[attr]) {
         this.props.dispatch({
           type: 'adOrder/list',
@@ -170,7 +170,7 @@ class AdOrder extends Component {
             attr: attr,
             data: {
               appId: appId,
-              adPositionId: id
+              adPositionId: adPositionId
             },
             order: true
           }
@@ -191,7 +191,7 @@ class AdOrder extends Component {
         <Collapse onChange={this.changeHandler}>
           {
             postionData.map((value, index) => {
-              const attr = `${value.appId}-${value.id}`
+              const attr = `${value.appId}-${value.adPositionId}`
               return (
                 <Panel header={`${value.appName}-${value.name}`} key={index}>
                   <Button

@@ -14,7 +14,7 @@ const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
-const imageUrl = `${API_SERVER}/advertisements/images`
+const imageServer = `${API_SERVER}/advertisements/images`
 const confirm = Modal.confirm;
 const formItemLayout = {
   labelCol: {
@@ -54,7 +54,7 @@ class PlatformEdit extends Component {
           values.displayParams = values.displayParams.replace(/，/g,',')
         }
         if(fileList[0] && fileList[0].image) {
-          values.image = fileList[0].image
+          values.imageUrl = fileList[0].image
         } else {
           this.props.dispatch({
             type: 'adConfigDetail/updateData',
@@ -69,10 +69,10 @@ class PlatformEdit extends Component {
         }
         values.startedAt = moment(values.time[0],moment.ISO_8601).format()
         values.endedAt = moment(values.time[1],moment.ISO_8601).format()
-        values.appId = Number(values.appId)
+        values.appId = values.appId
         values.displayStrategy = Number(values.displayStrategy)
         values.status = Number(values.status)
-        values.adPositionId = Number(values.adPositionId)
+        values.adPositionId = values.adPositionId
         values.name = trim(values.name)
         values.title = trim(values.title)
         values.url = trim(values.url)
@@ -200,7 +200,7 @@ class PlatformEdit extends Component {
   selectHandler = (type, value) => {
     if(type === 'adPositionId') {
       this.props.adConfigDetail.postionData.map((item) => {
-        if(value == item.id) {
+        if(value == item.adPositionId) {
           this.props.dispatch({
             type: 'adConfigDetail/updateData',
             payload: {
@@ -265,7 +265,7 @@ class PlatformEdit extends Component {
               rules: [{
                 required: true, message: '请选择业务',
               }],
-              initialValue: detail.appId !== undefined ? detail.appId + '' : undefined
+              initialValue: detail.appId
             })(
               <Select
                 disabled={isEdit}
@@ -274,7 +274,7 @@ class PlatformEdit extends Component {
                 {
                   appData.map(value => {
                     return (
-                      <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                      <Option value={value.appId} key={value.appId}>{value.name}</Option>
                     )
                   })
                 }
@@ -289,16 +289,16 @@ class PlatformEdit extends Component {
               rules: [{
                 required: true, message: '请选择广告位',
               }],
-              initialValue: detail.adPositionId !== undefined ? detail.adPositionId + '' : undefined
+              initialValue: detail.adPositionId
             })(
               <Select
                 disabled={isEdit}
                 placeholder='广告位'
                 onChange={this.selectHandler.bind(this, 'adPositionId')}>
                 {
-                  postionData.map(value => {
+                  postionData.map( (value, index) => {
                     return (
-                      <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                      <Option value={value.adPositionId} key={index}>{value.name}</Option>
                     )
                   })
                 }
@@ -314,8 +314,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入20字以内的广告名',
               },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入20字以内的广告名'),
               }],
               initialValue: detail.name
             })(
@@ -328,11 +326,7 @@ class PlatformEdit extends Component {
           >
             {getFieldDecorator('title', {
               rules: [{
-                required: true, message: '请输入20字以内的广告标题',
-              },{
                 max: 20, message: '长度最多20个字符'
-              },{
-                validator: this.trim.bind(this,'请输入20字以内的广告标题'),
               }],
               initialValue: detail.title
             })(
@@ -346,7 +340,7 @@ class PlatformEdit extends Component {
             {...help}
           >
              <Upload
-               action={imageUrl}
+               action={imageServer}
                listType='picture-card'
                fileList={fileList}
                onPreview={this.handlePreview}
@@ -371,8 +365,6 @@ class PlatformEdit extends Component {
                 required: true, message: '请输入广告跳转链接，以http://或https://开头',
               },{
                 max: 255, message: '长度最多255个字符'
-              },{
-                validator: this.trim.bind(this,'请输入广告跳转链接，以http://或https://开头'),
               }],
               initialValue: detail.url
             })(
@@ -448,7 +440,7 @@ class PlatformEdit extends Component {
               initialValue: detail.status !== undefined ? detail.status + '' : undefined
             })(
               <Select placeholder='请选择上下架'>
-                <Option value={'2'}>上架</Option>
+                <Option value={'0'}>上架</Option>
                 <Option value={'1'}>下架</Option>
               </Select>
             )}
