@@ -7,7 +7,10 @@ import {
 } from 'react-router-redux'
 import createDva from 'dva/lib/createDva'
 import createLoading from 'dva-loading'
+import 'moment/locale/zh-cn';
+import moment from 'moment';
 import './utils/debug'
+moment.locale('zh-cn');
 
 const history = createHistory()
 
