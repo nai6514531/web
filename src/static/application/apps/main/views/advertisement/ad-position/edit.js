@@ -100,17 +100,16 @@ class PlatformEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label='所属业务'
+            label='所属应用'
           >
             {getFieldDecorator('appId', {
               rules: [{
-                required: true, message: '请选择所属业务!',
+                required: true, message: '请选择所属应用!',
               }],
               initialValue: detail.appId
             })(
               <Select
-                disabled={isEdit}
-                placeholder="请选择所属业务">
+                placeholder="请选择所属应用">
                 {
                   appData.map(value => {
                     return (
@@ -131,7 +130,7 @@ class PlatformEdit extends Component {
               }],
               initialValue: detail.adPositionId
             })(
-              <Input disabled={true} disabled={isEdit} placeholder='广告位ID'/>
+              <Input placeholder='广告位ID'/>
             )}
           </FormItem>
           <FormItem
