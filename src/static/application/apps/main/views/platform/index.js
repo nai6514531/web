@@ -23,7 +23,7 @@ class Platform extends Component {
     this.columns = [
       { title: '应用ID', dataIndex: 'appId', key: 'appId' },
       { title: '应用名', dataIndex: 'name',key: 'name' },
-      { title: '应用说名', dataIndex: 'description',key: 'description' },
+      { title: '应用说明', dataIndex: 'description',key: 'description' },
       {
         title: '操作',
         key: 'operation',

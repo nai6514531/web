@@ -220,7 +220,7 @@ class AdConfig extends Component {
             value={ search.appId }
             allowClear
             className={styles.input}
-            placeholder='所属业务'
+            placeholder='所属应用'
             onChange={this.selectHandler.bind('this','appId')}>
               {
                 appData.map(value => {

@@ -112,7 +112,7 @@ class PlatformEdit extends Component {
               }],
               initialValue: detail.appId
             })(
-              <Input disabled={isEdit} placeholder='请输入应用ID'/>
+              <Input placeholder='请输入应用ID'/>
             )}
           </FormItem>
           <FormItem
