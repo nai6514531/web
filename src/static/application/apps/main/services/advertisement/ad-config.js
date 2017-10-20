@@ -21,9 +21,6 @@ const adConfigService = {
   delete: (id) => {
     return request.delete(`/advertisements/${id}`)
   },
-  upload: (data) => {
-    return request.post(`/advertisements/images`, data)
-  },
   order: (data) => {
     return request.post(`/advertisements/batch/orders`, data)
   }

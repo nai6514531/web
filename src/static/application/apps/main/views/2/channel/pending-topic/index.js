@@ -1,16 +1,23 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
+import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col, Badge } from 'antd'
 import { connect } from 'dva'
-import DataTable from '../../../components/data-table/'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../utils/'
+import DataTable from '../../../../components/data-table/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import { transformUrl, toQueryString } from '../../../../utils/'
 import moment from 'moment'
-import history from '../../../utils/history.js'
+import history from '../../../../utils/history.js'
 import styles from './index.pcss'
-import { status } from './dict.js'
 
+const confirm = Modal.confirm
+const status =  {
+  0: '正常',
+  1: '交易中',
+  2: '交易完成',
+  3: '违规下架',
+  4: '已下架'
+}
 const FormItem = Form.Item
 const formItemLayout = {
    labelCol: {
@@ -26,11 +33,28 @@ const Option = Select.Option
 class Topic extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.search)
-    // 搜索时跳到默认分页
-    // delete search.page
-    // delete search.per_page
+    let search = transformUrl(location.search)
+    let { id } = this.props.match.params
+    if(id) {
+      search = { ...search, channelId: id}
+    }
     this.search = search
+    this.breadItems = [
+      {
+        title: '闲置系统'
+      },
+      {
+        title: '频道管理',
+        url: `/2/channel`
+      },
+      {
+        title: '商品管理',
+        url: `/2/channel/${id}/topic`
+      },
+      {
+        title: '待处理商品管理',
+      }
+    ]
     this.columns = [
       {
         title: '序号',
@@ -48,7 +72,7 @@ class Topic extends Component {
                 style={{ width: '50px', height: '30px' }}
                 onClick={() => {
                   this.props.dispatch({
-                    type: 'topic/showImageModal',
+                    type: 'channelTopic/showImageModal',
                     payload: {
                       previewImage: record.url
                     }
@@ -104,17 +128,11 @@ class Topic extends Component {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          let detail
-          let { cityId } = this.search
-          if(cityId) {
-            detail = <Link to={`/2/topic/${record.id}?from=city`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
-          } else {
-            detail = <Link to={`/2/topic/${record.id}`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
-          }
           return (
             <span>
-              {detail}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动频道{'\u00A0'}|</a>
+              <Link to={`/2/topic/${record.id}?from=pending`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record.id) }>加入频道{'\u00A0'}|{'\u00A0'}</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record.id) }>不符合{'\u00A0'}|</a>
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
@@ -136,7 +154,7 @@ class Topic extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.search)
+    const url = this.search
     if( !url.channelId ) {
       delete url.channelId
     }
@@ -149,48 +167,29 @@ class Topic extends Component {
         search: url
       }
     })
-    this.props.dispatch({
-      type: 'topic/channelList',
-      payload: {
-        data: null
-      }
-    })
     this.fetch(url)
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'topic/list',
+      type: 'channelTopic/list',
       payload: {
         data: url
       }
     })
   }
-  show = (record) => {
-    this.props.dispatch({
-      type: 'topic/showModal',
-      payload: {
-        data: record
-      }
-    })
-  }
-  hide = () => {
-    this.props.dispatch({
-      type: 'topic/hideModal',
-    })
-  }
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!err) {
-        const id = this.props.topic.record.id
-        const url = transformUrl(location.search)
-        values.channelId = Number(values.channelId)
-        this.props.dispatch({
-          type: 'topic/moveTopic',
+  show = (id) => {
+    const self = this
+    confirm({
+      title: '确认将商品加入该频道?',
+      onOk() {
+        self.props.dispatch({
+          type: 'channelTopic/moveTopic',
           payload: {
             id,
-            url,
-            data: { values }
+            url: self.search,
+            data: {
+              channelId: self.props.match.params.id
+            }
           }
         })
       }
@@ -199,7 +198,7 @@ class Topic extends Component {
   updateStatus = (id, status) => {
     const url = transformUrl(location.search)
     this.props.dispatch({
-      type: 'topic/updateStatus',
+      type: 'channelTopic/updateStatus',
       payload: {
         id,
         url,
@@ -244,35 +243,16 @@ class Topic extends Component {
     }
     return item
   }
+  hide = () => {
+    this.props.dispatch({
+      type: 'channelTopic/hideModal',
+    })
+  }
   render() {
-    const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
-    let breadItems
-    if(this.search.cityId) {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '城市管理',
-          url: `/2/circle`
-        },
-        {
-          title: '商品管理'
-        }
-      ]
-    } else {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '商品管理'
-        }
-      ]
-    }
+    const { match: { params: { id } }, form: { getFieldDecorator }, common: { search }, channelTopic: { data: { objects, pagination }, record, key, previewVisible, previewImage, channel }, loading  } = this.props
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={this.breadItems} />
         <Input
           placeholder='商品发布人'
           className={styles.input}
@@ -294,20 +274,6 @@ class Topic extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.schoolName}
          />
-        <Select
-          value={ search.channelId }
-          allowClear
-          className={styles.input}
-          placeholder='商品频道'
-          onChange={this.selectHandler.bind('this','channelId')}>
-            {
-              channel.map(value => {
-                return (
-                  <Option value={value.id + ''} key={value.id}>{value.title}</Option>
-                )
-              })
-            }
-        </Select>
         <Select
           value={search.status}
           allowClear
@@ -332,49 +298,8 @@ class Topic extends Component {
           loading={loading}
           pagination={pagination}
           change={this.change}
+          rowClassName={() => {}}
         />
-        <Modal
-          title={`商品频道`}
-          visible={visible}
-          onCancel={this.hide}
-          onOk={this.handleSubmit}
-          key={key}
-         >
-          <Form onSubmit={this.handleSubmit}>
-            <FormItem
-              {...formItemLayout}
-              label='商品名称'
-            >
-              <span>{record.title}</span>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label='当前商品频道'
-            >
-              <span>{record.channelTitle}</span>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label='将商品移动至'
-            >
-              {getFieldDecorator('channelId', {
-                rules: [{
-                  required: true, message: '必填项!',
-                }]
-              })(
-                <Select allowClear>
-                  {
-                    channel.map(value => {
-                      return (
-                        <Option value={value.id + ''} key={value.id}>{value.title}</Option>
-                      )
-                    })
-                  }
-                </Select>
-              )}
-            </FormItem>
-          </Form>
-        </Modal>
         <Modal visible={previewVisible} footer={null} onCancel={this.hide}>
           <img alt="图片加载失败" style={{ width: '100%' }} src={previewImage} />
         </Modal>
@@ -382,13 +307,13 @@ class Topic extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'topic/clear'})
+    this.props.dispatch({ type: 'channelTopic/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    topic: state.topic,
+    channelTopic: state.channelTopic,
     common: state.common,
     loading: state.loading.global,
     ...props

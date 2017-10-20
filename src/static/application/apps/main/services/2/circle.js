@@ -1,11 +1,11 @@
 import request from '../../utils/request'
 const circleService = {
   list: (data) => {
-    let url = `/2/circles?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
+    let url = `/2/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
     return request.get(url)
   },
   summary: () => {
-    return request.get('/2/circles/summary')
+    return request.get('/2/cities/summary')
   },
   topicList: (data) => {
     let url = `/2/topics?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&schoolName=${data.schoolName || ''}&channelId=${ data.channelId || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&cityId=${data.cityId || ''}`
@@ -22,9 +22,6 @@ const circleService = {
   upDateTopicStatus: (id, data) => {
     let url = `/2/topics/${id}/status`
     return request.put(url, data)
-  },
-  channel: () => {
-    return request.get(`/2/channels`)
-  },
+  }
 }
 export default circleService

@@ -6,10 +6,13 @@ import { Row, Col, Spin, Card, Modal } from 'antd'
 import styles from './detail.pcss'
 import moment from 'moment'
 import { status } from './dict.js'
+import { transformUrl, toQueryString } from '../../../utils/'
 
 class TopicDetail extends Component {
   constructor(props) {
     super(props)
+    const search = transformUrl(location.search)
+    this.search = search
   }
   componentDidMount() {
     const id = this.props.match.params.id
@@ -35,22 +38,77 @@ class TopicDetail extends Component {
   }
   render() {
     const { topicDetail: { data, visible, previewImage }, loading  } = this.props
-    const breadItems = [
-      {
-        title: '闲置系统'
-      },
-      {
-        title: '城市管理',
-        url: `/2/circle`
-      },
-      {
-        title: '商品管理',
-        url: `/2/topic/#cityId=${data.cityId}`
-      },
-      {
-        title: '商品详情'
-      }
-    ]
+    const { from } = this.search
+    let breadItems
+    if(from == 'city') {
+      breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '城市管理',
+          url: `/2/circle`
+        },
+        {
+          title: '商品管理',
+          url: `/2/topic/?cityId=${data.cityId}`
+        },
+        {
+          title: '商品详情'
+        }
+      ]
+    } else if(from == 'channel') {
+      breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '频道管理',
+          url: `/2/channel`
+        },
+        {
+          title: '商品管理',
+          url: `/2/channel/${data.channelId}/topic`
+        },
+        {
+          title: '商品详情'
+        }
+      ]
+    } else if(from == 'pending') {
+      breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '频道管理',
+          url: `/2/channel`
+        },
+        {
+          title: '商品管理',
+          url: `/2/channel/${data.channelId}/topic`
+        },
+        {
+          title: '待处理商品管理',
+          url: `/2/channel/${data.channelId}/pending-topic`
+        },
+        {
+          title: '商品详情'
+        }
+      ]
+    } else {
+      breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '商品管理',
+          url: `/2/topic`
+        },
+        {
+          title: '商品详情'
+        }
+      ]
+    }
     return(
       <Spin
         tip='加载中...'

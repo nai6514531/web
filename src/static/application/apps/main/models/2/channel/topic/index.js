@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
-import channelService from '../../../services/2/channel.js'
+import circleService from '../../../../services/2/circle.js'
+import channelService from '../../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -9,29 +9,22 @@ const model = {
   },
   record: {},
   key: 1,
-  visible: false,
   previewVisible: false,
   previewImage: '',
   channel: []
 }
 export default {
-  namespace: 'topic',
+  namespace: 'channelTopic',
   state: cloneDeep(model),
   reducers: {
-    showModal(state, { payload: { data } }) {
-      const record = data
-      const visible = true
-      return { ...state, visible, record }
-    },
     showImageModal(state,{ payload: { previewImage } }) {
       const previewVisible = true
       return { ...state, previewVisible, previewImage }
     },
     hideModal(state) {
-      const visible = false
       const previewVisible = false
       const key = state.key + 1
-      return { ...state, visible, previewVisible, key }
+      return { ...state, previewVisible, key }
     },
     updateData(state, { payload }) {
       return { ...state, ...payload }
@@ -77,8 +70,8 @@ export default {
       }
     },
     *moveTopic({ payload }, { call, put }) {
-      const { id, data: { values }, url } = payload
-      const result = yield call(circleService.moveTopic, id, values)
+      const { id, data, url } = payload
+      const result = yield call(circleService.moveTopic, id, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({ type: 'hideModal' })

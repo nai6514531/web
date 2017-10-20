@@ -14,7 +14,7 @@ const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
-const imageServer = `${API_SERVER}/advertisements/images`
+const imageServer = `${API_SERVER}/oss/images/ad`
 const confirm = Modal.confirm;
 const formItemLayout = {
   labelCol: {
@@ -27,7 +27,7 @@ const formItemLayout = {
   },
 }
 
-class PlatformEdit extends Component {
+class AdEdit extends Component {
   constructor(props) {
     super(props)
   }
@@ -472,4 +472,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(Form.create()(PlatformEdit))
+export default connect(mapStateToProps)(Form.create(AdEdit))
