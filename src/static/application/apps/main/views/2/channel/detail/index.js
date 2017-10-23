@@ -29,7 +29,7 @@ class ChannelDetail extends Component {
   componentDidMount() {
     const id = this.props.match.params.id
     this.props.dispatch({
-      type: 'channelDetail/list',
+      type: 'channel/detail',
       payload: {
         id: id
       }
@@ -37,7 +37,7 @@ class ChannelDetail extends Component {
   }
   handlePreview = (img) => {
     this.props.dispatch({
-      type: 'channelDetail/showModal',
+      type: 'channel/showModal',
       payload: {
         previewImage: img
       }
@@ -45,11 +45,11 @@ class ChannelDetail extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'channelDetail/hideModal'
+      type: 'channel/hideModal'
     })
   }
   render() {
-    const { channelDetail: { data, visible, previewImage }, loading  } = this.props
+    const { channel: { detail, visible, previewImage }, loading  } = this.props
     return(
       <Spin
         tip='加载中...'
@@ -61,11 +61,11 @@ class ChannelDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>在售商品数：</span>{data.uniqueVisitor}</div>
-              <div><span className={styles.title}>待确认商品数：</span>{data.likes}</div>
-              <div><span className={styles.title}>处于交易中商品数：</span>{data.comments}</div>
-              <div><span className={styles.title}>交易成功商品数：</span>{data.consultation}</div>
-              <div><span className={styles.title}>询问人数：</span>{data.consultation}</div>
+              <div><span className={styles.title}>在售商品数：</span>{detail.onSaleCount}</div>
+              {/*<div><span className={styles.title}>待确认商品数：</span>{detail.checkingCount}</div>*/}
+              <div><span className={styles.title}>处于交易中商品数：</span>{detail.tradingCount}</div>
+              <div><span className={styles.title}>交易成功商品数：</span>{detail.soldCount}</div>
+              <div><span className={styles.title}>询问人数：</span>{detail.consultation}</div>
             </div>
           </div>
         </Card>
@@ -75,18 +75,14 @@ class ChannelDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>标题：</span>{data.title}</div>
-              <div><span className={styles.title}>副标题：</span>{data.content}</div>
-              <div><span className={styles.title}>创建时间：</span>{(data.value / 100).toFixed(2)}</div>
-              <div><span className={styles.title}>当前所处位置：</span>{data.channelTitle}</div>
-              <div><span className={styles.title}>状态：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</div>
+              <div><span className={styles.title}>标题：</span>{detail.title}</div>
+              <div><span className={styles.title}>副标题：</span>{detail.subtitle}</div>
+              <div><span className={styles.title}>创建时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
+              <div><span className={styles.title}>当前所处位置：</span>{detail.order}</div>
+              <div><span className={styles.title}>状态：</span>{detail.status === 0 ? '正常' : '已下架'}</div>
               <div><span className={styles.title}>背景图：</span></div>
               <p>
-                {
-                  data.images && JSON.parse(data.images).map( (value,index) => {
-                    return <span className={styles['img-item']} key={index} onClick={this.handlePreview.bind(this,value.url)}><img src={value.url}/></span>
-                  })
-                }
+                <span className={styles['img-item']} onClick={this.handlePreview.bind(this,detail.imageURL)}><img src={detail.imageURL}/></span>
               </p>
             </div>
           </div>
@@ -98,12 +94,12 @@ class ChannelDetail extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'channelDetail/clear'})
+    this.props.dispatch({ type: 'channel/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    channelDetail: state.channelDetail,
+    channel: state.channel,
     loading: state.loading.global,
     ...props
   }

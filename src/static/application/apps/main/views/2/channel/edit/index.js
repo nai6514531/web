@@ -13,7 +13,7 @@ const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
-const imageServer = `${API_SERVER}/oss/images/channel`
+const imageServer = `${API_SERVER}/upload/channel`
 const confirm = Modal.confirm;
 const formItemLayout = {
   labelCol: {

@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
+import cityService from '../../../services/2/city.js'
 import channelService from '../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
 
@@ -42,7 +42,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put, select }) {
-      const result = yield call(circleService.topicList, payload.data)
+      const result = yield call(cityService.topicList, payload.data)
       if(result.status == 'OK') {
         result.data.objects.map(value => {
           let image = JSON.parse(value.images)[0]
@@ -63,7 +63,7 @@ export default {
     },
     *updateStatus({ payload }, { call, put }) {
       const { id, data, url } = payload
-      const result = yield call(circleService.upDateTopicStatus, id, data)
+      const result = yield call(cityService.upDateTopicStatus, id, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({
@@ -78,7 +78,7 @@ export default {
     },
     *moveTopic({ payload }, { call, put }) {
       const { id, data: { values }, url } = payload
-      const result = yield call(circleService.moveTopic, id, values)
+      const result = yield call(cityService.moveTopic, id, values)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({ type: 'hideModal' })

@@ -30,12 +30,17 @@ class ChannelOrder extends Component {
     this.activeKey
     this.columns = [
       { title: 'id', dataIndex: 'id', key: 'id' },
-      { title: '排序', dataIndex: 'order', key: 'order' },
+      // { title: '排序', dataIndex: 'order', key: 'order' },
       { title: '频道名称', dataIndex: 'title',key: 'title' },
-      { title: '已上架商品数', dataIndex: 'description',key: 'description' },
-      { title: '处于交易中的商品数', dataIndex: 'a', key: 'a' },
-      { title: '待确认上架商品数', dataIndex: 'b',key: 'b' },
-      { title: '频道状态', dataIndex: 'status',key: 'status' }
+      { title: '已上架商品数', dataIndex: 'onSaleCount',key: 'onSaleCount' },
+      { title: '处于交易中的商品数', dataIndex: 'tradingCount', key: 'tradingCount' },
+      // { title: '待确认上架商品数', dataIndex: 'b',key: 'b' },
+      {
+        title: '频道状态',
+        render: (text, record) => {
+          return record.status === 0 ? '正常' : '已下架'
+        }
+      },
     ]
   }
   componentDidMount() {

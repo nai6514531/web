@@ -1,5 +1,5 @@
 import request from '../../utils/request'
-const circleService = {
+const cityService = {
   list: (data) => {
     let url = `/2/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
     return request.get(url)
@@ -24,4 +24,4 @@ const circleService = {
     return request.put(url, data)
   }
 }
-export default circleService
+export default cityService

@@ -254,7 +254,7 @@ class Topic extends Component {
         },
         {
           title: '城市管理',
-          url: `/2/circle`
+          url: `/2/city`
         },
         {
           title: '商品管理'

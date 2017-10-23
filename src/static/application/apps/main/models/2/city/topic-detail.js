@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
+import cityService from '../../../services/2/city.js'
 import { cloneDeep } from 'lodash'
 const model = {
   data: {},
@@ -28,7 +28,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(circleService.topicDetail, payload.id)
+      const result = yield call(cityService.topicDetail, payload.id)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

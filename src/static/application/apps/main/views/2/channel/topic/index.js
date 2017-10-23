@@ -291,14 +291,14 @@ class Topic extends Component {
             >
             筛选
           </Button>
-          <Badge count={99}>
+          {/* <Badge count={99}>
             <Link
               to={`/2/channel/${id}/pending-topic`}>
               <Button>
               待处理商品
               </Button>
             </Link>
-          </Badge>
+          </Badge> */}
         </span>
         <DataTable
           scroll={{ x: 1000 }}
