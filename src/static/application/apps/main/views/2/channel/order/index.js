@@ -29,8 +29,14 @@ class ChannelOrder extends Component {
     super(props)
     this.activeKey
     this.columns = [
-      { title: 'id', dataIndex: 'id', key: 'id' },
-      // { title: '排序', dataIndex: 'order', key: 'order' },
+      // { title: '频道序号', dataIndex: 'id', key: 'id' },
+      { title: '排序', dataIndex: 'order', key: 'order',
+        render: (text, record) => {
+          return (
+            <p data-id={record.id}>{record.order}</p>
+          )
+        }
+       },
       { title: '频道名称', dataIndex: 'title',key: 'title' },
       { title: '已上架商品数', dataIndex: 'onSaleCount',key: 'onSaleCount' },
       { title: '处于交易中的商品数', dataIndex: 'tradingCount', key: 'tradingCount' },
@@ -47,7 +53,7 @@ class ChannelOrder extends Component {
     this.props.dispatch({
       type: 'channel/list',
       payload: {
-        data: null
+        data: 'getAllWithStatus'
       }
     })
 
@@ -61,23 +67,35 @@ class ChannelOrder extends Component {
   }
   dragulaDecorator = (componentBackingInstance) => {
     if (componentBackingInstance) {
+      let tdWidth = []
+      let thead = document.querySelector('.ant-table-thead').children[0].children
       let drake = Dragula([componentBackingInstance])
+      for (let i = 0; i < thead.length; i ++) {
+        tdWidth.push(window.getComputedStyle(thead[i]).width)
+      }
+
       drake.on("drag", (el, target, source, sibling) => {
-        el.className = ' ex-drag'
+        let element = el.cloneNode(true)
+        el.className = 'ant-table-row ant-table-row-level-0 ex-drag'
+        for (var i = 0 ; i < el.children.length; i++) {
+          el.children[i].style.width = tdWidth[i]
+        }
+
       })
+
       drake.on("drop", (el, target, source, sibling) => {
         el.className = el.className.replace('ex-drag', 'ex-moved')
         this._onDrop(el, target, source, sibling)
         drake.cancel(true)
       })
 
-      drake.on("over", (el, container) => {
-        container.className += ' ex-over';
-      })
+      // drake.on("over", (el, container) => {
+      //   container.className += ' ex-over';
+      // })
 
       drake.on("cancel", (el, target) => {
-         this._onCancel(el, target)
-         el.className = el.className.replace('ex-drag', 'ex-moved')
+        this._onCancel(el, target)
+        el.className = el.className.replace('ex-drag', 'ex-moved')
       })
     }
   }
@@ -86,7 +104,7 @@ class ChannelOrder extends Component {
     let orders = this.props.channel.data.objects
     for(let i = 0; i < target.children.length; i++) {
       let child = target.children[i]
-      let id = parseInt(child.children[0].innerText)
+      let id = child.children[0].children[1].getAttribute('data-id')
       sorting.push(id)
     }
     let i = 1
@@ -135,7 +153,7 @@ class ChannelOrder extends Component {
     })
   }
   render() {
-    const { channel: { data: { objects }, visible, key, previewImage }, loading  } = this.props
+    const { channel: { data: { objects }, visible, key, previewImage, updatedTime }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -146,6 +164,9 @@ class ChannelOrder extends Component {
           >
           同步到现网
         </Button>
+        {
+          updatedTime ? <span style={{ marginLeft: '10px' }}>{`上次保存时间${moment(updatedTime).format('YYYY-MM-DD HH:mm')}`}</span> : ''
+        }
         <DataTable
           dataSource={objects}
           columns={this.columns}
@@ -153,6 +174,7 @@ class ChannelOrder extends Component {
           pagination={false}
           scroll={{ x: 700 }}
           getBodyWrapper={this.getBodyWrapper}
+          rowKey={'id'}
         />
         <Modal key={key} visible={visible} footer={null} onCancel={this.hide}>
           <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />

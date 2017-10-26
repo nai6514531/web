@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import menuService from '../../services/settings/menu.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -9,6 +10,7 @@ const model = {
     objects: []
   }
 }
+
 export default {
   namespace: 'menu',
   state: cloneDeep(model),

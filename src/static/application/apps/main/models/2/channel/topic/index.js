@@ -13,6 +13,7 @@ const model = {
   previewImage: '',
   channel: []
 }
+
 export default {
   namespace: 'channelTopic',
   state: cloneDeep(model),

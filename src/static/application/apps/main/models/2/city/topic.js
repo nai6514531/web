@@ -14,6 +14,7 @@ const model = {
   previewImage: '',
   channel: []
 }
+
 export default {
   namespace: 'topic',
   state: cloneDeep(model),
@@ -56,6 +57,10 @@ export default {
     *channelList({ payload }, { call, put, select }) {
       const result = yield call(channelService.list, payload.data)
       if(result.status == 'OK') {
+        result.data.objects.unshift({
+          id: 0,
+          title: '无频道'
+        })
         yield put({ type: 'updateData', payload: { channel: result.data.objects } })
       } else {
         result.message && message.error(result.message)

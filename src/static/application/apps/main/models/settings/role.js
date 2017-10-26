@@ -2,6 +2,7 @@ import { message } from 'antd'
 import roleService from '../../services/settings/role.js'
 import permissionService from '../../services/settings/permission.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -14,6 +15,7 @@ const model = {
   currentId: '',
   record: {}
 }
+
 export default {
   namespace: 'role',
   state: cloneDeep(model),

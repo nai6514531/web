@@ -15,7 +15,7 @@ const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageServer = `${API_SERVER}/upload/ad`
-const confirm = Modal.confirm;
+const confirm = Modal.confirm
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -42,7 +42,7 @@ class AdEdit extends Component {
     })
   }
   handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { match: { params: { id } }, history, adConfigDetail: { fileList } } = this.props
@@ -149,13 +149,13 @@ class AdEdit extends Component {
     const isJPG = file.type === 'image/jpeg'
     const isPNG = file.type === 'image/png'
     if(!isJPG && !isPNG) {
-      Message.error('上传的图片格式错误');
+      Message.error('上传的图片格式错误')
     }
-    const isLt1M = file.size / 1024 / 1024 < 1;
+    const isLt1M = file.size / 1024 / 1024 < 1
     if(!isLt1M) {
-      Message.error('图片过大，请压缩后再上传');
+      Message.error('图片过大，请压缩后再上传')
     }
-    return (isJPG || isPNG) && isLt1M;
+    return (isJPG || isPNG) && isLt1M
   }
   showConfirm = () => {
     confirm({
@@ -353,7 +353,7 @@ class AdEdit extends Component {
              <Modal visible={visible} footer={null} onCancel={this.hide}>
                <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
-           </FormItem>
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label='跳转链接'
@@ -472,4 +472,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(Form.create(AdEdit))
+export default connect(mapStateToProps)(Form.create()(AdEdit))

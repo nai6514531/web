@@ -77,12 +77,13 @@ class ChannelDetail extends Component {
             <div className={styles['card-item']}>
               <div><span className={styles.title}>标题：</span>{detail.title}</div>
               <div><span className={styles.title}>副标题：</span>{detail.subtitle}</div>
+              <div><span className={styles.title}>描述：</span>{detail.description}</div>
               <div><span className={styles.title}>创建时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
               <div><span className={styles.title}>当前所处位置：</span>{detail.order}</div>
               <div><span className={styles.title}>状态：</span>{detail.status === 0 ? '正常' : '已下架'}</div>
               <div><span className={styles.title}>背景图：</span></div>
               <p>
-                <span className={styles['img-item']} onClick={this.handlePreview.bind(this,detail.imageURL)}><img src={detail.imageURL}/></span>
+                <span className={styles['img-item']} onClick={this.handlePreview.bind(this,detail.imageUrl)}><img src={detail.imageUrl}/></span>
               </p>
             </div>
           </div>

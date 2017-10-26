@@ -6,7 +6,9 @@ import { connect } from 'dva'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
+import InputWithClear from '../../../../components/input-with-clear/'
 import moment from 'moment'
+import { trim } from 'lodash'
 import history from '../../../../utils/history.js'
 import styles from './index.pcss'
 
@@ -18,6 +20,7 @@ const status =  {
   3: '违规下架',
   4: '已下架'
 }
+
 const breadItems = [
   {
     title: '闲置系统'
@@ -31,6 +34,7 @@ const breadItems = [
   }
 ]
 const FormItem = Form.Item
+const Option = Select.Option
 const formItemLayout = {
    labelCol: {
      xs: { span: 24 },
@@ -41,7 +45,7 @@ const formItemLayout = {
      sm: { span: 14 },
    }
 }
-const Option = Select.Option
+
 class Topic extends Component {
   constructor(props) {
     super(props)
@@ -104,11 +108,11 @@ class Topic extends Component {
         dataIndex: 'channelTitle',
         key: 'channelTitle',
       },
-      {
-        title: '浏览量',
-        dataIndex: 'uniqueVisitor',
-        key: 'uniqueVisitor',
-      },
+      // {
+      //   title: '浏览量',
+      //   dataIndex: 'uniqueVisitor',
+      //   key: 'uniqueVisitor',
+      // },
       {
         title: '所属学校',
         dataIndex: 'schoolName',
@@ -126,19 +130,19 @@ class Topic extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/2/topic/${record.id}?from=channel`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record.id) }>移出频道{'\u00A0'}|</a>
+              <Link to={`/2/topic/${record.id}?from=channel`}>查看详情|</Link>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record.id) }>移出频道|</a>
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
                     return (
-                      <Popconfirm title={`是否确定要下架该商品`} onConfirm={ this.updateStatus.bind(this,record.id,4) } >
-                        <a href='javascript:void(0)'>{'\u00A0'}下架商品</a>
+                      <Popconfirm title={`是否确定要下架该商品`} onConfirm={ this.updateStatus.bind(this,record.id,3) } >
+                        <a href='javascript:void(0)'>下架商品</a>
                       </Popconfirm>
                     )
                   }
                   if(record.status === 3 || record.status === 4) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上架商品</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>上架商品</a>
                   }
                 })()
               }
@@ -212,8 +216,12 @@ class Topic extends Component {
       }
     })
   }
-  changeHandler = (type, e) => {
-    this.search = { ...this.search, [type]: e.target.value }
+  changeHandler = (type, value) => {
+    if(value) {
+      this.search = { ...this.search, [type]: trim(value) }
+    } else {
+      delete this.search[type]
+    }
   }
   selectHandler =  (type, value) => {
     this.props.dispatch({
@@ -254,21 +262,21 @@ class Topic extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Input
+        <InputWithClear
           placeholder='商品发布人'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
-        <Input
+        <InputWithClear
           placeholder='商品关键字'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'keywords')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.keywords}
          />
-        <Input
+        <InputWithClear
           placeholder='商品学校'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'schoolName')}

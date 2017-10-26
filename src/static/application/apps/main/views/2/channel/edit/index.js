@@ -14,7 +14,8 @@ const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageServer = `${API_SERVER}/upload/channel`
-const confirm = Modal.confirm;
+const confirm = Modal.confirm
+
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -41,7 +42,7 @@ class ChannelEdit extends Component {
     })
   }
   handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { match: { params: { id } }, history, channelEdit: { fileList } } = this.props
@@ -135,30 +136,35 @@ class ChannelEdit extends Component {
       type: 'channelEdit/hideModal'
     })
   }
-  beforeUpload = (file, fileList) => {
+  beforeUpload =  (file, fileList) => {
+    const fr = new FileReader
     const isJPG = file.type === 'image/jpeg'
     const isPNG = file.type === 'image/png'
     const isLt1M = file.size / 1024 / 1024 < 1
-    // const fr = new FileReader;
-    // fr.onload = function() { // file is loaded
-    //     let img = new Image
-    //     img.onload = function() {
-    //         let { width, heiht } = img
-    //         if( width > 40 || height > 40 ) {
-    //           Message.error('上传的图片需满足40*40')
-    //         }
-    //     }
-    //     img.src = fr.result
-    // }
-    // fr.readAsDataURL(file)
-    if(!isJPG && !isPNG) {
-      Message.error('上传的图片格式错误')
-    }
-
-    if(!isLt1M) {
-      Message.error('图片过大，请压缩后再上传')
-    }
-    return (isJPG || isPNG) && isLt1M;
+    return new Promise(function (resolve, reject) {
+      if(!isJPG && !isPNG) {
+        Message.error('上传的图片格式错误')
+        return reject()
+      }
+      if(!isLt1M) {
+        Message.error('图片过大，请压缩后再上传')
+        return reject()
+      }
+      fr.onload = function() {
+        let img = new Image
+        img.onload = function() {
+            let { width, height } = img
+            if( width != 750 || height != 300 ) {
+              Message.error('上传的图片需满足750*300')
+              reject()
+            } else {
+              resolve()
+            }
+        }
+        img.src = fr.result
+      }
+      fr.readAsDataURL(file)
+    })
   }
   showConfirm = () => {
     confirm({
@@ -187,7 +193,7 @@ class ChannelEdit extends Component {
     })
   }
   render() {
-    const { channelEdit: { standard, detail, appData, postionData, displayStrategy, help, visible, previewImage, fileList, identifyNeeded  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { channelEdit: { detail, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
@@ -195,7 +201,6 @@ class ChannelEdit extends Component {
         <div className='ant-upload-text'>图片</div>
       </div>
     )
-    const displayOption = identifyNeeded === 0 ? <Option value={'1'}>全部显示</Option> : [ <Option value={'1'} key={1}>全部显示</Option>,<Option value={'2'} key={2}>按尾号显示</Option> ]
     const breadItems = [
       {
         title: '闲置系统'
@@ -205,7 +210,7 @@ class ChannelEdit extends Component {
         url: '/2/channel'
       },
       {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑' : '新增频道'
       }
     ]
     const { startedAt, endedAt } = detail
@@ -249,7 +254,7 @@ class ChannelEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入20字以内的主标题',
+                required: true, message: '请输入20字以内的描述',
               },{
                 max: 20, message: '长度最多20个字符'
               }],
@@ -280,7 +285,7 @@ class ChannelEdit extends Component {
              <Modal visible={visible} footer={null} onCancel={this.hide}>
                <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
-           </FormItem>
+          </FormItem>
           <FormItem style={{textAlign: 'center'}}>
             <Button
               style={{margin: '20px 50px 0 0'}}

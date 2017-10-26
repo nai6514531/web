@@ -3,6 +3,7 @@ import adConfigService from '../../../services/advertisement/ad-config.js'
 import applicationService from '../../../services/platform/application.js'
 import adPositionService from '../../../services/advertisement/ad-position.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   appData: [],
   postionData: [],
@@ -18,6 +19,7 @@ const model = {
   },
   identifyNeeded: 0
 }
+
 export default {
   namespace: 'adConfigDetail',
   state: cloneDeep(model),
@@ -134,14 +136,6 @@ export default {
       } else {
         message.error(result.message)
       }
-    },
-    *upload({ payload }, { call, put }) {
-      const result = yield call(adConfigService.upload, payload.data)
-      if(result.status == 'OK') {
-        message.success('上传成功')
-      } else {
-        message.error(result.message)
-      }
-    },
+    }
   }
 }

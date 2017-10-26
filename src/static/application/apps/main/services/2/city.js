@@ -22,6 +22,17 @@ const cityService = {
   upDateTopicStatus: (id, data) => {
     let url = `/2/topics/${id}/status`
     return request.put(url, data)
-  }
+  },
+  inboxConsultation: (data) => {
+    let { topicId, channelId } = data
+    let url
+    if(channelId) {
+      url = `/2/inbox/consultation?channelId=${channelId}`
+    }
+    if(topicId) {
+      url = `/2/inbox/consultation?topicId=${topicId}`
+    }
+    return request.get(url)
+  },
 }
 export default cityService

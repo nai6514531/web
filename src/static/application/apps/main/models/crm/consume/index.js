@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import consumeService from '../../../services/crm/consume.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
@@ -10,6 +11,7 @@ const model = {
   exportUrl: '',
   date: new Date()
 }
+
 export default {
   namespace: 'crmConsume',
   state: cloneDeep(model),

@@ -4,6 +4,7 @@ import menuService from '../../services/settings/menu.js'
 import actionService from '../../services/settings/action.js'
 import elementService from '../../services/settings/element.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -20,6 +21,7 @@ const model = {
   menuData: [],
   elementData: []
 }
+
 export default {
   namespace: 'permission',
   state: cloneDeep(model),

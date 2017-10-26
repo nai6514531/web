@@ -2,19 +2,19 @@ import { message } from 'antd'
 import adConfigService from '../../../../services/advertisement/ad-config.js'
 import channelService from '../../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   visible: false,
   previewImage: '',
   fileList: [],
   key: 0,
   detail: {},
-  displayStrategy: 1,
   help: {
     validateStatus: '',
-    help: '请上传1M以内的图片'
-  },
-  identifyNeeded: 0
+    help: '请上传1M以内,750*300的图片'
+  }
 }
+
 export default {
   namespace: 'channelEdit',
   state: cloneDeep(model),
@@ -59,7 +59,24 @@ export default {
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(channelService.detail, id)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { detail: result.data } })
+        const image = result.data.imageUrl.split('/')
+        yield put({
+          type: 'updateData',
+          payload:  {
+            help: {
+              validateStatus: 'success',
+              help: '图片上传成功'
+            },
+            fileList: [{
+              image: image[image.length - 1],
+              url: result.data.imageUrl,
+              uid: -1,
+              status: 'done',
+              percent: 100,
+            }],
+            detail: result.data
+          }
+        })
       } else {
         message.error(result.message)
       }

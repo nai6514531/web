@@ -8,6 +8,7 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import history from '../../../utils/history.js'
 
+
 const confirm = Modal.confirm
 const breadItems = [
   {
@@ -38,13 +39,13 @@ class Channel extends Component {
         key: 'operation',
         render: (text, record, index) => {
           let operate = record.status == 1
-                        ? <a href='javascript:void(0)' onClick={ this.upDateChannelStatus.bind(this,record.id,0) }>{'\u00A0'}上架</a>
-                        : <a href='javascript:void(0)' onClick={ this.upDateChannelStatus.bind(this,record.id,1) }>{'\u00A0'}下架</a>
+                        ? <a href='javascript:void(0)' onClick={ this.upDateChannelStatus.bind(this,record.id,0) }>上架</a>
+                        : <a href='javascript:void(0)' onClick={ this.upDateChannelStatus.bind(this,record.id,1) }>下架</a>
           return (
             <span>
-              <Link to={`/2/channel/detail/${record.id}`}>详情</Link> |
-              <Link to={`/2/channel/${record.id}`}>编辑</Link> |
-              <Link to={`/2/channel/${record.id}/topic`}>商品管理</Link> |
+              <Link to={`/2/channel/detail/${record.id}`}>详情 | </Link>
+              <Link to={`/2/channel/${record.id}`}>编辑  | </Link>
+              <Link to={`/2/topic?channelId=${record.id}&from=channel`}>商品管理  | </Link>
               {operate}
             </span>
           )
@@ -59,22 +60,35 @@ class Channel extends Component {
   upDateChannelStatus = (id, status) => {
     const url = transformUrl(location.search)
     const self = this
-    confirm({
-      title: '下架频道?',
-      content: '下架频道后该频道不会再在首页出现，确认下架吗?',
-      onOk() {
-        self.props.dispatch({
-          type: 'channel/upDateChannelStatus',
-          payload: {
-            id,
-            data: {
-              status
-            },
-            url
-          }
-        })
-      }
-    })
+    if(status === 1 ) {
+      confirm({
+        title: '下架频道?',
+        content: '下架频道后该频道不会再在首页出现，确认下架吗?',
+        onOk() {
+          self.props.dispatch({
+            type: 'channel/upDateChannelStatus',
+            payload: {
+              id,
+              data: {
+                status
+              },
+              url
+            }
+          })
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'channel/upDateChannelStatus',
+        payload: {
+          id,
+          data: {
+            status
+          },
+          url
+        }
+      })
+    }
   }
   fetch = (url) => {
     this.props.dispatch({

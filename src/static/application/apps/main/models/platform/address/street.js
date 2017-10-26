@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import addressService from '../../../services/platform/address.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -14,6 +15,7 @@ const model = {
   areaData: [],
   areaDetailData: [],
 }
+
 export default {
   namespace: 'street',
   state: cloneDeep(model),

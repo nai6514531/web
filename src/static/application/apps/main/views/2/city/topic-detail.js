@@ -145,7 +145,7 @@ class TopicDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>浏览量：</span>{data.uniqueVisitor}</div>
+              { /*<div><span className={styles.title}>浏览量：</span>{data.uniqueVisitor}</div>*/ }
               <div><span className={styles.title}>点赞数：</span>{data.likes}</div>
               <div><span className={styles.title}>评论数：</span>{data.comments}</div>
               <div><span className={styles.title}>询问人数：</span>{data.consultation}</div>
@@ -181,7 +181,7 @@ class TopicDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>昵称：</span>{data.userName}</div>
+              <div><span className={styles.title}>昵称：</span>{data.user.name}</div>
               <div><span className={styles.title}>所在城市：</span>{data.cityName}</div>
               <div><span className={styles.title}>所在学校：</span>{data.schoolName}</div>
             </div>

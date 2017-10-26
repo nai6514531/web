@@ -2,6 +2,7 @@ import { message } from 'antd'
 import adPositionService from '../../../services/advertisement/ad-position.js'
 import applicationService from '../../../services/platform/application.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
@@ -9,6 +10,7 @@ const model = {
   detail: {},
   appData: []
 }
+
 export default {
   namespace: 'adPosition',
   state: cloneDeep(model),

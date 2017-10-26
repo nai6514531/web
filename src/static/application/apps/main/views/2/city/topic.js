@@ -6,8 +6,10 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import InputWithClear from '../../../components/input-with-clear/'
 import moment from 'moment'
 import history from '../../../utils/history.js'
+import { trim } from 'lodash'
 import styles from './index.pcss'
 import { status } from './dict.js'
 
@@ -22,6 +24,9 @@ const formItemLayout = {
      sm: { span: 14 },
    }
 }
+
+const confirm = Modal.confirm
+
 const Option = Select.Option
 class Topic extends Component {
   constructor(props) {
@@ -84,11 +89,11 @@ class Topic extends Component {
         dataIndex: 'channelTitle',
         key: 'channelTitle',
       },
-      {
-        title: '浏览量',
-        dataIndex: 'uniqueVisitor',
-        key: 'uniqueVisitor',
-      },
+      // {
+      //   title: '浏览量',
+      //   dataIndex: 'uniqueVisitor',
+      //   key: 'uniqueVisitor',
+      // },
       {
         title: '所属学校',
         dataIndex: 'schoolName',
@@ -114,15 +119,11 @@ class Topic extends Component {
           return (
             <span>
               {detail}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动频道{'\u00A0'}|</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动商品{'\u00A0'}|</a>
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
-                    return (
-                      <Popconfirm title={`是否确定要下架该商品`} onConfirm={ this.updateStatus.bind(this,record.id,4) } >
-                        <a href='javascript:void(0)'>{'\u00A0'}下架商品</a>
-                      </Popconfirm>
-                    )
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,3) }>{'\u00A0'}下架商品</a>
                   }
                   if(record.status === 3 || record.status === 4) {
                     return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上架商品</a>
@@ -152,7 +153,7 @@ class Topic extends Component {
     this.props.dispatch({
       type: 'topic/channelList',
       payload: {
-        data: null
+        data: 'getAll'
       }
     })
     this.fetch(url)
@@ -198,17 +199,43 @@ class Topic extends Component {
   }
   updateStatus = (id, status) => {
     const url = transformUrl(location.search)
-    this.props.dispatch({
-      type: 'topic/updateStatus',
-      payload: {
-        id,
-        url,
-        data: { status }
-      }
-    })
+    const self = this
+    if(status === 3 ) {
+      confirm({
+        title: '下架商品?',
+        content: '下架后该商品将不会再展示在C端，确认下架吗？',
+        onOk() {
+          self.props.dispatch({
+            type: 'topic/updateStatus',
+            payload: {
+              id,
+              data: {
+                status
+              },
+              url
+            }
+          })
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'topic/updateStatus',
+        payload: {
+          id,
+          data: {
+            status
+          },
+          url
+        }
+      })
+    }
   }
-  changeHandler = (type, e) => {
-    this.search = { ...this.search, [type]: e.target.value }
+  changeHandler = (type, value) => {
+    if(value) {
+      this.search = { ...this.search, [type]: trim(value) }
+    } else {
+      delete this.search[type]
+    }
   }
   selectHandler =  (type, value) => {
     this.props.dispatch({
@@ -260,6 +287,19 @@ class Topic extends Component {
           title: '商品管理'
         }
       ]
+    } else if(this.search.from === 'channel') {
+      breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '频道管理',
+          url: `/2/channel`
+        },
+        {
+          title: '商品管理'
+        }
+      ]
     } else {
       breadItems = [
         {
@@ -273,21 +313,21 @@ class Topic extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Input
+        <InputWithClear
           placeholder='商品发布人'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
-        <Input
+        <InputWithClear
           placeholder='商品关键字'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'keywords')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.keywords}
          />
-        <Input
+        <InputWithClear
           placeholder='商品学校'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'schoolName')}
@@ -332,6 +372,7 @@ class Topic extends Component {
           loading={loading}
           pagination={pagination}
           change={this.change}
+          rowClassName={() => {}}
         />
         <Modal
           title={`商品频道`}

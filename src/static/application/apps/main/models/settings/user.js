@@ -3,6 +3,7 @@ import userService from '../../services/settings/user.js'
 import roleService from '../../services/settings/role.js'
 import { storage, session } from '../../utils/storage.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -12,6 +13,7 @@ const model = {
   roleData: [],
   currentRole: [],
 }
+
 export default {
   namespace: 'user',
   state: cloneDeep(model),

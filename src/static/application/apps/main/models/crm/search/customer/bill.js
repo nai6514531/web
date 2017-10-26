@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import customerService from '../../../../services/crm/search/customer.js'
 import { cloneDeep } from 'lodash'
+
 const dict = {
   1: [
     {
@@ -23,6 +24,7 @@ const dict = {
     }
   ]
 }
+
 const model = {
   data: {
     objects: []
@@ -30,6 +32,7 @@ const model = {
   appData: [],
   action: undefined
 }
+
 export default {
   namespace: 'crmBill',
   state: cloneDeep(model),

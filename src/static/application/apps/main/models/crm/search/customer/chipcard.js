@@ -1,11 +1,13 @@
 import { message } from 'antd'
 import customerService from '../../../../services/crm/search/customer.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
   },
 }
+
 export default {
   namespace: 'crmChipcard',
   state: cloneDeep(model),

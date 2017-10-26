@@ -18,6 +18,8 @@ const status =  {
   3: '违规下架',
   4: '已下架'
 }
+
+const Option = Select.Option
 const FormItem = Form.Item
 const formItemLayout = {
    labelCol: {
@@ -29,7 +31,7 @@ const formItemLayout = {
      sm: { span: 14 },
    }
 }
-const Option = Select.Option
+
 class Topic extends Component {
   constructor(props) {
     super(props)
