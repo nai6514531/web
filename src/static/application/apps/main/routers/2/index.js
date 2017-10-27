@@ -16,10 +16,6 @@ import ChannelDetail from 'bundle-loader?lazy!../../views/2/channel/detail/'
 import ChannelOrder from 'bundle-loader?lazy!../../views/2/channel/order/'
 // import channelOrderModel from 'bundle-loader?lazy!../../models/2/channel/order/index.js'
 //
-// import ChannelTopic from 'bundle-loader?lazy!../../views/2/channel/topic/'
-// import ChannelPendingTopic from 'bundle-loader?lazy!../../views/2/channel/pending-topic/'
-// import channelTopicModel from 'bundle-loader?lazy!../../models/2/channel/topic/'
-
 import Topic from 'bundle-loader?lazy!../../views/2/city/topic.js'
 import topicModel from 'bundle-loader?lazy!../../models/2/city/topic.js'
 

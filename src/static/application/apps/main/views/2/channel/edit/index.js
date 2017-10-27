@@ -230,7 +230,7 @@ class ChannelEdit extends Component {
               }],
               initialValue: detail.title
             })(
-              <Input placeholder='主标题'/>
+              <Input placeholder='请输入6字以内'/>
             )}
           </FormItem>
           <FormItem
@@ -245,7 +245,7 @@ class ChannelEdit extends Component {
               }],
               initialValue: detail.subtitle
             })(
-              <Input placeholder='副标题'/>
+              <Input placeholder='请输入6字以内'/>
             )}
           </FormItem>
           <FormItem
@@ -260,7 +260,7 @@ class ChannelEdit extends Component {
               }],
               initialValue: detail.description
             })(
-              <Input placeholder='描述'/>
+              <Input placeholder='请输入20字以内'/>
             )}
           </FormItem>
           <FormItem
