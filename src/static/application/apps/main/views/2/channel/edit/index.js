@@ -239,13 +239,13 @@ class ChannelEdit extends Component {
           >
             {getFieldDecorator('subtitle', {
               rules: [{
-                required: true, message: '请输入6字以内的副标题',
+                required: true, message: '请输入10字以内的副标题',
               },{
-                max: 12, message: '长度最多12个字符'
+                max: 10, message: '长度最多10个字符'
               }],
               initialValue: detail.subtitle
             })(
-              <Input placeholder='请输入6字以内'/>
+              <Input placeholder='请输入10字以内'/>
             )}
           </FormItem>
           <FormItem
