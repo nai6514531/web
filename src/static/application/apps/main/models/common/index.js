@@ -1,6 +1,7 @@
 import { storage, session } from '../../utils/storage.js'
 import { message } from 'antd'
 import userService from '../../services/user'
+
 export default {
   namespace: 'common',
   state: {

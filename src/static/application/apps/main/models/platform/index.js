@@ -1,12 +1,14 @@
 import { message } from 'antd'
 import applicationService from '../../services/platform/application.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
   },
   detail: {}
 }
+
 export default {
   namespace: 'platform',
   state: cloneDeep(model),

@@ -10,6 +10,7 @@ import createLoading from 'dva-loading'
 import 'moment/locale/zh-cn';
 import moment from 'moment';
 import './utils/debug'
+import './assets/css/overlay.pcss'
 moment.locale('zh-cn');
 
 const history = createHistory()

@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Cascader, Form, Modal, Input, Button, Popconfirm } from 'antd'
+import { Tree, Cascader, Form, Modal, Input, Button, Popconfirm, Collapse } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { arrayToTree, transformMenu } from '../../../utils/'
+import { arrayToTree, transformMenu, generateData } from '../../../utils/'
 
 const FormItem = Form.Item
+const Panel = Collapse.Panel
 const formItemLayout = {
    labelCol: {
      xs: { span: 24 },
@@ -26,6 +27,7 @@ const breadItems = [
     title: '菜单'
   }
 ]
+const TreeNode = Tree.TreeNode
 
 class Menu extends Component {
   constructor(props) {
@@ -58,7 +60,7 @@ class Menu extends Component {
     })
   }
   handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { cascader } = values
@@ -122,10 +124,120 @@ class Menu extends Component {
       })
     }
   }
+  onDragEnter = (info) => {
+    // console.log(info)
+    // expandedKeys 需要受控时设置
+    // this.setState({
+    //   expandedKeys: info.expandedKeys,
+    // })
+  }
+  onDrop = (info) => {
+    const { eventKey: dropKey, pos: targetNode } = info.node.props
+    const { eventKey: dragKey, pos: dragNode } = info.dragNode.props
+    const dropPos = info.node.props.pos.split('-')
+    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
+    const currentPos = dragNode.slice(0, dragNode.length-2)
+    const targetPos = targetNode.slice(0, targetNode.length-2)
+    if(currentPos !== targetPos || !info.dropToGap ) {
+      // 判断是否是同级并且是否拖拽到了空隙位置
+      return
+    }
+    const loop = (data, key, callback) => {
+      data.forEach((item, index, arr) => {
+        if (item.id == key) {
+          return callback(item, index, arr)
+        }
+        if (item.children) {
+          return loop(item.children, key, callback)
+        }
+      })
+    }
+    const data = [...this.props.menu.treeData]
+    let dragObj
+    loop(data, dragKey, (item, index, arr) => {
+      arr.splice(index, 1)
+      dragObj = item
+    })
+    if (info.dropToGap) {
+      let ar
+      let i
+      loop(data, dropKey, (item, index, arr) => {
+        ar = arr
+        i = index
+      })
+      if (dropPosition === -1) {
+        ar.splice(i, 0, dragObj)
+      } else {
+        ar.splice(i - 1, 0, dragObj)
+      }
+    } else {
+      // loop(data, dropKey, (item) => {
+      //   item.children = item.children || []
+      //   // where to insert 示例添加到尾部，可以是随意位置
+      //   item.children.push(dragObj)
+      // })
+    }
+    this.props.dispatch({
+      type: 'menu/updateData',
+      payload: {
+        treeData: data
+      }
+    })
+  }
+  order = () => {
+    const treeData = [...this.props.menu.treeData]
+    const orignData = [...this.props.menu.data.objects]
+    const order = []
+    const loop = (data,preKey) => {
+      data.forEach((item, index, arr) => {
+        index = index + 1
+        if(item.level === 1) {
+          order.push({
+            id: item.id,
+            position: index * 10000
+          })
+        }
+        const result = order.find((ele) => {
+          return ele.id === item.parentId
+        })
+        if(result) {
+          if(item.level === 2) {
+            order.push({
+              id: item.id,
+              position: result.position + index * 100
+            })
+          }
+          if(item.level === 3) {
+            order.push({
+              id: item.id,
+              position: result.position + index
+            })
+          }
+        }
+        if (item.children) {
+          return loop(item.children)
+        }
+      })
+    }
+    loop(treeData)
+    this.props.dispatch({
+      type: 'menu/order',
+      payload: {
+        data: order
+      }
+    })
+  }
   render() {
-    const { form: { getFieldDecorator }, menu: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
+    const { form: { getFieldDecorator }, menu: { key, visible, record, data: { objects, pagination }, treeData }, loading  } = this.props
     this.options = transformMenu(objects)
+
     const title = record.id ? '编辑菜单' : '添加菜单'
+    const loop = data => data.map((item) => {
+      if (item.children && item.children.length) {
+        return <TreeNode key={item.id} title={item.name}>{loop(item.children)}</TreeNode>
+      }
+      return <TreeNode key={item.id} title={item.name} leaf={true}/>
+    })
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -136,6 +248,26 @@ class Menu extends Component {
           >
           添加菜单
         </Button>
+        <Collapse style={{ marginBottom: '20px' }}>
+          <Panel header="菜单排序" key="1">
+            <Button
+              type='primary'
+              onClick={this.order}
+              style={{marginBottom: '20px'}}
+              >
+              同步到现网
+            </Button>
+            <Tree
+              showLine
+              className="draggable-tree"
+              draggable
+              onDragEnter={this.onDragEnter}
+              onDrop={this.onDrop}
+            >
+              {loop(treeData)}
+            </Tree>
+          </Panel>
+        </Collapse>
         <DataTable
           scroll={{ x: 600 }}
           dataSource={objects}

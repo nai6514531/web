@@ -19,7 +19,7 @@ const breadItems = [
   }
 ]
 
-class Circle extends Component {
+class City extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
@@ -75,10 +75,10 @@ class Circle extends Component {
       }
     })
     this.props.dispatch({
-      type: 'circle/summary'
+      type: 'city/summary'
     })
     this.props.dispatch({
-      type: 'circle/provinceList'
+      type: 'city/provinceList'
     })
     this.fetch(url)
   }
@@ -95,32 +95,32 @@ class Circle extends Component {
   }
   handleSelect = () => {
     this.props.dispatch({
-      type: 'circle/updateData',
+      type: 'city/updateData',
       payload: {
         disabled: false
       }
     })
   }
   handleSearch = (filterKey) => {
-    const { provinceData, clonedProvinceData } = this.props.circle
+    const { provinceData, clonedProvinceData } = this.props.city
     const result = clonedProvinceData.filter(function( value, index ){
         return new RegExp( filterKey , 'img' ).test( value.name );
     })
     this.props.dispatch({
-      type: 'circle/updateData',
+      type: 'city/updateData',
       payload: {
         disabled: true
       }
     })
     this.props.dispatch({
-      type: 'circle/updateData',
+      type: 'city/updateData',
       payload: {
         provinceData: result
       }
     })
     if(!filterKey) {
       this.props.dispatch({
-        type: 'circle/updateData',
+        type: 'city/updateData',
         payload: {
           provinceData: clonedProvinceData,
           disabled: false
@@ -136,9 +136,9 @@ class Circle extends Component {
       type: 'common/resetIndex'
     })
     this.props.dispatch({
-      type: 'circle/updateData',
+      type: 'city/updateData',
       payload: {
-        provinceData: this.props.circle.clonedProvinceData
+        provinceData: this.props.city.clonedProvinceData
       }
     })
     this.fetch(this.search)
@@ -149,15 +149,15 @@ class Circle extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'circle/list',
+      type: 'city/list',
       payload: {
         data: url
       }
     })
   }
   render() {
-    const { circle: { summary, data: { objects, pagination }, provinceData, clonedProvinceData, disabled }, loading, common: { search }  } = this.props
-    const dataSource = this.props.circle.provinceData.map(value => {
+    const { city: { summary, data: { objects, pagination }, provinceData, clonedProvinceData, disabled }, loading, common: { search }  } = this.props
+    const dataSource = this.props.city.provinceData.map(value => {
       return <Option value={value.code + ''} key={value.id}>{value.name}</Option>
     })
     return(
@@ -184,7 +184,7 @@ class Circle extends Component {
           </Button>
         </span>
         {
-          summary ? <div className={styles.summary}>{`共计有${summary.circleCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
+          summary ? <div className={styles.summary}>{`共计有${summary.cityCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
         }
         <DataTable
           scroll={{ x: 700 }}
@@ -199,17 +199,17 @@ class Circle extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'circle/clear'})
+    this.props.dispatch({ type: 'city/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
     this.props.dispatch({ type: 'common/resetIndex' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    circle: state.circle,
+    city: state.city,
     common: state.common,
     loading: state.loading.global,
     ...props
   }
 }
-export default connect(mapStateToProps)(Circle)
+export default connect(mapStateToProps)(City)

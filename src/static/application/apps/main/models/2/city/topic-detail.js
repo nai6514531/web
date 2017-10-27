@@ -1,11 +1,16 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
+import cityService from '../../../services/2/city.js'
+import commonService from '../../../services/2/common.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
-  data: {},
+  data: {
+    user: {}
+  },
   visible: false,
   previewImage: '',
 }
+
 export default {
   namespace: 'topicDetail',
   state: cloneDeep(model),
@@ -28,8 +33,10 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(circleService.topicDetail, payload.id)
-      if(result.status == 'OK') {
+      const result = yield call(cityService.topicDetail, payload.id)
+      const inboxConsultation = yield call(commonService.inboxConsultation, { topicId: payload.id })
+      if(result.status == 'OK' && inboxConsultation.status == 'OK') {
+        result.data.consultation = inboxConsultation.data
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         result.message && message.error(result.message)

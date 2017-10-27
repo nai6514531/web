@@ -23,7 +23,7 @@ class PermissionModal extends Component {
   }
   handleSubmit = (e) => {
     e.preventDefault();
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.permission.record.id

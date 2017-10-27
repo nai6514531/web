@@ -1,23 +1,26 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { getComponent } from '../../components/bundle/'
+
 import User from 'bundle-loader?lazy!../../views/settings/user'
 import UserEdit from 'bundle-loader?lazy!../../views/settings/user/edit'
 import userModel from 'bundle-loader?lazy!../../models/settings/user.js'
+
 import Role from 'bundle-loader?lazy!../../views/settings/role'
 import roleModel from 'bundle-loader?lazy!../../models/settings/role.js'
+
 import Menu from 'bundle-loader?lazy!../../views/settings/menu'
 import menuModel from 'bundle-loader?lazy!../../models/settings/menu.js'
+
 import Password from 'bundle-loader?lazy!../../views/settings/password'
 import Permission from 'bundle-loader?lazy!../../views/settings/permission'
 import permissionModel from 'bundle-loader?lazy!../../models/settings/permission.js'
+
 import Action from 'bundle-loader?lazy!../../views/settings/action'
 import actionModel from 'bundle-loader?lazy!../../models/settings/action.js'
+
 import Element from 'bundle-loader?lazy!../../views/settings/element'
 import elementModel from 'bundle-loader?lazy!../../models/settings/element.js'
-import settlementPay from 'bundle-loader?lazy!../../views/settlement/pay'
-import billsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/daily'
-import dailyBillsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/detail'
 
 export default function (history, app) {
   return (

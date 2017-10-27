@@ -1,16 +1,19 @@
 import React from 'react'
 import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
+import Layout from '../components/layout/'
+
 import settings from './settings/'
 import settlement from './settlement/'
 import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
 import crm from './crm/'
+
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
-import Layout from '../components/layout/'
 import NotFound from 'bundle-loader?lazy!../views/not-found'
+
 function RouterConfig({ history, app }) {
   return (
     <Router>

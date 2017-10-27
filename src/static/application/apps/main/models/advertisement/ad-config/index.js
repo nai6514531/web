@@ -3,6 +3,7 @@ import adConfigService from '../../../services/advertisement/ad-config.js'
 import applicationService from '../../../services/platform/application.js'
 import adPositionService from '../../../services/advertisement/ad-position.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
@@ -13,6 +14,7 @@ const model = {
   key: 0,
   previewImage: ''
 }
+
 export default {
   namespace: 'adConfig',
   state: cloneDeep(model),
@@ -34,8 +36,6 @@ export default {
       return { ...state }
     },
     clear(state) {
-      model.appData = state.appData
-      model.postionData = state.postionData
       return model
     }
   },

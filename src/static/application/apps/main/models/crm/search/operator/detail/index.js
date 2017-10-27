@@ -1,11 +1,13 @@
 import { message } from 'antd'
 import operatorService from '../../../../../services/crm/search/operator.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {},
   key: 1,
   visible: false,
 }
+
 export default {
   namespace: 'crmOperatorDetail',
   state: cloneDeep(model),

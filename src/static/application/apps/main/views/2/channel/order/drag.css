@@ -6,25 +6,28 @@
   padding-left: 20px;
   height: 51px !important;
   line-height: 51px !important;
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
 }
+
 .container > div {
   cursor: move;
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;
 }
-.gu-mirror {
-  cursor: grabbing;
-  cursor: -moz-grabbing;
-  cursor: -webkit-grabbing;
-}
 
 .container .ex-drag {
   background-color: #62b8f6;
 }
 .container.ex-over {
-  background-color: rgba(255, 255, 255, 0.3);
+  /*background-color: rgba(255, 255, 255, 0.3);*/
 }
 .container .ex-moved {
   background-color: rgba(0, 0, 0, 0);
 }
+.ant-upload-list-picture-card {
+  display: block;
+}
+

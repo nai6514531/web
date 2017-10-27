@@ -1,5 +1,6 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
+import cityService from '../../../services/2/city.js'
+import channelService from '../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -13,6 +14,7 @@ const model = {
   previewImage: '',
   channel: []
 }
+
 export default {
   namespace: 'topic',
   state: cloneDeep(model),
@@ -32,21 +34,16 @@ export default {
       const key = state.key + 1
       return { ...state, visible, previewVisible, key }
     },
-    updateData(state, { payload: { data } }) {
-      return { ...state, data }
-    },
-    updateChannel(state, { payload: { channel } }) {
-      return { ...state, channel }
+    updateData(state, { payload }) {
+      return { ...state, ...payload }
     },
     clear(state) {
-      // don't clear channel
-      model.channel = state.channel
       return model
     }
   },
   effects: {
     *list({ payload }, { call, put, select }) {
-      const result = yield call(circleService.topicList, payload.data)
+      const result = yield call(cityService.topicList, payload.data)
       if(result.status == 'OK') {
         result.data.objects.map(value => {
           let image = JSON.parse(value.images)[0]
@@ -56,19 +53,22 @@ export default {
       } else {
         result.message && message.error(result.message)
       }
-      const topic = yield select(state => state.topic);
-      if( !topic.channel.length ) {
-        const channel = yield call(circleService.channel)
-        if(channel.status == 'OK') {
-          yield put({ type: 'updateChannel', payload: { channel: channel.data } })
-        } else {
-          channel.message && message.error(channel.message)
-        }
+    },
+    *channelList({ payload }, { call, put, select }) {
+      const result = yield call(channelService.list, payload.data)
+      if(result.status == 'OK') {
+        result.data.objects.unshift({
+          id: 0,
+          title: '无频道'
+        })
+        yield put({ type: 'updateData', payload: { channel: result.data.objects } })
+      } else {
+        result.message && message.error(result.message)
       }
     },
     *updateStatus({ payload }, { call, put }) {
       const { id, data, url } = payload
-      const result = yield call(circleService.upDateTopicStatus, id, data)
+      const result = yield call(cityService.upDateTopicStatus, id, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({
@@ -83,7 +83,7 @@ export default {
     },
     *moveTopic({ payload }, { call, put }) {
       const { id, data: { values }, url } = payload
-      const result = yield call(circleService.moveTopic, id, values)
+      const result = yield call(cityService.moveTopic, id, values)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({ type: 'hideModal' })

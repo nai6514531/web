@@ -2,12 +2,14 @@ import { message } from 'antd'
 import adConfigService from '../../../services/advertisement/ad-config.js'
 import adPositionService from '../../../services/advertisement/ad-position.js'
 import { cloneDeep, orderBy } from 'lodash'
+
 const model = {
   postionData: [],
   visible: false,
   key: 0,
   previewImage: ''
 }
+
 export default {
   namespace: 'adOrder',
   state: cloneDeep(model),

@@ -1,7 +1,8 @@
 import { message } from 'antd'
-import circleService from '../../../services/2/circle.js'
+import cityService from '../../../services/2/city.js'
 import addressService from '../../../services/platform/address.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
@@ -11,8 +12,9 @@ const model = {
   summary: null,
   disabled: false
 }
+
 export default {
-  namespace: 'circle',
+  namespace: 'city',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {
@@ -24,7 +26,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put, select }) {
-      const result = yield call(circleService.list, payload.data)
+      const result = yield call(cityService.list, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -42,7 +44,7 @@ export default {
     }
     ,
     *summary({ payload }, { call, put, select }) {
-      const summary = yield call(circleService.summary)
+      const summary = yield call(cityService.summary)
       if(summary.status == 'OK') {
         yield put({ type: 'updateData', payload: { summary: summary.data } })
       } else {

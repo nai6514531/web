@@ -1,13 +1,15 @@
 import { message } from 'antd'
 import menuService from '../../services/settings/menu.js'
 import { cloneDeep } from 'lodash'
+import { arrayToTree } from '../../utils/'
 const model = {
   key: 1,
   visible: false,
   record: {},
   data: {
     objects: []
-  }
+  },
+  treeData: []
 }
 export default {
   namespace: 'menu',
@@ -23,8 +25,8 @@ export default {
       const key = state.key + 1
       return { ...state, visible, key }
     },
-    updateData(state, { payload: { data } }) {
-      return { ...state, data }
+    updateData(state, { payload }) {
+      return { ...state, ...payload }
     },
     clear(state) {
       return model
@@ -35,6 +37,7 @@ export default {
       const result = yield call(menuService.list)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
+        yield put({ type: 'updateData', payload: { treeData: arrayToTree(result.data.objects)} })
       } else {
         message.error(result.message)
       }
@@ -64,6 +67,15 @@ export default {
       const result = yield call(menuService.delete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
+        yield put({ type: 'list' })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *order({ payload }, { call, put }) {
+      const result = yield call(menuService.order, payload.data)
+      if(result.status == 'OK') {
+        message.success('同步成功')
         yield put({ type: 'list' })
       } else {
         message.error(result.message)

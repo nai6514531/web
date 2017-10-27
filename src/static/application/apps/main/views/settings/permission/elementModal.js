@@ -23,7 +23,7 @@ class ElementModal extends Component {
     this.checkList = values
   }
   handleSubmit = () => {
-    const url = transformUrl(location.hash)
+    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'permission/updateElement',
       payload: {

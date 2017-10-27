@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import elementService from '../../services/settings/element'
 import { cloneDeep } from 'lodash'
+
 const model = {
   key: 1,
   visible: false,
@@ -9,6 +10,7 @@ const model = {
     objects: []
   }
 }
+
 export default {
   namespace: 'element',
   state: cloneDeep(model),

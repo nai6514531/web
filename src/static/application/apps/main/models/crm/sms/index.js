@@ -1,11 +1,13 @@
 import { message } from 'antd'
 import smsService from '../../../services/crm/sms.js'
 import { cloneDeep } from 'lodash'
+
 const model = {
   data: {
     objects: []
   }
 }
+
 export default {
   namespace: 'crmSms',
   state: cloneDeep(model),

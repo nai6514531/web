@@ -1,11 +1,11 @@
 import request from '../../utils/request'
-const circleService = {
+const cityService = {
   list: (data) => {
-    let url = `/2/circles?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
+    let url = `/2/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${Number(data.provinceId) || ''}`
     return request.get(url)
   },
   summary: () => {
-    return request.get('/2/circles/summary')
+    return request.get('/2/cities/summary')
   },
   topicList: (data) => {
     let url = `/2/topics?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&schoolName=${data.schoolName || ''}&channelId=${ data.channelId || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&cityId=${data.cityId || ''}`
@@ -23,8 +23,16 @@ const circleService = {
     let url = `/2/topics/${id}/status`
     return request.put(url, data)
   },
-  channel: () => {
-    return request.get(`/2/channels`)
+  inboxConsultation: (data) => {
+    let { topicId, channelId } = data
+    let url
+    if(channelId) {
+      url = `/2/inbox/consultation?channelId=${channelId}`
+    }
+    if(topicId) {
+      url = `/2/inbox/consultation?topicId=${topicId}`
+    }
+    return request.get(url)
   },
 }
-export default circleService
+export default cityService
