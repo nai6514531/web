@@ -406,9 +406,11 @@ class Topic extends Component {
                 <Select allowClear>
                   {
                     channel.map(value => {
-                      return (
-                        <Option value={value.id + ''} key={value.id}>{value.title}</Option>
-                      )
+                      if(value.status === 0 || value.id === 0) {
+                        return (
+                          <Option value={value.id + ''} key={value.id}>{value.title}</Option>
+                        )
+                      }
                     })
                   }
                 </Select>
