@@ -19,7 +19,12 @@ const arrayToTree = (array, id = 'id', pid = 'parentId', children = 'children') 
   })
   return result
 }
-
+const generateData = (data, _preKey = '0') => {
+  data.forEach((item, index) => {
+    item.key = `${_preKey}-${index}`
+  })
+  return data
+}
 const transformMenu = (menu) => {
   const formatMenu = []
   const result = [{
@@ -76,4 +81,4 @@ const createKey = ( data ) => {
   })
   return data
 }
-export { arrayToTree, transformMenu, transformUrl, toQueryString, createKey }
+export { arrayToTree, transformMenu, transformUrl, toQueryString, createKey, generateData }

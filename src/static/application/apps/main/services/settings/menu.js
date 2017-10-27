@@ -12,5 +12,8 @@ const menuService = {
   delete: (id) => {
     return request.delete(`/menus/${id}`)
   },
+  order: (data) => {
+    return request.post(`/menus/batch/orders`,data)
+  },
 }
 export default menuService
