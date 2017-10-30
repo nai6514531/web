@@ -97,7 +97,7 @@ class Permission extends Component {
    this.fetch(url)
   }
   render() {
-    const { permission: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
+    const { permission: { key, visible, actionVisible, elementVisible, record, data: { objects, pagination } }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -117,9 +117,9 @@ class Permission extends Component {
           change={this.change}
         />
         <PermissionModal {...this.props}/>
-        <ActionModal {...this.props}/>
         <MenuModal {...this.props}/>
-        <ElementModal {...this.props}/>
+        { actionVisible ? <ActionModal {...this.props}/> : null }
+        { elementVisible ? <ElementModal {...this.props}/> : null }
       </div>
     )
   }
