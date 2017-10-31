@@ -115,11 +115,18 @@ class OperatorDetail extends Component {
                   <div><span className={styles.title}>用户ID:</span>{data.id || '-'}</div>
                   <div><span className={styles.title}>注册时间:</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm:ss') || '-'}</div>
                   <div><span className={styles.title}>手机号:</span>{data.mobile || '-'}</div>
-                  <div><span className={styles.title}>地址:</span>{data.address || '-'}</div>
+                  <div><span className={styles.title}>地址:</span><span className={styles.overText}>{data.address || '-'}</span></div>
                 </div>
                 <div className={styles.line}/>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>用户角色:</span>{data.role || '-'}</div>
+                  <div>
+                    <span className={styles.title}>用户角色:</span>
+                    {
+                      !data.role.length ? '-' : data.role.map( (value, index) => {
+                        return `${value.name}${data.role.length !== index + 1 ? ',' : ''}`
+                      })
+                    }
+                  </div>
                   <div>
                     <span className={styles.title}>登录账号:</span>
                     <span className={styles.description}>{data.account || '-'}</span>
@@ -137,14 +144,14 @@ class OperatorDetail extends Component {
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
                   {/* <div><span className={styles.title}>经销商:</span>{data.id || '-'}</div> */}
-                  <div><span className={styles.title}>上级运营商:</span>{data.parentOperator || '-'}</div>
+                  <div><span className={styles.title}>上级运营商:</span>{data.parent.name || '-'}</div>
                   {/* <div><span className={styles.title}>主账号:</span>{data.createdAt || '-'}</div> */}
                   {/* <div><span className={styles.title}>员工账号:</span>{data.school || '-'}</div> */}
                 </div>
                 <div className={styles.line} />
                 <div className={styles['card-item']}>
                   {/* <div><span className={styles.title}>联系方式:</span>{data.wechatName || '-'}</div> */}
-                  <div><span className={styles.title}>联系方式:</span>{data.parentOperatorMobile || '-'}</div>
+                  <div><span className={styles.title}>联系方式:</span>{data.parent.mobile || '-'}</div>
                 </div>
               </div>
             </Card>
@@ -155,7 +162,7 @@ class OperatorDetail extends Component {
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
                   <span className={styles.title}>设备数量:</span>
-                  <span className={styles.description}>{data.deviceCount}</span>
+                  <span className={styles.description}>{data.deviceCount || '-'}</span>
                   {/* <a onClick={this.show}>查看</a> */}
                 </div>
               </div>

@@ -31,7 +31,16 @@ class Operator extends Component {
     this.columns = [
       { title: '用户ID', dataIndex: 'id', key: 'id' },
       { title: '登录账号', dataIndex: 'account',key: 'account' },
-      { title: '角色', dataIndex: 'role',key: 'role' },
+      {
+        title: '角色',
+        render: (record) => {
+          return (
+            !record.role.length ? '-' : record.role.map( (value, index) => {
+              return `${value.name}${record.role.length !== index + 1 ? ',' : ''}`
+            })
+          )
+        }
+      },
       {
         title: '运营商名称',
         render: (record) => {
@@ -42,7 +51,14 @@ class Operator extends Component {
       },
       { title: '地址', dataIndex: 'address',key: 'address' },
       // { title: '经销商', dataIndex: 'name',key: 'name' },
-      { title: '上级运营商', dataIndex: 'parentOperator',key: 'parentOperator' },
+      {
+        title: '上级运营商',
+        render: (record) => {
+          return (
+            `${record.parent.name}(${record.parent.mobile || '-' })`
+          )
+        }
+      },
       { title: '模块数量', dataIndex: 'deviceCount',key: 'deviceCount' },
       {
         title: '操作',
