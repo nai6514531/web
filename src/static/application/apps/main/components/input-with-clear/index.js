@@ -10,6 +10,9 @@ class InputWithClear extends Component {
      show: false
    }
   }
+  componentDidMount() {
+    this._mounted = true
+  }
   emitEmpty = () => {
     this.refs.searchInput.refs.input.value = ''
     this.setState({
@@ -31,11 +34,12 @@ class InputWithClear extends Component {
   }
   hide = (v) => {
     setTimeout(()=>{
-      this.setState({
-        show: false
-      })
+      if(this._mounted) {
+        this.setState({
+          show: false
+        })
+      }
     },250)
-
   }
   render() {
     const { placeholder, className, onPressEnter, defaultValue } = this.props
@@ -52,6 +56,9 @@ class InputWithClear extends Component {
         suffix={this.state.show && <Icon type="close-circle" onClick={this.emitEmpty} />}
       />
     )
+  }
+  componentWillUnmount() {
+    this._mounted = false
   }
 }
 

@@ -35,11 +35,18 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(cityService.topicDetail, payload.id)
       const inboxConsultation = yield call(commonService.inboxConsultation, { topicId: payload.id })
-      if(result.status == 'OK' && inboxConsultation.status == 'OK') {
-        result.data.consultation = inboxConsultation.data
+
+      if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         result.message && message.error(result.message)
+      }
+
+      if(inboxConsultation.status == 'OK') {
+        result.data.consultation = inboxConsultation.data
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        inboxConsultation.message && message.error(inboxConsultation.message)
       }
     }
   }

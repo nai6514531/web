@@ -23,7 +23,7 @@ const breadItems = [
 ]
 const { Option } = Select
 
-class Consume extends Component {
+class Device extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
@@ -37,7 +37,7 @@ class Consume extends Component {
         width: 200,
         render: (record) => {
           return (
-            `${record.assigner}(${record.assignerMobile})`
+            `${record.assigner || '-'}(${record.assignerMobile || '-'})`
           )
         }
       },
@@ -46,23 +46,31 @@ class Consume extends Component {
         width: 150,
         render: (record) => {
           return (
-            `${record.userName}(${record.userMobile || '-'})`
+            `${record.owner.name || '-'}(${record.owner.mobile || '-'})`
           )
         }
       },
-      { title: '楼层', dataIndex: 'address', key: 'address', width: 100 },
+      {
+        title: '楼层',
+        width: 100,
+        render: (record) => {
+          return (
+            record.address || '-'
+          )
+        }
+      },
       {
         title: '状态',
         width: 70,
         dataIndex: 'status',
         key: 'status',
-        render: (status) => {
+        render: ({ value }) => {
           let statusText = '';
-          if(status == 0){
+          if(value == 0){
             statusText = '空闲';
-          } else if(status == 9) {
+          } else if(value == 9) {
             statusText = '锁定';
-          } else if(status == 601 || status == 602 || status == 603 || status == 604) {
+          } else if(value == 601 || value == 602 || value == 603 || value == 604) {
             statusText = '使用中';
           }
           return statusText;
@@ -80,14 +88,22 @@ class Consume extends Component {
           )
         }
       },
-      { title: '类型', dataIndex: 'referenceDevice',key: 'referenceDevice', width: 70 },
+      {
+        title: '类型',
+        dataIndex: 'referenceDevice',
+        key: 'referenceDevice',
+        width: 70,
+        render(referenceDevice) {
+          return referenceDevice.name
+        }
+      },
       {
         title: '操作',
         key: 'operation',
         width: 150,
         render: (text, record, index) => {
           let action = '/'
-          const status = record.status
+          const status = record.status.value
           if(status == 9) {
             action = <Popconfirm title='确认取消锁定吗?' onConfirm={this.changeStatus.bind(this, record.id, 0)}>
               <a href='javascript:void(0)'>取消锁定</a>
@@ -281,4 +297,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(Consume)
+export default connect(mapStateToProps)(Device)
