@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import operatorService from '../../../../../services/crm/search/operator.js'
 import deviceService from '../../../../../services/crm/device.js'
-import bUserService from '../../../../../services/common/b-user.js'
+import commonService from '../../../../../services/common/'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -40,7 +40,7 @@ export default {
       const result = yield call(operatorService.detail, data)
       if(result.status == 'OK') {
         const deviceInfo = yield call(deviceService.list, { userId: result.data.id })
-        const accountInfo = yield call(bUserService.cashAccount, { userId: result.data.id })
+        const accountInfo = yield call(commonService.cashAccount, { userId: result.data.id })
 
         if(deviceInfo.status == 'OK') {
           result.data.deviceCount = deviceInfo.data.pagination.total

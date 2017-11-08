@@ -9,6 +9,7 @@ import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
 import crm from './crm/'
+import business from './business/'
 
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
@@ -47,6 +48,12 @@ function RouterConfig({ history, app }) {
         <Route path='/crm' render={ props => (
           <Layout>
             { crm(history, app) }
+          </Layout>
+        )}/>
+
+        <Route path='/business' render={ props => (
+          <Layout>
+            { business(history, app) }
           </Layout>
         )}/>
 

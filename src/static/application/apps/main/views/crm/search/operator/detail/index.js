@@ -162,7 +162,7 @@ class OperatorDetail extends Component {
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
                   <span className={styles.title}>设备数量:</span>
-                  <span className={styles.description}>{data.deviceCount || '-'}</span>
+                  <span className={styles.description}>{ isFinite(data.deviceCount) ? data.deviceCount : '-'}</span>
                   {/* <a onClick={this.show}>查看</a> */}
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import { message } from 'antd'
-import consumeService from '../../../services/crm/consume.js'
-import commonService from '../../../services/common/index.js'
-import operatorService from '../../../services/crm/search/operator.js' //后续会移出去 公共的
+import statisticsService from '../../../services/business/statistics.js'
+import commonService from '../../../services/common/'
+import operatorService from '../../../services/crm/search/operator.js'//后续会移出去 公共的
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -11,11 +11,10 @@ const model = {
   visible: false,
   key: 0,
   exportUrl: '',
-  date: new Date()
 }
 
 export default {
-  namespace: 'crmConsume',
+  namespace: 'businessConsume',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {
@@ -42,18 +41,19 @@ export default {
       if(result.status == 'OK') {
         let showError = true
         yield* result.data.objects.map(function* (value, index) {
-          const operations = yield call(operatorService.detail, value.owner.parentId)
+          // const operations = yield call(operatorService.detail, value.owner.parentId)
 
-          if(operations.status == 'OK') {
-            const operatorInfo = operations.data
-            if(operatorInfo) {
-              result.data.objects[index].parentOperator = operatorInfo.name
-              result.data.objects[index].parentOperatorMobile = operatorInfo.mobile
-            }
-          } else {
-            showError && message.error(operations.message)
-            showError = false
-          }
+          result.data.objects[index].key = index + 1
+          // if(operations.status == 'OK') {
+          //   const operatorInfo = operations.data
+          //   if(operatorInfo) {
+          //     result.data.objects[index].parentOperator = operatorInfo.name
+          //     result.data.objects[index].parentOperatorMobile = operatorInfo.mobile
+          //   }
+          // } else {
+          //   showError && message.error(operations.message)
+          //   showError = false
+          // }
 
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
@@ -62,7 +62,7 @@ export default {
       }
     },
     *export({ payload: { data } }, { call, put }) {
-      const result = yield call(consumeService.export, data)
+      const result = yield call(statisticsService.export, data)
       if(result.status == 'OK') {
         yield put({ type: 'showModal' })
         yield put({ type: 'updateData', payload: { exportUrl: result.data.url } })
@@ -71,7 +71,7 @@ export default {
       }
     },
     *refund({ payload: { id, data } }, { call, put }) {
-      const result = yield call(consumeService.refund, id)
+      const result = yield call(statisticsService.refund, id)
       if(result.status == 'OK') {
         message.success('退款成功')
         yield put({

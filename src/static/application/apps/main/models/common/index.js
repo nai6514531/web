@@ -11,7 +11,7 @@ export default {
     selectedKeys: [],
     clickedIndex: -1,
     userInfo: {
-      user: {},
+      user: null,
       menuList: [],
       actionList: [],
       elementList: []
