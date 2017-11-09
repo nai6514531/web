@@ -148,14 +148,15 @@ class AdEdit extends Component {
   beforeUpload = (file, fileList) => {
     const isJPG = file.type === 'image/jpeg'
     const isPNG = file.type === 'image/png'
-    if(!isJPG && !isPNG) {
+    const isGIF = file.type === 'image/gif'
+    if(!isJPG && !isPNG && !isGIF) {
       Message.error('上传的图片格式错误')
     }
     const isLt1M = file.size / 1024 / 1024 < 1
     if(!isLt1M) {
       Message.error('图片过大，请压缩后再上传')
     }
-    return (isJPG || isPNG) && isLt1M
+    return (isJPG || isPNG || isGIF) && isLt1M
   }
   showConfirm = () => {
     confirm({

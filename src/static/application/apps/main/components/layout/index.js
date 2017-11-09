@@ -58,6 +58,9 @@ class Wrapper extends React.Component {
     })
     const mode = fold ? 'vertical' : 'inline'
     const imageUrl = fold ? require('../../assets/favicon.png') : require('../../assets/logo.png')
+    if(!userInfo.user) {
+      return null
+    }
     return (
       <Layout>
         <Sider
