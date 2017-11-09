@@ -107,7 +107,7 @@ class Consume extends Component {
               // 运营商可针对在自己名下的当日消费订单进行退款
               return (
                 <span>
-                  <a href='javascript:void(0)' onClick={ this.showConfirm.bind(this,record.ticketId) }>{'\u00A0'}退款</a>
+                  <a href='javascript:void(0)' onClick={ this.showConfirm.bind(this,record.ticketId) }>退款</a>
                 </span>
               )
             }
@@ -154,7 +154,7 @@ class Consume extends Component {
     this.props.dispatch({
       type: 'businessConsume/list',
       payload: {
-        data: { ...url, status: '4,7' }
+        data: { ...url, status: '4,6,7' }
       }
     })
   }
@@ -171,7 +171,7 @@ class Consume extends Component {
     this.props.dispatch({
       type: 'businessConsume/export',
       payload: {
-        data: { ...this.search, status : '4,7' }
+        data: { ...this.search, status : '4,6,7' }
       }
     })
   }
@@ -253,7 +253,7 @@ class Consume extends Component {
           key={key}
         >
           <form name="export" >
-            <span className="form-text">确定导出这批订单吗？</span>
+            <span className="form-text">确定导出这批消费记录吗？</span>
             <button onClick={this.hide} type="button" id="cancel">取消</button>
             <a href={exportUrl} target="_blank" id="submit" download onClick={this.hide}>确认</a>
           </form>

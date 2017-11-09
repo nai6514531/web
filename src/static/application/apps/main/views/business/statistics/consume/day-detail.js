@@ -19,7 +19,7 @@ class DayDetailConsume extends Component {
     this.day = this.props.match.params.day
     this.breadItems = [
       {
-        title: '客服系统'
+        title: '商家系统'
       },
       {
         title: '统计报表',
@@ -44,11 +44,11 @@ class DayDetailConsume extends Component {
         render: (text, record, index) => {
           if(record.totalAmount) {
             return (
-             <span><Link to={`/business/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber}</Link>/{record.device.address}</span>
+             <span><Link to={`/business/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>/{record.device.address || '-'}</span>
             )
           }
           return (
-            `${record.device.serialNumber}/ ${record.device.address}`
+            `${record.device.serialNumber || '-'}/ ${record.device.address || '-'}`
           )
         },
       },

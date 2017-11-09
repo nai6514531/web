@@ -210,10 +210,20 @@ class DeviceStatistics extends Component {
   componentDidMount() {
     this.fetch(this.getParams())
   }
-  change = (data) => {
-    this.fetch({...this.getParams(), ...data})
+  change = (pageInfo) => {
+    const { date, deviceSerial } = this.search
+    if( !date && !deviceSerial ) {
+      message.info('请选择月份或模块编号进行查询')
+      return 'NOTRENDER'
+    }
+    this.fetch({...this.getParams(), ...pageInfo})
   }
   fetch = (data) => {
+    const { date, deviceSerial } = data
+    if( !date && !deviceSerial ) {
+      message.info('请选择月份或模块编号进行查询')
+      return
+    }
     this.props.dispatch({
       type: 'businessStatistics/listByDates',
       payload: {
@@ -245,6 +255,7 @@ class DeviceStatistics extends Component {
       startAt = ''
       endAt = ''
     }
+    console.log('this.search',this.search)
     const data = {
        ...this.search,
       startAt,
@@ -257,12 +268,6 @@ class DeviceStatistics extends Component {
     return data
   }
   searchClick = () => {
-    const { date, deviceSerial } = this.search
-    if( !date && !deviceSerial ) {
-      message.info('请选择月份或模块编号进行查询')
-      return
-    }
-
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
     const queryString = toQueryString({ ...this.search })

@@ -11,20 +11,6 @@ const model = {
   },
   type: '-1'
 }
-const groupByMulti = function(list, values, context) {
-  if (!values.length) {
-    return list;
-  }
-  console.log('list',list,values[0])
-  var byFirst = _.groupBy(list, values[0], context),
-      rest    = values.slice(1);
-  for (var prop in byFirst) {
-    byFirst[prop] = groupByMulti(byFirst[prop], rest, context);
-  }
-  console.log('byFirst',byFirst)
-  return byFirst;
-}
-
 export default {
   namespace: 'businessStatistics',
   state: cloneDeep(model),
@@ -62,7 +48,7 @@ export default {
       const result = yield call(statisticsService.listByDay, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
-          value.key = index + 1
+          value.key = index + 1 + Number(data.offset || 0)
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -74,7 +60,7 @@ export default {
       const result = yield call(statisticsService.listByDates, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
-          value.key = index + 1
+          value.key = index + 1 + Number(data.offset || 0)
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -85,7 +71,7 @@ export default {
       const result = yield call(statisticsService.listByDevices, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
-          value.key = index + 1
+          value.key = index + 1 + Number(data.offset || 0)
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -96,7 +82,7 @@ export default {
       const result = yield call(commonService.consumptionsList, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
-          value.key = index + 1
+          value.key = index + 1 + Number(data.offset || 0)
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

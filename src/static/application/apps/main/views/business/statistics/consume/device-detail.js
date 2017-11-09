@@ -27,7 +27,7 @@ class DayDeviceConsume extends Component {
     this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
-        title: '客服系统'
+        title: '商家系统'
       },
       {
         title: '统计报表',
@@ -56,11 +56,11 @@ class DayDeviceConsume extends Component {
         render: (text, record, index) => {
           if(record.totalMode1 || record.totalMode2 || record.totalMode3 || record.totalMode4) {
             return (
-             <span><Link to={`${record.deviceSerial}`}>{record.deviceSerial}</Link>/{record.device.address}</span>
+             <span><Link to={`${record.deviceSerial}`}>{record.deviceSerial || '-'}</Link>/{record.device.address || '-'}</span>
             )
           }
           return (
-            `${record.deviceSerial}/ ${record.device.address}`
+            `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
           )
         },
       },

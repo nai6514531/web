@@ -19,14 +19,14 @@ class DeviceSearchByDay extends Component {
     this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
-        title: '客服系统'
+        title: '商家系统'
       },
       {
         title: '统计报表',
         url: '/business/statistics'
       },
       {
-        title: '明细'
+        title: this.month
       }
     ]
     this.columns = [
@@ -47,7 +47,7 @@ class DeviceSearchByDay extends Component {
         title: '编号/楼道信息',
         render: (text, record, index) => {
           return (
-            `${record.deviceSerial}/ ${record.device.address}`
+            `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
           )
         },
       },

@@ -42,8 +42,7 @@ export default {
         let showError = true
         yield* result.data.objects.map(function* (value, index) {
           // const operations = yield call(operatorService.detail, value.owner.parentId)
-
-          result.data.objects[index].key = index + 1
+          result.data.objects[index].key = index + 1 + Number(data.offset)
           // if(operations.status == 'OK') {
           //   const operatorInfo = operations.data
           //   if(operatorInfo) {
