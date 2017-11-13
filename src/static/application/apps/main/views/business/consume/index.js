@@ -9,18 +9,18 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import history from '../../../utils/history.js'
 import styles from './index.pcss'
-import DatePicker from '../../../components/date-picker/'
 import { trim } from 'lodash'
 
 const breadItems = [
   {
-    title: '客服系统'
+    title: '商家系统'
   },
   {
     title: '消费查询'
   }
 ]
 const { Option } = Select
+const confirm = Modal.confirm
 
 const dict = {
   '1' : 'firstPulseName',
@@ -35,48 +35,49 @@ class Consume extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
+      // { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       // { title: '经销商', dataIndex: 'agency',key: 'agency' },
-      {
-        title: '上级运营商',
-        width: 150,
-        render: (record) => {
-          return (
-            `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
-          )
-        }
-      },
-      { title: '运营商名称', dataIndex: 'owner.name',key: 'owner.name', width: 100 },
+      // {
+      //   title: '上级运营商',
+      //   width: 150,
+      //   render: (record) => {
+      //     return (
+      //       `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
+      //     )
+      //   }
+      // },
+      { title: '序号', dataIndex: 'key',key: 'key', width: 50 },
+      { title: '运营商', dataIndex: 'owner.name',key: 'owner.name', width: 100 },
       { title: '服务电话', dataIndex: 'owner.telephone', key: 'owner.telephone', width: 100 },
       { title: '模块编号', dataIndex: 'deviceSerial',key: 'deviceSerial', width: 100 },
       { title: '楼道信息', dataIndex: 'device.address', key: 'device.address', width: 100 },
-      { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
-      { title: '消费密码', dataIndex: 'token',key: 'token', width: 100 },
+      { title: '洗衣手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
+      { title: '洗衣密码', dataIndex: 'token',key: 'token', width: 100 },
       {
-        title: '类型',
+        title: '洗衣金额',
         width: 50,
+        render:(text, record) => {
+          return  `${(record.value/100).toFixed(2)}元`
+        }
+      },
+      {
+        title: '洗衣类型',
+        width: 100,
         render: (text, record) => {
           return (
             record.device[dict[record.deviceMode]]
           )
         }
       },
-      {
-        title: '消费金额',
-        width: 50,
-        render:(text, record) => {
-          return record.value / 100
-        }
-      },
-      {
-        title: '支付方式',
-        width: 70,
-        dataIndex: 'payment.name',
-        key: 'payment.name',
-      },
+      // {
+      //   title: '支付方式',
+      //   width: 70,
+      //   dataIndex: 'payment.name',
+      //   key: 'payment.name',
+      // },
       {
         title: '下单时间',
-        width: 100,
+        width: 120,
         render: (text, record) => {
           return (
             `${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
@@ -100,12 +101,18 @@ class Consume extends Component {
             )
           }
           if(record.status.value === 7) {
+            const createdAt = moment(record.createdAt).format('YYYY-MM-DD')
+            const today = moment(new Date()).format('YYYY-MM-DD')
+            if(createdAt == today && record.ownerId == this.props.common.userInfo.user.id ) {
+              // 运营商可针对在自己名下的当日消费订单进行退款
+              return (
+                <span>
+                  <a href='javascript:void(0)' onClick={ this.showConfirm.bind(this,record.ticketId) }>退款</a>
+                </span>
+              )
+            }
             return (
-              <span>
-                <Popconfirm title='确认退款吗?' onConfirm={ this.refund.bind(this,record.ticketId) } >
-                  <a href='javascript:void(0)'>{'\u00A0'}退款</a>
-                </Popconfirm>
-              </span>
+              <span style={{color: '#666'}}>/</span>
             )
           }
         }
@@ -114,13 +121,9 @@ class Consume extends Component {
   }
   componentDidMount() {
     const url = this.search
-    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
-    if(!this.search.startAt || !this.search.endAt) {
-      message.info('请选择日期')
-      return
-    }
-    if( !customerMobile && !keywords && !deviceSerial ) {
-      // message.info('请选择筛选条件')
+    const { customerMobile, deviceSerial } = url
+    if( !customerMobile && !deviceSerial ) {
+      // message.info('请输入手机号或模块编号进行查询')
       return
     }
     this.fetch(url)
@@ -133,13 +136,9 @@ class Consume extends Component {
     }
   }
   searchClick = () => {
-    const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = this.search
-    if(!startAt || !endAt) {
-      message.info('请选择日期')
-      return
-    }
-    if( !customerMobile && !keywords && !deviceSerial ) {
-      message.info('请选择筛选条件')
+    const { customerMobile, deviceSerial } = this.search
+    if( !customerMobile && !deviceSerial ) {
+      message.info('请输入手机号或模块编号进行查询')
       return
     }
     this.search.offset = 0
@@ -153,76 +152,67 @@ class Consume extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmConsume/list',
+      type: 'businessConsume/list',
       payload: {
-        data: { ...url, status: '4,7' }
+        data: { ...url, status: '4,6,7' }
       }
     })
   }
   change = (url) => {
     this.search = { ...this.search, ...url }
-    this.fetch(url)
+    this.fetch(this.search)
   }
   export = () => {
-    const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
-    if(!startAt || !endAt) {
-      message.info('请选择日期')
-      return
-    }
-    if( !customerMobile && !keywords && !deviceSerial ) {
+    const { customerMobile, deviceSerial } = this.search
+    if( !customerMobile && !deviceSerial ) {
       message.info('请先筛选再导出')
       return
     }
     this.props.dispatch({
-      type: 'crmConsume/export',
+      type: 'businessConsume/export',
       payload: {
-        data: this.search
+        data: { ...this.search, status : '4,6,7' }
       }
     })
   }
   hide = () => {
     this.props.dispatch({
-      type: 'crmConsume/hideModal'
+      type: 'businessConsume/hideModal'
     })
   }
-  refund = (id) => {
-    this.props.dispatch({
-      type: 'crmConsume/refund',
-      payload: {
-        id: id,
-        data: this.search
+  showConfirm = (id) => {
+    const url = transformUrl(location.search)
+    const self = this
+    confirm({
+      title: '确认退款?',
+      content: '款项将退到消费用户的苏打生活账户余额，确认退款吗?',
+      onOk() {
+        self.props.dispatch({
+          type: 'businessConsume/refund',
+          payload: {
+            id: id,
+            data: { ...url, userId: self.props.common.userInfo.user.id }
+          }
+        })
       }
     })
   }
   render() {
-    const { crmConsume: { date, data: { objects, pagination }, key, visible, exportUrl }, loading  } = this.props
+    const { businessConsume: {  data: { objects, pagination }, key, visible, exportUrl }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Row className={styles['input-wrap']}>
-          <span className={styles.input}>
-          <DatePicker
-            date={date}
-            search={this.search}
-            defaultTime={true}/>
-          </span>
           <Input
-            placeholder='运营商名称/账号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'keywords')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.keywords}
-           />
-          <Input
-            placeholder='消费手机号'
+            placeholder='请输入洗衣手机号'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'customerMobile')}
             onPressEnter={this.searchClick}
             defaultValue={this.search.customerMobile}
           />
           <Input
-            placeholder='模块编号'
+            placeholder='请输入模块编号'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'deviceSerial')}
             onPressEnter={this.searchClick}
@@ -263,7 +253,7 @@ class Consume extends Component {
           key={key}
         >
           <form name="export" >
-            <span className="form-text">确定导出这批订单吗？</span>
+            <span className="form-text">确定导出这批消费记录吗？</span>
             <button onClick={this.hide} type="button" id="cancel">取消</button>
             <a href={exportUrl} target="_blank" id="submit" download onClick={this.hide}>确认</a>
           </form>
@@ -272,12 +262,13 @@ class Consume extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmConsume/clear'})
+    this.props.dispatch({ type: 'businessConsume/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmConsume: state.crmConsume,
+    businessConsume: state.businessConsume,
+    common: state.common,
     loading: state.loading.global,
     ...props
   }

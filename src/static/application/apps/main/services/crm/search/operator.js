@@ -9,6 +9,5 @@ const operatorService = {
   updatePassword: (id,data) => {
     return request.put(`/crm/operators/${id}/password`,data)
   }
-
 }
 export default operatorService

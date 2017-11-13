@@ -49,11 +49,11 @@ api.interceptors.response.use(
       return Promise.reject('服务器返回数据异常!')
     }
     if(response.data.status === 'UNAUTHORIZED' || response.data.status === 'SESSION_EXPIRED') {
+      storage.clear('token')
+      session.clear()
       confirm({
         title: response.data.message,
         onOk() {
-          storage.clear('token')
-          session.clear()
           window.location.href = '/'
         }
       })

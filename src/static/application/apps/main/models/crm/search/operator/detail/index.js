@@ -1,9 +1,16 @@
 import { message } from 'antd'
 import operatorService from '../../../../../services/crm/search/operator.js'
+import deviceService from '../../../../../services/crm/device.js'
+import commonService from '../../../../../services/common/'
 import { cloneDeep } from 'lodash'
 
 const model = {
-  data: {},
+  data: {
+    role: [],
+    parent: {
+
+    }
+  },
   key: 1,
   visible: false,
 }
@@ -32,6 +39,27 @@ export default {
     *detail({ payload: { data } }, { call, put }) {
       const result = yield call(operatorService.detail, data)
       if(result.status == 'OK') {
+        const deviceInfo = yield call(deviceService.list, { userId: result.data.id })
+        const accountInfo = yield call(commonService.cashAccount, { userId: result.data.id })
+
+        if(deviceInfo.status == 'OK') {
+          result.data.deviceCount = deviceInfo.data.pagination.total
+        } else {
+          message.error(deviceInfo.message)
+        }
+
+        if(accountInfo.status == 'OK') {
+          result.data.autoSettle = accountInfo.data.mode.value == 0 ? '是' : '否'
+          result.data.payment = accountInfo.data.type.description
+          if(accountInfo.data.type.value === 1) {
+            result.data.cashAccount = accountInfo.data.user.name + ' | ' + accountInfo.data.user.account
+          } else {
+            result.data.cashAccount = accountInfo.data.user.name
+          }
+        } else {
+          message.error(accountInfo.message)
+        }
+
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)

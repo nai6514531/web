@@ -38,22 +38,27 @@ class DataTable extends Component {
   }
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination }
+    let handlerResult = true
     const { current, pageSize } = pagination
-    // const url = transformUrl(location.hash)
     const url = transformUrl(location.search)
     const queryString = toQueryString({ ...url, offset: (current - 1) * pageSize, limit: pageSize })
+
     pager.current = current
     pager.pageSize = pageSize
-    this.setState({
-      pagination: pager,
-    })
-    this.props.dispatch({
-      type: 'common/resetIndex'
-    })
-    // location.hash = toQueryString({ ...url, page: current, per_page: pageSize })
-    //     history.push(`${location.pathname}?${queryString}`)
-    history.push(`${location.pathname}?${queryString}`)
-    this.props.change && this.props.change(transformUrl(location.search))
+
+    if(this.props.change) {
+      handlerResult = this.props.change(transformUrl(`?${queryString}`))
+    }
+
+    if(handlerResult !== 'NOTRENDER') {
+      this.setState({
+        pagination: pager,
+      })
+      this.props.dispatch({
+        type: 'common/resetIndex'
+      })
+      history.push(`${location.pathname}?${queryString}`)
+    }
   }
   render() {
     const { getBodyWrapper, rowClassName, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
