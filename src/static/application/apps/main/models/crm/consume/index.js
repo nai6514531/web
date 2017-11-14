@@ -1,7 +1,6 @@
 import { message } from 'antd'
-import consumeService from '../../../services/crm/consume.js'
-import commonService from '../../../services/common/index.js'
-import operatorService from '../../../services/crm/search/operator.js' //后续会移出去 公共的
+import sodaService from '../../../services/soda/index.js'
+import userService from '../../../services/soda-manager/user.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -38,11 +37,11 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(commonService.consumptionsList, data)
+      const result = yield call(sodaService.ticketsList, data)
       if(result.status == 'OK') {
         let showError = true
         yield* result.data.objects.map(function* (value, index) {
-          const operations = yield call(operatorService.detail, value.owner.parentId)
+          const operations = yield call(userService.detail, value.owner.parentId)
 
           if(operations.status == 'OK') {
             const operatorInfo = operations.data
@@ -62,7 +61,7 @@ export default {
       }
     },
     *export({ payload: { data } }, { call, put }) {
-      const result = yield call(consumeService.export, data)
+      const result = yield call(sodaService.crmExport, data)
       if(result.status == 'OK') {
         yield put({ type: 'showModal' })
         yield put({ type: 'updateData', payload: { exportUrl: result.data.url } })
@@ -71,7 +70,7 @@ export default {
       }
     },
     *refund({ payload: { id, data } }, { call, put }) {
-      const result = yield call(consumeService.refund, id)
+      const result = yield call(sodaService.crmRefund, id)
       if(result.status == 'OK') {
         message.success('退款成功')
         yield put({

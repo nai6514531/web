@@ -1,7 +1,5 @@
 import { message } from 'antd'
-import statisticsService from '../../../services/business/statistics.js'
-import commonService from '../../../services/common/'
-import operatorService from '../../../services/crm/search/operator.js'//后续会移出去 公共的
+import sodaService from '../../../services/soda/index.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -37,23 +35,11 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(commonService.consumptionsList, data)
+      const result = yield call(sodaService.ticketsList, data)
       if(result.status == 'OK') {
         let showError = true
         yield* result.data.objects.map(function* (value, index) {
-          // const operations = yield call(operatorService.detail, value.owner.parentId)
           result.data.objects[index].key = index + 1 + Number(data.offset)
-          // if(operations.status == 'OK') {
-          //   const operatorInfo = operations.data
-          //   if(operatorInfo) {
-          //     result.data.objects[index].parentOperator = operatorInfo.name
-          //     result.data.objects[index].parentOperatorMobile = operatorInfo.mobile
-          //   }
-          // } else {
-          //   showError && message.error(operations.message)
-          //   showError = false
-          // }
-
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -61,7 +47,7 @@ export default {
       }
     },
     *export({ payload: { data } }, { call, put }) {
-      const result = yield call(statisticsService.export, data)
+      const result = yield call(sodaService.bizexport, data)
       if(result.status == 'OK') {
         yield put({ type: 'showModal' })
         yield put({ type: 'updateData', payload: { exportUrl: result.data.url } })
@@ -70,7 +56,7 @@ export default {
       }
     },
     *refund({ payload: { id, data } }, { call, put }) {
-      const result = yield call(statisticsService.refund, id)
+      const result = yield call(sodaService.bizRefund, id)
       if(result.status == 'OK') {
         message.success('退款成功')
         yield put({

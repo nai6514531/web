@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import addressService from '../../../services/platform/address.js'
+import addressService from '../../../services/soda-manager/address.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -15,7 +15,7 @@ const model = {
 }
 
 export default {
-  namespace: 'area',
+  namespace: 'district',
   state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
@@ -37,7 +37,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(addressService.areaList, payload.data)
+      const result = yield call(addressService.districtList, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -62,7 +62,7 @@ export default {
     },
     *update({ payload }, { call, put }) {
       const { data, id } = payload
-      const result = yield call(addressService.areaUpdate, id, data)
+      const result = yield call(addressService.districtUpdate, id, data)
       if(result.status == 'OK') {
         yield put({
           type: 'list',
@@ -77,7 +77,7 @@ export default {
       }
     },
     *add({ payload }, { call, put }) {
-      const result = yield call(addressService.areaAdd, payload.data)
+      const result = yield call(addressService.districtAdd, payload.data)
       if(result.status == 'OK') {
         yield put({
           type: 'list',
@@ -92,7 +92,7 @@ export default {
       }
     },
     *delete({ payload }, { call, put }) {
-      const result = yield call(addressService.areaDelete, payload.id)
+      const result = yield call(addressService.districtDelete, payload.id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({

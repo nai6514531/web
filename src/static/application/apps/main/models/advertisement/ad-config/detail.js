@@ -1,7 +1,6 @@
 import { message } from 'antd'
-import adConfigService from '../../../services/advertisement/ad-config.js'
-import applicationService from '../../../services/platform/application.js'
-import adPositionService from '../../../services/advertisement/ad-position.js'
+import adService from '../../../services/soda-manager/ad.js'
+import applicationService from '../../../services/soda-manager/application.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -54,7 +53,7 @@ export default {
       }
     },
     *postionList({ payload={} }, { call, put }) {
-      const result = yield call(adPositionService.list, payload.data)
+      const result = yield call(adService.adPositionList, payload.data)
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
         let help = ''
@@ -83,7 +82,7 @@ export default {
       }
     },
     *detail({ payload: { id } }, { call, put }) {
-      const result = yield call(adConfigService.detail, id)
+      const result = yield call(adService.adDetail, id)
       if(result.status == 'OK') {
         const image = result.data.imageUrl.split('/')
         yield put({
@@ -119,7 +118,7 @@ export default {
     },
     *update({ payload }, { call, put }) {
       const { data, id, history } = payload
-      const result = yield call(adConfigService.update, id, data)
+      const result = yield call(adService.adUpdate, id, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         history.goBack()
@@ -129,7 +128,7 @@ export default {
     },
     *add({ payload }, { call, put }) {
       const { data, history } = payload
-      const result = yield call(adConfigService.add, payload.data)
+      const result = yield call(adService.adAdd, payload.data)
       if(result.status == 'OK') {
         message.success('添加成功')
         history.goBack()

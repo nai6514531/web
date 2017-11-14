@@ -35,7 +35,7 @@ class Province extends Component {
   constructor(props) {
     super(props)
     this.columns = [
-      { title: '行政区划代码', dataIndex: 'code', key: 'code' },
+      { title: '行政区划代码', dataIndex: 'id', key: 'id' },
       { title: '省', dataIndex: 'name',key: 'name' },
       {
         title: '操作',
@@ -130,11 +130,11 @@ class Province extends Component {
               {...formItemLayout}
               label='行政区划代码'
             >
-              {getFieldDecorator('code', {
+              {getFieldDecorator('id', {
                 rules: [{
                   required: true, message: '请输入行政区划代码',
                 }],
-                initialValue: record.code
+                initialValue: record.id
               })(
                 <Input />
               )}

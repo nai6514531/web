@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import roleService from '../../services/settings/role.js'
-import permissionService from '../../services/settings/permission.js'
+import roleService from '../../services/soda-manager/role.js'
+import permissionService from '../../services/soda-manager/permission.js'
 import { cloneDeep } from 'lodash'
 
 const model = {

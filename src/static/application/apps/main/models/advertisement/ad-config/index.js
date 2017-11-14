@@ -1,7 +1,6 @@
 import { message } from 'antd'
-import adConfigService from '../../../services/advertisement/ad-config.js'
-import applicationService from '../../../services/platform/application.js'
-import adPositionService from '../../../services/advertisement/ad-position.js'
+import adService from '../../../services/soda-manager/ad.js'
+import applicationService from '../../../services/soda-manager/application.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -41,7 +40,7 @@ export default {
   },
   effects: {
     *list({ payload: { data, order } }, { call, put }) {
-      const result = yield call(adConfigService.list, data, order)
+      const result = yield call(adService.adList, data, order)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -57,7 +56,7 @@ export default {
       }
     },
     *postionList({ payload={} }, { call, put }) {
-      const result = yield call(adPositionService.list, payload.data)
+      const result = yield call(adService.adPositionList, payload.data)
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
       } else {
@@ -65,7 +64,7 @@ export default {
       }
     },
     *delete({ payload: { id, data } }, { call, put }) {
-      const result = yield call(adConfigService.delete, id)
+      const result = yield call(adService.adDelete, id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({

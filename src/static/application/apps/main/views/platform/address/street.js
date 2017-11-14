@@ -39,10 +39,10 @@ class Street extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: '行政区划代码', dataIndex: 'code', key: 'code' },
+      { title: '行政区划代码', dataIndex: 'id', key: 'id' },
       { title: '省', dataIndex: 'provinceName',key: 'provinceName' },
       { title: '市', dataIndex: 'cityName',key: 'cityName' },
-      { title: '区', dataIndex: 'areaName',key: 'areaName' },
+      { title: '区', dataIndex: 'districtName',key: 'districtName' },
       { title: '街道', dataIndex: 'name',key: 'name' },
       {
         title: '操作',
@@ -71,25 +71,25 @@ class Street extends Component {
         search: url
       }
     })
-    if(url.cityCode) {
+    if(url.cityId) {
       this.props.dispatch({
         type: 'street/cityList',
         payload: {
           data: {
-            provinceCode: url.provinceCode
+            provinceId: url.provinceId
           },
           attr: 'cityData'
         }
       })
     }
-    if(url.areaCode) {
+    if(url.districtId) {
       this.props.dispatch({
-        type: 'street/areaList',
+        type: 'street/districtList',
         payload: {
           data: {
-            cityCode: url.cityCode
+            cityId: url.cityId
           },
-          attr: 'areaData'
+          attr: 'districtData'
         }
       })
     }
@@ -132,25 +132,25 @@ class Street extends Component {
         data: record
       }
     })
-    if(record.provinceCode) {
+    if(record.provinceId) {
       this.props.dispatch({
         type: 'street/cityList',
         payload: {
           data: {
-            provinceCode: record.provinceCode
+            provinceId: record.provinceId
           },
           attr: 'cityDetailData'
         }
       })
     }
-    if(record.cityCode) {
+    if(record.cityId) {
       this.props.dispatch({
-        type: 'street/areaList',
+        type: 'street/districtList',
         payload: {
           data: {
-            cityCode: record.cityCode
+            cityId: record.cityId
           },
-          attr: 'areaDetailData'
+          attr: 'districtDetailData'
         }
       })
     }
@@ -169,13 +169,13 @@ class Street extends Component {
     this.search = { ...this.search, [type]: e.target.value }
   }
   selectHandler =  (type, value) => {
-    if(type === 'provinceCode') {
+    if(type === 'provinceId') {
       this.props.dispatch({
         type: 'common/updateSearch',
         payload: {
           search: {
-            cityCode: undefined,
-            areaCode: undefined
+            cityId: undefined,
+            districtId: undefined
           }
         }
       })
@@ -184,11 +184,11 @@ class Street extends Component {
           type: 'street/updateData',
           payload: {
             cityData: [],
-            areaData: []
+            districtData: []
           }
         })
-        delete this.search.cityCode
-        delete this.search.areaCode
+        delete this.search.cityId
+        delete this.search.districtId
       } else {
         this.props.dispatch({
           type: 'street/cityList',
@@ -201,12 +201,12 @@ class Street extends Component {
         })
       }
     }
-    if(type === 'cityCode') {
+    if(type === 'cityId') {
       this.props.dispatch({
         type: 'common/updateSearch',
         payload: {
           search: {
-            areaCode: undefined
+            districtId: undefined
           }
         }
       })
@@ -214,19 +214,19 @@ class Street extends Component {
         this.props.dispatch({
           type: 'street/updateData',
           payload: {
-            areaData: []
+            districtData: []
           }
         })
-        delete this.search.cityCode
-        delete this.search.areaCode
+        delete this.search.cityId
+        delete this.search.districtId
       } else {
         this.props.dispatch({
-          type: 'street/areaList',
+          type: 'street/districtList',
           payload: {
             data: {
               [type]: value
             },
-            attr: 'areaData'
+            attr: 'districtData'
           }
         })
       }
@@ -260,14 +260,14 @@ class Street extends Component {
   }
   handleProvince = (value) => {
     this.props.form.setFieldsValue({
-      cityCode: undefined,
-      areaCode: undefined
+      cityId: undefined,
+      districtId: undefined
     })
     this.props.dispatch({
       type: 'street/updateData',
       payload: {
         cityDetailData: [],
-        areaDetailData: []
+        districtDetailData: []
       }
     })
     if(value) {
@@ -275,7 +275,7 @@ class Street extends Component {
         type: 'street/cityList',
         payload: {
           data: {
-            provinceCode: value
+            provinceId: value
           },
           attr: 'cityDetailData'
         }
@@ -284,70 +284,70 @@ class Street extends Component {
   }
   handleCity = (value) => {
     this.props.form.setFieldsValue({
-      areaCode: undefined
+      districtId: undefined
     })
     this.props.dispatch({
       type: 'street/updateData',
       payload: {
-        areaDetailData: []
+        districtDetailData: []
       }
     })
     if(value) {
       this.props.dispatch({
-        type: 'street/areaList',
+        type: 'street/districtList',
         payload: {
           data: {
-            cityCode: value
+            cityId: value
           },
-          attr: 'areaDetailData'
+          attr: 'districtDetailData'
         }
       })
     }
   }
   render() {
-    const { common: { search }, form: { getFieldDecorator }, street: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData, areaData, areaDetailData }, loading  } = this.props
+    const { common: { search }, form: { getFieldDecorator }, street: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData, districtData, districtDetailData }, loading  } = this.props
     const title = record.id ? '编辑街道' : '添加街道'
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Select
-          value={ search.provinceCode }
+          value={ search.provinceId }
           allowClear
           className={styles.input}
           placeholder='省'
-          onChange={this.selectHandler.bind('this','provinceCode')}>
+          onChange={this.selectHandler.bind('this','provinceId')}>
             {
               provinceData.map(value => {
                 return (
-                  <Option value={value.code} key={value.id}>{value.name}</Option>
+                  <Option value={value.id} key={value.id}>{value.name}</Option>
                 )
               })
             }
         </Select>
         <Select
-          value={ search.cityCode }
+          value={ search.cityId }
           allowClear
           className={styles.input}
           placeholder='市'
-          onChange={this.selectHandler.bind('this','cityCode')}>
+          onChange={this.selectHandler.bind('this','cityId')}>
             {
               cityData.map(value => {
                 return (
-                  <Option value={value.code} key={value.id}>{value.name}</Option>
+                  <Option value={value.id} key={value.id}>{value.name}</Option>
                 )
               })
             }
         </Select>
         <Select
-          value={ search.areaCode }
+          value={ search.districtId }
           allowClear
           className={styles.input}
           placeholder='区'
-          onChange={this.selectHandler.bind('this','areaCode')}>
+          onChange={this.selectHandler.bind('this','districtId')}>
             {
-              areaData.map(value => {
+              districtData.map(value => {
                 return (
-                  <Option value={value.code} key={value.id}>{value.name}</Option>
+                  <Option value={value.id} key={value.id}>{value.name}</Option>
                 )
               })
             }
@@ -407,11 +407,11 @@ class Street extends Component {
               {...formItemLayout}
               label='行政区划代码'
             >
-              {getFieldDecorator('code', {
+              {getFieldDecorator('id', {
                 rules: [{
                   required: true, message: '请输入行政区划代码!',
                 }],
-                initialValue: record.code
+                initialValue: record.id
               })(
                 <Input placeholder='请输入行政区划代码'/>
               )}
@@ -420,11 +420,11 @@ class Street extends Component {
               {...formItemLayout}
               label='省'
             >
-              {getFieldDecorator('provinceCode', {
+              {getFieldDecorator('provinceId', {
                 rules: [{
                   required: true, message: '请选择省',
                 }],
-                initialValue: record.provinceCode !== undefined ? record.provinceCode : undefined
+                initialValue: record.provinceId !== undefined ? record.provinceId : undefined
               })(
                 <Select
                   allowClear
@@ -433,7 +433,7 @@ class Street extends Component {
                     {
                       provinceData.map(value => {
                         return (
-                          <Option value={value.code} key={value.id}>{value.name}</Option>
+                          <Option value={value.id} key={value.id}>{value.name}</Option>
                         )
                       })
                     }
@@ -444,11 +444,11 @@ class Street extends Component {
               {...formItemLayout}
               label='市'
             >
-              {getFieldDecorator('cityCode', {
+              {getFieldDecorator('cityId', {
                 rules: [{
                   required: true, message: '请选择市',
                 }],
-                initialValue: record.cityCode !== undefined ? record.cityCode : undefined
+                initialValue: record.cityId !== undefined ? record.cityId : undefined
               })(
                 <Select
                   allowClear
@@ -457,7 +457,7 @@ class Street extends Component {
                     {
                       cityDetailData.map(value => {
                         return (
-                          <Option value={value.code} key={value.id}>{value.name}</Option>
+                          <Option value={value.id} key={value.id}>{value.name}</Option>
                         )
                       })
                     }
@@ -468,19 +468,19 @@ class Street extends Component {
               {...formItemLayout}
               label='区'
             >
-              {getFieldDecorator('areaCode', {
+              {getFieldDecorator('districtId', {
                 rules: [{
                   required: true, message: '请选择区',
                 }],
-                initialValue: record.areaCode !== undefined ? record.areaCode : undefined
+                initialValue: record.districtId !== undefined ? record.districtId : undefined
               })(
                 <Select
                   allowClear
                   placeholder='区'>
                     {
-                      areaDetailData.map(value => {
+                      districtDetailData.map(value => {
                         return (
-                          <Option value={value.code} key={value.id}>{value.name}</Option>
+                          <Option value={value.id} key={value.id}>{value.name}</Option>
                         )
                       })
                     }

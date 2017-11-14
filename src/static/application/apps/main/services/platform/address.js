@@ -18,9 +18,9 @@ const addressesService = {
   cityList: (data, getAll) => {
     let url
     if(getAll) {
-      url= `/addresses/cities?provinceCode=${data.provinceCode || ''}&name=${data.name || ''}`
+      url= `/addresses/cities?provinceId=${data.provinceId || ''}&name=${data.name || ''}`
     } else {
-      url = `/addresses/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceCode=${data.provinceCode || ''}&name=${data.name || ''}`
+      url = `/addresses/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${data.provinceId || ''}&name=${data.name || ''}`
     }
     return request.get(url)
   },
@@ -37,33 +37,33 @@ const addressesService = {
   cityDelete: (id) => {
     return request.delete(`/addresses/cities/${id}`)
   },
-  areaList: (data,getAll) => {
+  districtList: (data,getAll) => {
     let url
     if(getAll) {
-      url= `/addresses/areas?cityCode=${data.cityCode || ''}&name=${data.name || ''}`
+      url= `/addresses/districts?cityId=${data.cityId || ''}&name=${data.name || ''}`
     } else {
-      url = `/addresses/areas?offset=${data.offset || 0 }&limit=${data.limit || 10 }&cityCode=${data.cityCode || ''}&name=${data.name || ''}`
+      url = `/addresses/districts?offset=${data.offset || 0 }&limit=${data.limit || 10 }&cityId=${data.cityId || ''}&name=${data.name || ''}`
     }
     return request.get(url)
   },
-  areaAdd: (data) => {
-    return request.post(`/addresses/areas`, data)
+  districtAdd: (data) => {
+    return request.post(`/addresses/districts`, data)
   },
-  areaUpdate: (id, data) => {
-    return request.put(`/addresses/areas/${id}`, data)
+  districtUpdate: (id, data) => {
+    return request.put(`/addresses/districts/${id}`, data)
   },
-  areaDetail: (id) => {
-    return request.get(`/addresses/areas/${id}`)
+  districtDetail: (id) => {
+    return request.get(`/addresses/districts/${id}`)
   },
-  areaDelete: (id) => {
-    return request.delete(`/addresses/areas/${id}`)
+  districtDelete: (id) => {
+    return request.delete(`/addresses/districts/${id}`)
   },
   streetList: (data, getAll) => {
     let url
     if(getAll) {
-      url= `/addresses/streets?areaCode=${data.areaCode || ''}&name=${data.name || ''}`
+      url= `/addresses/streets?districtId=${data.districtId || ''}&name=${data.name || ''}`
     } else {
-      url = `/addresses/streets?offset=${data.offset || 0 }&limit=${data.limit || 10 }&areaCode=${data.areaCode || ''}&name=${data.name || ''}`
+      url = `/addresses/streets?offset=${data.offset || 0 }&limit=${data.limit || 10 }&districtId=${data.districtId || ''}&name=${data.name || ''}`
     }
     return request.get(url)
   },
@@ -80,7 +80,7 @@ const addressesService = {
     return request.delete(`/addresses/streets/${id}`)
   },
   schoolList: (data) => {
-    return request.get(`/addresses/schools?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceCode=${data.provinceCode || ''}&cityCode=${data.cityCode || ''}&areaCode=${data.areaCode || ''}&name=${data.name || ''}`)
+    return request.get(`/addresses/schools?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${data.provinceId || ''}&cityId=${data.cityId || ''}&districtId=${data.districtId || ''}&name=${data.name || ''}`)
   },
   schoolAdd: (data) => {
     return request.post(`/addresses/schools`, data)

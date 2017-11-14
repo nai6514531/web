@@ -1,6 +1,6 @@
 import { storage, session } from '../../utils/storage.js'
 import { message } from 'antd'
-import userService from '../../services/user'
+import commonService from '../../services/common.js'
 
 export default {
   namespace: 'common',
@@ -73,7 +73,7 @@ export default {
   },
   effects: {
     *logout({ payload }, { call, put }) {
-      const result = yield call(userService.logout)
+      const result = yield call(commonService.logout)
       if(result.status == 'OK') {
         storage.clear('token')
         // storage.clear('userInfo')
@@ -87,7 +87,7 @@ export default {
       payload,
     }, { put, call }) {
       // 获取用户信息
-      const result = yield call(userService.info)
+      const result = yield call(commonService.profile)
       if(result.status === 'OK') {
         // storage.val('userInfo', result.data)
          yield put({

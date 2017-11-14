@@ -1,6 +1,5 @@
 import { message } from 'antd'
-import adConfigService from '../../../services/advertisement/ad-config.js'
-import adPositionService from '../../../services/advertisement/ad-position.js'
+import adService from '../../../services/soda-manager/ad.js'
 import { cloneDeep, orderBy } from 'lodash'
 
 const model = {
@@ -32,7 +31,7 @@ export default {
   },
   effects: {
     *list({ payload: { data, order, attr } }, { call, put }) {
-      const result = yield call(adConfigService.list, data, order)
+      const result = yield call(adService.adList, data, order)
       if(result.status == 'OK') {
         const orderData = orderBy(result.data.objects,'order','asc')
         yield put({ type: 'updateData', payload: { [attr]: orderData } })
@@ -41,7 +40,7 @@ export default {
       }
     },
     *postionList({ payload={} }, { call, put }) {
-      const result = yield call(adPositionService.list)
+      const result = yield call(adService.adPositionList)
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { postionData: result.data.objects } })
       } else {
@@ -49,7 +48,7 @@ export default {
       }
     },
     *order({ payload }, { call, put }) {
-      const result = yield call(adConfigService.order, payload.data)
+      const result = yield call(adService.adOrder, payload.data)
       if(result.status == 'OK') {
         message.success('同步成功')
         // yield put({ type: 'list' })

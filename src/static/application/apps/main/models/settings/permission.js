@@ -1,8 +1,8 @@
 import { message } from 'antd'
-import permissionService from '../../services/settings/permission'
-import menuService from '../../services/settings/menu.js'
-import actionService from '../../services/settings/action.js'
-import elementService from '../../services/settings/element.js'
+import permissionService from '../../services/soda-manager/permission.js'
+import menuService from '../../services/soda-manager/menu.js'
+import actionService from '../../services/soda-manager/action.js'
+import elementService from '../../services/soda-manager/element.js'
 import { cloneDeep } from 'lodash'
 
 const model = {

@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import operatorService from '../../../../services/crm/search/operator.js'
-import deviceService from '../../../../services/crm/device.js'
+import userService from '../../../../services/soda-manager/user.js' 
+import deviceService from '../../../../services/soda-manager/device.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -22,7 +22,7 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(operatorService.list, data)
+      const result = yield call(userService.list, data)
       if(result.status == 'OK') {
         let showError = true
         yield* result.data.objects.map(function* (value, index) {

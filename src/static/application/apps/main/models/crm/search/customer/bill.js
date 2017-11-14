@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import customerService from '../../../../services/crm/search/customer.js'
+import sodaService from '../../../../services/soda/index.js'
 import { cloneDeep } from 'lodash'
 
 const dict = {
@@ -50,7 +50,7 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(customerService.billsList, data)
+      const result = yield call(sodaService.billsList, data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import addressService from '../../../services/platform/address.js'
+import addressService from '../../../services/soda-manager/address.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -12,8 +12,8 @@ const model = {
   provinceData: [],
   cityData: [],
   cityDetailData: [],
-  areaData: [],
-  areaDetailData: [],
+  districtData: [],
+  districtDetailData: [],
 }
 
 export default {
@@ -62,8 +62,8 @@ export default {
         message.error(result.message)
       }
     },
-    *areaList({ payload }, { call, put }) {
-      const result = yield call(addressService.areaList, payload.data, true)
+    *districtList({ payload }, { call, put }) {
+      const result = yield call(addressService.districtList, payload.data, true)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { [payload.attr]: result.data.objects } })
       } else {
