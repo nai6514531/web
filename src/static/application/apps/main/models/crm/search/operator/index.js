@@ -36,7 +36,6 @@ export default {
           }
 
         })
-
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)
