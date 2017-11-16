@@ -171,8 +171,8 @@ class Customer extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>账户余额:</span><span className={styles.description}>{data.wallet && (data.wallet.value / 100).toFixed(2)}</span><Link to={`/crm/${data.mobile}/bill`}>明细</Link></div>
-                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{data.chipcardCount < 0 ? '无' : (data.chipcardCount / 100).toFixed(2)}</span><Link to={`/crm/${data.mobile}/chipcard`}>明细</Link></div>
+                  <div><span className={styles.title}>账户余额:</span><span className={styles.description}>{ (data.wallet && data.wallet.value >= 0) ? (data.wallet.value / 100).toFixed(2) : '-'}</span><Link to={`/crm/${data.mobile}/bill`}>明细</Link></div>
+                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span><Link to={`/crm/${data.mobile}/chipcard`}>明细</Link></div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>
                 </div>

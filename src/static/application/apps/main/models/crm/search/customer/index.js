@@ -51,10 +51,12 @@ export default {
 
       if(ticket.status == 'OK') {
         const object =  ticket.data.objects[0]
-        const deviceInfo = object.device
-        result.data.recentAddress = deviceInfo.address
-        result.data.lastTicketResume = `${dict.app[object.feature]}-${deviceInfo[dict.device[object.deviceMode]]}${deviceInfo.serialNumber}-${(object.value / 100).toFixed(2)}元（密码:${object.token}）`
-        yield put({ type: 'updateData', payload: { data: result.data } })
+        if(object) {
+          const deviceInfo = object.device
+          result.data.recentAddress = deviceInfo.address
+          result.data.lastTicketResume = `${dict.app[object.feature] || '-'}-${deviceInfo[dict.device[object.deviceMode]] || '-'}${deviceInfo.serialNumber || '-'}-${(object.value / 100).toFixed(2)}元（密码:${object.token || '-'}）`
+          yield put({ type: 'updateData', payload: { data: result.data } })
+        }
       } else {
         message.error(ticket.message)
       }
