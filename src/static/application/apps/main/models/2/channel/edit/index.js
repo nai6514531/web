@@ -1,5 +1,4 @@
 import { message } from 'antd'
-import adConfigService from '../../../../services/advertisement/ad-config.js'
 import channelService from '../../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
 
