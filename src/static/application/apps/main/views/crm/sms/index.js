@@ -55,6 +55,11 @@ class Sms extends Component {
         dataIndex: 'status',
         key: 'status',
         render: (text, record) => {
+          if(record.status == 2) {
+            return(
+              <Link target='_blank' to={`https://doc.alidayu.com/doc2/detail.htm?spm=0.0.0.0.RXMbE8&treeId=136&articleId=104495&docType=1`}>{ dict[record.status] || '-' }</Link>
+            )
+          }
           return(
             dict[record.status] || '-'
           )

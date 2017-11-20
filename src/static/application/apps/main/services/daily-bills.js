@@ -5,6 +5,11 @@ const dailyBillsService = {
     return request.get(`/daily-bills/${options.id}`, {
     	params: options
     })
+  },
+  getTotalUnsettledBill: (options) => {
+    return request.get(`/daily-bills/unsettled-bill`, {
+    	params: options
+    })
   }
 }
 export default dailyBillsService

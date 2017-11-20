@@ -6,6 +6,8 @@ import _ from 'underscore'
 import querystring from 'querystring'
 
 import billsService from '../../../services/bills'
+import dailyBillsService from '../../../services/daily-bills'
+import walletService from '../../../services/soda/wallet'
 import settlementService from '../../../services/settlement'
 import history from '../../../utils/history'
 
@@ -50,6 +52,8 @@ class App extends Component {
       loading: false,
       searchLoading: false,
       exportLoading: false,
+      totalUnsettledBill: 0,
+      totalWalletValue: 0
     }
     this.columns = [
       {
@@ -129,6 +133,10 @@ class App extends Component {
     ]
   }
   componentDidMount () {
+
+    this.getTotalUnsettledBill()
+    this.getTotalWalletValue()
+
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
 
@@ -140,7 +148,33 @@ class App extends Component {
     if (!search.startAt || !search.endAt) {
       return
     }
+
     this.getSettlementReports(search)
+
+  }
+  getTotalUnsettledBill(){
+    dailyBillsService.getTotalUnsettledBill().then((res)=>{
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.setState({
+        totalUnsettledBill:res.data
+      })
+    }).catch((err) => {
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
+  getTotalWalletValue(){
+    walletService.getTotalValue().then((res)=>{
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.setState({
+        totalWalletValue:res.data
+      })
+    }).catch((err) => {
+      message.error(err.message || '服务器异常，刷新重试')
+    })
   }
   getSettlementReports(options) {
     let search = { ...this.state.search, ..._.pick(options || {}, 'startAt', 'endAt') }
@@ -307,6 +341,8 @@ class App extends Component {
           <Button type='primary' icon='search' onClick={this.search.bind(this)}
             loading={this.state.searchLoading} className={styles.button}>筛选</Button>
           <Button type='primary' icon='download' onClick={this.exportSettlement.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
+          <span>未结算账单总额：{this.state.totalUnsettledBill}</span>
+          <span>钱包总额：{this.state.totalWalletValue}</span>
         </div>
         <Table
           dataSource={this.state.list || []}
