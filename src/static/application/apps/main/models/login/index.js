@@ -1,5 +1,4 @@
-import loginService from '../../services/login'
-import userService from '../../services/user'
+import commonService from '../../services/common.js'
 import { message } from 'antd'
 import { storage } from '../../utils/storage.js'
 import { API_SERVER } from '../../utils/debug'
@@ -28,7 +27,7 @@ export default {
       let [ accountHelp, passwordHelp, captchaHelp ] = [ null, null, null ]
       const originData = _.cloneDeep(payload.data)
       delete originData.initPassword
-      const data = yield call(loginService.login, originData)
+      const data = yield call(commonService.login, originData)
       if(data.status == 'OK') {
         //登录成功后存储账户密码token等
         if(payload.data.checked) {

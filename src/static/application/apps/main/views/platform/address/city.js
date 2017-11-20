@@ -39,7 +39,7 @@ class City extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: '行政区划代码', dataIndex: 'code', key: 'code' },
+      { title: '行政区划代码', dataIndex: 'id', key: 'id' },
       { title: '省', dataIndex: 'provinceName',key: 'provinceName' },
       { title: '市', dataIndex: 'name',key: 'name' },
       {
@@ -157,15 +157,15 @@ class City extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Select
-          value={ search.provinceCode }
+          value={ search.provinceId }
           allowClear
           className={styles.input}
           placeholder='省'
-          onChange={this.selectHandler.bind('this','provinceCode')}>
+          onChange={this.selectHandler.bind('this','provinceId')}>
             {
               provinceData.map(value => {
                 return (
-                  <Option value={value.code} key={value.id}>{value.name}</Option>
+                  <Option value={value.id} key={value.id}>{value.name}</Option>
                 )
               })
             }
@@ -225,11 +225,11 @@ class City extends Component {
               {...formItemLayout}
               label='行政区划代码'
             >
-              {getFieldDecorator('code', {
+              {getFieldDecorator('id', {
                 rules: [{
                   required: true, message: '请输入行政区划代码!',
                 }],
-                initialValue: record.code
+                initialValue: record.id
               })(
                 <Input placeholder='请输入行政区划代码'/>
               )}
@@ -238,11 +238,11 @@ class City extends Component {
               {...formItemLayout}
               label='省'
             >
-              {getFieldDecorator('provinceCode', {
+              {getFieldDecorator('provinceId', {
                 rules: [{
                   required: true, message: '请选择省',
                 }],
-                initialValue: record.provinceCode !== undefined ? record.provinceCode + '' : undefined
+                initialValue: record.provinceId !== undefined ? record.provinceId + '' : undefined
               })(
                 <Select
                   allowClear
@@ -250,7 +250,7 @@ class City extends Component {
                     {
                       provinceData.map(value => {
                         return (
-                          <Option value={value.code} key={value.id}>{value.name}</Option>
+                          <Option value={value.id} key={value.id}>{value.name}</Option>
                         )
                       })
                     }

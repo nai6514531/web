@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import menuService from '../../services/settings/menu.js'
+import menuService from '../../services/soda-manager/menu.js'
 import { cloneDeep } from 'lodash'
 import { arrayToTree } from '../../utils/'
 const model = {

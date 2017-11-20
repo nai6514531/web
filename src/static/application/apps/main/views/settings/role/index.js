@@ -88,7 +88,7 @@ class RoleModal extends Component {
 class PermissionModal extends Component {
   constructor(props) {
     super(props)
-    this.checkList = []
+    this.checkList = this.props.role.currentPermisson
   }
   hide = () => {
     this.props.dispatch({
@@ -109,7 +109,6 @@ class PermissionModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, role: { permissonData: { objects }, currentPermisson, permissionVisible, key } } = this.props
-    this.checkList = currentPermisson
     return(
       <Modal
         title='配置权限'
@@ -203,7 +202,7 @@ class Role extends Component {
     })
   }
   render() {
-    const { role: { data }, loading  } = this.props
+    const { role: { data, permissionVisible }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -221,7 +220,7 @@ class Role extends Component {
           pagination={false}
         />
         <RoleModal {...this.props} />
-        <PermissionModal {...this.props} />
+        { permissionVisible ? <PermissionModal {...this.props} /> : null }
       </div>
     )
   }

@@ -12,8 +12,8 @@ import CityModel from 'bundle-loader?lazy!../../models/platform/address/city.js'
 import Province from 'bundle-loader?lazy!../../views/platform/address/province.js'
 import ProvinceModel from 'bundle-loader?lazy!../../models/platform/address/province.js'
 
-import Area from 'bundle-loader?lazy!../../views/platform/address/area.js'
-import AreaModel from 'bundle-loader?lazy!../../models/platform/address/area.js'
+import District from 'bundle-loader?lazy!../../views/platform/address/district.js'
+import DistrictModel from 'bundle-loader?lazy!../../models/platform/address/district.js'
 
 import Street from 'bundle-loader?lazy!../../views/platform/address/street.js'
 import StreetModel from 'bundle-loader?lazy!../../models/platform/address/street.js'
@@ -28,7 +28,7 @@ export default function (history, app) {
       <Route exact path='/platform/application/:id' component={getComponent(PlatformEdit,app,platformModel)} />
       <Route exact path='/platform/province' component={getComponent(Province,app,ProvinceModel)} />
       <Route exact path='/platform/city' component={getComponent(City,app,CityModel)} />
-      <Route exact path='/platform/area' component={getComponent(Area,app,AreaModel)} />
+      <Route exact path='/platform/district' component={getComponent(District,app,DistrictModel)} />
       <Route exact path='/platform/street' component={getComponent(Street,app,StreetModel)} />
       <Route exact path='/platform/school' component={getComponent(School,app,SchoolModel)} />
     </Switch>

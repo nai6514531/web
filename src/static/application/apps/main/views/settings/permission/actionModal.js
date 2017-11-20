@@ -15,7 +15,7 @@ class ActionModal extends Component {
     this.search = {
       noPagination: true
     }
-    this.checkList = []
+    this.checkList = this.props.permission.currentData
   }
   hide = () => {
     this.checkList = []
@@ -51,7 +51,6 @@ class ActionModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, permission: { actionData, actionVisible, key, currentData }, loading } = this.props
-    this.checkList = currentData
     return(
       <Modal
         title='配置接口'

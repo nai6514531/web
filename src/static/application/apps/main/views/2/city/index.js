@@ -158,7 +158,7 @@ class City extends Component {
   render() {
     const { city: { summary, data: { objects, pagination }, provinceData, clonedProvinceData, disabled }, loading, common: { search }  } = this.props
     const dataSource = this.props.city.provinceData.map(value => {
-      return <Option value={value.code + ''} key={value.id}>{value.name}</Option>
+      return <Option value={value.id + ''} key={value.id}>{value.name}</Option>
     })
     return(
       <div>

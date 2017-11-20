@@ -10,7 +10,7 @@ import moment from 'moment'
 import history from '../../../utils/history.js'
 import styles from './index.pcss'
 import { trim } from 'lodash'
-
+import dict from '../../../utils/dict.js'
 const breadItems = [
   {
     title: '客服系统'
@@ -20,11 +20,6 @@ const breadItems = [
   }
 ]
 const { Option } = Select
-const dict = {
-  1: '等待回执',
-  2: '发送失败',
-  3: '发送成功'
-}
 class Sms extends Component {
   constructor(props) {
     super(props)
@@ -57,7 +52,7 @@ class Sms extends Component {
         render: (text, record) => {
           if(record.status == 2) {
             return(
-              <Link target='_blank' to={`https://doc.alidayu.com/doc2/detail.htm?spm=0.0.0.0.RXMbE8&treeId=136&articleId=104495&docType=1`}>{ dict[record.status] || '-' }</Link>
+              <Link target='_blank' to={`https://doc.alidayu.com/doc2/detail.htm?spm=0.0.0.0.RXMbE8&treeId=136&articleId=104495&docType=1`}>{ dict.sms[record.status] || '-' }</Link>
             )
           }
           return(

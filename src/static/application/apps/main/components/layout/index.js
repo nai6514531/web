@@ -62,7 +62,7 @@ class Wrapper extends React.Component {
       return null
     }
     return (
-      <Layout>
+      <Layout style={{ overflow: 'hidden' }}>
         <Sider
           className='side'
           collapsible
@@ -71,7 +71,6 @@ class Wrapper extends React.Component {
           >
           <div className={logoWrap}><Link to='/admin' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link></div>
           <SideBar
-            style={{ overflow: 'auto' }}
             {...this.props}
             mode={mode}
             fold={fold}

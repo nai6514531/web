@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import adPositionService from '../../../services/advertisement/ad-position.js'
-import applicationService from '../../../services/platform/application.js'
+import adService from '../../../services/soda-manager/ad.js'
+import applicationService from '../../../services/soda-manager/application.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -25,7 +25,7 @@ export default {
   },
   effects: {
     *list({ payload = {} }, { call, put }) {
-      const result = yield call(adPositionService.list, payload.data)
+      const result = yield call(adService.adPositionList, payload.data)
       yield put({ type: 'appList' })
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
@@ -35,7 +35,7 @@ export default {
     },
     *update({ payload }, { call, put }) {
       const { data, id, history } = payload
-      const result = yield call(adPositionService.update, id, data)
+      const result = yield call(adService.adPositionUpdate, id, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         history.goBack()
@@ -44,7 +44,7 @@ export default {
       }
     },
     *detail({ payload: { id } }, { call, put }) {
-      const result = yield call(adPositionService.detail, id)
+      const result = yield call(adService.adPositionDetail, id)
       yield put({ type: 'appList' })
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { detail: result.data } })
@@ -62,7 +62,7 @@ export default {
     },
     *add({ payload }, { call, put }) {
       const { data, history } = payload
-      const result = yield call(adPositionService.add, data)
+      const result = yield call(adService.adPositionAdd, data)
       if(result.status == 'OK') {
         message.success('添加成功')
         history.goBack()
@@ -71,7 +71,7 @@ export default {
       }
     },
     *delete({ payload: { id, data } }, { call, put }) {
-      const result = yield call(adPositionService.delete, id)
+      const result = yield call(adService.adPositionDelete, id)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({

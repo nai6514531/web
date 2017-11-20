@@ -10,6 +10,7 @@ import moment from 'moment'
 import history from '../../../utils/history.js'
 import styles from './index.pcss'
 import DatePicker from '../../../components/date-picker/'
+import dict from '../../../utils/dict.js'
 import { trim } from 'lodash'
 
 const breadItems = [
@@ -21,13 +22,6 @@ const breadItems = [
   }
 ]
 const { Option } = Select
-
-const dict = {
-  '1' : 'firstPulseName',
-  '2' : 'secondPulseName',
-  '3' : 'thirdPulseName',
-  '4' : 'fourthPulseName',
-}
 
 class Consume extends Component {
   constructor(props) {
@@ -57,7 +51,7 @@ class Consume extends Component {
         width: 50,
         render: (text, record) => {
           return (
-            record.device[dict[record.deviceMode]]
+            record.device[dict.device[record.deviceMode]]
           )
         }
       },

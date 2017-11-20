@@ -1,7 +1,6 @@
 import { message } from 'antd'
-import operatorService from '../../../../../services/crm/search/operator.js'
-import deviceService from '../../../../../services/crm/device.js'
-import commonService from '../../../../../services/common/'
+import userService from '../../../../../services/soda-manager/user.js' 
+import deviceService from '../../../../../services/soda-manager/device.js' 
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -37,10 +36,10 @@ export default {
   },
   effects: {
     *detail({ payload: { data } }, { call, put }) {
-      const result = yield call(operatorService.detail, data)
+      const result = yield call(userService.detail, data)
       if(result.status == 'OK') {
         const deviceInfo = yield call(deviceService.list, { userId: result.data.id })
-        const accountInfo = yield call(commonService.cashAccount, { userId: result.data.id })
+        const accountInfo = yield call(userService.cashAccount, { userId: result.data.id })
 
         if(deviceInfo.status == 'OK') {
           result.data.deviceCount = deviceInfo.data.pagination.total
@@ -66,7 +65,7 @@ export default {
       }
     },
     *updatePassword({ payload: { data: { id, password } }}, { call, put }) {
-      const result = yield call(operatorService.updatePassword, id, { password })
+      const result = yield call(userService.updatePassword, id, { password })
       if(result.status == 'OK') {
         message.success('密码修改成功')
         yield put({ type: 'hideModal' })

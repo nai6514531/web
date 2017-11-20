@@ -1,6 +1,7 @@
 import { message } from 'antd'
-import statisticsService from '../../../services/business/statistics.js'
-import commonService from '../../../services/common/index.js'
+import sodaStatisticsService from '../../../services/soda/statistics.js'
+import mngStatisticsService from '../../../services/soda-manager/statistic.js'
+import sodaService from '../../../services/soda/index.js'
 import { cloneDeep } from 'lodash'
 import { transformUrl } from '../../../utils/'
 import _ from 'lodash'
@@ -24,7 +25,7 @@ export default {
   },
   effects: {
     *list({ payload: { type, data } }, { call, put }) {
-      const result = yield call(statisticsService.listByMonth, data)
+      const result = yield call(mngStatisticsService.listByMonth, data)
       if(result.status == 'OK') {
         let total = {}
         result.data.objects.map((value, index) => {
@@ -45,7 +46,7 @@ export default {
       }
     },
     *dayList({ payload: { type, data } }, { call, put }) {
-      const result = yield call(statisticsService.listByDay, data)
+      const result = yield call(mngStatisticsService.listByDay, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
           value.key = index + 1 + Number(data.offset || 0)
@@ -57,7 +58,7 @@ export default {
 
     },
     *listByDates({ payload: { type, data } }, { call, put }) {
-      const result = yield call(statisticsService.listByDates, data)
+      const result = yield call(sodaStatisticsService.listByDates, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
           value.key = index + 1 + Number(data.offset || 0)
@@ -68,7 +69,7 @@ export default {
       }
     },
     *listByDevices({ payload: { type, data } }, { call, put }) {
-      const result = yield call(statisticsService.listByDevices, data)
+      const result = yield call(sodaStatisticsService.listByDevices, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
           value.key = index + 1 + Number(data.offset || 0)
@@ -79,7 +80,7 @@ export default {
       }
     },
     *consumptionsList({ payload: { type, data } }, { call, put }) {
-      const result = yield call(commonService.consumptionsList, data)
+      const result = yield call(sodaService.ticketsList, data)
       if(result.status == 'OK') {
         result.data.objects.map((value, index) => {
           value.key = index + 1 + Number(data.offset || 0)

@@ -6,6 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import RoleModal from './roleModal.js'
 import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
@@ -100,11 +101,6 @@ class User extends Component {
       }
     })
   }
-  hide = () => {
-    this.props.dispatch({
-      type: 'user/hideModal'
-    })
-  }
   show = (id) => {
     this.id = id
     this.props.dispatch({
@@ -127,24 +123,11 @@ class User extends Component {
     history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
-  checkboxChange = (values) => {
-    this.checkList = values
-  }
-  handleSubmit = () => {
-    this.props.dispatch({
-      type: 'user/updateRoles',
-      payload: {
-        id: this.id,
-        data: this.checkList
-      }
-    })
-  }
   change = (url) => {
    this.fetch(url)
   }
   render() {
-    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, currentRole, key, visible }, loading  } = this.props
-    this.checkList = currentRole
+    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, key, visible }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -194,29 +177,7 @@ class User extends Component {
           pagination={pagination}
           change={this.change}
         />
-        <Modal
-          title='配置角色'
-          visible={visible}
-          onCancel={this.hide}
-          onOk={this.handleSubmit}
-          key={key}
-         >
-          <Row>
-            <Checkbox.Group onChange={this.checkboxChange} defaultValue={currentRole}>
-            {
-              roleData.map((item, index) => {
-                return(
-                  <Col span={8} key={index}>
-                      <Checkbox value={item.id} >
-                        {item.name}
-                      </Checkbox>
-                  </Col>
-                )
-              })
-            }
-            </Checkbox.Group>
-          </Row>
-        </Modal>
+        { visible ? <RoleModal {...this.props} id={this.id}/> : null }
       </div>
     )
   }

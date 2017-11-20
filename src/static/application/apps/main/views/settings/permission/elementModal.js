@@ -12,7 +12,7 @@ const formItemLayout = {
 class ElementModal extends Component {
   constructor(props) {
     super(props)
-    this.checkList = []
+    this.checkList = this.props.permission.currentData
   }
   hide = () => {
     this.props.dispatch({
@@ -35,7 +35,6 @@ class ElementModal extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, permission: { elementData, elementVisible, key, currentData } } = this.props
-    this.checkList = currentData
     return(
       <Modal
         title='配置元素'

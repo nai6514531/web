@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import smsService from '../../../services/crm/sms.js'
+import commonService from '../../../services/common.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -23,7 +23,7 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(smsService.list, data)
+      const result = yield call(commonService.smsList, data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

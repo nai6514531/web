@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import elementService from '../../services/settings/element'
+import elementService from '../../services/soda-manager/element.js'
 import { cloneDeep } from 'lodash'
 
 const model = {

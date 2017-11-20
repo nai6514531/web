@@ -156,7 +156,7 @@ class Customer extends Component {
                   <h1>基本信息</h1>
               </div>
               <div className={styles['sub-card']}>
-                <Avatar className={styles.avatar} src={data.avatar} />
+                <Avatar className={styles.avatar} src={data.avatorUrl} />
                 <div className={styles['text-wrapper']}>
                   <h2>{data.nickName}</h2>
                   <div className={styles['card-item']}>

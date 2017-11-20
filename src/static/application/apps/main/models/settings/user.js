@@ -1,6 +1,7 @@
 import { message } from 'antd'
-import userService from '../../services/settings/user.js'
-import roleService from '../../services/settings/role.js'
+import userService from '../../services/soda-manager/user.js'
+import roleService from '../../services/soda-manager/role.js'
+import commonService from '../../services/common.js'
 import { storage, session } from '../../utils/storage.js'
 import { cloneDeep } from 'lodash'
 
@@ -116,7 +117,7 @@ export default {
       }
     },
     *reset({ payload }, { call, put }) {
-      const result = yield call(userService.reset, payload.data)
+      const result = yield call(commonService.reset, payload.data)
       if(result.status == 'OK') {
         message.success('重置密码成功')
         storage.clear('token')
