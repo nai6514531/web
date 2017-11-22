@@ -2,11 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-<<<<<<< HEAD
-import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input,Popconfirm } from 'antd'
-=======
 import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popconfirm } from 'antd'
->>>>>>> feature/reroute
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import history from '../../../../utils/history.js'
