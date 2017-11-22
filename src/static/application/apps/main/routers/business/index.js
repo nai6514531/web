@@ -13,6 +13,16 @@ import DeviceSearchByDay from 'bundle-loader?lazy!../../views/business/statistic
 import ConsumeSearch from 'bundle-loader?lazy!../../views/business/consume/'
 import ConsumeSearchModel from 'bundle-loader?lazy!../../models/business/consume/'
 
+import bill from 'bundle-loader?lazy!../../views/business/bill'
+import billDetailList from 'bundle-loader?lazy!../../views/business/bill/detail'
+import dailyBill from 'bundle-loader?lazy!../../views/business/daily-bill'
+import dailyDetailBill from 'bundle-loader?lazy!../../views/business/daily-bill/detail'
+import account from 'bundle-loader?lazy!../../views/business/account'
+import accountEdit from 'bundle-loader?lazy!../../views/business/account/edit'
+
+import chipcardDetail from 'bundle-loader?lazy!../../views/business/chipcard/detail'
+import chipcardRechargeList from 'bundle-loader?lazy!../../views/business/chipcard'
+
 export default function (history, app) {
   return (
     <Switch>
@@ -22,6 +32,18 @@ export default function (history, app) {
       <Route exact path='/business/statistics/consume/:month/:day/:deviceSerial' component={getComponent(ConsumeSearchDayDevice,app,BusinessStatisticsModel)} />
       <Route exact path='/business/statistics/device/:month/:deviceSerial' component={getComponent(DeviceSearchByDay,app,BusinessStatisticsModel)} />
       <Route exact path='/business/consume-search' component={getComponent(ConsumeSearch,app,ConsumeSearchModel)} />
+
+      <Route path='/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
+      <Route path='/business/account/add' component={getComponent(accountEdit,　app)} />
+      <Route path='/business/account' component={getComponent(account,　app)} />
+      <Route path='/business/bill/:id' component={getComponent(billDetailList,　app)} />
+      <Route path='/business/bill' component={getComponent(bill,　app)} />
+      <Route path='/business/bill/detail' component={getComponent(bill,　app)} />
+      <Route path='/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
+      <Route path='/business/daily-bill' component={getComponent(dailyBill,　app)} />
+
+      <Route path='/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
+      <Route path='/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
     </Switch>
   )
 }

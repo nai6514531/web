@@ -27,6 +27,17 @@ const userService = {
   },
   cashAccount: (data) => {
     return request.get(`/mng/cash-accounts/${data.userId}`)
+  },
+  updateCashAccount: (options) => {
+    return request.put(`/mng/users/${options.id}/cash-accounts`, options)
+  },
+  GetDetailWithCashAccount: (options) => {
+    return request.get(`/mng/users/${options.id}/cash-accounts`)
+  },
+  getDetailWithDevice: (options) => {
+    return request.get(`/mng/business/device`, {
+      params: options
+    })
   }
 }
 export default userService

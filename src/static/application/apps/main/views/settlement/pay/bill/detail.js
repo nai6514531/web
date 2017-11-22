@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import Promise from 'bluebird'
 import moment from 'moment'
 import querystring from 'querystring'
-import dailyBillsService from '../../../../services/daily-bills'
 import { Table, message} from 'antd'
+
+import dailyBillsService from '../../../../services/soda-manager/daily-bills'
 
 import history from '../../../../utils/history'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
@@ -74,10 +75,10 @@ class App extends Component {
         dataIndex: 'id'
       },
       {
-        title: '设备编号／楼道信息',
+        title: '设备编号/楼道信息',
         dataIndex: 'device',
         render: (device) => {
-          return `${device.serial}／${device.address}`
+          return `${device.serial}/${device.serial}`
         }
       },
       {
@@ -109,7 +110,6 @@ class App extends Component {
           return `${user.mobile}`
         }
       },
-     
       {
         title: '下单时间',
         dataIndex: 'createdAt',
@@ -127,7 +127,6 @@ class App extends Component {
       {
         title: '是否结算',
         dataIndex: 'hasSettled',
-        key: 'operation',
         render: (hasSettled) => {
           return hasSettled ? '是' : '否'
         }
@@ -143,9 +142,9 @@ class App extends Component {
   getDailyBillsDetail({ ...options }) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
     const id = this.props.match.params.id
-    const search = _.extend({id: id}, pagination)
+    const search = _.extend({billId: id}, pagination)
     this.setState({ loading: true })
-    dailyBillsService.getDetail(search).then((res) => {
+    dailyBillsService.list(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }

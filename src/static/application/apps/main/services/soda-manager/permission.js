@@ -38,6 +38,9 @@ const permissionService = {
   },
   updateAction: (data, id) => {
     return request.put(`/mng/permissions/${id}/actions`, data)
-  }
+  },
+  getRecharge: () => {
+    return request.get(`/mng/chipcard/permissions/recharge`)
+  },
 }
 export default permissionService

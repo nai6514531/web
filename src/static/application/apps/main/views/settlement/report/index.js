@@ -5,10 +5,10 @@ import moment from 'moment'
 import _ from 'underscore'
 import querystring from 'querystring'
 
-import billsService from '../../../services/bills'
-import dailyBillsService from '../../../services/daily-bills'
+import billsService from '../../../services/soda-manager/bills'
+import dailyBillsService from '../../../services/soda-manager/daily-bills'
 import walletService from '../../../services/soda/wallet'
-import settlementService from '../../../services/settlement'
+import settlementService from '../../../services/soda-manager/settlement'
 import history from '../../../utils/history'
 
 import { Button, Modal, Form, Table, Input , DatePicker, message, Icon } from 'antd'
@@ -52,8 +52,8 @@ class App extends Component {
       loading: false,
       searchLoading: false,
       exportLoading: false,
-      totalUnsettledBill: 0,
-      totalWalletValue: 0
+      totalUnsettledBill: '?',
+      totalWalletValue: '?'
     }
     this.columns = [
       {
@@ -153,12 +153,12 @@ class App extends Component {
 
   }
   getTotalUnsettledBill(){
-    dailyBillsService.getTotalUnsettledBill().then((res)=>{
+    dailyBillsService.getTotalUnsettledBill().then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       this.setState({
-        totalUnsettledBill:res.data
+        totalUnsettledBill: res.data
       })
     }).catch((err) => {
       message.error(err.message || '服务器异常，刷新重试')

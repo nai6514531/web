@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 const settlementService = {
   pay: (data) => {
@@ -10,6 +10,9 @@ const settlementService = {
     return request.get(`/settlement`, {
     	params: data
     })
+  },
+  getDetail: (data) => {
+    return request.get(`/mng/settlement/detail`)
   },
   export: (options) => {
     return request.post(`/settlement/actions/export`, {

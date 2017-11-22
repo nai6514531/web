@@ -5,8 +5,8 @@ import moment from 'moment'
 import _ from 'underscore'
 import querystring from 'querystring'
 
-import billsService from '../../../services/bills'
-import settlementService from '../../../services/settlement'
+import billsService from '../../../services/soda-manager/bills'
+import settlementService from '../../../services/soda-manager/settlement'
 import history from '../../../utils/history'
 
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message, Icon } from 'antd'
@@ -74,6 +74,7 @@ class App extends Component {
       exportLoading: false,
       alipayConfirmShow: false,
       selectedPayLoading: false,
+      endOpen: false,
       selectedRowKeys: [],
       payConfirmShow: false,
       confirmPay: {
@@ -101,16 +102,16 @@ class App extends Component {
       },
       {
         title: '收款账号',
-        dataIndex: 'account',
+        dataIndex: 'cashAccount',
         width: 130,
-        render: (account, record) => {
+        render: (cashAccount, record) => {
           if (!!~[1].indexOf(account.type)) {
             return _.template([
               '<%- realName %>',
-              '账号：<%- name %>'
+              '账号：<%- account %>'
               ].join(' | '))({
-                realName: account.realName,
-                name: account.name || '-'
+                realName: cashAccount.realName,
+                account: cashAccount.account || '-'
               })
           }
           if (!!~[2].indexOf(account.type)) {
@@ -118,8 +119,8 @@ class App extends Component {
               '<%- realName %>',
               ].join(' | '))({
                 nickName: record.user.nickName || '-',
-                realName: account.realName,
-                name: account.name || '-'
+                realName: cashAccount.realName,
+                account: cashAccount.account || '-'
               })
           }
           return '-'
@@ -235,7 +236,7 @@ class App extends Component {
 
     this.setState({searchLoading: true, loading: true})
 
-    billsService.get({...search, ...pagination}).then((res) => {
+    billsService.list({...search, ...pagination}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }

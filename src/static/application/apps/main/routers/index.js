@@ -50,6 +50,11 @@ function RouterConfig({ history, app }) {
             { crm(history, app) }
           </Layout>
         )}/>
+        <Route path='/business' render={ props => (
+          <Layout>
+            { business(history, app) }
+          </Layout>
+        )}/>
 
         <Route path='/business' render={ props => (
           <Layout>

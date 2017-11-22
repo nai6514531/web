@@ -12,7 +12,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'
   },
-  withCredentials: true,
   timeout: 1000 * 60 * 5,
   transformRequest: [(data) => {
     NProgress.start()
@@ -34,6 +33,7 @@ const api = axios.create({
 
 api.interceptors.request.use(function (config) {
   config.headers.Authorization = 'Bearer ' + (storage.val('token') || '')
+  config.withCredentials = !!~config.url.indexOf('http') ? false : true
   var timestamp = new Date().getTime()
   if (config.url.indexOf('?') > 0) {
     config.url = config.url + `&_t=${timestamp}`

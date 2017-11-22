@@ -5,7 +5,7 @@ import querystring from 'querystring'
 
 import history from '../../../../utils/history'
 
-import billsService from '../../../../services/bills'
+import dailyBillsService from '../../../../services/soda-manager/daily-bills'
 import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
 const { RangePicker } = DatePicker
 const { Option } = Select
@@ -100,17 +100,16 @@ class App extends Component {
       },
       {
         title: '帐户信息',
-        dataIndex: 'account',
-        key: 'account.id',
+        dataIndex: 'cashAccount',
         render: (account, record) => {
           if (!!~[1].indexOf(account.type)) {
             return _.template([
               '<%- realName %>',
-              '账号：<%- name %>',
+              '账号：<%- account %>',
               '手机号：<%- mobile %>'
               ].join(' | '))({
-                realName: account.realName,
-                name: account.name || '-',
+                realName: cashAccount.realName,
+                account: cashAccount.account || '-',
                 mobile: record.mobile || '-'
               })
           } 
@@ -118,9 +117,7 @@ class App extends Component {
             return _.template([
               '<%- realName %>',
               ].join(' | '))({
-                realName: account.realName,
-                name: account.name || '-',
-                mobile: record.mobile || '-'
+                realName: cashAccount.realName
               })
           } 
           return '-'
@@ -164,11 +161,12 @@ class App extends Component {
     const search = _.extend({id: id }, pagination)
 
     this.setState({ loading: true })
-    billsService.getDetail(search).then((res) => {
+    dailyBillsService.list(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       const data = res.data
+      console.log(data)
       this.setState({
         bills: data.objects, 
         pagination: {

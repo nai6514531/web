@@ -1,0 +1,111 @@
+.view {
+  h2 {
+    padding-left: 10px;
+    border-left: 3px solid #49a9ee;
+    margin-bottom: 10px
+  }
+  .info {
+    margin-bottom: 20px;
+    button {
+      margin: 5px 15px 10px 0
+    }
+    .amount {
+      font-size: 20px;
+      font-weight: bold;
+      width: 90px;
+      display: inline-block;
+      color: #000
+    }
+    .panelLeft {
+      padding: 20px 50px 20px 20px
+    }
+    @media (min-width:1200px) {
+      .panelLeft {
+        border-right: 1px #e4e0e0 dashed
+      }
+    }
+    @media (max-width:1200px) {
+      .panelLeft {
+        border-bottom: 1px #e4e0e0 dashed;
+        padding-bottom: 20px
+      }
+    }
+    .colorBlue {
+      color: #49a9ee
+    }
+    .colorRed {
+      color: #de0f0f
+    }
+    .cashAccount {
+      padding: 20px 50px 20px 50px;
+      line-height: 20px;
+      .hidden {
+        display: none
+      }
+    }
+    @media (max-width:1200px) {
+      .cashAccount {
+        padding-top: 20px;
+        padding-left: 20px
+      }
+    }
+  }
+  .rule {
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #49a9ee;
+  }
+}
+.confimTip {
+  font-size: 14px;
+  span {
+    color: #ea1304 !important;
+    font-style: normal;
+    margin: 0 3px
+  }
+}
+.hidden {
+  display: none;
+}
+.status {
+  i {
+    font-style: normal;
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 5px;
+    &.waiting {
+      background-color: #1890ff;
+    }
+    &.success {
+      background-color: #52c41a;
+    }
+    &.paying {
+      background-color: #1890ff;
+    }
+    &.fail {
+      background-color: #f5222d;
+    }
+    &.failIcon {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+  }
+}
+.list {
+  .tip {
+    margin-top: 20px
+  }
+}
+.detail {
+  .tip {
+    font-size: 14px;
+    padding-left: 15px;
+    span {
+      color: #1890ff;
+      margin: 0 5px
+    }
+  }
+}
