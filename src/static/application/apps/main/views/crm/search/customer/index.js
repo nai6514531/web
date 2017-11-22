@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input } from 'antd'
+import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popconfirm } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import history from '../../../../utils/history.js'
@@ -84,6 +84,14 @@ class Customer extends Component {
   show = (record) => {
     this.props.dispatch({
       type: 'crmCustomer/showModal'
+    })
+  }
+  resetValue(mobile){
+    this.props.dispatch({
+      type: 'crmCustomer/resetValue',
+      payload: {
+        data: mobile
+      }
     })
   }
   showConfirm = (values) => {
@@ -171,7 +179,16 @@ class Customer extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>账户余额:</span><span className={styles.description}>{ (data.wallet && data.wallet.value >= 0) ? (data.wallet.value / 100).toFixed(2) : '-'}</span><Link to={`/crm/${data.mobile}/bill`}>明细</Link></div>
+                  <div>
+                    <span className={styles.title}>账户余额:</span>
+                    <span className={styles.description}>{ (data.wallet && data.wallet.value >= 0) ? (data.wallet.value / 100).toFixed(2) : '-'}</span>
+                    <Link to={`/crm/${data.mobile}/bill`}>明细</Link>
+                    <span className={styles.resetValue}>
+                      <Popconfirm title={`确认将用户 ${data.mobile} 账户余额清零吗?`} onConfirm={ this.resetValue.bind(this,data.mobile) } >
+                        <Button type='danger' size='small'>清零</Button>
+                      </Popconfirm>
+                    </span>
+                  </div>
                   <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span><Link to={`/crm/${data.mobile}/chipcard`}>明细</Link></div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>
