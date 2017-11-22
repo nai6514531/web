@@ -146,7 +146,6 @@ class AdConfig extends Component {
       }
     })
     if(type === 'appId') {
-      console.log('value',value)
       delete this.search.adPositionId
       this.props.dispatch({
         type: 'common/updateSearch',

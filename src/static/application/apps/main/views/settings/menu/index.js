@@ -125,7 +125,6 @@ class Menu extends Component {
     }
   }
   onDragEnter = (info) => {
-    // console.log(info)
     // expandedKeys 需要受控时设置
     // this.setState({
     //   expandedKeys: info.expandedKeys,
