@@ -77,5 +77,19 @@ export default {
         message.error(result.message)
       }
     },
+    *resetValue({ payload }, { call, put }) {
+      const result = yield call(sodaService.resetWallet, payload.data )
+      if(result.status == 'OK') {
+        message.success('钱包清零成功')
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.data
+          }
+        })
+      } else {
+        message.error(result.message)
+      }
+    }
   }
 }

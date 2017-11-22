@@ -255,7 +255,6 @@ class DeviceStatistics extends Component {
       startAt = ''
       endAt = ''
     }
-    console.log('this.search',this.search)
     const data = {
        ...this.search,
       startAt,
