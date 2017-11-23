@@ -36,7 +36,7 @@ const sodaService = {
     return request.put(`/soda/users/${mobile}/password`,data)
   },
   resetWallet: (mobile) => {
-    return request.put(`/soda/wallet/${mobile}/reset`)
+    return request.put(`/soda/wallets/${mobile}/reset`)
   },
 }
 export default sodaService
