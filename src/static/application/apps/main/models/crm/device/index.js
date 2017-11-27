@@ -6,6 +6,9 @@ const model = {
   data: {
     objects: []
   },
+  detail: {
+    objects: []
+  },
   selectedRowKeys: []
 }
 
@@ -24,27 +27,15 @@ export default {
     *list({ payload: { data } }, { call, put }) {
       const result = yield call(deviceService.list, data)
       if(result.status == 'OK') {
-        let showError = true
-        yield* result.data.objects.map(function* (value, index) {
-          const operations = yield call(deviceService.operations, {
-            serialNumber: value.serialNumber,
-            limit: 1,
-            type: '1,4'
-          })
-
-          if(operations.status == 'OK') {
-            const operatorInfo = operations.data.objects[0]
-            if(operatorInfo) {
-              result.data.objects[index].assigner = operatorInfo.operator.name
-              result.data.objects[index].assignerMobile = operatorInfo.operator.mobile
-            }
-          } else {
-            showError && message.error(operations.message)
-            showError = false
-          }
-
-        })
         yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *detail({ payload }, { call, put }) {
+      const result = yield call(deviceService.operations, payload.data)
+      if(result.status == 'OK') {
+        yield put({ type: 'updateData', payload: { detail: result.data } })
       } else {
         message.error(result.message)
       }
