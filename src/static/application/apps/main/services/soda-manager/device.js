@@ -10,7 +10,7 @@ const deviceService = {
     return request.get(url)
   },
   operations: (data) => {
-    let url = `/mng/operations/devices?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type}&serialNumber=${data.serialNumber}`
+    let url = `/mng/operations/devices?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
     return request.get(url)
   },
   reset: (id) => {

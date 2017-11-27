@@ -32,15 +32,15 @@ class Device extends Component {
     this.columns = [
       { title: '模块号', dataIndex: 'serialNumber', key: 'serialNumber', width: 100 },
       // { title: '经销商', dataIndex: '',key: '' },
-      {
-        title: '分配人',
-        width: 200,
-        render: (record) => {
-          return (
-            `${record.assigner || '-'}(${record.assignerMobile || '-'})`
-          )
-        }
-      },
+      // {
+      //   title: '分配人',
+      //   width: 200,
+      //   render: (record) => {
+      //     return (
+      //       `${record.assigner || '-'}(${record.assignerMobile || '-'})`
+      //     )
+      //   }
+      // },
       {
         title: '运营商',
         width: 150,
@@ -104,6 +104,7 @@ class Device extends Component {
         render: (text, record, index) => {
           let action = '/'
           const status = record.status.value
+          const { keywords, deviceSerial } = this.search
           if(status == 9) {
             action = <Popconfirm title='确认取消锁定吗?' onConfirm={this.changeStatus.bind(this, record.id, 0)}>
               <a href='javascript:void(0)'>取消锁定</a>
@@ -127,6 +128,7 @@ class Device extends Component {
               <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.id])}>
                 <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
               </Popconfirm>
+              <Link to={`/crm/device/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
             </span>
           )
         }
