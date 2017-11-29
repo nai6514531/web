@@ -17,6 +17,8 @@ body {
 @media (min-width: 768px) {
   .side {
     height: 100vh;
+  }
+  .unfold-side {
     overflow: scroll;
   }
   .side::-webkit-scrollbar {
