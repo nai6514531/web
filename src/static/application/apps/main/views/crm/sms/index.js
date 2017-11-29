@@ -33,7 +33,7 @@ class Sms extends Component {
         dataIndex: 'receivedAt',
         key: 'receivedAt',
         render: (text, record) => {
-          return`${moment(record.receivedAt).format('YYYY-MM-DD HH:mm:ss')}`
+          return`${moment(record.receivedAt).utc().format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       {
@@ -41,7 +41,7 @@ class Sms extends Component {
         dataIndex: 'sendedAt',
         key: 'sendedAt',
         render: (text, record) => {
-          return`${moment(record.sendedAt).format('YYYY-MM-DD HH:mm:ss')}`
+          return`${moment(record.sendedAt).utc().format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       { title: '错误码', dataIndex: 'code', key: 'code' },

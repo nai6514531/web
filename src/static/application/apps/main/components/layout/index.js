@@ -44,9 +44,15 @@ class Wrapper extends React.Component {
   }
   render() {
     const { common: { fold, navOpenKeys, userInfo, selectedKeys }, dispatch } = this.props
+    const mode = fold ? 'vertical' : 'inline'
+    const imageUrl = fold ? require('../../assets/favicon.png') : require('../../assets/logo.png')
     const wrapper = classNames('wrapper',{
       'wrapper-fold': !fold,
       'wrapper-unfold': fold
+    })
+    const sideWrap = classNames({
+      'side': true,
+      'unfold-side': !fold
     })
     const logo = classNames({
       'logo': !fold,
@@ -56,15 +62,13 @@ class Wrapper extends React.Component {
       'fold-logo-wrap': fold,
       'logo-wrap': !fold
     })
-    const mode = fold ? 'vertical' : 'inline'
-    const imageUrl = fold ? require('../../assets/favicon.png') : require('../../assets/logo.png')
     if(!userInfo.user) {
       return null
     }
     return (
       <Layout style={{ overflow: 'hidden' }}>
         <Sider
-          className='side'
+          className={sideWrap}
           collapsible
           collapsed={fold}
           trigger={null}

@@ -32,8 +32,8 @@ class DeviceDetail extends Component {
         title: '说明',
         render: (record) => {
             const { operator, operatorType, toUser } = record
-            let operatorText = <span style={{color: '#108ee9'}}>{operator.name || '-'}</span>
-            let userText = <span style={{color: '#108ee9'}}>{toUser.name || '-'}</span>
+            let operatorText = <span style={{color: '#108ee9'}}> { operator.name || '-' } </span>
+            let userText = <span style={{color: '#108ee9'}}> { toUser.name || '-' } </span>
             let description = ''
             switch (operatorType.value) {
                 case 1:
@@ -57,9 +57,6 @@ class DeviceDetail extends Component {
                 default:
                     break;
             }
-            // if(operatorType.value === 1) {
-            //     1:返厂 2:更新设备 3:新增设备 4:分配设备 5:删除设备 6:批量更新设备 
-            // }
             return(
                 description
             )
