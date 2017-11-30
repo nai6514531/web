@@ -37,7 +37,7 @@ class DeviceDetail extends Component {
             let description = ''
             switch (operatorType.value) {
                 case 1:
-                    description = <span>设备被{operatorText}删除,返回测试员账号</span>
+                    description = <span>设备被{operatorText}删除，返回测试员账号</span>
                     break;
                 case 2:
                 description = <span>设备信息被{operatorText}更新</span>
