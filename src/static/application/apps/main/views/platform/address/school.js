@@ -110,9 +110,15 @@ class School extends Component {
         const id = this.props.school.record.id
         const url = transformUrl(location.search)
         let type = 'school/add'
+
         if(id) {
           type = 'school/update'
         }
+
+        values.provinceId = Number(values.provinceId)
+        values.cityId = Number(values.cityId)
+        values.districtId = Number(values.districtId)
+
         this.props.dispatch({
           type: type,
           payload: { data: values, id, url }

@@ -37,6 +37,10 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(addressService.cityList, payload.data)
       if(result.status == 'OK') {
+        result.data.objects.map(value => {
+          value.id = String(value.id || '')
+          value.provinceId = String(value.provinceId || '')
+        })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)
@@ -45,6 +49,9 @@ export default {
     *provinceList({ payload }, { call, put }) {
       const result = yield call(addressService.provinceList, {}, true)
       if(result.status == 'OK') {
+        result.data.objects.map(value => {
+          value.id = String(value.id || '')
+        })
         yield put({ type: 'updateData', payload: { provinceData: result.data.objects } })
       } else {
         message.error(result.message)

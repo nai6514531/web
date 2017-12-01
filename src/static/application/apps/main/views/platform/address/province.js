@@ -70,6 +70,7 @@ class Province extends Component {
         if(id) {
           type = 'province/update'
         }
+        values.id = Number(values.id)
         this.props.dispatch({
           type: type,
           payload: { data: values, id }
