@@ -110,9 +110,16 @@ class Street extends Component {
         const id = this.props.street.record.id
         const url = transformUrl(location.search)
         let type = 'street/add'
+
         if(id) {
           type = 'street/update'
         }
+
+        values.id = Number(values.id)
+        values.provinceId = Number(values.provinceId)
+        values.cityId = Number(values.cityId)
+        values.districtId = Number(values.districtId)
+
         this.props.dispatch({
           type: type,
           payload: { data: values, id, url }

@@ -98,9 +98,15 @@ class District extends Component {
         const id = this.props.district.record.id
         const url = transformUrl(location.search)
         let type = 'district/add'
+
         if(id) {
           type = 'district/update'
         }
+        values.id = Number(values.id)
+        values.provinceId = Number(values.provinceId)
+        values.cityId = Number(values.cityId)
+        values.districtId = Number(values.districtId)
+
         this.props.dispatch({
           type: type,
           payload: { data: values, id, url }

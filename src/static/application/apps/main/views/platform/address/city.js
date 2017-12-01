@@ -89,6 +89,8 @@ class City extends Component {
         if(id) {
           type = 'city/update'
         }
+        values.id = Number(values.id)
+        values.provinceId = Number(values.provinceId)
         this.props.dispatch({
           type: type,
           payload: { data: values, id, url }
@@ -242,7 +244,7 @@ class City extends Component {
                 rules: [{
                   required: true, message: '请选择省',
                 }],
-                initialValue: record.provinceId !== undefined ? record.provinceId + '' : undefined
+                initialValue: record.provinceId !== undefined ? record.provinceId : undefined
               })(
                 <Select
                   allowClear
