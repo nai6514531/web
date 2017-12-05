@@ -3,25 +3,25 @@ const actionService = {
   list: (data) => {
     let url
     if(!data) {
-      url = `/mng/actions`
+      url = `/mng/apis`
     } else if(data.noPagination) {
-      url = `/mng/actions?handlerName=${data.handlerName || ''}&method=${data.method || ''}`
+      url = `/mng/apis?key=${data.key || ''}&name=${data.name || ''}`
     } else {
-      url = `/mng/actions?offset=${data.offset || 0 }&limit=${data.limit || 10 }&handlerName=${data.handlerName || ''}&method=${data.method || ''}`
+      url = `/mng/apis?offset=${data.offset || 0 }&limit=${data.limit || 10 }&key=${data.key || ''}&name=${data.name || ''}`
     }
     return request.get(url)
   },
   update: (data, id) => {
-    return request.put(`/mng/actions/${id}`, data)
+    return request.put(`/mng/apis/${id}`, data)
   },
   add: (data) => {
-    return request.post(`/mng/actions`, data)
+    return request.post(`/mng/apis`, data)
   },
   detail: (id) => {
-    return request.get(`/mng/actions/${id}`)
+    return request.get(`/mng/apis/${id}`)
   },
   delete: (id) => {
-    return request.delete(`/mng/actions/${id}`)
+    return request.delete(`/mng/apis/${id}`)
   },
 }
 export default actionService

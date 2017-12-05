@@ -36,24 +36,24 @@ class Action extends Component {
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '控制器名称', dataIndex: 'handlerName',key: 'handlerName' },
-      { title: 'api', dataIndex: 'api',key: 'api' },
+      { title: 'key', dataIndex: 'key',key: 'key' },
+      { title: '控制器名称', dataIndex: 'name',key: 'name' },
+      { title: 'path', dataIndex: 'path',key: 'path' },
       { title: '请求方法', dataIndex: 'method',key: 'method' },
-      { title: '描述', dataIndex: 'description',key: 'description' },
-      {
-        title: '操作',
-        key: 'operation',
-        render: (text, record, index) => {
-          return (
-            <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除</a>
-              </Popconfirm>
-            </span>
-          )
-        }
-      }
+      // {
+      //   title: '操作',
+      //   key: 'operation',
+      //   render: (text, record, index) => {
+      //     return (
+      //       <span>
+      //         <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
+      //         <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+      //           <a href='javascript:void(0)'>{'\u00A0'}删除</a>
+      //         </Popconfirm>
+      //       </span>
+      //     )
+      //   }
+      // }
     ]
   }
   componentDidMount() {
@@ -131,16 +131,16 @@ class Action extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Input
-          placeholder='请输入控制器名称关键字'
+          placeholder='key'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'handlerName')}
+          onChange={this.changeHandler.bind(this, 'key')}
           onPressEnter={this.searchClick}
-          defaultValue={this.search.handlerName}
+          defaultValue={this.search.key}
          />
         <Input
-          placeholder='请输入请求方法关键字'
+          placeholder='名称'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'method')}
+          onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.method}
          />
@@ -152,13 +152,13 @@ class Action extends Component {
             >
             搜索
           </Button>
-          <Button
+          {/* <Button
             type='primary'
             onClick={this.show.bind(this,{})}
             style={{marginBottom: '20px', marginRight: 20}}
             >
             添加接口
-          </Button>
+          </Button> */}
         </span>
         <DataTable
           scroll={{ x: 1000 }}
@@ -180,11 +180,11 @@ class Action extends Component {
               {...formItemLayout}
               label='控制器名称'
             >
-              {getFieldDecorator('handlerName', {
+              {getFieldDecorator('key', {
                 rules: [{
                   required: true, message: '请输入控制器名称!',
                 }],
-                initialValue: record.handlerName
+                initialValue: record.key
               })(
                 <Input />
               )}
