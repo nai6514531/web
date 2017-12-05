@@ -22,6 +22,10 @@ import actionModel from 'bundle-loader?lazy!../../models/settings/action.js'
 import Element from 'bundle-loader?lazy!../../views/settings/element'
 import elementModel from 'bundle-loader?lazy!../../models/settings/element.js'
 
+import LoginLog from 'bundle-loader?lazy!../../views/settings/log/login-log.js'
+import ActionLog from 'bundle-loader?lazy!../../views/settings/log/action-log.js'
+import LogModel from 'bundle-loader?lazy!../../models/settings/log.js'
+
 export default function (history, app) {
   return (
     <Switch>
@@ -33,6 +37,8 @@ export default function (history, app) {
       <Route path='/admin/settings/change-password' component={getComponent(Password,app,userModel)} />
       <Route path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
       <Route path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
+      <Route path='/admin/settings/login-logs' component={getComponent(LoginLog,app,LogModel)} />
+      <Route path='/admin/settings/action-logs' component={getComponent(ActionLog,app,LogModel)} />
     </Switch>
   )
 }

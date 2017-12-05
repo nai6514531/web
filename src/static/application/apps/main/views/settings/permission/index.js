@@ -37,8 +37,8 @@ class Permission extends Component {
                 <a href='javascript:void(0)'>{'\u00A0'}删除|</a>
               </Popconfirm>
               <a href='javascript:void(0)' onClick={ this.showMenu.bind(this, record.id) }>{'\u00A0'}配置菜单|</a>
-              <a href='javascript:void(0)' onClick={ this.showElement.bind(this, record.id) }>{'\u00A0'}配置元素|</a>
-              <a href='javascript:void(0)' onClick={ this.showAction.bind(this, record.id) }>{'\u00A0'}配置接口</a>
+              <a href='javascript:void(0)' onClick={ this.showElement.bind(this, record.id) }>{'\u00A0'}配置元素</a>
+              {/* <a href='javascript:void(0)' onClick={ this.showAction.bind(this, record.id) }>{'\u00A0'}配置接口</a> */}
             </span>
           )
         }
@@ -118,7 +118,7 @@ class Permission extends Component {
         />
         <PermissionModal {...this.props}/>
         <MenuModal {...this.props}/>
-        { actionVisible ? <ActionModal {...this.props}/> : null }
+        {/* { actionVisible ? <ActionModal {...this.props}/> : null } */}
         { elementVisible ? <ElementModal {...this.props}/> : null }
       </div>
     )

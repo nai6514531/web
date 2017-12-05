@@ -63,15 +63,15 @@ class ActionModal extends Component {
        >
         <Row>
           <Input
-            placeholder='请输入控制器名称关键字'
+            placeholder='key'
             style={{ width: 200, marginRight: 20, marginTop: 10 }}
-            onChange={this.changeHandler.bind(this, 'handlerName')}
+            onChange={this.changeHandler.bind(this, 'key')}
             onPressEnter={this.searchClick}
            />
           <Input
-            placeholder='请输入请求方法关键字'
+            placeholder='名称'
             style={{ width: 200, marginRight: 20, marginTop: 10 }}
-            onChange={this.changeHandler.bind(this, 'method')}
+            onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
            />
           <Button
@@ -91,13 +91,13 @@ class ActionModal extends Component {
                       <Popover
                         content={
                           <Row>
-                            <Row style={{marginTop:10}}><Col span={5}>控制器名称:</Col><Col span={19}>{item.handlerName}</Col></Row>
-                            <Row style={{marginTop:10}}><Col span={5}>api:</Col>{item.api}</Row>
-                            <Row style={{marginTop:10}}><Col span={5}>请求方法:</Col>{item.method}</Row>
-                            <Row style={{marginTop:10}}><Col span={5}>描述:</Col>{item.description}</Row>
+                            <Row>控制器名称:{item.name}</Row>
+                            <Row>key:{item.key}</Row>
+                            <Row>path:{item.path}</Row>
+                            <Row>请求方法:{item.method}</Row>
                           </Row>
                         }>
-                        {item.description}
+                        {item.name}
                       </Popover>
                     </Checkbox>
                 </Col>

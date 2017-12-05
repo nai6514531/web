@@ -25,7 +25,7 @@ const permissionService = {
     return request.get(`/mng/permissions/${id}/menus`)
   },
   action: (id) => {
-    return request.get(`/mng/permissions/${id}/actions`)
+    return request.get(`/mng/permissions/${id}/apis`)
   },
   element: (id) => {
     return request.get(`/mng/permissions/${id}/elements`)
@@ -37,7 +37,7 @@ const permissionService = {
     return request.put(`/mng/permissions/${id}/elements`, data)
   },
   updateAction: (data, id) => {
-    return request.put(`/mng/permissions/${id}/actions`, data)
+    return request.put(`/mng/permissions/${id}/apis`, data)
   },
   getRecharge: () => {
     return request.get(`/mng/chipcard/permissions/recharge`)
