@@ -18,6 +18,9 @@ const chipcardService = {
   },
   recharge: (options) => {
     return request.put(`/soda/recharges/chipcard`, options)
-  }
+  },
+  getRechargePermission: () => {
+    return request.get(`/mng/chipcard/permissions/recharge`)
+  },
 }
 export default chipcardService

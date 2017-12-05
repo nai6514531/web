@@ -13,6 +13,7 @@ import { Input as ReInput } from '../../../components/form/input'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import ChipcardService from '../../../services/soda-manager/chipcard'
 import history from '../../../utils/history'
+import { conversionUnit } from '../../../utils/functions'
 
 import styles from './index.pcss'
 
@@ -49,10 +50,6 @@ const formItemLayout = {
     xs: { span: 24 },
     sm: { span: 14 },
   },
-}
-
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
 }
 
 class App extends Component {
@@ -227,7 +224,6 @@ class App extends Component {
     let { rechargeLoading } = this.state
 
     validateFieldsAndScroll((err, values) => {
-      console.log(values)
       if (err || rechargeLoading) {
         return
       }

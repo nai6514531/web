@@ -30,6 +30,11 @@ module.exports = _.extend({
     4: '大物洗',
   },
 
+  CONSUME_STATUS: { 
+    4: '已退款',
+    7: '正常',
+  },
+  
   CASH_ACCOUNT_TYPE_IS_ALIPAY: 1,
   CASH_ACCOUNT_TYPE_IS_WECHAT: 2,
   CASH_ACCOUNT_TYPE_IS_BANK: 3,

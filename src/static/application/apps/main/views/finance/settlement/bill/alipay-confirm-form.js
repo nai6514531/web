@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Icon } from 'antd'
+
 import styles from './index.pcss'
 
 class App extends Component {
@@ -7,16 +8,17 @@ class App extends Component {
     super(props)
   }
 	cancel () {
-		this.props.onCancel();
+		this.props.onCancel()
 	}
 	submit () {
 		this.props.changeModalVisible()
 	}
 	inputChange () {
-		
-	}
+             
+  }
 	render () {
 		const payInfo = this.props.payInfo
+
 		return (
 			<form name='alipayment' action={payInfo.request_url + '?_input_charset=' + payInfo._input_charset} method='post' target='_blank'>
       	<div className={styles.hidden}>
@@ -41,4 +43,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default App

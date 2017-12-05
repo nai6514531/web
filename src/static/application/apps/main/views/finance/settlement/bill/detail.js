@@ -1,18 +1,23 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import Promise from 'bluebird'
 import moment from 'moment'
 import querystring from 'querystring'
-import { Table, message} from 'antd'
+import { Table, message } from 'antd'
 
-import dailyBillsService from '../../../../services/soda-manager/daily-bills'
+import DailyBillsService from '../../../../services/soda-manager/daily-bills'
 
 import history from '../../../../utils/history'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
-import styles from '../index.pcss'
+import { conversionUnit } from '../../../../utils/functions'
+
+import Breadcrumb from '../../../../components/layout/breadcrumb'
+
+import CONSTANT from '../../constant'
+
+import styles from './index.pcss'
 
 const BILL_ID = querystring.parse(window.location.search).billId
 const PAEG_SIZE = 10
+console.log('BILL_ID', BILL_ID)
 
 const wechatBreadItems = [
   {
@@ -27,7 +32,7 @@ const wechatBreadItems = [
   },
   {
     title: '账单明细',
-    url: `/finance/settlement/bills/${BILL_ID}?type=wechat`,
+    url: `/finance/settlement/bills/BILL_ID?type=wechat`,
   },
   {
     title: '明细'
@@ -47,15 +52,33 @@ const alipayBreadItems = [
   },
   {
     title: '账单明细',
-    url: `/finance/settlement/bills/${BILL_ID}?type=alipay`,
+    url: `/finance/settlement/bills/BILL_ID?type=alipay`,
   },
   {
     title: '明细'
   }
 ]
-const SERVICE_TYPE = { 1: '单拖', 2: '快洗', 3: '标准', 4: '大物洗' }
-const PAY_TYPE = { 1: '微信', 2: '支付宝', 3: '账户余额', 4: 'IC卡余额' }
-const BILLS_STATUS = { 4: '已退款', 7: '正常' }
+
+class Bread extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render () {
+    let { billId } = querystring.parse(window.location.search) 
+    let { type } = this.props
+    let items = type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems
+    console.log('billId', billId)
+    items = _.map(items, (item) => {
+      if (item.url) {
+        let url = item.url.replace('BILL_ID', billId)
+        return { title: item.title, url: url }
+      }
+      return item
+    })
+
+    return <Breadcrumb items={items} />
+  }
+}
 
 class App extends Component {
   constructor(props) {
@@ -85,7 +108,7 @@ class App extends Component {
         title: '服务类型',
         dataIndex: 'type',
         render: (type) => {
-          return SERVICE_TYPE[type]
+          return CONSTANT.SERVICE_TYPE[type]
         }
       },
       {
@@ -93,14 +116,14 @@ class App extends Component {
         dataIndex: 'pay',
         key:'pay.amount',
         render: (pay) => {
-          return `${pay.amount/100}元`
+          return `${conversionUnit(pay.amount)}元`
         }
       },
       {
         title: '支付方式',
         dataIndex: 'pay',
         render: (pay) => {
-          return PAY_TYPE[pay.type] || '-'
+          return CONSTANT.CASH_ACCOUNT_TYPE[pay.type] || '-'
         }
       },
       {
@@ -121,7 +144,7 @@ class App extends Component {
         title: '状态',
         dataIndex: 'status',
         render: (status) => {
-          return BILLS_STATUS[status] || '-'
+          return CONSTANT.CONSUME_STATUS[status] || '-'
         }
       },
       {
@@ -137,14 +160,19 @@ class App extends Component {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = _.pick(querystring.parse(query), 'limit', 'offset') 
 
-    this.getDailyBillsDetail({pagination: {limit: parseInt(query.limit || PAEG_SIZE, 10), offset: parseInt(query.offset || 0, 10)}})
+    this.getDailyBillsDetail({
+      pagination: {
+        limit: parseInt(query.limit || PAEG_SIZE, 10), 
+        offset: parseInt(query.offset || 0, 10)
+      }
+    })
   }
   getDailyBillsDetail({ ...options }) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
     const id = this.props.match.params.id
-    const search = _.extend({billId: id}, pagination)
+    const search = _.extend({id: id}, pagination)
     this.setState({ loading: true })
-    dailyBillsService.list(search).then((res) => {
+    DailyBillsService.getTickets(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -163,13 +191,14 @@ class App extends Component {
     })
   }
   changeHistory (options) {
+    let { billId } = querystring.parse(window.location.search) 
     let payType = !!~this.props.location.search.indexOf('alipay') ? 'alipay' : 
       !!~this.props.location.search.indexOf('wechat') ? 'wechat' : ''
     let pagination = _.clone(this.state.pagination)
     let id = this.props.match.params.id
     options = _.extend(pagination, options)
     options.type = payType
-    options.billId = BILL_ID
+    options.billId = billId
 
     let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'type', 'billId'))
     history.push(`/finance/settlement/daily-bills/${id}?${query}`)
@@ -201,7 +230,7 @@ class App extends Component {
     }
     return(
       <div className={styles.view}>
-        <Breadcrumb items={type === 1 ? alipayBreadItems : wechatBreadItems} />
+        <Bread type={type} />
         <Table
           dataSource={this.state.bills || []}
           rowKey={record => record.id}

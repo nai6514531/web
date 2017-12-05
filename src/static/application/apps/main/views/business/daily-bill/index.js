@@ -12,6 +12,7 @@ import { Input } from '../../../components/form/input'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import DailyBillsService from '../../../services/soda-manager/daily-bills'
 import history from '../../../utils/history'
+import { conversionUnit } from '../../../utils/functions'
 import CONSTANT from '../constant'
 
 import styles from './index.pcss'
@@ -26,10 +27,6 @@ const breadItems = [
     title: '每日账单'
   }
 ]
-
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
-}
 
 class App extends Component {
   constructor(props) {
@@ -73,7 +70,7 @@ class App extends Component {
         title: '收款方式',
         render: (record) => {
           let { cashAccount: { type } } = record
-          return CONSTANT.PAY_ACCOUNT_TYPE[type]
+          return CONSTANT.CASH_ACCOUNT_TYPE[type]
         }
       }, {
         title: '账期',
@@ -86,13 +83,13 @@ class App extends Component {
         render: (record) => {
           let { cashAccount: { type, realName, account, bank }, user: { mobile } } = record
 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return _.without([`${realName}`, `账号：${account || '-'}`, `手机：${mobile || '-'}`], '').join(' | ')
           } 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return realName || '-'
           } 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
             return _.without([`户名:${realName}`, `${bank.name}`, `${account}`, `${mobile}`], '').join(' | ')
           }
           return '-'

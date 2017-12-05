@@ -4,7 +4,7 @@ import { getComponent } from '../components/bundle/'
 import Layout from '../components/layout/'
 
 import settings from './settings/'
-import settlement from './settlement/'
+import finance from './finance/'
 import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
@@ -27,7 +27,7 @@ function RouterConfig({ history, app }) {
         )}/>
         <Route path='/finance' render={ props => (
           <Layout>
-            { settlement(history, app) }
+            { finance(history, app) }
           </Layout>
         )}/>
         <Route path='/2' render={ props => (
@@ -55,13 +55,6 @@ function RouterConfig({ history, app }) {
             { business(history, app) }
           </Layout>
         )}/>
-
-        <Route path='/business' render={ props => (
-          <Layout>
-            { business(history, app) }
-          </Layout>
-        )}/>
-
         <Route component={getComponent(NotFound)} />
       </Switch>
     </Router>

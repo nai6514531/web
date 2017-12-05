@@ -1,27 +1,23 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import Promise from 'bluebird'
 import moment from 'moment'
 import _ from 'underscore'
 import querystring from 'querystring'
+import { Button, Modal, Table, DatePicker, message, Row, Col } from 'antd'
+const confirm = Modal.confirm
 
-import billsService from '../../../services/soda-manager/bills'
-import dailyBillsService from '../../../services/soda-manager/daily-bills'
-import walletService from '../../../services/soda/wallet'
-import settlementService from '../../../services/soda-manager/settlement'
-import history from '../../../utils/history'
+import DailyBillsService from '../../../../services/soda-manager/daily-bills'
+import WalletService from '../../../../services/soda/wallet'
+import SettlementService from '../../../../services/soda-manager/settlement'
 
-import { Button, Modal, Form, Table, Input , DatePicker, message, Icon } from 'antd'
-const confirm = Modal.confirm;
-const { RangePicker } = DatePicker
+import Breadcrumb from '../../../../components/layout/breadcrumb'
 
+import history from '../../../../utils/history'
+import { conversionUnit } from '../../../../utils/functions'
 
-import Breadcrumb from '../../../components/layout/breadcrumb/'
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
-
-const FormItem = Form.Item
 
 const breadItems = [
   {
@@ -72,7 +68,7 @@ class App extends Component {
           key: 'alipay.totalAmount',
           width: 100,
           render: (alipay) => {
-            return `${(alipay.totalAmount/100).toFixed(2)}`
+            return `${conversionUnit(alipay.totalAmount)}`
           }
         }, {
           title: '微信',
@@ -80,7 +76,7 @@ class App extends Component {
           key: 'wechat.totalAmount',
           width: 100,
           render: (wechat) => {
-            return `${(wechat.totalAmount/100).toFixed(2)}`
+            return `${conversionUnit(wechat.totalAmount)}`
           }
         }]
       }, {
@@ -91,7 +87,7 @@ class App extends Component {
           key: 'alipay.settlement.totalAmount',
           width: 100,
           render: (alipay) => {
-            return `${(alipay.settlement.totalAmount/100).toFixed(2)}`
+            return `${conversionUnit(alipay.settlement.totalAmount)}`
           }
         }, {
           title: '微信',
@@ -99,7 +95,7 @@ class App extends Component {
           key: 'wechat.settlement.totalAmount',
           width: 100,
           render: (wechat) => {
-            return `${(wechat.settlement.totalAmount/100).toFixed(2)}`
+            return `${conversionUnit(wechat.settlement.totalAmount)}`
           }
         }]
       }, {
@@ -110,7 +106,7 @@ class App extends Component {
           key: 'alipay.settlement.cast',
           width: 100,
           render: (alipay) => {
-            return `${(alipay.settlement.cast/100).toFixed(2)}`
+            return `${conversionUnit(alipay.settlement.cast)}`
           }
         }, {
           title: '微信',
@@ -118,7 +114,7 @@ class App extends Component {
           key: 'wechat.settlement.cast',
           width: 100,
           render: (wechat) => {
-            return `${(wechat.settlement.cast/100).toFixed(2)}`
+            return `${conversionUnit(wechat.settlement.cast)}`
           }
         }, {
           title: '合计',
@@ -126,7 +122,7 @@ class App extends Component {
           key: 'id',
           render: (record) => {
             let cast = record.wechat.settlement.cast + record.alipay.settlement.cast
-            return `${(cast/100).toFixed(2)}`
+            return `${conversionUnit(cast)}`
           }
         }]
       }
@@ -153,7 +149,7 @@ class App extends Component {
 
   }
   getTotalUnsettledBill(){
-    dailyBillsService.getTotalUnsettledBill().then((res) => {
+    DailyBillsService.getTotalUnsettledBill().then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -165,7 +161,7 @@ class App extends Component {
     })
   }
   getTotalWalletValue(){
-    walletService.getTotalValue().then((res)=>{
+    WalletService.getTotalValue().then((res)=>{
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -188,7 +184,7 @@ class App extends Component {
 
     this.setState({searchLoading: true, loading: true})
 
-    settlementService.get(search).then((res) => {
+    SettlementService.get(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -214,7 +210,7 @@ class App extends Component {
     if (!search.startAt || !search.endAt) {
       return message.info('请选择日期')
     }
-    this.setState({pagination: { limit: PAEG_SIZE, offset: 0, total: 0 }})
+    this.setState({ pagination: { offset: 0, total: 0 } })
     this.getSettlementReports()
     this.changeHistory()
   }
@@ -266,7 +262,7 @@ class App extends Component {
       content: '',
       onOk() {
         self.setState({ exportLoading: true })
-        settlementService.export(self.state.search).then((res) => {
+        SettlementService.export(self.state.search).then((res) => {
           if (res.status !== 'OK') {
             throw new Error(res.message)
           }
@@ -275,7 +271,6 @@ class App extends Component {
         }).catch((err) => {
           self.setState({ exportLoading: false })
           message.error(err.message || '导出失败,请重试～')
-          console.log(err)
         })
       },
       onCancel() {
@@ -289,7 +284,7 @@ class App extends Component {
   }
   render () {
     const self = this
-    const { startAt, endAt } = this.state.search
+    const { search: { startAt, endAt }, totalUnsettledBill, totalWalletValue, searchLoading } = this.state
 
     const pagination = {
       total: this.state.pagination.total,
@@ -317,33 +312,37 @@ class App extends Component {
     return(
       <div className={styles.view}>
         <Breadcrumb items={breadItems} />
-        <div className={styles.search}>
-          <DatePicker
-            style={{width:120, marginBottom: 10}}
-            value={!!startAt ? moment(startAt) : null}
-            format="YYYY-MM-DD"
-            disabledDate={this.disabledStartDate}
-            placeholder="开始日期"
-            onChange={this.onStartChange.bind(this)}
-            onOpenChange={this.handleStartOpenChange.bind(this)}
-          />
-          -
-          <DatePicker
-            style={{width:120, marginRight:10, marginBottom: 10}}
-            disabledDate={this.disabledEndDate.bind(this)}
-            placeholder="结束日期"
-            format="YYYY-MM-DD"
-            value={!!endAt ? moment(endAt) : null}
-            onChange={this.onEndChange.bind(this)}
-            open={this.state.endOpen}
-            onOpenChange={this.handleEndOpenChange.bind(this)}
-          />
-          <Button type='primary' icon='search' onClick={this.search.bind(this)}
-            loading={this.state.searchLoading} className={styles.button}>筛选</Button>
-          <Button type='primary' icon='download' onClick={this.exportSettlement.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
-          <span>未结算账单总额：{this.state.totalUnsettledBill}</span>
-          <span>钱包总额：{this.state.totalWalletValue}</span>
-        </div>
+        <Row className={styles.search}>
+          <Col xs={24} sm={14} md={11}>
+            <DatePicker
+              style={{width:120, marginBottom: 10}}
+              value={!!startAt ? moment(startAt) : null}
+              format="YYYY-MM-DD"
+              disabledDate={this.disabledStartDate}
+              placeholder="开始日期"
+              onChange={this.onStartChange.bind(this)}
+              onOpenChange={this.handleStartOpenChange.bind(this)}
+            />
+            -
+            <DatePicker
+              style={{width:120, marginRight:10, marginBottom: 10}}
+              disabledDate={this.disabledEndDate.bind(this)}
+              placeholder="结束日期"
+              format="YYYY-MM-DD"
+              value={!!endAt ? moment(endAt) : null}
+              onChange={this.onEndChange.bind(this)}
+              open={this.state.endOpen}
+              onOpenChange={this.handleEndOpenChange.bind(this)}
+            />
+            <Button type='primary' icon='search' onClick={this.search.bind(this)}
+              loading={searchLoading} className={styles.button}>筛选</Button>
+            <Button type='primary' icon='download' onClick={this.exportSettlement.bind(this)} loading={this.state.exportLoading} className={styles.button}>导出</Button>
+          </Col>
+          <Col xs={24} sm={10} className={styles.value}>
+            <span>未结算账单总额：{totalUnsettledBill}</span>
+            <span>钱包总额：{totalWalletValue}</span>
+          </Col>
+        </Row>
         <Table
           dataSource={this.state.list || []}
           rowKey={record => moment(record.date).valueOf()}
