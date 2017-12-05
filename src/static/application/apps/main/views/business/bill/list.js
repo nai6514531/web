@@ -8,15 +8,12 @@ const { confirm } = Modal
 import { Link } from 'react-router-dom'
 
 import BillsService from '../../../services/soda-manager/bills'
+import { conversionUnit } from '../../../utils/functions'
 import CONSTANT from '../constant'
 
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
-
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
-}
 
 class App extends Component {
   constructor(props) {
@@ -45,10 +42,10 @@ class App extends Component {
         render: (record) => {
           let { cashAccount: { realName, account, type } } = record
 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return _.without([`支付宝`, `${realName}`, `账号：${account || '-'}`], '').join(' | ')
           } 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return _.without([`微信`, `${realName}`], '').join(' | ')
           } 
           return '-'
@@ -158,7 +155,7 @@ class App extends Component {
     if (bill.totalAmount <= 200) {
       return message.info('可结算金额必须超过2元才可结算')
     }
-    if (type === CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK) {
+    if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK) {
       return message.info('你当前收款方式为银行卡，不支持结算，请修改收款方式再进行结算操作。')
     }
     if (!hasCashType) {

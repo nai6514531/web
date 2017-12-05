@@ -1,5 +1,4 @@
 import React, {  Component }from 'react'
-import Promise from 'bluebird'
 import _ from 'underscore'
 import moment from 'moment'
 import op from 'object-path'
@@ -14,7 +13,6 @@ import Breadcrumb from '../../../components/layout/breadcrumb'
 import history from '../../../utils/history'
 import CONSTANT from '../constant'
 import List from './list'
-// import AccountForm from './edit-account-form.jsx'
 
 import SettlementService from '../../../services/soda-manager/settlement'
 import BillsService from '../../../services/soda-manager/bills'
@@ -24,6 +22,8 @@ import styles from './index.pcss'
 
 const DATE_TYPE_IS_SETTLED_AT = 2
 
+const PAEG_SIZE = 10
+
 const breadItems = [
   {
     title: '商家系统'
@@ -32,7 +32,6 @@ const breadItems = [
     title: '结算查询'
   },
 ]
-const PAEG_SIZE = 10
 
 class App extends Component {
   constructor (props) {
@@ -107,7 +106,7 @@ class App extends Component {
     if (totalAmount <= 200) {
       return message.info('可结算金额必须超过2元才可结算')
     }
-    if (type === CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK) {
+    if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK) {
       return message.info('你当前收款方式为银行卡，不支持结算，请修改收款方式再进行结算操作。')
     }
     if (!this.hasCashType) {
@@ -200,8 +199,8 @@ class App extends Component {
   }
   render() {
     const { cashAccount, user, bills } = this.state
-    this.hasCashType = !!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_ALIPAY, CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK].indexOf(cashAccount.type)
-    const cashTypeIsWechat = cashAccount.type === CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT
+    this.hasCashType = !!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY, CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(cashAccount.type)
+    const cashTypeIsWechat = cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT
     
     return (<section className={styles.view}>
       <Breadcrumb items={breadItems} />
@@ -219,16 +218,16 @@ class App extends Component {
           </Col>
           <Col xs={24} lg={{span: 13}} className={styles.cashAccount}>
             {
-              cashAccount.type === CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK ?  <Row>
+              cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK ?  <Row>
                 <Col xs={8} lg={{span: 5}}  span={4}>收款方式：</Col>
                 <Col xs={16} lg={{span: 12}} span={10}>银行卡 <span className={styles.colorRed}>（不支持结算！）</span></Col>
               </Row> : null
             }
             { 
-              cashAccount.type !== CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK ? <Row >
+              cashAccount.type !== CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK ? <Row >
                 <Col xs={8} lg={{span: 5}}>收款方式：</Col>
                 <Col  xs={16} lg={{span: 12}}>
-                  {CONSTANT.PAY_ACCOUNT_TYPE[cashAccount.type] || '无'}
+                  {CONSTANT.CASH_ACCOUNT_TYPE[cashAccount.type] || '无'}
                   <span 
                     className={cx({ [`${styles.hidden}`]: !this.hasCashType, [`${styles.rule}`]: this.hasCashType })}
                     onClick={this.castInfo}>

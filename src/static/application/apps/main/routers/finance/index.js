@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { getComponent } from '../../components/bundle/'
+import { getComponent } from '../../components/bundle'
 
-import settlementPay from 'bundle-loader?lazy!../../views/settlement/pay'
-import settlementReport from 'bundle-loader?lazy!../../views/settlement/report'
-import billsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/daily'
-import dailyBillsDetail from 'bundle-loader?lazy!../../views/settlement/pay/bill/detail'
+import settlementPay from 'bundle-loader?lazy!../../views/finance/settlement/bill'
+import settlementReport from 'bundle-loader?lazy!../../views/finance/settlement/report'
+import billsDetail from 'bundle-loader?lazy!../../views/finance/settlement/bill/daily'
+import dailyBillsDetail from 'bundle-loader?lazy!../../views/finance/settlement/bill/detail'
 
 export default function (history, app) {
   return (

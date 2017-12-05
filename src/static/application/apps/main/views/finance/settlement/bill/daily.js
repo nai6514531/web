@@ -2,20 +2,21 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import querystring from 'querystring'
+import { Table, message } from 'antd'
 
 import history from '../../../../utils/history'
+import { conversionUnit } from '../../../../utils/functions'
 
-import dailyBillsService from '../../../../services/soda-manager/daily-bills'
-import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message } from 'antd'
-const { RangePicker } = DatePicker
-const { Option } = Select
+import DailyBillsService from '../../../../services/soda-manager/daily-bills'
 
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
-import styles from '../index.pcss'
+import Breadcrumb from '../../../../components/layout/breadcrumb'
+
+import CONSTANT from '../../constant'
+
+import styles from './index.pcss'
 
 const PAEG_SIZE = 10
 
-const FormItem = Form.Item
 const formItemLayout = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
@@ -51,7 +52,6 @@ const alipayBreadItems = [
     title: '账单明细'
   }
 ]
-const BILLS_STATUS = {1:'等待结算', 2:'结算成功', 3:'结算中', 4:'结算失败'}
 
 class App extends Component {
   constructor(props) {
@@ -81,14 +81,13 @@ class App extends Component {
         title: '金额',
         dataIndex: 'totalAmount',
         render: (totalAmount) => {
-          return `${totalAmount/100}`
+          return `${conversionUnit(totalAmount)}`
         }
       },
       {
         title: '收款方式',
-        dataIndex: 'account',
-        render: (account) => {
-          return `${account.payName}`
+        render: (record) => {
+          return CONSTANT.CASH_ACCOUNT_TYPE[record.cashAccount.type]
         }
       },
       {
@@ -101,8 +100,8 @@ class App extends Component {
       {
         title: '帐户信息',
         dataIndex: 'cashAccount',
-        render: (account, record) => {
-          if (!!~[1].indexOf(account.type)) {
+        render: (cashAccount, record) => {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               '账号：<%- account %>',
@@ -113,7 +112,7 @@ class App extends Component {
                 mobile: record.mobile || '-'
               })
           } 
-          if (!!~[2].indexOf(account.type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               ].join(' | '))({
@@ -132,7 +131,28 @@ class App extends Component {
         title: '状态',
         dataIndex: 'status',
         render: (status) => {
-          return BILLS_STATUS[status]
+          let label
+          switch (status) {
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT:
+              label = <span>未申请结算</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING:
+              label = <span><i className={styles.waiting}></i>等待结算</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS:
+              label = <span><i className={styles.success}></i>结算成功</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING:
+              label = <span><i className={styles.paying}></i>结算中</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL:
+              label = <span><i className={styles.fail}></i>结算失败</span>
+              break;
+            default:
+              label = <span>-</span>
+              break;
+          }
+          return <p className={styles.status}>{label}</p>
         }
       },
       {
@@ -153,20 +173,24 @@ class App extends Component {
   componentDidMount () {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
-    this.getBillsDetail({pagination: {limit: parseInt(query.limit || PAEG_SIZE, 10), offset: parseInt(query.offset || 0, 10)}})
+    this.getBillsDetail({
+      pagination: {
+        limit: parseInt(query.limit || PAEG_SIZE, 10),
+        offset: parseInt(query.offset || 0, 10)
+      }
+    })
   }
   getBillsDetail({...options}) {
     const pagination = _.extend(this.state.pagination, options.pagination || {})
     const id = this.props.match.params.id
-    const search = _.extend({id: id }, pagination)
+    const search = _.extend({ billId: id }, pagination)
 
     this.setState({ loading: true })
-    dailyBillsService.list(search).then((res) => {
+    DailyBillsService.list(search).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       const data = res.data
-      console.log(data)
       this.setState({
         bills: data.objects, 
         pagination: {

@@ -1,7 +1,8 @@
 import React, { Component }from 'react'
 import querystring from 'querystring'
-import { Tabs } from 'antd'
+import { Tabs, Modal } from 'antd'
 const TabPane = Tabs.TabPane
+const confirm = Modal.confirm
 
 import UserService from '../../../../services/soda-manager/user'
 
@@ -19,7 +20,7 @@ const breadItems = [
     title: '商家系统'
   },
   {
-    title: '运营商',
+    title: '运营商管理',
     url: '/business/account'
   },
   {
@@ -32,33 +33,68 @@ const subEditBreadItems = [
     title: '商家系统',
   },
   {
-    title: '运营商',
+    title: '运营商管理',
     url: '/business/account'
   },
   {
     title: '下级运营商',
-    url: `/business/account?parentId=${id}`
+    url: `/business/account?parentId=PARENT_ID`
   },
   {
     title: '修改运营商'
   }
 ]
+
 const subAddBreadItems = [
   {
     title: '商家系统',
   },
   {
-    title: '运营商',
+    title: '运营商管理',
     url: '/business/account'
   },
   {
     title: '下级运营商',
-    url: `/business/account?parentId=${id}`
+    url: `/business/account?parentId=PARENT_ID`
   },
   {
     title: '新增运营商'
   }
 ]
+
+const settlementBreadItems = [
+  {
+    title: '商家系统',
+  },
+  {
+    title: '结算查询',
+    url: '/business/bill'
+  },
+  {
+    title: '修改',
+  }
+]
+
+class Bread extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render () {
+    let { isSub, isAdd, redirectUrl, parentId } = this.props
+    let items = isSub ? (isAdd ? subAddBreadItems : subEditBreadItems) :
+    !!redirectUrl ? settlementBreadItems : breadItems
+
+    items = _.map(items, (item) => {
+      if (item.url) {
+        let url = item.url.replace('PARENT_ID', parentId)
+        return { title: item.title, url: url }
+      }
+      return item
+    })
+
+    return <Breadcrumb items={items} />
+  }
+}
 
 class App extends Component {
   constructor(props) {
@@ -75,7 +111,7 @@ class App extends Component {
         address: '',
         accountName: '',
         cashAccount: {
-          type: CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT,
+          type: CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT,
           account: '',
           realName: '',
           isAuto: true
@@ -117,19 +153,27 @@ class App extends Component {
     })
   }
   changeTab(key) {
-    this.setState({ activeKey: key　})
+    let self = this
+    confirm({
+      title: '确定取消当前修改?',
+      onOk() {
+        self.setState({ activeKey: key　})
+      },
+      onCancel() {
+      },
+    })
   }
   render() {
     let { isAdd, isSub } = this.account
     let { detail, activeKey, redirectUrl, loading, parentId } = this.state
 
     return <div>
-      <Breadcrumb items={isSub ? (isAdd ? subAddBreadItems : subEditBreadItems) : breadItems} />
+      <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} parentId={parentId} />
       <Tabs 
         activeKey={activeKey}
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="基本信息" key="default">
-          { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} parentId={parentId} /> : null }
+          { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} parentId={parentId} redirectUrl={redirectUrl} /> : null }
         </TabPane>
         <TabPane tab="收款信息" key="cash" disabled={isAdd ? true : false} >
           { activeKey === 'cash' ? <Pay {...this.props} 

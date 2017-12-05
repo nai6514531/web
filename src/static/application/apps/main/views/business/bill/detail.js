@@ -11,6 +11,7 @@ const confirm = Modal.confirm
 import DailyBillsService from '../../../services/soda-manager/daily-bills'
 import BillsService from '../../../services/soda-manager/bills'
 import Breadcrumb from '../../../components/layout/breadcrumb'
+import { conversionUnit } from '../../../utils/functions'
 import CONSTANT from '../constant'
 
 import styles from './index.pcss'
@@ -29,10 +30,6 @@ const breadItems = [
     title: '账单明细'
   }
 ]
-
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
-}
 
 class Detail extends Component{
   constructor(props) {
@@ -76,13 +73,13 @@ class Detail extends Component{
         render: (record) => {
           let { cashAccount: { type, realName, account, bank }, user: { mobile } } = record
 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return `${realName || '-'} | 账号:${account || '-'}`
           } 
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return `${realName || '-'}`
           }
-          if (!!~[CONSTANT.PAY_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
             return _.without([`户名:${realName || '-'}`, `${bank.name}`, `${account}`, `${mobile}`], '').join(' | ')
           }
           return '-'

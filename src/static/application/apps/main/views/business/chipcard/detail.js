@@ -6,12 +6,9 @@ const confirm = Modal.confirm;
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import { Input } from '../../../components/form/input'
 import ChipcardService from '../../../services/soda-manager/chipcard'
+import { conversionUnit } from '../../../utils/functions'
 
 import styles from './index.pcss'
-
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
-}
 
 const breadItems = [
   {

@@ -6,11 +6,11 @@ import op from 'object-path'
 import cx from 'classnames'
 import md5 from 'md5';
 import querystring from 'querystring'
-import { Table, Button, message, Form, Tabs, modal, Input, Spin } from 'antd'
+import { Table, Button, message, Form, Tabs, Modal, Input, Spin } from 'antd'
 const FormItem = Form.Item
 const createForm = Form.create
 const TabPane = Tabs.TabPane
-const Confirm = modal.Confirm
+const confirm = Modal.confirm
 
 import UserService from '../../../../services/soda-manager/user'
 import styles from '../index.pcss'
@@ -133,7 +133,7 @@ class Detial extends Component {
   updateAccount(options) {
     let { id } = this.props.match.params
     id = +id
-    let { isAdd, isSub, parentId } = this.props
+    let { isAdd, isSub, parentId, redirectUrl } = this.props
     this.setState({ loading: true })
 
     UserService.update({...options, id: id}, id ).then((res) => {
@@ -144,6 +144,9 @@ class Detial extends Component {
       this.setState({
         loading: false
       })
+      if (redirectUrl) {
+        return this.props.history.push(redirectUrl)
+      }
       if (isSub) {
         return this.props.history.push(`/business/account?parentId=${parentId}`)
       }

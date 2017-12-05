@@ -5,6 +5,7 @@ import { Button, Table, Icon, Popconfirm, message } from 'antd'
 
 import DailyBillsService from '../../../services/soda-manager/daily-bills'
 import history from '../../../utils/history'
+import { conversionUnit } from '../../../utils/functions'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 
 import CONSTANT from '../constant'
@@ -12,7 +13,6 @@ import CONSTANT from '../constant'
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
-const BILL_ID = querystring.parse(window.location.search.slice(1)).billId
 
 const breadItems = [
   {
@@ -37,15 +37,31 @@ const billBreadItems = [
   },
   {
     title: '账单明细',
-    url: `/business/bill/${BILL_ID}`
+    url: `/business/bill/BILL_ID`
   },
   {
     title: '明细'
   }
 ]
 
-const conversionUnit = (value) => {
-  return (value / 100).toFixed(2)
+class Bread extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render () {
+    let { billId, isBillsView } = this.props
+    let items = isBillsView ? billBreadItems : breadItems
+
+    items = _.map(items, (item) => {
+      if (item.url) {
+        let url = item.url.replace('BILL_ID', billId)
+        return { title: item.title, url: url }
+      }
+      return item
+    })
+
+    return <Breadcrumb items={items} />
+  }
 }
 
 class App extends Component{
@@ -131,6 +147,7 @@ class App extends Component{
 
     if (!!query.billId) {
       this.isBillsView = true
+      this.billId = query.billId
     }
     this.list(pagination)
   }
@@ -140,7 +157,7 @@ class App extends Component{
     pagination = _.pick({...this.state.pagination, ...pagination}, 'limit', 'offset')
     this.setState({ loading: true, pagination })
 
-    DailyBillsService.detail({...pagination, id: id }).then((res) => {
+    DailyBillsService.getTickets({...pagination, id: id }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -163,7 +180,7 @@ class App extends Component{
     const { id } = this.props.match.params
     const query = querystring.stringify(_.pick({ ...this.state.pagination, ...options }, 'offset', 'limit'))
     if (this.isBillsView) {
-    history.push(`/business/daily-bill/${id}?${query}&billId=${BILL_ID}`)
+    history.push(`/business/daily-bill/${id}?${query}&billId=${this.billId}`)
       return 
     }
     history.push(`/business/daily-bill/${id}?${query}`)
@@ -199,7 +216,7 @@ class App extends Component{
     const { list, loading } = this.state
 
     return (<section>
-      <Breadcrumb items={this.isBillsView ? billBreadItems : breadItems} />
+      <Bread isBillsView={this.isBillsView} billId={this.billId} />
       <Table scroll={{ x: 500 }} 
         dataSource={list}
         columns={this.columns} 

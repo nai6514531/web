@@ -2,12 +2,12 @@ import request from '../../utils/request'
 
 const settlementService = {
   pay: (data) => {
-    return request.post(`/settlement/actions/pay`, {
+    return request.post(`/mng/settlement/actions/pay`, {
     	bills: data
     })
   },
   get: (data) => {
-    return request.get(`/settlement`, {
+    return request.get(`/mng/settlement`, {
     	params: data
     })
   },
@@ -15,7 +15,7 @@ const settlementService = {
     return request.get(`/mng/settlement/detail`)
   },
   export: (options) => {
-    return request.post(`/settlement/actions/export`, {
+    return request.post(`/mng/settlement/actions/export`, {
       endAt: options.endAt,
       startAt: options.startAt,
     })

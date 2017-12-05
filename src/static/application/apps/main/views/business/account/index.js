@@ -10,7 +10,7 @@ import { Table, Button, message } from 'antd';
 
 import { Input } from '../../../components/form/input'
 import UserService from '../../../services/soda-manager/user'
-import PermissionService from '../../../services/soda-manager/permission'
+import ChipcardService from '../../../services/soda-manager/chipcard'
 import history from '../../../utils/history'
 
 import Breadcrumb from '../../../components/layout/breadcrumb'
@@ -24,7 +24,7 @@ const breadItems = [
     title: '商家系统'
   },
   {
-    title: '运营商'
+    title: '运营商管理'
   }
 ]
 
@@ -33,7 +33,7 @@ const subBreadItems = [
     title: '商家系统',
   },
   {
-    title: '运营商',
+    title: '运营商管理',
     url: '/business/account'
   },
   {
@@ -102,14 +102,14 @@ class App extends Component {
 
     if (!!parentId) {
       this.setState({ isSubAccount: true, parentId })
-      this.list({ search: { key: search.key, id: parentId } , pagination})
+      this.list({ search: { keys: search.keys, id: parentId } , pagination})
       return 
     }
     this.detail()
     this.getisRechargePermission()
   }
   getisRechargePermission() {
-    PermissionService.getRecharge().then((res) => {
+    ChipcardService.getRechargePermission().then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -164,7 +164,7 @@ class App extends Component {
     })
   }
   changeHistory (options) {
-    let query = _.pick({...this.state.search, ...this.state.pagination, ...options}, 'keys', 'parentId',  'limit', 'offset')
+    let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'keys', 'parentId',  'limit', 'offset')
     history.push(`/business/account?${querystring.stringify(query)}`)
   }
   search() {
@@ -254,7 +254,6 @@ class App extends Component {
         dataSource={list}
         pagination={isSubAccount ? this.pagination.call(this) : null}
         loading={loading}
-        bordered
       />
     </div>)
   }

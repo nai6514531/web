@@ -6,7 +6,7 @@ const dailyBillsService = {
       params: options
     })
   },
-  detail: (options) => {
+  getTickets: (options) => {
     return request.get(`/mng/daily-bills/tickets/${options.id}`, {
     	params: options
     })

@@ -4,23 +4,25 @@ import Promise from 'bluebird'
 import moment from 'moment'
 import _ from 'underscore'
 import querystring from 'querystring'
-
-import billsService from '../../../services/soda-manager/bills'
-import settlementService from '../../../services/soda-manager/settlement'
-import history from '../../../utils/history'
-
-import { Popconfirm, Button, Modal, Form, Select, Table, Input, Checkbox, Col, Row, DatePicker, message, Icon } from 'antd'
-const confirm = Modal.confirm;
-const { RangePicker } = DatePicker
+import { Button, Modal, Select, Table, Input, Col, Row, DatePicker, message, Icon } from 'antd'
+const { confirm } = Modal
 const { Option } = Select
-const InputGroup = Input.Group
+
+import BillsService from '../../../../services/soda-manager/bills'
+import SettlementService from '../../../../services/soda-manager/settlement'
+
+import history from '../../../../utils/history'
+import { conversionUnit } from '../../../../utils/functions'
+
 import ConfirmForm from './alipay-confirm-form'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
+import Breadcrumb from '../../../../components/layout/breadcrumb'
+
+import CONSTANT from '../../constant'
+
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
 
-const FormItem = Form.Item
 const formItemLayout = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
@@ -48,8 +50,6 @@ const alipayBreadItems = [
     title: '支付宝结算'
   }
 ]
-
-const BILLS_STATUS = {1: '等待结算', 2: '结算成功', 3: '结算中', 4: '结算失败'}
 
 class App extends Component {
   constructor (props) {
@@ -97,7 +97,7 @@ class App extends Component {
         dataIndex: 'user',
         width: 130,
         render: (user) => {
-          return `${user.name} | ${user.accountName}`
+          return `${user.name} | ${user.account}`
         }
       },
       {
@@ -105,22 +105,20 @@ class App extends Component {
         dataIndex: 'cashAccount',
         width: 130,
         render: (cashAccount, record) => {
-          if (!!~[1].indexOf(account.type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               '账号：<%- account %>'
               ].join(' | '))({
                 realName: cashAccount.realName,
-                account: cashAccount.account || '-'
+                account: cashAccount.account || '-',
               })
           }
-          if (!!~[2].indexOf(account.type)) {
+          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               ].join(' | '))({
-                nickName: record.user.nickName || '-',
                 realName: cashAccount.realName,
-                account: cashAccount.account || '-'
               })
           }
           return '-'
@@ -140,32 +138,50 @@ class App extends Component {
         title: '结算金额',
         dataIndex: 'totalAmount',
         width: 80,
-        render: (data) => {
-          return `${(data/100).toFixed(2)}`
+        render: (value) => {
+          return conversionUnit(value)
         }
       },
       {
         title: '手续费',
         dataIndex: 'cast',
         width: 60,
-        render: (data) => {
-          return `${(data/100).toFixed(2)}`
+        render: (value) => {
+          return conversionUnit(value)
         }
       },
       {
         title: '入账金额',
         dataIndex: 'amount',
         width: 80,
-        render: (data) => {
-          return `${(data/100).toFixed(2)}`
+        render: (value) => {
+          return conversionUnit(value)
         }
       },
       {
         title: '状态',
         dataIndex: 'status',
-        width: 70,
+        width: 90,
         render: (status) => {
-          return BILLS_STATUS[status] || '-'
+          let label
+          switch (status) {
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING:
+              label = <span><i className={styles.waiting}></i>等待结算</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS:
+              label = <span><i className={styles.success}></i>结算成功</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING:
+              label = <span><i className={styles.paying}></i>结算中</span>
+              break;
+            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL:
+              label = <span><i className={styles.fail}></i>结算失败</span>
+              break;
+            default:
+              label = <span>-</span>
+              break;
+          }
+          return <p className={styles.status}>{label}</p>
         }
       },
       {
@@ -173,7 +189,7 @@ class App extends Component {
         dataIndex: 'settledAt',
         width: 135,
         render: (date, record) => {
-          return date && record.status === 2 ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
+          return date && record.status === CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
         }
       },
       {
@@ -188,7 +204,7 @@ class App extends Component {
         key: 'operation',
         width: 90,
         render: (text, record, index) => {
-          const disabled = !!~[0, 2, 3, 4].indexOf(record.status)
+          const disabled = !!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT, CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS, CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING, CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status)
           const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
             !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
           const count = record.count / 100
@@ -203,8 +219,8 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    let payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 :
-                    !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING :
+                    !!~this.props.location.pathname.indexOf('wechat') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT : 0
 
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
@@ -236,7 +252,7 @@ class App extends Component {
 
     this.setState({searchLoading: true, loading: true})
 
-    billsService.list({...search, ...pagination}).then((res) => {
+    BillsService.list({...search, ...pagination}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -259,13 +275,13 @@ class App extends Component {
   onPay () {
     const { type } = this.state.search
     this.setState({ selectedPayLoading: true });
-    settlementService.pay(this.state.billsId).then((res) => {
+    SettlementService.pay(this.state.billsId).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       const data = res.data
       // 支付宝账单二次确认
-      if (type === 1) {
+      if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY) {
         this.alipayInfo = data
         this.setState({ alipayConfirmShow: true, payConfirmShow: false })
       }
@@ -295,28 +311,28 @@ class App extends Component {
     if (!!search.startAt && !search.endAt) {
       return message.info('请选择结束日期')
     }
-    this.getBills({pagination: { limit: PAEG_SIZE, offset: 0 }})
+    this.getBills({ pagination: { offset: 0 } })
     this.changeHistory()
   }
   changeDateType (value) {
     const { search } = this.state
     const type = +value
-    this.setState({search: {...search, dateType: type}})
+    this.setState({ search: { ...search, dateType: type } })
   }
   changeKeys (e) {
     const val = e.target.value
-    this.setState({search: {...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"")}})
+    this.setState({ search: { ...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"") } })
   }
   emitKeysEmpty() {
     this.refs.keysInput.focus();
-    this.setState({search: {...this.state.search, keys: ''}})
+    this.setState({ search: { ...this.state.search, keys: '' } })
   }
   onSelectChange (selectedRowKeys) {
-    this.setState({ selectedRowKeys: selectedRowKeys });
+    this.setState({ selectedRowKeys: selectedRowKeys })
   }
   selectInit (record) {
-    // 已结账、结算中状态不可选
-    return { disabled: !!~[0, 2, 3, 4].indexOf(record.status)}
+    // 已结账、结算中、失败状态不可选
+    return { disabled: !!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT, CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS, CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING, CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status) }
   }
   hideConfirmShow () {
     this.setState({alipayConfirmShow: false})
@@ -368,7 +384,7 @@ class App extends Component {
       content: '',
       onOk() {
         self.setState({exportLoading: true})
-        billsService.export(self.state.search).then((res) => {
+        BillsService.export(self.state.search).then((res) => {
           if (res.status !== 'OK') {
             throw new Error(res.message)
           }
@@ -385,8 +401,8 @@ class App extends Component {
     })
   }
   reset() {
-    const payType = !!~this.props.location.pathname.indexOf('alipay') ? 1 :
-                    !!~this.props.location.pathname.indexOf('wechat') ? 2 : 0
+    const payType = !!~this.props.location.pathname.indexOf('alipay') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY :
+                    !!~this.props.location.pathname.indexOf('wechat') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT : 0
     const options = {
       search: {
         status: '',
@@ -456,7 +472,7 @@ class App extends Component {
 
     return(
       <div className={styles.view}>
-        <Breadcrumb items={type === 1 ? alipayBreadItems : wechatBreadItems} />
+        <Breadcrumb items={type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems} />
         <div>
           <Button
               type="primary"
@@ -539,7 +555,6 @@ class App extends Component {
             closable={false}
             maskClosable={true}
             visible={this.state.alipayConfirmShow}
-            onCancel={this.hideConfirmShow.bind(this)}
           >
             <ConfirmForm changeModalVisible={this.hideConfirmShow.bind(this)} onCancel={this.hideConfirmShow.bind(this)} payInfo={this.alipayInfo || {}} />
           </Modal>
