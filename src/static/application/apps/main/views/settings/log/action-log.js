@@ -26,7 +26,8 @@ class ActionLog extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: 'id', dataIndex: 'userId', key: 'userId' },
+      { title: 'id', dataIndex: 'id', key: 'id' },
+      { title: '用户id', dataIndex: 'userId', key: 'userId' },
       { title: '用户名', dataIndex: 'userName', key: 'userName' },
       { title: '账号', dataIndex: 'userAccount',key: 'userAccount' },
       { title: '接口key', dataIndex: 'apiKey',key: 'apiKey', width: 150 },
