@@ -114,7 +114,7 @@ export default {
         yield put({
           type: 'list',
           payload: {
-            data: null
+            data: 'getAllWithStatus'
           }
         })
       } else {

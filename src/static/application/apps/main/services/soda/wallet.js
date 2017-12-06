@@ -5,7 +5,7 @@ const walletService = {
     return request.get(`/mng/wallet/total-value`)
   },
   resetValue: (mobile) => {
-    return request.get(`/crm/wallet/${mobile}/actions/reset`)
+    return request.put(`/soda/wallets/${mobile}/reset`)
   }
 }
 export default walletService
