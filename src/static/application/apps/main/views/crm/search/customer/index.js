@@ -122,17 +122,6 @@ class Customer extends Component {
       }
     })
   }
-  resetValue(mobile){
-    console.info(mobile)
-    walletService.resetValue(mobile).then((res)=>{
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      this.fetch(mobile)
-    }).catch((err) => {
-      message.error(err.message || '服务器异常，刷新重试')
-    })
-  }
   render() {
     const { crmCustomer: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
     return(
