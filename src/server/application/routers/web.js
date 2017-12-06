@@ -4,7 +4,7 @@ import { app } from '../controllers/web'
 
 const router = Router()
 
-router.use(connectWechat);
+// router.use(connectWechat);
 router.get('/', app)
 
 export default router
