@@ -172,10 +172,6 @@ class App extends Component {
     this.changeHistory(pagination)
     this.list({ pagination })
   }
-  emitKeysEmpty() {
-    this.refs.keysInput.focus();
-    this.setState({ search: { ...this.state.search, keys: '' } })
-  }
   changeKeys (e) {
     const val = e.target.value || ''
     this.setState({ search: {...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"") } })
@@ -242,7 +238,7 @@ class App extends Component {
             type='primary' 
             style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
             onClick={() => { this.props.history.push('/business/recharges-chipcard') }}>
-            ＩＣ卡金额转移
+            IC卡金额转移
           </Button> : null }
         </div>
       }
