@@ -37,6 +37,7 @@ class Input extends React.Component {
         suffix={suffix}
         value={value}
         onChange={this.onChangeValue.bind(this)}
+        className={styles.closeInput}
         ref={node => this.input = node}
       />
     );

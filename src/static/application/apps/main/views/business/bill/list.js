@@ -3,7 +3,6 @@ import _ from 'underscore'
 import moment from 'moment'
 import { Affix, Button, Input, Table, Icon, Select, DatePicker, Breadcrumb, message, Modal } from 'antd'
 const { Option } = Select
-const { RangePicker } = DatePicker
 const { confirm } = Modal
 import { Link } from 'react-router-dom'
 
@@ -43,7 +42,7 @@ class App extends Component {
           let { cashAccount: { realName, account, type } } = record
 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
-            return _.without([`支付宝`, `${realName}`, `账号：${account || '-'}`], '').join(' | ')
+            return _.without([`支付宝`, `${realName}`, `账号:${account || '-'}`], '').join(' | ')
           } 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return _.without([`微信`, `${realName}`], '').join(' | ')

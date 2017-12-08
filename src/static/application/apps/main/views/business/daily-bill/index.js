@@ -84,7 +84,7 @@ class App extends Component {
           let { cashAccount: { type, realName, account, bank }, user: { mobile } } = record
 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
-            return _.without([`${realName}`, `账号：${account || '-'}`, `手机：${mobile || '-'}`], '').join(' | ')
+            return _.without([`${realName}`, `账号:${account || '-'}`, `手机:${mobile || '-'}`], '').join(' | ')
           } 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return realName || '-'

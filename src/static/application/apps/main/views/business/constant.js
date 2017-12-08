@@ -30,6 +30,20 @@ module.exports = _.extend({
     4: '大物洗',
   },
 
+  DEVICE_STATUS: {
+    0: '空闲',
+    9: '锁定',
+    601: '使用中',
+    602: '使用中',
+    603: '使用中',
+    604: '使用中',
+  },
+
+  FEATURE_TYPE: {
+    1: '洗衣机',
+    2: '充电桩',
+  },
+
   CASH_ACCOUNT_TYPE_IS_ALIPAY: 1,
   CASH_ACCOUNT_TYPE_IS_WECHAT: 2,
   CASH_ACCOUNT_TYPE_IS_BANK: 3,
@@ -42,5 +56,9 @@ module.exports = _.extend({
 
   CONSUME_STATUS_IS_DEFAULT: 7,
   CONSUME_STATUS_IS_REFUND: 4,
+
+  DEVICE_STATUS_IS_FREE: 0,
+  DEVICE_STATUS_IS_LOCK: 9,
+  DEVICE_STATUS_IS_USING: [601, 602, 603, 604],
   
 }, km({}))

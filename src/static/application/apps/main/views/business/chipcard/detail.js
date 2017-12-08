@@ -15,6 +15,10 @@ const breadItems = [
     title: '商家系统'
   },
   {
+    title: '运营商管理',
+    url: '/business/account'
+  },
+  {
     title: 'IC卡金额转移',
     url: '/business/recharges-chipcard'
   },
@@ -141,7 +145,7 @@ class Detail extends Component {
       <div className={styles.detail}>
         <Spin spinning={loading}>
           <Row>
-            <h2><Icon type="mobile" />学生登录手机号 {mobile}</h2>
+            <h2><Icon type="mobile" />学生登录手机号 <span>{mobile}</span></h2>
           </Row>
           <Row>
             <h2>
@@ -181,33 +185,36 @@ class Detail extends Component {
           </Row>
         </Spin>
       </div>
-      <Modal
-        footer={null}
-        visible={visible}
-        onCancel={() => { this.setState({ visible: false })}}>
-        <Spin spinning={updateLoading}>
-	        <Form onSubmit={this.handleSubmit.bind(this)} className={styles.form}>
-	          <FormItem
-	            {...formItemLayout}
-	            label="适用商家账号">
-	            {getFieldDecorator("apply", {
-	              initialValue: _.map(apply, (value) => { return `${value.account}` }).join(','),
-	              rules: [{
-	                required: true, message: "账号不可为空",
-	              }]
-	            })(
-	              <Input placeholder="如有多个账号，需用英文逗号隔开"/>
-	            )}
-	          </FormItem>
-	          <FormItem {...tailFormItemLayout}>
-			        <p className={styles.tip}>注意:该学生手机号之前充值对应的适用商家也将更新为此次修改结果！</p>
-			      </FormItem>
-	          <FormItem {...tailFormItemLayout} style={{textAlign: "center"}}>
-			        <Button type="primary" htmlType="submit" >修改</Button>
-			      </FormItem>
-	        </Form>
-        </Spin>
-     </Modal>
+      {
+        visible ? 
+        <Modal
+          footer={null}
+          visible={visible}
+          onCancel={() => { this.setState({ visible: false })}}>
+          <Spin spinning={updateLoading}>
+  	        <Form onSubmit={this.handleSubmit.bind(this)} className={styles.form}>
+  	          <FormItem
+  	            {...formItemLayout}
+  	            label="适用商家账号">
+  	            {getFieldDecorator("apply", {
+  	              initialValue: _.map(apply, (value) => { return `${value.account}` }).join(','),
+  	              rules: [{
+  	                required: true, message: "账号不可为空",
+  	              }]
+  	            })(
+  	              <Input placeholder="如有多个账号，需用英文逗号隔开"/>
+  	            )}
+  	          </FormItem>
+  	          <FormItem {...tailFormItemLayout}>
+  			        <p className={styles.tip}>注意:该学生手机号之前充值对应的适用商家也将更新为此次修改结果！</p>
+  			      </FormItem>
+  	          <FormItem {...tailFormItemLayout} style={{textAlign: "center"}}>
+  			        <Button type="primary" htmlType="submit" >修改</Button>
+  			      </FormItem>
+  	        </Form>
+          </Spin>
+       </Modal> : null 
+     }
     </section>)
   }
 }
