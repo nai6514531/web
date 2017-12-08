@@ -13,10 +13,10 @@ import styles from './index.pcss'
 import { trim } from 'lodash'
 const breadItems = [
   {
-    title: '客服系统'
+    title: '设置'
   },
   {
-    title: '短信查询'
+    title: '操作记录'
   }
 ]
 const { Option } = Select
@@ -26,7 +26,7 @@ class ActionLog extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.columns = [
-      { title: 'id', dataIndex: 'id', key: 'id' },
+      { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '用户id', dataIndex: 'userId', key: 'userId' },
       { title: '用户名', dataIndex: 'userName', key: 'userName' },
       { title: '账号', dataIndex: 'userAccount',key: 'userAccount' },
