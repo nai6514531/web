@@ -265,6 +265,22 @@ class ChannelEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
+            label='类型'
+          >
+            {getFieldDecorator('type', {
+              rules: [{
+                required: true, message: '请选择类型!',
+              }],
+              initialValue: detail.type !== undefined ? detail.type + '' : detail.type
+            })(
+              <Select placeholder='请选择类型'>
+                  <Option value={'0'}>闲置</Option>
+                  <Option value={'1'}>每日话题</Option>
+              </Select>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
             label='上传图片'
             required
             {...help}

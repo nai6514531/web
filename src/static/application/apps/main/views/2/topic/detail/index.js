@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { Row, Col, Spin, Card, Modal } from 'antd'
 import styles from './detail.pcss'
 import moment from 'moment'
-import { status } from './dict.js'
-import { transformUrl, toQueryString } from '../../../utils/'
+import { status } from '../dict.js'
+import { transformUrl, toQueryString } from '../../../../utils/'
 
 class TopicDetail extends Component {
   constructor(props) {
@@ -69,27 +69,6 @@ class TopicDetail extends Component {
         {
           title: '商品管理',
           url: `/2/channel/${data.channelId}/topic`
-        },
-        {
-          title: '商品详情'
-        }
-      ]
-    } else if(from == 'pending') {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '频道管理',
-          url: `/2/channel`
-        },
-        {
-          title: '商品管理',
-          url: `/2/channel/${data.channelId}/topic`
-        },
-        {
-          title: '待处理商品管理',
-          url: `/2/channel/${data.channelId}/pending-topic`
         },
         {
           title: '商品详情'

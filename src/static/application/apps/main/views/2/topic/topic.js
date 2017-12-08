@@ -43,7 +43,34 @@ class Topic extends Component {
         key: 'id',
       },
       {
-        title: '商品首图',
+        title: '发布时间',
+        dataIndex: 'sendedAt',
+        key: 'sendedAt',
+        render: (text, record) => {
+          // redo
+          return`${moment(record.sendedAt).format('YYYY-MM-DD HH:mm:ss')}`
+        }
+      },
+      {
+        title: '帖子内容',
+        dataIndex: 'title',
+        key: 'title',
+        render: (text, record, index) => {
+          return (
+            <Popover
+              content={
+                <Row>
+                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>标题:</span>{record.title}</Row>
+                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
+                </Row>
+              }>
+                {record.title}
+            </Popover>
+          )
+        }
+      },
+      {
+        title: '配图',
         render: (text, record, index) => {
           if(record.url) {
             return (
@@ -67,22 +94,14 @@ class Topic extends Component {
         }
       },
       {
-        title: '商品详情',
-        dataIndex: 'title',
-        key: 'title',
-        render: (text, record, index) => {
-          return (
-            <Popover
-              content={
-                <Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>标题:</span>{record.title}</Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
-                </Row>
-              }>
-                {record.title}
-            </Popover>
-          )
-        }
+        title: '点赞数',
+        dataIndex: 'likes',
+        key: 'likes',
+      },
+      {
+        title: '评论数',
+        dataIndex: 'comments',
+        key: 'comments',
       },
       {
         title: '所属频道',
@@ -94,13 +113,13 @@ class Topic extends Component {
       //   dataIndex: 'uniqueVisitor',
       //   key: 'uniqueVisitor',
       // },
+      // {
+      //   title: '所属学校',
+      //   dataIndex: 'schoolName',
+      //   key: 'schoolName',
+      // },
       {
-        title: '所属学校',
-        dataIndex: 'schoolName',
-        key: 'schoolName',
-      },
-      {
-        title: '交易状态',
+        title: '帖子状态',
         render: (text, record) => {
           return status[record.status]
         }
@@ -112,21 +131,21 @@ class Topic extends Component {
           let detail
           let { cityId } = this.search
           if(cityId) {
-            detail = <Link to={`/2/topic/${record.id}?from=city`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+            detail = <Link to={`/2/topic/${record.id}?from=city`}>详情{'\u00A0'}|{'\u00A0'}</Link>
           } else {
-            detail = <Link to={`/2/topic/${record.id}`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+            detail = <Link to={`/2/topic/${record.id}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
           }
           return (
             <span>
               {detail}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动商品{'\u00A0'}|</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a>
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,3) }>{'\u00A0'}下架商品</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,3) }>{'\u00A0'}下线</a>
                   }
                   if(record.status === 3 || record.status === 4) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上架商品</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上线</a>
                   }
                 })()
               }
@@ -202,8 +221,8 @@ class Topic extends Component {
     const self = this
     if(status === 3 ) {
       confirm({
-        title: '下架商品?',
-        content: '下架后该商品将不会再展示在C端，确认下架吗？',
+        title: '下架帖子?',
+        content: '下架后该帖子将不会再展示在C端，确认下架吗？',
         onOk() {
           self.props.dispatch({
             type: 'topic/updateStatus',
@@ -284,7 +303,7 @@ class Topic extends Component {
           url: `/2/city`
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     } else if(this.search.from === 'channel') {
@@ -297,7 +316,7 @@ class Topic extends Component {
           url: `/2/channel`
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     } else {
@@ -306,7 +325,7 @@ class Topic extends Component {
           title: '闲置系统'
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     }
@@ -314,21 +333,21 @@ class Topic extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <InputWithClear
-          placeholder='商品发布人'
+          placeholder='帖子发布人'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
         <InputWithClear
-          placeholder='商品关键字'
+          placeholder='帖子关键字'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'keywords')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.keywords}
          />
         <InputWithClear
-          placeholder='商品学校'
+          placeholder='帖子学校'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'schoolName')}
           onPressEnter={this.searchClick}
@@ -338,7 +357,7 @@ class Topic extends Component {
           value={ search.channelId }
           allowClear
           className={styles.input}
-          placeholder='商品频道'
+          placeholder='帖子频道'
           onChange={this.selectHandler.bind('this','channelId')}>
             {
               channel.map(value => {
@@ -352,7 +371,7 @@ class Topic extends Component {
           value={search.status}
           allowClear
           className={styles.input}
-          placeholder='商品状态'
+          placeholder='帖子状态'
           onChange={this.selectHandler.bind('this','status')}>
             { this.renderStatus(status) }
         </Select>
@@ -375,7 +394,7 @@ class Topic extends Component {
           rowClassName={() => {}}
         />
         <Modal
-          title={`商品频道`}
+          title={`帖子频道`}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -384,19 +403,19 @@ class Topic extends Component {
           <Form onSubmit={this.handleSubmit}>
             <FormItem
               {...formItemLayout}
-              label='商品名称'
+              label='帖子名称'
             >
               <span>{record.title}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='当前商品频道'
+              label='当前帖子频道'
             >
               <span>{record.channelTitle}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='将商品移动至'
+              label='将帖子移动至'
             >
               {getFieldDecorator('channelId', {
                 rules: [{

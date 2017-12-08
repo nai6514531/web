@@ -16,11 +16,11 @@ import ChannelDetail from 'bundle-loader?lazy!../../views/2/channel/detail/'
 import ChannelOrder from 'bundle-loader?lazy!../../views/2/channel/order/'
 // import channelOrderModel from 'bundle-loader?lazy!../../models/2/channel/order/index.js'
 //
-import Topic from 'bundle-loader?lazy!../../views/2/city/topic.js'
-import topicModel from 'bundle-loader?lazy!../../models/2/city/topic.js'
+import Topic from 'bundle-loader?lazy!../../views/2/topic/topic.js'
+import topicModel from 'bundle-loader?lazy!../../models/2/topic/topic.js'
 
-import TopicDetail from 'bundle-loader?lazy!../../views/2/city/topic-detail.js'
-import topicDetailModel from 'bundle-loader?lazy!../../models/2/city/topic-detail.js'
+import TopicDetail from 'bundle-loader?lazy!../../views/2/topic/detail/index.js'
+import topicDetailModel from 'bundle-loader?lazy!../../models/2/topic/topic-detail.js'
 
 export default function (history, app) {
   return (
