@@ -54,14 +54,14 @@ class Code extends Component {
     let { keyLoading, qrCodeUrl, wechat , detail: { nickName, cashAccount } } = this.props
     let url = DEFAULT_URL + `?key=${wechat.key}`
 
-    return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading })} > 
-      <Col xs={24} sm={10} md={6}> 
+    return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading })} >
+      <Col xs={24} sm={10} md={6}>
         <QRCode value={url} />
         {keyLoading ? <Spin className={styles.spin} /> : null}
       </Col>
       <Col xs={24} sm={14} md={16}>
         {!!wechat.nickName || (!wechat.key && cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT) ? <div className={styles.tip}>
-          <Icon type='check-circle' className={cx(styles.check, styles.icon)} /> 
+          <Icon type='check-circle' className={cx(styles.check, styles.icon)} />
           <p>
             关联成功（你将使用昵称为
             <span className={styles.name}>{wechat.nickName || nickName}</span>
@@ -133,22 +133,22 @@ class Alipay extends Component {
             <Button type="primary" className='form-wrapper-btn' onClick={() => { this.setState({ showAccountNameTip: true })}}>查看示例</Button>
           </Col>
         </Row>
-      </FormItem> 
-      <Modal 
+      </FormItem>
+      <Modal
         title="示例图片"
         footer={null}
         visible={this.state.showAccountTip}
         onCancel={() => { this.setState({ showAccountTip: false })}}
         style={{ textAlign:'center' }}>
-        <img src={require("../../images/pic_01.png")} width="70%"/>
+        <img src={require("../images/pic_01.png")} width="70%"/>
      </Modal>
-     <Modal 
-        title="示例图片" 
+     <Modal
+        title="示例图片"
         footer={null}
         visible={this.state.showAccountNameTip}
         onCancel={() => { this.setState({ showAccountNameTip: false })}}
         style={{ textAlign:'center' }}>
-        <img src={require("../../images/pic_02.png")} width="70%"/>
+        <img src={require("../images/pic_02.png")} width="70%"/>
      </Modal>
     </div>
   }
@@ -166,8 +166,8 @@ class Wechat extends Component {
     let { visible } = this.state
 
     return <div>
-      <FormItem 
-        {...formItemLayout} 
+      <FormItem
+        {...formItemLayout}
         label='扫码验证身份'>
         {getFieldDecorator('qrcode', {
           rules: [
@@ -193,7 +193,7 @@ class Wechat extends Component {
           <Input placeholder="如：张三" />
         )}
       </FormItem>
-      <Modal 
+      <Modal
         title="如何认证"
         footer={null}
         visible={visible}
@@ -288,7 +288,7 @@ class Pay extends Component {
       }
       // 结算帐号为微信，且重新关连
       if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT　&& !!wechat.key ) {
-        options = { ...options, wechat } 
+        options = { ...options, wechat }
       }
 
       this.updateAccount(options)
@@ -406,8 +406,8 @@ class Pay extends Component {
             </RadioGroup>
           )}
         </FormItem>
-        <FormItem 
-          {...formItemLayout} 
+        <FormItem
+          {...formItemLayout}
           label="是否自动结算" >
           {getFieldDecorator('auto', {
             initialValue: !!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(cashAccount.type) ? cashAccount.isAuto : true,
@@ -419,13 +419,13 @@ class Pay extends Component {
           )}
         </FormItem>
         {
-          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT ? 
-          <Wechat {...this.props} 
-          wechat={wechat} 
-          qrCodeUrl={qrCodeUrl} 
-          keyLoading={keyLoading} 
-          createWechatKey={this.createWechatKey.bind(this)} /> : 
-          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? 
+          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT ?
+          <Wechat {...this.props}
+          wechat={wechat}
+          qrCodeUrl={qrCodeUrl}
+          keyLoading={keyLoading}
+          createWechatKey={this.createWechatKey.bind(this)} /> :
+          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ?
           <Alipay {...this.props} /> : null
         }
         <FormItem {...tailFormItemLayout}>
