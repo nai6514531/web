@@ -86,7 +86,7 @@ class App extends Component{
         title: '设备编号/楼道信息',
         dataIndex: 'device',
         render: (device) => {
-          return _.without([`${device.serial}`, `${device.address}`], '').join(' / ')
+          return `${device.serial || '-' } / ${device.address || '-'}`
         }
       }, {
         title: '服务类型',
