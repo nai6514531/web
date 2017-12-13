@@ -1,7 +1,10 @@
 import request from '../../utils/request'
 const userService = {
   list: (data) => {
-    return request.get(`/2/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.mobile || ''}&isOfficial=${data.isOfficial || 0}&status=${data.status || 0 }&schoolName=${data.schoolName || '' }`)
+    if(data.pagination === false) {
+      return request.get(`/2/users?name=${data.name || ''}&mobile=${data.mobile || ''}&isOfficial=${data.isOfficial || ''}&status=${data.status || ''}&schoolName=${data.schoolName || '' }`)
+    }
+    return request.get(`/2/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&mobile=${data.mobile || ''}&isOfficial=${data.isOfficial || ''}&status=${data.status || ''}&schoolName=${data.schoolName || '' }`)
   },
   detail: (id) => {
     return request.get(`/2/users/${id}`)

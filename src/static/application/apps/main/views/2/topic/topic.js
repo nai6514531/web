@@ -11,7 +11,7 @@ import moment from 'moment'
 import history from '../../../utils/history.js'
 import { trim } from 'lodash'
 import styles from './index.pcss'
-import { status } from './dict.js'
+import dict from '../../../utils/dict.js'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -26,16 +26,20 @@ const formItemLayout = {
 }
 
 const confirm = Modal.confirm
-
 const Option = Select.Option
+
 class Topic extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.search)
-    // 搜索时跳到默认分页
-    // delete search.page
-    // delete search.per_page
-    this.search = search
+    this.search = transformUrl(location.search)
+    let { from, cityId, channelId } = this.search
+    if(from === 'city') {
+      this.createUrl = `/2/topic/new?from=${from}&cityId=${cityId}`
+    } else if(from === 'channel') {
+      this.createUrl = `/2/topic/new?from=${from}&channelId=${channelId}`
+    } else {
+      this.createUrl = `/2/topic/new`
+    }
     this.columns = [
       {
         title: '序号',
@@ -43,18 +47,18 @@ class Topic extends Component {
         key: 'id',
       },
       {
-        title: '发布时间',
-        dataIndex: 'sendedAt',
-        key: 'sendedAt',
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        key: 'updatedAt',
         render: (text, record) => {
-          // redo
-          return`${moment(record.sendedAt).format('YYYY-MM-DD HH:mm:ss')}`
+          return`${moment(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       {
         title: '帖子内容',
-        dataIndex: 'title',
-        key: 'title',
+        dataIndex: 'content',
+        key: 'content',
+        width: 200,
         render: (text, record, index) => {
           return (
             <Popover
@@ -64,7 +68,7 @@ class Topic extends Component {
                   <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
                 </Row>
               }>
-                {record.title}
+                {record.content}
             </Popover>
           )
         }
@@ -99,7 +103,7 @@ class Topic extends Component {
         key: 'likes',
       },
       {
-        title: '评论数',
+        title: '留言数',
         dataIndex: 'comments',
         key: 'comments',
       },
@@ -121,23 +125,39 @@ class Topic extends Component {
       {
         title: '帖子状态',
         render: (text, record) => {
-          return status[record.status]
+          return dict.topicStatus[record.status]
         }
       },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          let detail
-          let { cityId } = this.search
-          if(cityId) {
-            detail = <Link to={`/2/topic/${record.id}?from=city`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+          let detail, edit, comment, like
+          let { from, cityId, channelId } = this.search
+
+          if(from === 'city') {
+            detail = <Link to={`/2/topic/detail/${record.id}?from=${from}&cityId=${cityId}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}?from=${from}&cityId=${cityId}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment?from=${from}&cityId=${cityId}`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like?from=${from}&cityId=${cityId}`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
+          } else if(from === 'channel') {
+            detail = <Link to={`/2/topic/detail/${record.id}?from=${from}&channelId=${channelId}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}?from=${from}&channelId=${channelId}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment?from=${from}&channelId=${channelId}`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like?from=${from}&channelId=${channelId}`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
           } else {
-            detail = <Link to={`/2/topic/${record.id}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            detail = <Link to={`/2/topic/detail/${record.id}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
           }
+
           return (
             <span>
               {detail}
+              {edit}
+              {comment}
+              {like}
               <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a>
               {
                 (() => {
@@ -172,7 +192,9 @@ class Topic extends Component {
     this.props.dispatch({
       type: 'topic/channelList',
       payload: {
-        data: 'getAll'
+        data: {
+          pagination: false
+        }
       }
     })
     this.fetch(url)
@@ -290,10 +312,13 @@ class Topic extends Component {
     }
     return item
   }
+  createTopic = () => {
+    this.props.history.push(this.createUrl)
+  }
   render() {
     const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
     let breadItems
-    if(this.search.cityId) {
+    if(this.search.from === 'city') {
       breadItems = [
         {
           title: '闲置系统'
@@ -373,7 +398,7 @@ class Topic extends Component {
           className={styles.input}
           placeholder='帖子状态'
           onChange={this.selectHandler.bind('this','status')}>
-            { this.renderStatus(status) }
+            { this.renderStatus(dict.topicStatus) }
         </Select>
         <span className={styles['button-wrap']}>
           <Button
@@ -382,6 +407,12 @@ class Topic extends Component {
             style={{marginBottom: '20px', marginRight: 20}}
             >
             筛选
+          </Button>
+          <Button
+            type='primary'
+            onClick={this.createTopic}
+            style={{marginBottom: 20, marginRight: 20 }}>
+              新建帖子
           </Button>
         </span>
         <DataTable

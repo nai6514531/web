@@ -34,7 +34,6 @@ class UserEdit extends Component {
   }
   componentDidMount() {
     const { match: { params: { id } } } = this.props
-    this.props.dispatch({ type: 'userEdit/appList' })
     id !== 'new' && this.props.dispatch({
       type: 'userEdit/detail',
       payload: {
@@ -63,16 +62,16 @@ class UserEdit extends Component {
       }
       if(!err) {
         values.schoolId = Number(values.schoolId)
-        const schoolInfo = this.props.userEdit.schoolData.filter(obj => {
-          return obj.id === values.schoolId
-        })[0]
-        schoolInfo.schoolName = schoolInfo.name
+        // const schoolInfo = this.props.userEdit.schoolData.filter(obj => {
+        //   return obj.id === values.schoolId
+        // })[0]
+        // schoolInfo.schoolName = schoolInfo.name
 
         let type = 'userEdit/add'
         if(id !== 'new') {
           type = 'userEdit/update'
         }
-        values = { ...values, ...schoolInfo }
+        // values = { ...values, ...schoolInfo }
         this.props.dispatch({
           type: type,
           payload: {
@@ -244,7 +243,6 @@ class UserEdit extends Component {
         <div className='ant-upload-text'>图片</div>
       </div>
     )
-    console.log('disabled',disabled)
     const breadItems = [
       {
         title: '闲置系统'
@@ -279,7 +277,7 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='上传图片'
+            label='头像'
             required
             {...help}
           >

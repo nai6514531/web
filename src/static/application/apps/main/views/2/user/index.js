@@ -86,9 +86,13 @@ class TwoUser extends Component {
         render: (text, record) => {
           return dict.two.userStatus[record.status]
         }
+      },{
+        title: '手机号',
+        dataIndex: 'mobile',
+        key: 'mobilem',
       },
       {
-        title: '创建时间',
+        title: '注册时间',
         dataIndex: 'created_at',
         key: 'created_at',
         render: (text, record) => {
@@ -99,10 +103,10 @@ class TwoUser extends Component {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          const edit = record.isOfficial === 1 ? <Link to={`/2/users/${record.mobile}`}>{'\u00A0'}编辑 |</Link> : null
+          const edit = record.isOfficial === 1 ? <Link to={`/2/users/${record.id}`}>{'\u00A0'}编辑 |</Link> : null
           return (
             <span>
-              <Link to={`/2/users/detail/${record.mobile}`}>详情</Link> |
+              <Link to={`/2/users/detail/${record.id}`}>详情</Link> |
               { edit }
               {
                 (() => {
@@ -185,12 +189,12 @@ class TwoUser extends Component {
     }
   }
   updateStatus = (id, status) => {
-    const url = this.search
+    const url = transformUrl(location.search)
     const self = this
     if(status === 1 ) {
       confirm({
         title: '拉黑用户?',
-        content: '拉黑后该用户点赞及其评论将消失，确定拉黑吗？',
+        content: '拉黑后该用户点赞及其留言将消失，确定拉黑吗？',
         onOk() {
           self.props.dispatch({
             type: 'twoUser/updateStatus',

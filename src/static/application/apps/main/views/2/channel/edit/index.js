@@ -46,6 +46,7 @@ class ChannelEdit extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { match: { params: { id } }, history, channelEdit: { fileList } } = this.props
+        values.type = Number(values.type)
         let type = 'channelEdit/add'
         if(id !== 'new') {
           type = 'channelEdit/update'

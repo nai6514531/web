@@ -53,7 +53,10 @@ class ChannelOrder extends Component {
     this.props.dispatch({
       type: 'channel/list',
       payload: {
-        data: 'getAllWithStatus'
+        data: {
+          pagination: false,
+          status: 0
+        }
       }
     })
 

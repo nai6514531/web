@@ -1,5 +1,8 @@
 import { message } from 'antd'
 import userService from '../../../services/2/user.js'
+import commentService from '../../../services/2/comment.js'
+import likeService from '../../../services/2/like.js'
+import replyService from '../../../services/2/reply.js'
 import { storage, session } from '../../../utils/storage.js'
 import { cloneDeep } from 'lodash'
 
@@ -44,18 +47,56 @@ export default {
     },
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(userService.detail, id)
+      const comment = yield call(commentService.list, {
+        pagination:false,
+        userId: id
+      })
+      const like = yield call(likeService.list, {
+        pagination:false,
+        userId: id
+      })
+      const reply = yield call(replyService.list, {
+        pagination:false,
+        userId: id
+      })
+
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { detail: result.data } })
       } else {
         message.error(result.message)
       }
+
+      if(comment.status == 'OK') {
+        result.data.commentCount = comment.data.pagination.total
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        comment.message && message.error(comment.message)
+      }
+
+      if(like.status == 'OK') {
+        result.data.likeCount = like.data.pagination.total
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        like.message && message.error(like.message)
+      }
+
+      if(reply.status == 'OK') {
+        result.data.replyCount = reply.data.pagination.total
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        reply.message && message.error(reply.message)
+      }
     },
     *updateStatus({ payload }, { call, put }) {
-      const { history, data, id } = payload
+      const { url, data, id } = payload
       const result = yield call(userService.updateStatus, data, id)
       if(result.status == 'OK') {
-        history.goBack()
-        message.success('更新成功')
+        yield put({
+          type: 'list',
+          payload: {
+            data: url
+          }
+        })
       } else {
         message.error(result.message)
       }

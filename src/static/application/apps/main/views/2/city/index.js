@@ -56,7 +56,7 @@ class City extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/2/topic?cityId=${record.cityId}`}>商品管理</Link>
+              <Link to={`/2/topic?cityId=${record.cityId}&from=city`}>商品管理</Link>
             </span>
           )
         }

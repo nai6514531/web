@@ -76,8 +76,9 @@ class UserDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>点赞数：</span>{detail.onSaleCount}</div>
-              <div><span className={styles.title}>留言数：</span>{detail.checkingCount}</div>
+              <div><span className={styles.title}>点赞数：</span>{detail.likeCount}</div>
+              <div><span className={styles.title}>留言数：</span>{detail.commentCount}</div>
+              <div><span className={styles.title}>回复数：</span>{detail.replyCount}</div>
             </div>
           </div>
         </Card>
