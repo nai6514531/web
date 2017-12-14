@@ -46,8 +46,10 @@ export default {
       const result = yield call(cityService.topicList, payload.data)
       if(result.status == 'OK') {
         result.data.objects.map(value => {
-          let image = JSON.parse(value.images || '{}')[0]
+          let { content, images } = value
+          let image = JSON.parse(images || '{}')[0]
           value.url = image ? image.url : ''
+          value.partContent = content.length > 30 ? content.slice(0, 30) + '...' : content
         })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {

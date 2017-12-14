@@ -33,7 +33,7 @@ class ActionLog extends Component {
       { title: '接口key', dataIndex: 'apiKey',key: 'apiKey', width: 100 },
       { title: '接口名', dataIndex: 'apiName',key: 'apiName', width: 100 },
       { title: '请求方法', dataIndex: 'method',key: 'method' },
-      { title: '请求参数', dataIndex: 'requestBody',key: 'requestBody', width: 150 },
+      // { title: '请求参数', dataIndex: 'requestBody',key: 'requestBody', width: 150 },
       { title: '响应状态', dataIndex: 'responseStatus',key: 'responseStatus', width: 100 },
       { title: '响应码', dataIndex: 'responseCode',key: 'responseCode' },
       { title: '响应描述', dataIndex: 'responseDescription',key: 'responseDescription', width: 100 },
@@ -44,6 +44,15 @@ class ActionLog extends Component {
         width: 100,
         render: (text, record) => {
           return`${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
+        }
+      },
+      {
+        title: '操作',
+        key: 'operation',
+        render: (text, record, index) => {
+          return (
+            <Link to={`/admin/settings/action-logs/${record.id}`}>详情</Link>
+          )
         }
       }
     ]

@@ -1,18 +1,67 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { Row, Col, Spin, Card, Modal } from 'antd'
 import styles from './detail.pcss'
 import moment from 'moment'
-import { status } from './dict.js'
-import { transformUrl, toQueryString } from '../../../utils/'
+import dict from '../../../../utils/dict.js'
+import { transformUrl, toQueryString } from '../../../../utils/'
 
 class TopicDetail extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
     this.search = search
+    let { from, cityId, channelId } = this.search
+    if(from == 'city') {
+      this.breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '城市管理',
+          url: `/2/city`
+        },
+        {
+          title: '帖子管理',
+          url: `/2/topic/?cityId=${cityId}&from=${from}`
+        },
+        {
+          title: '帖子详情'
+        }
+      ]
+    } else if(from == 'channel') {
+      this.breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '频道管理',
+          url: `/2/channel`
+        },
+        {
+          title: '帖子管理',
+          url: `/2/topic?channelId=${channelId}&from=${from}`
+        },
+        {
+          title: '帖子详情'
+        }
+      ]
+    } else {
+      this.breadItems = [
+        {
+          title: '闲置系统'
+        },
+        {
+          title: '帖子管理',
+          url: `/2/topic`
+        },
+        {
+          title: '帖子详情'
+        }
+      ]
+    }
   }
   componentDidMount() {
     const id = this.props.match.params.id
@@ -38,93 +87,22 @@ class TopicDetail extends Component {
   }
   render() {
     const { topicDetail: { data, visible, previewImage }, loading  } = this.props
-    const { from } = this.search
-    let breadItems
-    if(from == 'city') {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '城市管理',
-          url: `/2/city`
-        },
-        {
-          title: '商品管理',
-          url: `/2/topic/?cityId=${data.cityId}`
-        },
-        {
-          title: '商品详情'
-        }
-      ]
-    } else if(from == 'channel') {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '频道管理',
-          url: `/2/channel`
-        },
-        {
-          title: '商品管理',
-          url: `/2/channel/${data.channelId}/topic`
-        },
-        {
-          title: '商品详情'
-        }
-      ]
-    } else if(from == 'pending') {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '频道管理',
-          url: `/2/channel`
-        },
-        {
-          title: '商品管理',
-          url: `/2/channel/${data.channelId}/topic`
-        },
-        {
-          title: '待处理商品管理',
-          url: `/2/channel/${data.channelId}/pending-topic`
-        },
-        {
-          title: '商品详情'
-        }
-      ]
-    } else {
-      breadItems = [
-        {
-          title: '闲置系统'
-        },
-        {
-          title: '商品管理',
-          url: `/2/topic`
-        },
-        {
-          title: '商品详情'
-        }
-      ]
-    }
     return(
       <Spin
         tip='加载中...'
         spinning={loading}>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={this.breadItems} />
         {/*
         <Card>
-          <p className={styles.wrapper}><span className={styles.title}>商品标题:</span><span className={styles.description}>{data.title}</span></p>
-          <p className={styles.wrapper}><span className={styles.title}>商品价格:</span><span className={styles.description}>{(data.value / 100).toFixed(2)}</span></p>
+          <p className={styles.wrapper}><span className={styles.title}>帖子标题:</span><span className={styles.description}>{data.title}</span></p>
+          <p className={styles.wrapper}><span className={styles.title}>帖子价格:</span><span className={styles.description}>{(data.value / 100).toFixed(2)}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>发帖时间:</span><span className={styles.description}>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>所属频道:</span><span className={styles.description}>{data.channelTitle}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>交易状态:</span><span className={styles.description}>{status[data.status]}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>浏览量:</span><span className={styles.description}>{data.uniqueVisitor}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>点赞数:</span><span className={styles.description}>{data.likes}</span></p>
-          <p className={styles.wrapper}><span className={styles.title}>评论数:</span><span className={styles.description}>{data.comments}</span></p>
-          <p className={styles.wrapper}><span className={styles.title}>商品描述:</span><span className={styles.description}>{data.content}</span></p>
+          <p className={styles.wrapper}><span className={styles.title}>留言数:</span><span className={styles.description}>{data.comments}</span></p>
+          <p className={styles.wrapper}><span className={styles.title}>帖子描述:</span><span className={styles.description}>{data.content}</span></p>
           <p className={styles.wrapper}><span className={styles.title}>共有多少人来询问:</span><span className={styles.description}>{data.consultation}</span></p>
           <div className={styles['img-wrapper']}>
             {
@@ -141,21 +119,21 @@ class TopicDetail extends Component {
         */}
         <Card className={styles.card}>
           <div className={styles.header}>
-              <h1>商品交易情况:</h1>
+              <h1>帖子交易情况:</h1>
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
               { /*<div><span className={styles.title}>浏览量：</span>{data.uniqueVisitor}</div>*/ }
               <div><span className={styles.title}>点赞数：</span>{data.likes}</div>
-              <div><span className={styles.title}>评论数：</span>{data.comments}</div>
+              <div><span className={styles.title}>留言数：</span>{data.comments}</div>
               <div><span className={styles.title}>询问人数：</span>{data.consultation}</div>
-              <div><span className={styles.title}>交易状态：</span>{status[data.status]}</div>
+              <div><span className={styles.title}>交易状态：</span>{dict.topicStatus[data.status]}</div>
             </div>
           </div>
         </Card>
         <Card className={styles.card}>
           <div className={styles.header}>
-              <h1>商品基本信息:</h1>
+              <h1>帖子基本信息:</h1>
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
@@ -179,7 +157,7 @@ class TopicDetail extends Component {
         </Card>
         <Card className={styles.card}>
           <div className={styles.header}>
-              <h1>商品发布人信息：</h1>
+              <h1>帖子发布人信息：</h1>
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
