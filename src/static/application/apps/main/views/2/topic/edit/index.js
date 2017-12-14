@@ -11,7 +11,6 @@ import { trim, debounce } from 'lodash'
 import moment from 'moment'
 
 const { TextArea } = Input
-const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 const Option = AutoComplete.Option
 const FormItem = Form.Item
@@ -221,7 +220,6 @@ class TopicEdit extends Component {
     })
   }
   handleChannelSelect = (value) => {
-    // 二手及任意闲置频道
     let type
     if(value != 0) {
       type = this.props.topicEdit.channelData.filter(obj => obj.id == value)[0].type

@@ -4,14 +4,11 @@ import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Spin, Message, Form, Input, Button, InputNumber, Select } from 'antd'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { API_SERVER } from '../../../utils/debug.js'
-import { storage } from '../../../utils/storage.js'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 
 const Option = Select.Option
 const FormItem = Form.Item
-const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 const formItemLayout = {
   labelCol: {

@@ -9,7 +9,6 @@ import { storage } from '../../../../utils/storage.js'
 import { trim, debounce } from 'lodash'
 import moment from 'moment'
 
-const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 const Option = AutoComplete.Option
 const FormItem = Form.Item
