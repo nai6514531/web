@@ -26,7 +26,7 @@ class LoginLog extends Component {
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '用户id', dataIndex: 'userId', key: 'userId' },
+      { title: '用户ID', dataIndex: 'userId', key: 'userId' },
       { title: '用户名', dataIndex: 'userName', key: 'userName' },
       { title: '账号', dataIndex: 'userAccount',key: 'userAccount' },
       { title: '省', dataIndex: 'provinceName',key: 'provinceName' },
