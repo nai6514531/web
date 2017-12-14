@@ -49,15 +49,18 @@ export default {
       const result = yield call(userService.detail, id)
       const comment = yield call(commentService.list, {
         pagination:false,
-        userId: id
+        userId: id,
+        status: 0
       })
       const like = yield call(likeService.list, {
         pagination:false,
-        userId: id
+        userId: id,
+        status: 0
       })
       const reply = yield call(replyService.list, {
         pagination:false,
-        userId: id
+        userId: id,
+        status: 0
       })
 
       if(result.status == 'OK') {

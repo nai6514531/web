@@ -1,10 +1,11 @@
 import request from '../../utils/request'
 const replyService = {
   list: (data) => {
+    let status = !isNaN(data.status) ? data.status : ''
     if(data.pagination  === false) {
-      return request.get(`/2/replys?userId=${data.userId || ''}&name=${data.name || ''}&keywords=${data.keywords || ''}&commentId=${data.commentId || '' }`)
+      return request.get(`/2/replys?status=${status}&userId=${data.userId || ''}&name=${data.name || ''}&keywords=${data.keywords || ''}&commentId=${data.commentId || '' }`)
     }
-    return request.get(`/2/replys?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&keywords=${data.keywords || ''}&commentId=${data.commentId || '' }`)
+    return request.get(`/2/replys?status=${status}&offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&keywords=${data.keywords || ''}&commentId=${data.commentId || '' }`)
   },
   detail: (id) => {
     return request.get(`/2/replys/${id}`)

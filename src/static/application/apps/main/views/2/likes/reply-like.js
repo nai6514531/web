@@ -213,6 +213,7 @@ class ReplyLikes extends Component {
               <InputNumber
                 min={1}
                 max={maxLikes}
+                disabled={!maxLikes}
                 style={{width: '200px'}}
                 placeholder={`最多输入${maxLikes}个`}/>
             )}

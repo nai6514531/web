@@ -188,6 +188,7 @@ class TopicLikes extends Component {
                 min={1}
                 max={maxLikes}
                 style={{width: '200px'}}
+                disabled={!maxLikes}
                 placeholder={`最多输入${maxLikes}个`}/>
             )}
           </FormItem>

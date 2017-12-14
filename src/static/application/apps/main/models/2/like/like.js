@@ -10,7 +10,7 @@ const model = {
   realLikes: 0,
   virtualLikes: 0,
   content: '',
-  maxLikes: 10
+  maxLikes: 1
 }
 
 export default {
