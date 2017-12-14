@@ -15,9 +15,7 @@ import CONSTANT from '../../constant'
 
 import styles from './index.pcss'
 
-const BILL_ID = querystring.parse(window.location.search).billId
 const PAEG_SIZE = 10
-console.log('BILL_ID', BILL_ID)
 
 const wechatBreadItems = [
   {
@@ -67,7 +65,7 @@ class Bread extends Component {
     let { billId } = querystring.parse(window.location.search) 
     let { type } = this.props
     let items = type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems
-    console.log('billId', billId)
+
     items = _.map(items, (item) => {
       if (item.url) {
         let url = item.url.replace('BILL_ID', billId)
@@ -101,7 +99,7 @@ class App extends Component {
         title: '设备编号/楼道信息',
         dataIndex: 'device',
         render: (device) => {
-          return `${device.serial}/${device.serial}`
+          return `${device.serial || '-' } / ${device.address || '-'}`
         }
       },
       {

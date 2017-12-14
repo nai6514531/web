@@ -488,7 +488,7 @@ class App extends Component {
           <Select
             className={styles.item}
             value={this.state.search.status}
-            style={{width: 120 }}
+            style={{width: 120}}
             onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
             <Option value=''>请选择结算状态</Option>
             <Option value='1'>等待结算</Option>
