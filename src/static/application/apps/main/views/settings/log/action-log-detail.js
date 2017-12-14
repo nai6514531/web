@@ -48,7 +48,7 @@ class ActionLogDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>用户id：</span>{detail.userId}</div>
+              <div><span className={styles.title}>用户ID：</span>{detail.userId}</div>
               <div><span className={styles.title}>用户名：</span>{detail.userName}</div>
               <div><span className={styles.title}>账号：</span>{detail.userAccount}</div>
             </div>
@@ -60,15 +60,17 @@ class ActionLogDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>接口key：</span>{detail.apiKey}</div>
+              <div><span className={styles.title}>接口Key：</span>{detail.apiKey}</div>
               <div><span className={styles.title}>接口名：</span>{detail.apiName}</div>
+              <div><span className={styles.title}>请求路径：</span>{detail.requestURI}</div>
+              <div><span className={styles.title}>请求参数：</span>{detail.requestURLParams}</div>
               <div><span className={styles.title}>请求方法：</span>{detail.method}</div>
               <div><span className={styles.title}>响应状态：</span>{detail.responseStatus}</div>
               <div><span className={styles.title}>响应码：</span>{detail.responseCode}</div>
               <div><span className={styles.title}>响应描述：</span>{detail.responseDescription}</div>
-              <div><span className={styles.title}>创建时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
+              <div><span className={styles.title}>操作时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
               <div>
-                <span className={styles.title}>请求参数：</span>
+                <span className={styles.title}>请求体：</span>
                 <SyntaxHighlighter
                   language='json'
                   style={docco}
