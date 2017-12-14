@@ -93,28 +93,27 @@ class TwoUser extends Component {
       },
       {
         title: '注册时间',
-        dataIndex: 'created_at',
-        key: 'created_at',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
         render: (text, record) => {
-          return`${moment(record.created_at).format('YYYY-MM-DD HH:mm:ss')}`
+          return`${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          const edit = record.isOfficial === 1 ? <Link to={`/2/users/${record.id}`}>{'\u00A0'}编辑 |</Link> : null
           return (
             <span>
-              <Link to={`/2/users/detail/${record.id}`}>详情</Link> |
-              { edit }
+              <Link to={`/2/users/detail/${record.id}`}>详情</Link>
+              <Link to={`/2/users/${record.id}`}> | 编辑 </Link>
               {
                 (() => {
-                  if(record.status === 0) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,1) }>{'\u00A0'}拉黑</a>
+                  if(record.status === 0  && record.isOfficial !== 1) {
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,1) }> | {'\u00A0'}拉黑</a>
                   }
                   if(record.status === 1) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}取消拉黑</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>  | {'\u00A0'}取消拉黑</a>
                   }
                 })()
               }

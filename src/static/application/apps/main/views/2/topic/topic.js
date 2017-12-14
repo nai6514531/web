@@ -56,8 +56,8 @@ class Topic extends Component {
       },
       {
         title: '帖子内容',
-        dataIndex: 'content',
-        key: 'content',
+        dataIndex: 'partContent',
+        key: 'partContent',
         width: 200,
         render: (text, record, index) => {
           return (
@@ -68,7 +68,7 @@ class Topic extends Component {
                   <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
                 </Row>
               }>
-                {record.content}
+                {record.partContent}
             </Popover>
           )
         }

@@ -129,7 +129,7 @@ class ReplyEdit extends Component {
       const { match: { params: { commentId } }, history } = this.props
       if(!err) {
         values.userId = Number(values.userId)
-        values.status = Number(values.status)
+        // values.status = Number(values.status)
         values.commentId = Number(commentId)
         this.props.dispatch({
           type: 'replyEdit/add',
@@ -235,7 +235,7 @@ class ReplyEdit extends Component {
               </AutoComplete>
             )}
           </FormItem>
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             label='回复状态'
           >
@@ -250,7 +250,7 @@ class ReplyEdit extends Component {
                 <Radio value={'1'}>线下</Radio>
               </RadioGroup>
             )}
-          </FormItem>
+          </FormItem> */}
           <FormItem style={{textAlign: 'center'}}>
             <Button
               style={{margin: '20px 50px 0 0'}}

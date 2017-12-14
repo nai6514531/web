@@ -198,7 +198,11 @@ class CommentLikes extends Component {
                 required: true, message: '请输入赞数',
               }]
             })(
-              <InputNumber style={{width: '200px'}} placeholder={`最多输入${maxLikes}个`}/>
+              <InputNumber
+                min={1}
+                max={maxLikes}
+                style={{width: '200px'}}
+                placeholder={`最多输入${maxLikes}个`}/>
             )}
           </FormItem>
           <FormItem
