@@ -68,7 +68,7 @@ class ActionLogDetail extends Component {
               <div><span className={styles.title}>响应状态：</span>{detail.responseStatus}</div>
               <div><span className={styles.title}>响应码：</span>{detail.responseCode}</div>
               <div><span className={styles.title}>响应描述：</span>{detail.responseDescription}</div>
-              <div><span className={styles.title}>操作时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
+              <div><span className={styles.title}>操作时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm:ss')}</div>
               <div>
                 <span className={styles.title}>请求体：</span>
                 <SyntaxHighlighter

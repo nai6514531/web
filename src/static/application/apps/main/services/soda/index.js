@@ -18,6 +18,10 @@ const sodaService = {
     let url = `/soda/tickets?offset=${data.offset || 0 }&limit=${data.limit || 10 }&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&ownerId=${data.userId || ''}&status=${data.status || ''}`
     return request.get(url)
   },
+  ticketDetail: (id) => {
+    let url = `/soda/tickets/${id}`
+    return request.get(url)
+  },
   billsList: (data) => {
     const { mobile, url: { offset, limit, startAt, endAt, action, type } } =  data
     return request.get(`/soda/bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}&type=${type || ''}`)

@@ -5,6 +5,9 @@ import { getComponent } from '../../components/bundle/'
 import Consume from 'bundle-loader?lazy!../../views/crm/consume/'
 import ConsumeModel from 'bundle-loader?lazy!../../models/crm/consume/'
 
+import ConsumeDetail from 'bundle-loader?lazy!../../views/crm/consume/detail/'
+import ConsumeDetailModel from 'bundle-loader?lazy!../../models/crm/consume/detail.js'
+
 import Sms from 'bundle-loader?lazy!../../views/crm/sms/'
 import SmsModel from 'bundle-loader?lazy!../../models/crm/sms/'
 
@@ -31,6 +34,7 @@ export default function (history, app) {
   return (
     <Switch>
       <Route exact path='/crm/consume' component={getComponent(Consume,app,ConsumeModel)} />
+      <Route exact path='/crm/consume/:id' component={getComponent(ConsumeDetail,app,ConsumeDetailModel)} />
       <Route exact path='/crm/sms' component={getComponent(Sms,app,SmsModel)} />
       <Route exact path='/crm/device' component={getComponent(Device,app,DeviceModel)} />
       <Route exact path='/crm/device/:id' component={getComponent(DeviceDetail,app,DeviceModel)} />
