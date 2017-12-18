@@ -146,7 +146,7 @@ class App extends Component {
   }
   changeHistory ({...options}) {
     let query = _.pick({ ...this.state.search, ...this.state.pagination, ...options }, 'offset', 'limit', 'mobile')
-    history.push(`/business/recharges-chipcard?${querystring.stringify(query)}`)
+    this.props.history.push(`/business/recharges-chipcard?${querystring.stringify(query)}`)
   }
   pagination () {
     let self = this
@@ -193,7 +193,7 @@ class App extends Component {
         let data = res.data
         let apply = _.map(data.apply || [], (value) => { return `${value.account}` }).join(',')
         setFieldsValue({ apply: apply })
-        
+
       }).catch((err) => {
         this.setState({ applyLoading: false })
         message.error(err.message || '服务器异常，刷新重试')
@@ -203,7 +203,7 @@ class App extends Component {
   checkValue(rule, value, callback) {
     value = value || ''
     let number = Number(value || '')
-    let integer = value.split('.')[0] 
+    let integer = value.split('.')[0]
     let portion = value.split('.')[1] || ''
 
     if (isNaN(number) || number <= 0) {
@@ -282,12 +282,12 @@ class App extends Component {
         <Button type='primary' style={{ marginBottom: 10, marginRight: 10 }} loading={loading} icon='search' onClick={this.search.bind(this)}>筛选</Button>
         <Button type='primary' style={{ marginBottom: 10, backgroundColor: "#ED9D51", borderColor: "#ED9D51" }} onClick={() => { this.setState({ visible: true })}}>充值</Button>
       </div>
-      <Table 
+      <Table
         style= {{ marginTop: 16 }}
-        scroll={{ x: 900 }} 
-        dataSource={recharges} 
-        columns={this.columns} 
-        pagination={pagination} 
+        scroll={{ x: 900 }}
+        dataSource={recharges}
+        columns={this.columns}
+        pagination={pagination}
         rowKey={record => record.id}
         loading={loading}
       />
@@ -306,7 +306,7 @@ class App extends Component {
                   rules: [
                     { required: true, message: "手机号不可为空"},
                     { len: 11, message: '请输入11位手机号' },
-                    { type: 'string', pattern: /^1\d{10}$/, message: '请输入正确的手机号'} 
+                    { type: 'string', pattern: /^1\d{10}$/, message: '请输入正确的手机号'}
                   ],
                 })(
                   <Input placeholder="请输入手机号" onBlur={this.onBlurMobile.bind(this)}/>
@@ -339,7 +339,7 @@ class App extends Component {
               <FormItem {...tailFormItemLayout}>
                 <p className={styles.tip}>充值金额只可用于适用商家名下的设备</p>
               </FormItem>
-              <FormItem 
+              <FormItem
                 {...tailFormItemLayout}
                 style={{textAlign: "center"}}>
                 <Button
@@ -353,7 +353,7 @@ class App extends Component {
               </FormItem>
             </Form>
           </Spin>
-        </Modal> : null 
+        </Modal> : null
       }
     </section>)
   }

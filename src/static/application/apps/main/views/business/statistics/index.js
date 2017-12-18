@@ -8,9 +8,9 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import InputWithClear from '../../../components/input-with-clear/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import history from '../../../utils/history.js'
 import { trim } from 'lodash'
 import styles from './index.pcss'
+
 const breadItems = [
   {
     title: '商家系统'
@@ -270,7 +270,7 @@ class DeviceStatistics extends Component {
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
     const queryString = toQueryString({ ...this.search })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.getParams())
   }
   disabledDate = (current) => {
@@ -343,7 +343,7 @@ class BusinessStatistics extends Component {
         }
       }
     })
-    history.push(`${location.pathname}?type=${type}`)
+    this.props.history.push(`${location.pathname}?type=${type}`)
   }
   render() {
     const { businessStatistics: { data: { objects, pagination }, type }, loading  } = this.props

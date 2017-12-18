@@ -75,7 +75,7 @@ class Detail extends Component{
 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return `${realName || '-'} | 账号:${account || '-'}`
-          } 
+          }
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return `${realName || '-'}`
           }
@@ -137,7 +137,7 @@ class Detail extends Component{
     let data = { ...pagination, billId: id }
 
     if (id === 'detail') {
-      data = { ...pagination, status: 0 } 
+      data = { ...pagination, status: 0 }
     }
     DailyBillsService.list(data).then((res) => {
       if (res.status !== 'OK') {
@@ -159,7 +159,7 @@ class Detail extends Component{
     })
   }
   getBillDetail() {
-    let { id } = this.props.match.params 
+    let { id } = this.props.match.params
 
     if (id === 'detail') {
       return
@@ -178,7 +178,7 @@ class Detail extends Component{
   }
   changeHistory (options) {
     let query = _.pick({ ...this.state.search, ...this.state.pagination, ...options }, 'offset', 'limit', 'status', 'endAt', 'startAt', 'keys', 'type')
-    history.push(`/business/daily-bill?${querystring.stringify(query)}`)
+    this.props.history.push(`/business/daily-bill?${querystring.stringify(query)}`)
   }
   pagination () {
     let self = this
@@ -210,20 +210,20 @@ class Detail extends Component{
     return (<section className={styles.detail}>
       <Breadcrumb items={breadItems} />
       {
-        count !== 0 ? 
+        count !== 0 ?
         <p className={styles.tip}>
           共包含
           <span>{count}</span>
           天账单，结算金额总计
           <span>{conversionUnit(totalAmount)}</span>元
-        </p> 
+        </p>
         : null
       }
-      <Table scroll={{ x: 900 }}  
+      <Table scroll={{ x: 900 }}
         style= {{ marginTop: 16 }}
-        dataSource={list} 
-        columns={this.columns} 
-        pagination={this.pagination.call(this)} 
+        dataSource={list}
+        columns={this.columns}
+        pagination={this.pagination.call(this)}
         loading={loading}
         rowKey={record => record.id}
       />

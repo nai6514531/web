@@ -103,7 +103,7 @@ class App extends Component {
     if (!!parentId) {
       this.setState({ isSubAccount: true, parentId })
       this.list({ search: { keys: search.keys, id: parentId } , pagination})
-      return 
+      return
     }
     this.detail()
     this.getisRechargePermission()
@@ -165,7 +165,7 @@ class App extends Component {
   }
   changeHistory (options) {
     let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'keys', 'parentId',  'limit', 'offset')
-    history.push(`/business/account?${querystring.stringify(query)}`)
+    this.props.history.push(`/business/account?${querystring.stringify(query)}`)
   }
   search() {
     let pagination = { offset: 0 }
@@ -211,9 +211,9 @@ class App extends Component {
 
     return (<div>
       <Breadcrumb items={isSubAccount ? subBreadItems : breadItems} />
-      { 
+      {
         isSubAccount ? <div>
-          <Button 
+          <Button
             type='primary'　
             style={{ marginRight: 10, marginBottom: 10 }}
             disabled={!!parentId ? false : true}
@@ -229,13 +229,13 @@ class App extends Component {
           />
           <Button type='primary' loading={searchLoading} onClick={this.search.bind(this)}>筛选</Button>
         </div> : <div>
-          <Button 
+          <Button
             type='primary'　
             style={{ marginRight: 10, marginBottom: 10 }}
             disabled={!!parentId ? false : true}
             onClick={this.toSubList.bind(this)}>下级运营商</Button>
-          {isPermissionRecharge ? <Button 
-            type='primary' 
+          {isPermissionRecharge ? <Button
+            type='primary'
             style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
             onClick={() => { this.props.history.push('/business/recharges-chipcard') }}>
             IC卡金额转移

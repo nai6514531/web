@@ -23,7 +23,7 @@ import accountEdit from 'bundle-loader?lazy!../../views/business/account/edit'
 import chipcardDetail from 'bundle-loader?lazy!../../views/business/chipcard/detail'
 import chipcardRechargeList from 'bundle-loader?lazy!../../views/business/chipcard'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
       <Route exact path='/business/statistics' component={getComponent(BusinessStatistics,app,BusinessStatisticsModel)} />
@@ -33,17 +33,17 @@ export default function (history, app) {
       <Route exact path='/business/statistics/device/:month/:deviceSerial' component={getComponent(DeviceSearchByDay,app,BusinessStatisticsModel)} />
       <Route exact path='/business/consume-search' component={getComponent(ConsumeSearch,app,ConsumeSearchModel)} />
 
-      <Route path='/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
-      <Route path='/business/account/add' component={getComponent(accountEdit,　app)} />
-      <Route path='/business/account' component={getComponent(account,　app)} />
-      <Route path='/business/bill/:id' component={getComponent(billDetailList,　app)} />
-      <Route path='/business/bill' component={getComponent(bill,　app)} />
-      <Route path='/business/bill/detail' component={getComponent(bill,　app)} />
-      <Route path='/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
-      <Route path='/business/daily-bill' component={getComponent(dailyBill,　app)} />
+      <Route exact path='/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
+      <Route exact path='/business/account/add' component={getComponent(accountEdit,　app)} />
+      <Route exact path='/business/account' component={getComponent(account,　app)} />
+      <Route exact path='/business/bill/:id' component={getComponent(billDetailList,　app)} />
+      <Route exact path='/business/bill' component={getComponent(bill,　app)} />
+      <Route exact path='/business/bill/detail' component={getComponent(bill,　app)} />
+      <Route exact path='/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
+      <Route exact path='/business/daily-bill' component={getComponent(dailyBill,　app)} />
 
-      <Route path='/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
-      <Route path='/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
+      <Route exact path='/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
+      <Route exact path='/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
     </Switch>
   )
 }

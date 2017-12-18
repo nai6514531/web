@@ -6,7 +6,6 @@ import { Button, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import history from '../../../utils/history.js'
 
 
 const confirm = Modal.confirm

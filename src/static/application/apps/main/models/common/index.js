@@ -98,5 +98,12 @@ export default {
         message.error(result.message)
       }
     }
+  },
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen(location => {
+        console.log('location', location)
+      });
+    }
   }
 }

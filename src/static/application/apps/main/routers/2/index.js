@@ -48,7 +48,7 @@ import UsersEditModal from 'bundle-loader?lazy!../../models/2/user/userEdit.js'
 import UsersDetail from 'bundle-loader?lazy!../../views/2/user/detail/index.js'
 import usersModel from 'bundle-loader?lazy!../../models/2/user/user.js'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
       <Route exact path='/2/channel' component={getComponent(Channel,app,channelModel)} />

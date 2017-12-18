@@ -6,7 +6,6 @@ import { Form, Modal, Input, Button, Popconfirm, Select } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const FormItem = Form.Item
@@ -202,7 +201,7 @@ class District extends Component {
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
   change = (url) => {

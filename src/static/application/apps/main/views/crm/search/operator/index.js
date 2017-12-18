@@ -6,7 +6,6 @@ import { Input, Button, message } from 'antd'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
-import history from '../../../../utils/history.js'
 import styles from './index.pcss'
 import { trim } from 'lodash'
 import InputWithClear from '../../../../components/input-with-clear/'
@@ -92,7 +91,7 @@ class Operator extends Component {
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
     const queryString = toQueryString({ ...this.search })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.props.dispatch({
       type: 'common/resetIndex'
     })
