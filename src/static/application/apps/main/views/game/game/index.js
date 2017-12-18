@@ -243,7 +243,40 @@ class Game extends Component {
             >
             筛选
           </Button>
+          <Button
+            type='export'
+            onClick={this.searchClick}
+            style={{marginBottom: '20px', marginRight: 20}}
+            >
+            导出
+          </Button>
         </span>
+        </Row>
+        <Row>
+          <Link
+              to={`/game/label`}>
+              <Button
+                type='primary'
+                className={styles.button}>
+                标签管理
+              </Button>
+            </Link>
+            <Link
+              to={`/game/games/order`}>
+              <Button
+                type='primary'
+                className={styles.button}>
+                排序
+              </Button>
+            </Link>
+            <Link
+              to={`/game/new`}>
+              <Button
+                type='primary'
+                className={styles.button}>
+                新增
+              </Button>
+            </Link>
         </Row>
         <DataTable
            dataSource={objects}
