@@ -10,6 +10,7 @@ import advertisement from './advertisement/'
 import platform from './platform/'
 import crm from './crm/'
 import business from './business/'
+import game from './game/'
 
 import Login from 'bundle-loader?lazy!../views/login'
 import loginModel from 'bundle-loader?lazy!../models/login/'
@@ -33,6 +34,11 @@ function RouterConfig({ history, app }) {
         <Route path='/2' render={ props => (
           <Layout>
             { idle(history, app) }
+          </Layout>
+        )}/>
+         <Route path='/game' render={ props => (
+          <Layout>
+            { game(history, app) }
           </Layout>
         )}/>
         <Route path='/advertisement' render={ props => (
