@@ -26,7 +26,7 @@ export default {
   },
   effects: {
     *detail({ payload: { data } }, { call, put }) {
-      const result = yield call(deviceService.detail, data.deviceSerial)
+      const result = yield call(deviceService.detail, data.id)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -34,7 +34,7 @@ export default {
       }
     },
     *resetToken({ payload: { data } }, { call, put }) {
-      const result = yield call(deviceService.resetToken, data.serialNumber)
+      const result = yield call(deviceService.resetToken, data.serial)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { token: result.data } })
         message.success('重置成功')

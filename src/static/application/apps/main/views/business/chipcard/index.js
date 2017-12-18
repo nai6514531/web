@@ -95,7 +95,7 @@ class App extends Component {
         title: '充值时间',
         dataIndex: 'createdAt',
         render: (date) => {
-          return moment(date).format('YYYY-MM-DD HH:mm:SS')
+          return moment(date).format('YYYY-MM-DD HH:mm:ss')
         }
       }
     ]

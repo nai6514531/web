@@ -8,7 +8,6 @@ import 'nprogress/nprogress.css'
 const confirm = Modal.confirm
 const api = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'
@@ -36,6 +35,11 @@ api.interceptors.request.use(function (config) {
   let token = storage.val('token')
   if (token) {
     config.headers.Authorization = 'Bearer ' + token
+  }
+  if (!!~(config.url).indexOf('http')) {
+    config.withCredentials = false
+  } else {
+    config.withCredentials = true
   }
   let timestamp = new Date().getTime()
   if (config.url.indexOf('?') > 0) {

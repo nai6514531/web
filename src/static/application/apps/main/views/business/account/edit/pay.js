@@ -53,14 +53,16 @@ class Code extends Component {
   render() {
     let { keyLoading, qrCodeUrl, wechat , detail: { nickName, cashAccount } } = this.props
     let url = DEFAULT_URL + `/act/erp-relate-wechat?key=${wechat.key}`
+    let isRelatedWchat = !!wechat.nickName || (!wechat.key && cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT)
 
-    return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading })} >
+    return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading, [`${styles.success}`]: isRelatedWchat })} >
       <Col xs={24} sm={10} md={6}>
+        { isRelatedWchat ? <img src={require("../images/reload.png")} width="60" onClick={this.props.createWechatKey} /> : null }
         <QRCode value={url} />
         {keyLoading ? <Spin className={styles.spin} /> : null}
       </Col>
       <Col xs={24} sm={14} md={16}>
-        {!!wechat.nickName || (!wechat.key && cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT) ? <div className={styles.tip}>
+        { isRelatedWchat ? <div className={styles.tip}>
           <Icon type='check-circle' className={cx(styles.check, styles.icon)} />
           <p>
             关联成功（你将使用昵称为

@@ -12,7 +12,7 @@ class OperationDetail extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    const { keywords, deviceSerial } = search
+    const { keys, serials } = search
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
@@ -65,11 +65,11 @@ class OperationDetail extends Component {
     ]
     this.breadItems = [
         {
-          title: '客服系统'
+          title: '苏打生活'
         },
         {
           title: '设备查询',
-          url: `/crm/device?deviceSerial=${deviceSerial}&keywords=${keywords}`
+          url: `/crm/device?serials=${serials}&keys=${keys}`
         },
         {
           title: '设备操作详情'

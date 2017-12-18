@@ -139,6 +139,7 @@ class Detail extends Component {
   render () {
     let { form: { getFieldDecorator } } = this.props
     let { chipcard: { mobile, value, recharge, apply }, loading, updateLoading, visible } = this.state
+    apply = _.sortBy(apply, 'id')
     let applySign = _.map(apply, (value) => { return `${value.name}(${value.account})` })
 
     return (<section>

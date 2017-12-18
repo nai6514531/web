@@ -23,6 +23,13 @@ import accountEdit from 'bundle-loader?lazy!../../views/business/account/edit'
 import chipcardDetail from 'bundle-loader?lazy!../../views/business/chipcard/detail'
 import chipcardRechargeList from 'bundle-loader?lazy!../../views/business/chipcard'
 
+import device from 'bundle-loader?lazy!../../views/business/device'
+import deviceEdit from 'bundle-loader?lazy!../../views/business/device/edit'
+import deviceBatchEdit from 'bundle-loader?lazy!../../views/business/device/edit/batch'
+
+import deviceAddress from 'bundle-loader?lazy!../../views/business/device/address'
+import deviceAddressEdit from 'bundle-loader?lazy!../../views/business/device/address/edit'
+
 export default function (app) {
   return (
     <Switch>
@@ -43,8 +50,20 @@ export default function (app) {
       <Route exact path='/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
       <Route exact path='/business/daily-bill' component={getComponent(dailyBill,　app)} />
 
-      <Route exact path='/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
-      <Route exact path='/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
+      <Route path='/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
+      <Route path='/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
+
+      <Route path='/business/device/address/edit/:id' component={getComponent(deviceAddressEdit,　app)} />
+      <Route path='/business/device/address/add' component={getComponent(deviceAddressEdit,　app)} />      
+      <Route path='/business/device/address' component={getComponent(deviceAddress,　app)} />
+      
+      <Route path='/business/device/edit/:id' component={getComponent(deviceEdit,　app)} />
+      <Route path='/business/device/add' component={getComponent(deviceEdit,　app)} />
+      <Route path='/business/device/edit' component={getComponent(deviceBatchEdit,　app)} />
+      <Route path='/business/device' component={getComponent(device,　app)} />
+
+      
+
     </Switch>
   )
 }

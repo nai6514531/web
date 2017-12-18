@@ -1,10 +1,12 @@
 import request from '../../utils/request'
 const userService = {
-  list: (data) => {
-    return request.get(`/mng/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&roleId=${data.roleId || ''}`)
-  },
   adminUserlist: (data) => {
     return request.get(`/mng/admin/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}&keywords=${data.keywords || ''}`)
+  },
+  list: (options) => {
+    return request.get(`/mng/users`, {
+      params: options
+    })
   },
   detail: (id) => {
     return request.get(`/mng/users/${id}`)
@@ -42,5 +44,6 @@ const userService = {
       params: options
     })
   }
+
 }
 export default userService

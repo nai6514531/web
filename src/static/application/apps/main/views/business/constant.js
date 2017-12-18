@@ -2,12 +2,14 @@ import km from 'keymirror'
 import _ from 'underscore'
 
 module.exports = _.extend({
+  // 收款类型
   CASH_ACCOUNT_TYPE: {
     1: '支付宝',
     2: '微信',
     3: '银行卡',
   },
 
+  // 账单类型
   BILL_STATUS: {
     0: '未申请结算', 
     1: '等待结算', 
@@ -16,6 +18,7 @@ module.exports = _.extend({
     4: '结算失败',
   }, 
 
+  // 支付类型
   PAYMENT_TYPE: {
     1: '微信',
     2: '支付宝',
@@ -23,6 +26,7 @@ module.exports = _.extend({
     4: 'IC卡余额',
   },
 
+  // 服务类型
   SERVICE_TYPE: {
     1: '单脱',
     2: '快洗',
@@ -39,26 +43,30 @@ module.exports = _.extend({
     604: '使用中',
   },
 
-  FEATURE_TYPE: {
-    1: '洗衣机',
-    2: '充电桩',
-  },
-
+  // 收款类型
+  // 支付宝
   CASH_ACCOUNT_TYPE_IS_ALIPAY: 1,
+  // 微信
   CASH_ACCOUNT_TYPE_IS_WECHAT: 2,
+  // 银行
   CASH_ACCOUNT_TYPE_IS_BANK: 3,
 
+  // 账单状态
+  // 未申请结算
   BILL_SETTLEMENT_STATUS_IS_DEFAULT: 0,
+  // 等待结算
   BILL_SETTLEMENT_STATUS_IS_WAITING: 1,
+  // 结算成功
   BILL_SETTLEMENT_STATUS_IS_SUCCESS: 2,
+  // 结算中
   BILL_SETTLEMENT_STATUS_IS_PAYING: 3,
+  // 结算失败
   BILL_SETTLEMENT_STATUS_IS_FAIL: 4,
 
+  // 消费状态
+  // 正常
   CONSUME_STATUS_IS_DEFAULT: 7,
+  // 已退款
   CONSUME_STATUS_IS_REFUND: 4,
-
-  DEVICE_STATUS_IS_FREE: 0,
-  DEVICE_STATUS_IS_LOCK: 9,
-  DEVICE_STATUS_IS_USING: [601, 602, 603, 604],
   
 }, km({}))
