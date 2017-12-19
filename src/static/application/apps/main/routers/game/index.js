@@ -12,6 +12,10 @@ import SupplierEdit from 'bundle-loader?lazy!../../views/game/supplier/edit/inde
 import Label from 'bundle-loader?lazy!../../views/game/label/index.js'
 import labelModel from 'bundle-loader?lazy!../../models/game/label/index.js'
 
+import Billboard from 'bundle-loader?lazy!../../views/game/billboard/index.js'
+import billboardModel from 'bundle-loader?lazy!../../models/game/billboard/index.js'
+
+
 export default function (history, app) {
     return (
       <Switch>
@@ -21,6 +25,8 @@ export default function (history, app) {
         <Route exact path='/game/supplier/:id' component={getComponent(SupplierEdit, app, supplierModel)} />     
 
         <Route exact path='/game/label' component={getComponent(Label, app, labelModel)} />
+        <Route exact path='/game/billboard' component={getComponent(Billboard, app, billboardModel)} />
+        
            
       </Switch>
     )
