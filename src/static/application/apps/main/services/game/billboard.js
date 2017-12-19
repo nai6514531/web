@@ -1,23 +1,23 @@
 import request from '../../utils/request'
-const labelService = {
+const billboardService = {
   list: () => {
     let url
-    url = `/game/labels`
+    url = `/game/billboards`
     return request.get(url)
   },
   detail: (id) => {
-    return request.get(`/game/label/${id}`)
+    return request.get(`/game/billboard/${id}`)
   },
   add: (data) => {
-    let url = `/game/label`
+    let url = `/game/billboard`
     return request.post(url, data)
   },
   update: (id, data) => {
-    let url = `/game/label/${id}`
+    let url = `/game/billboard/${id}`
     return request.put(url, data)
   },
   delete: (id) => {
-    return request.delete(`/game/label/${id}`)
+    return request.delete(`/game/billboard/${id}`)
   }
 }
-export default labelService
+export default billboardService
