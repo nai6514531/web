@@ -26,11 +26,23 @@ class LoginLog extends Component {
     this.search = search
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
-      { title: '用户id', dataIndex: 'userId', key: 'userId' },
+      { title: '用户ID', dataIndex: 'userId', key: 'userId' },
       { title: '用户名', dataIndex: 'userName', key: 'userName' },
       { title: '账号', dataIndex: 'userAccount',key: 'userAccount' },
       { title: '省', dataIndex: 'provinceName',key: 'provinceName' },
       { title: '市', dataIndex: 'cityName',key: 'cityName' },
+      {
+        title: 'IP',
+        dataIndex: 'ip',
+        key: 'ip',
+        render:(text,record)=>{
+          if(record.ip){
+            return <a target="_blank" href={`http://ip.taobao.com/ipSearch.php?ipAddr=${record.ip}`}>{record.ip}</a>
+          }else{
+            return "/"
+          }
+        }
+      },
       {
         title: '登录时间',
         dataIndex: 'createdAt',
@@ -81,7 +93,7 @@ class LoginLog extends Component {
         <Breadcrumb items={breadItems} />
         <Row className={styles['input-wrap']}>
           <Input
-            placeholder='用户id'
+            placeholder='用户ID'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'userId')}
             onPressEnter={this.searchClick}

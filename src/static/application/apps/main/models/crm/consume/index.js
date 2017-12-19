@@ -39,22 +39,22 @@ export default {
     *list({ payload: { data } }, { call, put }) {
       const result = yield call(sodaService.ticketsList, data)
       if(result.status == 'OK') {
-        let showError = true
-        yield* result.data.objects.map(function* (value, index) {
-          const operations = yield call(userService.detail, value.owner.parentId)
+        // let showError = true
+        // yield* result.data.objects.map(function* (value, index) {
+        //   const operations = yield call(userService.detail, value.owner.parentId)
 
-          if(operations.status == 'OK') {
-            const operatorInfo = operations.data
-            if(operatorInfo) {
-              result.data.objects[index].parentOperator = operatorInfo.name
-              result.data.objects[index].parentOperatorMobile = operatorInfo.mobile
-            }
-          } else {
-            showError && message.error(operations.message)
-            showError = false
-          }
+        //   if(operations.status == 'OK') {
+        //     const operatorInfo = operations.data
+        //     if(operatorInfo) {
+        //       result.data.objects[index].parentOperator = operatorInfo.name
+        //       result.data.objects[index].parentOperatorMobile = operatorInfo.mobile
+        //     }
+        //   } else {
+        //     showError && message.error(operations.message)
+        //     showError = false
+        //   }
 
-        })
+        // })
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)

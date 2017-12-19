@@ -31,17 +31,17 @@ class Consume extends Component {
     this.columns = [
       { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       // { title: '经销商', dataIndex: 'agency',key: 'agency' },
-      {
-        title: '上级运营商',
-        width: 150,
-        render: (record) => {
-          return (
-            `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
-          )
-        }
-      },
-      { title: '运营商名称', dataIndex: 'owner.name',key: 'owner.name', width: 100 },
-      { title: '服务电话', dataIndex: 'owner.telephone', key: 'owner.telephone', width: 100 },
+      // {
+      //   title: '上级运营商',
+      //   width: 150,
+      //   render: (record) => {
+      //     return (
+      //       `${record.parentOperator}(${record.parentOperatorMobile || '-' })`
+      //     )
+      //   }
+      // },
+      // { title: '运营商名称', dataIndex: 'owner.name',key: 'owner.name', width: 100 },
+      // { title: '服务电话', dataIndex: 'owner.telephone', key: 'owner.telephone', width: 100 },
       { title: '模块编号', dataIndex: 'deviceSerial',key: 'deviceSerial', width: 100 },
       { title: '楼道信息', dataIndex: 'device.address', key: 'device.address', width: 100 },
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
@@ -80,28 +80,29 @@ class Consume extends Component {
       {
         title: '操作',
         key: 'operation',
-        width: 50,
+        width: 100,
         render: (text, record, index) => {
+         let refund
           if(record.status.value === 4) {
-            return (
-              <span style={{color: '#666'}}>已退款</span>
-            )
+            refund = <span style={{color: '#666'}}>已退款</span>
           }
           if(record.paymentId === 4) {
             // ic卡不支持退款
-            return (
-              <span style={{color: '#666'}}>/</span>
-            )
+            refund = <span style={{color: '#666'}}>/</span>
           }
           if(record.status.value === 7) {
-            return (
-              <span>
-                <Popconfirm title='确认退款吗?' onConfirm={ this.refund.bind(this,record.ticketId) } >
-                  <a href='javascript:void(0)'>{'\u00A0'}退款</a>
-                </Popconfirm>
-              </span>
-            )
+            refund = <span>
+                      <Popconfirm title='确认退款吗?' onConfirm={ this.refund.bind(this,record.ticketId) } >
+                        <a href='javascript:void(0)'>退款</a>
+                      </Popconfirm>
+                    </span>
           }
+          return(
+            <span>
+              <Link to={`/crm/consume/${record.ticketId}`}>详情{'\u00A0'} | {'\u00A0'}</Link>
+              { refund }
+            </span>
+          )
         }
       }
     ]
