@@ -9,7 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import history from '../../../utils/history.js'
 import labelService from '../../../services/game/label'
 import styles from './index.pcss'
-import { dropWhile, findIndex } from 'lodash'
+import { dropWhile, findIndex, trim } from 'lodash'
 const Option = Select.Option
 const confirm = Modal.confirm
 const FormItem = Form.Item
@@ -114,7 +114,7 @@ class Label extends Component {
     labelService.add(data).then(function(result){
       if(result.status == 'OK') {
         self.setState((prevState, props) => {
-          return { labels: [...self.state.labels, result.data] };
+          return { labels: [result.data, ...self.state.labels] };
         });
       } else {
         result.message && message.error(result.message)
@@ -126,7 +126,7 @@ class Label extends Component {
     this.showModal()
   }
   handleAdd = (data) => {
-    this.setState({isAdd: true});
+    this.setState({isAdd: true, record: {}});
     this.showModal();
   }
   showModal = () => {
@@ -134,7 +134,8 @@ class Label extends Component {
   }
   handleCancel = () => {
     this.setState({ visible: false });
-    this.setState({ record: {}})
+    const form = this.form;
+    form.resetFields();
   }
   handleCreate = () => {
     const form = this.form;
@@ -142,6 +143,8 @@ class Label extends Component {
       if (err) {
         return;
       }
+      values.name = trim(values.name) 
+      values.color = trim(values.color)       
       if (this.state.isAdd) {
         this.add(values);
       } else {
