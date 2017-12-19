@@ -24,6 +24,7 @@ import elementModel from 'bundle-loader?lazy!../../models/settings/element.js'
 
 import LoginLog from 'bundle-loader?lazy!../../views/settings/log/login-log.js'
 import ActionLog from 'bundle-loader?lazy!../../views/settings/log/action-log.js'
+import ActionLogDetail from 'bundle-loader?lazy!../../views/settings/log/action-log-detail.js'
 import LogModel from 'bundle-loader?lazy!../../models/settings/log.js'
 
 export default function (history, app) {
@@ -38,6 +39,7 @@ export default function (history, app) {
       <Route path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
       <Route path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
       <Route path='/admin/settings/login-logs' component={getComponent(LoginLog,app,LogModel)} />
+      <Route path='/admin/settings/action-logs/:id' component={getComponent(ActionLogDetail,app,LogModel)} />
       <Route path='/admin/settings/action-logs' component={getComponent(ActionLog,app,LogModel)} />
     </Switch>
   )

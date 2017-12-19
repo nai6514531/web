@@ -11,7 +11,7 @@ import moment from 'moment'
 import history from '../../../utils/history.js'
 import { trim } from 'lodash'
 import styles from './index.pcss'
-import { status } from './dict.js'
+import dict from '../../../utils/dict.js'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -26,16 +26,20 @@ const formItemLayout = {
 }
 
 const confirm = Modal.confirm
-
 const Option = Select.Option
+
 class Topic extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.search)
-    // 搜索时跳到默认分页
-    // delete search.page
-    // delete search.per_page
-    this.search = search
+    this.search = transformUrl(location.search)
+    let { from, cityId, channelId } = this.search
+    if(from === 'city') {
+      this.createUrl = `/2/topic/new?from=${from}&cityId=${cityId}`
+    } else if(from === 'channel') {
+      this.createUrl = `/2/topic/new?from=${from}&channelId=${channelId}`
+    } else {
+      this.createUrl = `/2/topic/new`
+    }
     this.columns = [
       {
         title: '序号',
@@ -43,7 +47,34 @@ class Topic extends Component {
         key: 'id',
       },
       {
-        title: '商品首图',
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        key: 'updatedAt',
+        render: (text, record) => {
+          return`${moment(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}`
+        }
+      },
+      {
+        title: '帖子内容',
+        dataIndex: 'partContent',
+        key: 'partContent',
+        width: 200,
+        render: (text, record, index) => {
+          return (
+            <Popover
+              content={
+                <Row>
+                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>标题:</span>{record.title}</Row>
+                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
+                </Row>
+              }>
+                {record.partContent}
+            </Popover>
+          )
+        }
+      },
+      {
+        title: '配图',
         render: (text, record, index) => {
           if(record.url) {
             return (
@@ -67,22 +98,14 @@ class Topic extends Component {
         }
       },
       {
-        title: '商品详情',
-        dataIndex: 'title',
-        key: 'title',
-        render: (text, record, index) => {
-          return (
-            <Popover
-              content={
-                <Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>标题:</span>{record.title}</Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
-                </Row>
-              }>
-                {record.title}
-            </Popover>
-          )
-        }
+        title: '点赞数',
+        dataIndex: 'likes',
+        key: 'likes',
+      },
+      {
+        title: '留言数',
+        dataIndex: 'comments',
+        key: 'comments',
       },
       {
         title: '所属频道',
@@ -94,39 +117,55 @@ class Topic extends Component {
       //   dataIndex: 'uniqueVisitor',
       //   key: 'uniqueVisitor',
       // },
+      // {
+      //   title: '所属学校',
+      //   dataIndex: 'schoolName',
+      //   key: 'schoolName',
+      // },
       {
-        title: '所属学校',
-        dataIndex: 'schoolName',
-        key: 'schoolName',
-      },
-      {
-        title: '交易状态',
+        title: '帖子状态',
         render: (text, record) => {
-          return status[record.status]
+          return dict.topicStatus[record.status]
         }
       },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          let detail
-          let { cityId } = this.search
-          if(cityId) {
-            detail = <Link to={`/2/topic/${record.id}?from=city`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+          let detail, edit, comment, like
+          let { from, cityId, channelId } = this.search
+
+          if(from === 'city') {
+            detail = <Link to={`/2/topic/detail/${record.id}?from=${from}&cityId=${cityId}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}?from=${from}&cityId=${cityId}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment?from=${from}&cityId=${cityId}`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like?from=${from}&cityId=${cityId}`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
+          } else if(from === 'channel') {
+            detail = <Link to={`/2/topic/detail/${record.id}?from=${from}&channelId=${channelId}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}?from=${from}&channelId=${channelId}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment?from=${from}&channelId=${channelId}`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like?from=${from}&channelId=${channelId}`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
           } else {
-            detail = <Link to={`/2/topic/${record.id}`}>查看详情{'\u00A0'}|{'\u00A0'}</Link>
+            detail = <Link to={`/2/topic/detail/${record.id}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
+            edit = <Link to={`/2/topic/${record.id}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
+            comment = <Link to={`/2/topic/${record.id}/comment`}>留言管理{'\u00A0'}|{'\u00A0'}</Link>
+            like = <Link to={`/2/topic/${record.id}/like`}>点赞管理{'\u00A0'}|{'\u00A0'}</Link>
           }
+
           return (
             <span>
               {detail}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动商品{'\u00A0'}|</a>
+              {edit}
+              {comment}
+              {like}
+              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a>
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,3) }>{'\u00A0'}下架商品</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,3) }>{'\u00A0'}下线</a>
                   }
                   if(record.status === 3 || record.status === 4) {
-                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上架商品</a>
+                    return <a href='javascript:void(0)' onClick={ this.updateStatus.bind(this,record.id,0) }>{'\u00A0'}上线</a>
                   }
                 })()
               }
@@ -153,7 +192,9 @@ class Topic extends Component {
     this.props.dispatch({
       type: 'topic/channelList',
       payload: {
-        data: 'getAll'
+        data: {
+          pagination: false
+        }
       }
     })
     this.fetch(url)
@@ -202,8 +243,8 @@ class Topic extends Component {
     const self = this
     if(status === 3 ) {
       confirm({
-        title: '下架商品?',
-        content: '下架后该商品将不会再展示在C端，确认下架吗？',
+        title: '下架帖子?',
+        content: '下架后该帖子将不会再展示在C端，确认下架吗？',
         onOk() {
           self.props.dispatch({
             type: 'topic/updateStatus',
@@ -271,10 +312,13 @@ class Topic extends Component {
     }
     return item
   }
+  createTopic = () => {
+    this.props.history.push(this.createUrl)
+  }
   render() {
     const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
     let breadItems
-    if(this.search.cityId) {
+    if(this.search.from === 'city') {
       breadItems = [
         {
           title: '闲置系统'
@@ -284,7 +328,7 @@ class Topic extends Component {
           url: `/2/city`
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     } else if(this.search.from === 'channel') {
@@ -297,7 +341,7 @@ class Topic extends Component {
           url: `/2/channel`
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     } else {
@@ -306,7 +350,7 @@ class Topic extends Component {
           title: '闲置系统'
         },
         {
-          title: '商品管理'
+          title: '帖子管理'
         }
       ]
     }
@@ -314,21 +358,21 @@ class Topic extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <InputWithClear
-          placeholder='商品发布人'
+          placeholder='帖子发布人'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
         <InputWithClear
-          placeholder='商品关键字'
+          placeholder='帖子关键字'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'keywords')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.keywords}
          />
         <InputWithClear
-          placeholder='商品学校'
+          placeholder='帖子学校'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'schoolName')}
           onPressEnter={this.searchClick}
@@ -338,7 +382,7 @@ class Topic extends Component {
           value={ search.channelId }
           allowClear
           className={styles.input}
-          placeholder='商品频道'
+          placeholder='帖子频道'
           onChange={this.selectHandler.bind('this','channelId')}>
             {
               channel.map(value => {
@@ -352,9 +396,9 @@ class Topic extends Component {
           value={search.status}
           allowClear
           className={styles.input}
-          placeholder='商品状态'
+          placeholder='帖子状态'
           onChange={this.selectHandler.bind('this','status')}>
-            { this.renderStatus(status) }
+            { this.renderStatus(dict.topicStatus) }
         </Select>
         <span className={styles['button-wrap']}>
           <Button
@@ -363,6 +407,12 @@ class Topic extends Component {
             style={{marginBottom: '20px', marginRight: 20}}
             >
             筛选
+          </Button>
+          <Button
+            type='primary'
+            onClick={this.createTopic}
+            style={{marginBottom: 20, marginRight: 20 }}>
+              新建帖子
           </Button>
         </span>
         <DataTable
@@ -375,7 +425,7 @@ class Topic extends Component {
           rowClassName={() => {}}
         />
         <Modal
-          title={`商品频道`}
+          title={`帖子频道`}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
@@ -384,19 +434,19 @@ class Topic extends Component {
           <Form onSubmit={this.handleSubmit}>
             <FormItem
               {...formItemLayout}
-              label='商品名称'
+              label='帖子名称'
             >
               <span>{record.title}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='当前商品频道'
+              label='当前帖子频道'
             >
               <span>{record.channelTitle}</span>
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label='将商品移动至'
+              label='将帖子移动至'
             >
               {getFieldDecorator('channelId', {
                 rules: [{

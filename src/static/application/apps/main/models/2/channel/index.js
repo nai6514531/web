@@ -114,7 +114,10 @@ export default {
         yield put({
           type: 'list',
           payload: {
-            data: 'getAllWithStatus'
+            data: {
+              status: 0,
+              pagination: false
+            }
           }
         })
       } else {

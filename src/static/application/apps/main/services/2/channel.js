@@ -2,10 +2,10 @@ import request from '../../utils/request'
 const channelService = {
   list: (data) => {
     let url
-    if(data === 'getAllWithStatus') {
-      url = `/2/channels?status=0`
-    } else if (data === 'getAll') {
-      url = `/2/channels`
+    if(data.pagination  === false) {
+      let status = !isNaN(data.status) ? data.status : ''
+      let type = !isNaN(data.type) ? data.type : ''
+      url = `/2/channels?status=${status}&type=${type}`
     } else {
       url = `/2/channels?offset=${data.offset || 0 }&limit=${data.limit || 10 }`
     }

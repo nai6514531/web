@@ -15,6 +15,14 @@ const cityService = {
     let url = `/2/topics/${id}`
     return request.get(url)
   },
+  topicAdd: (data) => {
+    let url = `/2/topics`
+    return request.post(url, data)
+  },
+  topicUpdate: (id, data) => {
+    let url = `/2/topics/${id}`
+    return request.put(url, data)
+  },
   moveTopic: (id, data) => {
     let url = `/2/topics/${id}/channel`
     return request.put(url, data)

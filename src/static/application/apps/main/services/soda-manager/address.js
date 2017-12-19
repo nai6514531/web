@@ -80,6 +80,9 @@ const addressesService = {
     return request.delete(`/mng/streets/${id}`)
   },
   schoolList: (data) => {
+    if(!data.pagination) {
+      return request.get(`/mng/schools?provinceId=${data.provinceId || ''}&cityId=${data.cityId || ''}&districtId=${data.districtId || ''}&name=${data.name || ''}`)
+    }
     return request.get(`/mng/schools?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${data.provinceId || ''}&cityId=${data.cityId || ''}&districtId=${data.districtId || ''}&name=${data.name || ''}`)
   },
   schoolAdd: (data) => {

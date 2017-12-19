@@ -2,18 +2,18 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal } from 'antd'
+import { Spin, Message, Form, Input, Button, Upload, Icon, Modal, Radio, AutoComplete } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../utils/debug.js'
 import { storage } from '../../../../utils/storage.js'
-import { trim } from 'lodash'
+import { trim, debounce } from 'lodash'
 import moment from 'moment'
 
-const RangePicker = DatePicker.RangePicker
-const { Option } = Select
+const RadioGroup = Radio.Group
+const Option = AutoComplete.Option
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
-const imageServer = `${API_SERVER}/upload/channel`
+const imageServer = `${API_SERVER}/upload/twoUser`
 const confirm = Modal.confirm
 
 const formItemLayout = {
@@ -27,15 +27,14 @@ const formItemLayout = {
   },
 }
 
-class ChannelEdit extends Component {
+class UserEdit extends Component {
   constructor(props) {
     super(props)
   }
   componentDidMount() {
     const { match: { params: { id } } } = this.props
-    this.props.dispatch({ type: 'channelEdit/appList' })
     id !== 'new' && this.props.dispatch({
-      type: 'channelEdit/detail',
+      type: 'userEdit/detail',
       payload: {
         id: id
       }
@@ -44,30 +43,34 @@ class ChannelEdit extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if(!err) {
-        const { match: { params: { id } }, history, channelEdit: { fileList } } = this.props
-        values.type = Number(values.type)
-        let type = 'channelEdit/add'
-        if(id !== 'new') {
-          type = 'channelEdit/update'
-        }
-        if(values.displayParams) {
-          values.displayParams = values.displayParams.replace(/，/g,',')
-        }
-        if(fileList[0] && fileList[0].image) {
-          values.imageUrl = fileList[0].image
-        } else {
-          this.props.dispatch({
-            type: 'channelEdit/updateData',
-            payload: {
-              help: {
-                validateStatus: 'error',
-                help: '请选择图片上传'
-              }
+      const { match: { params: { id } }, history, userEdit: { fileList } } = this.props
+
+      if(fileList[0] && fileList[0].image) {
+        values.avatorUrl = fileList[0].image
+      } else {
+        this.props.dispatch({
+          type: 'userEdit/updateData',
+          payload: {
+            help: {
+              validateStatus: 'error',
+              help: '请选择图片上传'
             }
-          })
-          return
+          }
+        })
+        return
+      }
+      if(!err) {
+        values.schoolId = Number(values.schoolId)
+        // const schoolInfo = this.props.userEdit.schoolData.filter(obj => {
+        //   return obj.id === values.schoolId
+        // })[0]
+        // schoolInfo.schoolName = schoolInfo.name
+
+        let type = 'userEdit/add'
+        if(id !== 'new') {
+          type = 'userEdit/update'
         }
+        // values = { ...values, ...schoolInfo }
         this.props.dispatch({
           type: type,
           payload: {
@@ -84,7 +87,7 @@ class ChannelEdit extends Component {
   }
   handlePreview = (file) => {
     this.props.dispatch({
-      type: 'channelEdit/showModal',
+      type: 'userEdit/showModal',
       payload: {
         previewImage: file.url || file.thumbUrl
       }
@@ -101,7 +104,7 @@ class ChannelEdit extends Component {
       if (file.response) {
         if(file.response.status === 'OK') {
           this.props.dispatch({
-            type: 'channelEdit/updateData',
+            type: 'userEdit/updateData',
             payload: {
               help: {
                 validateStatus: 'success',
@@ -112,7 +115,7 @@ class ChannelEdit extends Component {
           return file.response.status === 'OK'
         } else {
           this.props.dispatch({
-            type: 'channelEdit/updateData',
+            type: 'userEdit/updateData',
             payload: {
               help: {
                 validateStatus: 'error',
@@ -126,7 +129,7 @@ class ChannelEdit extends Component {
       return true
     })
     this.props.dispatch({
-      type: 'channelEdit/updateData',
+      type: 'userEdit/updateData',
       payload: {
         fileList: fileList
       }
@@ -134,7 +137,7 @@ class ChannelEdit extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'channelEdit/hideModal'
+      type: 'userEdit/hideModal'
     })
   }
   beforeUpload =  (file, fileList) => {
@@ -155,8 +158,8 @@ class ChannelEdit extends Component {
         let img = new Image
         img.onload = function() {
             let { width, height } = img
-            if( width != 750 || height != 300 ) {
-              Message.error('上传的图片需满足750*300')
+            if( width != 650 || height != 650 ) {
+              Message.error('上传的图片需满足650*650')
               reject()
             } else {
               resolve()
@@ -178,23 +181,60 @@ class ChannelEdit extends Component {
   }
   onRemove = () => {
     this.props.dispatch({
-      type: 'channelEdit/updateData',
+      type: 'userEdit/updateData',
       payload: {
         fileList: []
       }
     })
     this.props.dispatch({
-      type: 'channelEdit/updateData',
+      type: 'userEdit/updateData',
       payload: {
         help: {
           validateStatus: '',
-          help: '请上传1M以内的图片'
+          help: '请上传1M以内,650*650的图片'
         }
       }
     })
   }
+  handleSelect = () => {
+    this.props.dispatch({
+      type: 'userEdit/updateData',
+      payload: {
+        disabled: false
+      }
+    })
+  }
+  handleSearch = (filterKey) => {
+    if(filterKey) {
+      this.props.dispatch({
+        type: 'userEdit/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+      this.props.dispatch({
+        type: 'userEdit/schoolList',
+        payload: {
+          data: {
+            name: filterKey,
+            pagination: false
+          }
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'userEdit/updateData',
+        payload: {
+          disabled: false
+        }
+      })
+    }
+  }
+  debounceSearch = _.debounce((filterKey) => {
+      return this.handleSearch(filterKey)
+  }, 1000)
   render() {
-    const { channelEdit: { detail, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { userEdit: { detail, help, visible, previewImage, fileList, schoolData, disabled  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
@@ -207,11 +247,11 @@ class ChannelEdit extends Component {
         title: '闲置系统'
       },
       {
-        title: '频道管理',
-        url: '/2/channel'
+        title: '用户管理',
+        url: '/2/users'
       },
       {
-        title: isEdit ? '编辑' : '新增频道'
+        title: isEdit ? '编辑' : '新增用户'
       }
     ]
     const { startedAt, endedAt } = detail
@@ -221,68 +261,22 @@ class ChannelEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label='主标题'
+            label='昵称'
           >
-            {getFieldDecorator('title', {
+            {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入6字以内的主标题',
-              },{
-                max: 6, message: '长度最多6个字符'
-              }],
-              initialValue: detail.title
-            })(
-              <Input placeholder='请输入6字以内'/>
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='副标题'
-          >
-            {getFieldDecorator('subtitle', {
-              rules: [{
-                required: true, message: '请输入10字以内的副标题',
+                required: true, message: '请输入10字以内的昵称',
               },{
                 max: 10, message: '长度最多10个字符'
               }],
-              initialValue: detail.subtitle
+              initialValue: detail.name
             })(
               <Input placeholder='请输入10字以内'/>
             )}
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='描述'
-          >
-            {getFieldDecorator('description', {
-              rules: [{
-                required: true, message: '请输入20字以内的描述',
-              },{
-                max: 20, message: '长度最多20个字符'
-              }],
-              initialValue: detail.description
-            })(
-              <Input placeholder='请输入20字以内'/>
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='类型'
-          >
-            {getFieldDecorator('type', {
-              rules: [{
-                required: true, message: '请选择类型!',
-              }],
-              initialValue: detail.type !== undefined ? detail.type + '' : detail.type
-            })(
-              <Select placeholder='请选择类型'>
-                  <Option value={'0'}>闲置</Option>
-                  <Option value={'1'}>每日话题</Option>
-              </Select>
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='上传图片'
+            label='头像'
             required
             {...help}
           >
@@ -303,6 +297,45 @@ class ChannelEdit extends Component {
                <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
           </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="用户类型"
+          >
+            {getFieldDecorator('isOfficial', {
+              rules: [{
+                required: true, message: '请选择用户类型',
+              }],
+              initialValue: detail.isOfficial || 1
+            })(
+              <RadioGroup>
+                <Radio value={0}>普通用户</Radio>
+                <Radio value={1}>马甲</Radio>
+              </RadioGroup>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="学校"
+          >
+            {getFieldDecorator('schoolId', {
+              rules: [{
+                required: true, message: '请选择学校',
+              }],
+              initialValue: detail.schoolId
+            })(
+              <AutoComplete
+                placeholder='学校'
+                allowClear
+                onSelect={this.handleSelect}
+                onSearch={this.debounceSearch}>
+                {
+                  schoolData.map((value) => {
+                    return <Option key={value.id}>{value.name}</Option>;
+                  })
+                }
+              </AutoComplete>
+            )}
+          </FormItem>
           <FormItem style={{textAlign: 'center'}}>
             <Button
               style={{margin: '20px 50px 0 0'}}
@@ -313,6 +346,7 @@ class ChannelEdit extends Component {
             <Button
               type='primary'
               loading={loading}
+              disabled={disabled}
               onClick={this.handleSubmit}>
               保存
             </Button>
@@ -322,14 +356,14 @@ class ChannelEdit extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'channelEdit/clear'})
+    this.props.dispatch({ type: 'userEdit/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    channelEdit: state.channelEdit,
+    userEdit: state.userEdit,
     loading: state.loading.global,
     ...props
   }
 }
-export default connect(mapStateToProps)(Form.create()(ChannelEdit))
+export default connect(mapStateToProps)(Form.create()(UserEdit))
