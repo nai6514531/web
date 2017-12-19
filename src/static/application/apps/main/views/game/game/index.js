@@ -224,7 +224,7 @@ class Game extends Component {
           })
         }
         </Select>
-        <span className={styles.input}>
+        <span style={{marginBottom: '20px', marginRight: 20}}>
           <RangePicker
             showTime
             defaultValue={[startedAt,endedAt]}
@@ -257,7 +257,7 @@ class Game extends Component {
               to={`/game/label`}>
               <Button
                 type='primary'
-                className={styles.button}>
+                style={{marginBottom: '20px', marginRight: 20}}>
                 标签管理
               </Button>
             </Link>
@@ -265,7 +265,7 @@ class Game extends Component {
               to={`/game/games/order`}>
               <Button
                 type='primary'
-                className={styles.button}>
+                style={{marginBottom: '20px', marginRight: 20}}>
                 排序
               </Button>
             </Link>
@@ -273,7 +273,7 @@ class Game extends Component {
               to={`/game/new`}>
               <Button
                 type='primary'
-                className={styles.button}>
+                style={{marginBottom: '20px', marginRight: 20}}>
                 新增
               </Button>
             </Link>
