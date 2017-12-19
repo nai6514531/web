@@ -15,6 +15,7 @@ import labelModel from 'bundle-loader?lazy!../../models/game/label/index.js'
 import Billboard from 'bundle-loader?lazy!../../views/game/billboard/index.js'
 import billboardModel from 'bundle-loader?lazy!../../models/game/billboard/index.js'
 
+import BillboardGames from 'bundle-loader?lazy!../../views/game/billboard/games/index.js'
 
 export default function (history, app) {
     return (
@@ -26,6 +27,8 @@ export default function (history, app) {
 
         <Route exact path='/game/label' component={getComponent(Label, app, labelModel)} />
         <Route exact path='/game/billboard' component={getComponent(Billboard, app, billboardModel)} />
+
+        <Route exact path='/game/billboard/:id/games' component={getComponent(BillboardGames, app, billboardModel)} />
         
            
       </Switch>

@@ -53,7 +53,7 @@ class Billboard extends Component {
                   <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this, record.id) } >
                     <a href='javascript:void(0)'>{'\u00A0'}删除</a>
                   </Popconfirm> | 
-                  <Link to={`/game/game/${record.id}`}>管理游戏</Link> 
+                  <Link to={`/game/billboard/${record.id}/games`}>管理游戏</Link> 
                 </span>
             )
         }

@@ -18,6 +18,22 @@ const billboardService = {
   },
   delete: (id) => {
     return request.delete(`/game/billboard/${id}`)
-  }
+  },
+  gamesList: (id) => {
+    let url
+    url = `/game/billboard/${id}/games`
+    return request.get(url)
+  },
+  deleteGame: (id, gameId) => {
+    return request.delete(`/game/billboard/${id}/game/${gameId}`)
+  },
+  addGame: (id, gameId) => {
+    let url = `/game/billboard/${id}/game/${gameId}`
+    return request.post(url)
+  },
+  updateGameOrders: (id, data) => {
+    let url = `/game/billboard/${id}/game/orders`
+    return request.post(url, data)
+  },
 }
 export default billboardService
