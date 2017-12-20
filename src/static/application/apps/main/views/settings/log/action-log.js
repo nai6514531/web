@@ -8,7 +8,6 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import DatePicker from '../../../components/date-picker/'
 import moment from 'moment'
-import history from '../../../utils/history.js'
 import styles from './index.pcss'
 import { trim } from 'lodash'
 const breadItems = [
@@ -30,7 +29,7 @@ class ActionLog extends Component {
       { title: '用户ID', dataIndex: 'userId', key: 'userId' },
       { title: '用户名', dataIndex: 'userName', key: 'userName' },
       { title: '账号', dataIndex: 'userAccount',key: 'userAccount' },
-      { title: '接口Key', dataIndex: 'apiKey',key: 'apiKey'},
+      { title: '接口Key', dataIndex: 'apiKey',key: 'apiKey', width: 150},
       { title: '接口名', dataIndex: 'apiName',key: 'apiName'},
       { title: '请求方法', dataIndex: 'method',key: 'method' },
       { title: '响应状态', dataIndex: 'responseStatus',key: 'responseStatus'},
@@ -72,7 +71,7 @@ class ActionLog extends Component {
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
   fetch = (url) => {

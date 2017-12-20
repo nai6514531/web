@@ -180,10 +180,10 @@ class App extends Component{
     const { id } = this.props.match.params
     const query = querystring.stringify(_.pick({ ...this.state.pagination, ...options }, 'offset', 'limit'))
     if (this.isBillsView) {
-    history.push(`/business/daily-bill/${id}?${query}&billId=${this.billId}`)
-      return 
+    this.props.history.push(`/business/daily-bill/${id}?${query}&billId=${this.billId}`)
+      return
     }
-    history.push(`/business/daily-bill/${id}?${query}`)
+    this.props.history.push(`/business/daily-bill/${id}?${query}`)
   }
   pagination () {
     let self = this
@@ -217,9 +217,9 @@ class App extends Component{
 
     return (<section>
       <Bread isBillsView={this.isBillsView} billId={this.billId} />
-      <Table scroll={{ x: 500 }} 
+      <Table scroll={{ x: 500 }}
         dataSource={list}
-        columns={this.columns} 
+        columns={this.columns}
         pagination={this.pagination.call(this)}
         loading={loading}
         rowKey={record => record.id}

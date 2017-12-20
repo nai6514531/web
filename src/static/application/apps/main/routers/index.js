@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Redirect, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Switch, Redirect, Route, Router } from 'react-router-dom'
 import { getComponent } from '../components/bundle/'
 import Layout from '../components/layout/'
 
@@ -17,44 +17,18 @@ import NotFound from 'bundle-loader?lazy!../views/not-found'
 
 function RouterConfig({ history, app }) {
   return (
-    <Router>
+    <Router history={history}>
       <Switch>
         <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
-        <Route path='/admin' render={ props => (
-          <Layout>
-            { settings(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/finance' render={ props => (
-          <Layout>
-            { finance(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/2' render={ props => (
-          <Layout>
-            { idle(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/advertisement' render={ props => (
-          <Layout>
-            { advertisement(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/platform' render={ props => (
-          <Layout>
-            { platform(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/crm' render={ props => (
-          <Layout>
-            { crm(history, app) }
-          </Layout>
-        )}/>
-        <Route path='/business' render={ props => (
-          <Layout>
-            { business(history, app) }
-          </Layout>
-        )}/>
+        <Layout>
+            { settings(app) }
+            { finance(app) }
+            { idle(app) }
+            { advertisement(app) }
+            { platform(app) }
+            { crm(app) }
+            { business(app) }
+        </Layout>
         <Route component={getComponent(NotFound)} />
       </Switch>
     </Router>

@@ -51,7 +51,7 @@ class App extends Component {
       },
       search: {
         dateType: DATE_TYPE_IS_SETTLED_AT,
-        status: '', 
+        status: '',
         startAt: '',
         endAt: ''
       },
@@ -112,7 +112,7 @@ class App extends Component {
     if (!this.hasCashType) {
       return message.info('你当前未设定收款方式，请修改收款方式再进行结算操作。')
     }
-    
+
     confirm({
       title: '确认申请结算',
       content: <p className={styles.confimTip}>共有<span>{count}</span>天账单结算,结算金额为<span>{totalAmount/100}</span>元,本次结算将收取<span>{cast/100}</span>元手续费,是否确认结算？</p>,
@@ -143,12 +143,12 @@ class App extends Component {
         throw new Error(res.message)
       }
       let { data } = res
-      this.setState({ 
-        totalAmount: data.totalAmount || 0, 
-        count: data.count || 0, 
-        cast: data.cast || 0 , 
-        user: data.user || {}, 
-        cashAccount: data.cashAccount || {} 
+      this.setState({
+        totalAmount: data.totalAmount || 0,
+        count: data.count || 0,
+        cast: data.cast || 0 ,
+        user: data.user || {},
+        cashAccount: data.cashAccount || {}
       })
       this.getBillsList()
     }).catch((err) => {
@@ -173,9 +173,9 @@ class App extends Component {
           loading: false,
           searchLoading: false
         },
-        pagination: { 
-          ...pagination, 
-          total: data.pagination.total 
+        pagination: {
+          ...pagination,
+          total: data.pagination.total
         }
       })
     }).catch((err) => {
@@ -195,13 +195,13 @@ class App extends Component {
   }
   changeHistory ({...options}) {
     let query = _.pick({ ...this.state.search, ...this.state.pagination, ...options }, 'offset', 'limit', 'status', 'endAt', 'startAt')
-    history.push(`/business/bill?${querystring.stringify(query)}`)
+    this.props.history.push(`/business/bill?${querystring.stringify(query)}`)
   }
   render() {
     const { cashAccount, user, bills } = this.state
     this.hasCashType = !!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY, CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(cashAccount.type)
     const cashTypeIsWechat = cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT
-    
+
     return (<section className={styles.view}>
       <Breadcrumb items={breadItems} />
       <section className={styles.info}>
@@ -210,7 +210,7 @@ class App extends Component {
           <Col xs={24} lg={{span: 9}} className={styles.panelLeft}>
             <p>可结算金额（元）</p>
             <div>
-              <span className={styles.amount}>{(this.state.totalAmount/100).toFixed(2)}</span> 
+              <span className={styles.amount}>{(this.state.totalAmount/100).toFixed(2)}</span>
               <Button type='primary' onClick={this.applySettlement.bind(this)} disabled={this.state.loading}>申请结算</Button>
               {this.state.totalAmount !== 0 ? <Button onClick={this.dailyBillDetail.bind(this)}>明细</Button> : null}
             </div>
@@ -223,12 +223,12 @@ class App extends Component {
                 <Col xs={16} lg={{span: 12}} span={10}>银行卡 <span className={styles.colorRed}>（不支持结算！）</span></Col>
               </Row> : null
             }
-            { 
+            {
               cashAccount.type !== CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK ? <Row >
                 <Col xs={8} lg={{span: 5}}>收款方式：</Col>
                 <Col  xs={16} lg={{span: 12}}>
                   {CONSTANT.CASH_ACCOUNT_TYPE[cashAccount.type] || '无'}
-                  <span 
+                  <span
                     className={cx({ [`${styles.hidden}`]: !this.hasCashType, [`${styles.rule}`]: this.hasCashType })}
                     onClick={this.castInfo}>
                     手续费收取规则
@@ -254,7 +254,7 @@ class App extends Component {
             </Row>
             <Row>
               <Col span={24}>
-                <Button type='primary' 
+                <Button type='primary'
                   onClick={() => { this.props.history.push(`/business/account/edit/${user.id}?type=cash&redirectUrl=${encodeURIComponent(`/business/bill`)}`) }}>
                   修改收款方式
                 </Button>
@@ -263,8 +263,8 @@ class App extends Component {
           </Col>
         </Row>
       </section>
-      <List 
-        getBillsList={this.getBillsList.bind(this)} 
+      <List
+        getBillsList={this.getBillsList.bind(this)}
         bills={bills}
         search={this.state.search}
         cashAccount={cashAccount}
@@ -272,7 +272,7 @@ class App extends Component {
         pagination={this.state.pagination}
         changeHistory={this.changeHistory.bind(this)}
       />
-      { 
+      {
         this.state.cashModalVisible ? <Modal
           wrapClassName={styles.modal}
           footer={null}
@@ -282,7 +282,7 @@ class App extends Component {
         >
         </Modal> : null
       }
-      
+
     </section>)
   }
 }

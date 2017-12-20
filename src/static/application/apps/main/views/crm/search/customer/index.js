@@ -5,7 +5,6 @@ import { connect } from 'dva'
 import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popconfirm } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
-import history from '../../../../utils/history.js'
 import styles from './index.pcss'
 import { trim } from 'lodash'
 import md5 from 'md5'
@@ -66,7 +65,7 @@ class Customer extends Component {
       return
     }
     const queryString = toQueryString({ ...this.search })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(mobile)
   }
   fetch = (mobile) => {

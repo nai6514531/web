@@ -6,7 +6,6 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const Option = Select.Option
@@ -142,7 +141,7 @@ class City extends Component {
       }
     })
     this.fetch(this.search)
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
   }
   change = (url) => {
    this.fetch(url)
