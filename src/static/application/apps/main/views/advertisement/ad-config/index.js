@@ -7,7 +7,6 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import history from '../../../utils/history.js'
 import styles from './index.pcss'
 
 const RangePicker = DatePicker.RangePicker
@@ -187,7 +186,7 @@ class AdConfig extends Component {
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
   hide = () => {

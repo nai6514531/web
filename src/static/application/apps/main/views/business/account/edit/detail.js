@@ -124,7 +124,7 @@ class Detial extends Component {
       this.setState({
         loading: false
       })
-      this.props.history.push(`/business/account?parentId=${parentId}`)
+      this.props.history.push(`/business/account/sub?parentId=${parentId}`)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -148,7 +148,7 @@ class Detial extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/business/account?parentId=${parentId}`)
+        return this.props.history.push(`/business/account/sub?parentId=${parentId}`)
       }
       this.props.history.push(`/business/account`)
     }).catch((err) => {

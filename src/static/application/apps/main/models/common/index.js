@@ -98,5 +98,13 @@ export default {
         message.error(result.message)
       }
     }
+  },
+  subscriptions: {
+    setup({ dispatch, history }) {
+      // 监听所有页面路由变化
+      history.listen(location => {
+        console.log('location', location)
+      });
+    }
   }
 }

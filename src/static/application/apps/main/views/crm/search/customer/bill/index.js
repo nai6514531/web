@@ -7,7 +7,6 @@ import DataTable from '../../../../../components/data-table/'
 import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../../utils/'
 import styles from './index.pcss'
-import history from '../../../../../utils/history.js'
 import DatePicker from '../../../../../components/date-picker/'
 import moment from 'moment'
 
@@ -144,7 +143,7 @@ class Bill extends Component {
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
   fetch =(url) => {

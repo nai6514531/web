@@ -27,20 +27,22 @@ import ActionLog from 'bundle-loader?lazy!../../views/settings/log/action-log.js
 import ActionLogDetail from 'bundle-loader?lazy!../../views/settings/log/action-log-detail.js'
 import LogModel from 'bundle-loader?lazy!../../models/settings/log.js'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
+      {/*默认登录后首页/admin*/}
+      <Route exact path='/admin' render={() => <div />} />
       <Route exact path='/admin/settings/user' component={getComponent(User,app,userModel)} />
-      <Route path='/admin/settings/user/:id' component={getComponent(UserEdit,app,userModel)} />
-      <Route path='/admin/settings/role' component={getComponent(Role,app,roleModel)} />
-      <Route path='/admin/settings/menu' component={getComponent(Menu,app,menuModel)} />
-      <Route path='/admin/settings/permission' component={getComponent(Permission,app,permissionModel)} />
-      <Route path='/admin/settings/change-password' component={getComponent(Password,app,userModel)} />
-      <Route path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
-      <Route path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
-      <Route path='/admin/settings/login-logs' component={getComponent(LoginLog,app,LogModel)} />
-      <Route path='/admin/settings/action-logs/:id' component={getComponent(ActionLogDetail,app,LogModel)} />
-      <Route path='/admin/settings/action-logs' component={getComponent(ActionLog,app,LogModel)} />
+      <Route exact path='/admin/settings/user/:id' component={getComponent(UserEdit,app,userModel)} />
+      <Route exact path='/admin/settings/role' component={getComponent(Role,app,roleModel)} />
+      <Route exact path='/admin/settings/menu' component={getComponent(Menu,app,menuModel)} />
+      <Route exact path='/admin/settings/permission' component={getComponent(Permission,app,permissionModel)} />
+      <Route exact path='/admin/settings/change-password' component={getComponent(Password,app,userModel)} />
+      <Route exact path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />
+      <Route exact path='/admin/settings/element' component={getComponent(Element,app,elementModel)} />
+      <Route exact path='/admin/settings/login-logs' component={getComponent(LoginLog,app,LogModel)} />
+      <Route exact path='/admin/settings/action-logs/:id' component={getComponent(ActionLogDetail,app,LogModel)} />
+      <Route exact path='/admin/settings/action-logs' component={getComponent(ActionLog,app,LogModel)} />
     </Switch>
   )
 }

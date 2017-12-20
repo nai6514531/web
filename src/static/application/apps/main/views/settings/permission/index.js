@@ -10,7 +10,7 @@ import ActionModal from './actionModal.js'
 import ElementModal from './elementModal.js'
 import MenuModal from './menuModal.js'
 import PermissionModal from './permissionModal.js'
-import history from '../../../utils/history.js'
+
 const breadItems = [
   {
     title: '设置'

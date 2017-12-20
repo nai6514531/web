@@ -30,7 +30,7 @@ import OperatorModel from 'bundle-loader?lazy!../../models/crm/search/operator/'
 import OperatorDetail from 'bundle-loader?lazy!../../views/crm/search/operator/detail/'
 import OperatorDetailModel from 'bundle-loader?lazy!../../models/crm/search/operator/detail/'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
       <Route exact path='/crm/consume' component={getComponent(Consume,app,ConsumeModel)} />

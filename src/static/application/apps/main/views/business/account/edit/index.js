@@ -38,7 +38,7 @@ const subEditBreadItems = [
   },
   {
     title: '下级运营商',
-    url: `/business/account?parentId=PARENT_ID`
+    url: `/business/account/sub?parentId=PARENT_ID`
   },
   {
     title: '修改运营商'
@@ -55,7 +55,7 @@ const subAddBreadItems = [
   },
   {
     title: '下级运营商',
-    url: `/business/account?parentId=PARENT_ID`
+    url: `/business/account/sub?parentId=PARENT_ID`
   },
   {
     title: '新增运营商'

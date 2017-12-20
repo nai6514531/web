@@ -433,7 +433,7 @@ class App extends Component {
     options = _.extend(search, pagination, options)
 
     let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'status', 'endAt', 'startAt', 'keys', 'dateType', 'keys'))
-    history.push(`/finance/settlement/${payType}?${query}`)
+    this.props.history.push(`/finance/settlement/${payType}?${query}`)
   }
   render () {
     const self = this

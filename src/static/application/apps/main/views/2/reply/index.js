@@ -8,7 +8,6 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import InputWithClear from '../../../components/input-with-clear/'
 import moment from 'moment'
-import history from '../../../utils/history.js'
 import { trim } from 'lodash'
 import styles from './index.pcss'
 import dict from '../../../utils/dict.js'
@@ -248,7 +247,7 @@ class Reply extends Component {
     this.props.dispatch({
       type: 'common/resetIndex'
     })
-    history.push(`${location.pathname}?${queryString}`)
+    this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
   change = (url) => {

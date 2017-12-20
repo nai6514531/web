@@ -85,10 +85,10 @@ class App extends Component {
 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return _.without([`${realName}`, `账号:${account || '-'}`, `手机:${mobile || '-'}`], '').join(' | ')
-          } 
+          }
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
             return realName || '-'
-          } 
+          }
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
             return _.without([`户名:${realName}`, `${bank.name}`, `${account}`, `${mobile}`], '').join(' | ')
           }
@@ -221,7 +221,7 @@ class App extends Component {
   }
   changeHistory ({...options}) {
     let query = _.pick({ ...this.state.search, ...this.state.pagination, ...options }, 'offset', 'limit', 'status', 'endAt', 'startAt', 'keys', 'type')
-    history.push(`/business/daily-bill?${querystring.stringify(query)}`)
+    this.props.history.push(`/business/daily-bill?${querystring.stringify(query)}`)
   }
   pagination () {
     let self = this
@@ -256,7 +256,7 @@ class App extends Component {
     return (<section className={styles.view}>
       <Breadcrumb items={breadItems} />
       <div>
-        <Select 
+        <Select
           value={type}
           style={{ width: 120, marginRight: 10, marginBottom: 10 }}
           onChange={(value) => { this.setState({ search: { ...this.state.search, type: value } }) }}>
@@ -305,12 +305,12 @@ class App extends Component {
         />
         <Button type='primary' style={{ marginBottom: 10 }} loading={searchLoading} icon='search' onClick={this.search.bind(this)}>筛选</Button>
       </div>
-      <Table 
+      <Table
         style= {{ marginTop: 16 }}
-        scroll={{ x: 900 }} 
-        dataSource={bills} 
-        columns={this.columns} 
-        pagination={pagination} 
+        scroll={{ x: 900 }}
+        dataSource={bills}
+        columns={this.columns}
+        pagination={pagination}
         rowKey={record => record.id}
         loading={this.state.loading}
        />

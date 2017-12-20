@@ -280,7 +280,7 @@ class App extends Component {
   changeHistory (options) {
     options = { ...this.state.search, ...this.state.pagination, ...options }
     let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'endAt', 'startAt'))
-    history.push(`/finance/settlement/report?${query}`)
+    this.props.history.push(`/finance/settlement/report?${query}`)
   }
   render () {
     const self = this
