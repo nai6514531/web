@@ -178,7 +178,7 @@ class App extends Component {
   }
   toSubList () {
     let { parentId } = this.state
-    this.props.history.push(`/business/account?parentId=${parentId}`)
+    this.props.history.push(`/business/account/sub?parentId=${parentId}`)
   }
   pagination () {
     let self = this
