@@ -35,6 +35,7 @@ export default function (app) {
 
       <Route exact path='/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
       <Route exact path='/business/account/add' component={getComponent(accountEdit,　app)} />
+      <Route exact path='/business/account/sub' component={getComponent(account,　app)} />
       <Route exact path='/business/account' component={getComponent(account,　app)} />
       <Route exact path='/business/bill/:id' component={getComponent(billDetailList,　app)} />
       <Route exact path='/business/bill' component={getComponent(bill,　app)} />
