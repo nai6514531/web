@@ -7,10 +7,10 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import history from '../../../utils/history.js'
-import gameService from '../../../services/game/game'
 import styles from './index.pcss'
 import moment from 'moment'
 import supplierService from '../../../services/game/supplier'
+import gameService from '../../../services/game/game'
 import { message } from 'antd'
 
 
@@ -33,7 +33,9 @@ class Game extends Component {
     const search = transformUrl(location.search)
     this.search = search
     this.state = {
-      suppliers: []
+      suppliers: [],
+      visible: false,
+      exportUrl: '',
     }
     this.columns = [
       {
@@ -128,7 +130,7 @@ class Game extends Component {
       delete this.search[type]
     }
   }
-  searchClick = () => {
+  searchClick = (type) => {
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
     const queryString = toQueryString({ ...this.search })
@@ -136,7 +138,25 @@ class Game extends Component {
       type: 'common/resetIndex'
     })
     history.push(`${location.pathname}?${queryString}`)
-    this.fetch(this.search)
+    if (type == 'export') {
+      this.export(this.search)
+    } else {
+      this.fetch(this.search)
+    }
+   
+  }
+  export = (url) => {
+    const self = this;
+    const data = url
+    gameService.export(data).then(function(result){
+      if(result.status == 'OK') {
+        self.setState((prevState, props) => {
+          return { exportUrl: result.data.url, visible: true };
+        });
+      } else {
+        result.message && message.error(result.message)
+      }
+    })
   }
   fetch =(url) => {
     this.props.dispatch({
@@ -161,9 +181,12 @@ class Game extends Component {
       delete this.search.endedAt
     }
   }
+  hideModal = () => {
+    this.setState({ visible: false })
+  }
   render() {
     const { common: { search }, game: { data: { objects, pagination }, allGames }, loading } = this.props
-   const { suppliers } = this.state;
+    const { suppliers, visible, exportUrl } = this.state;
     pagination && (pagination.showSizeChanger = true)
     const startedAt = this.search.startedAt ? moment(this.search.startedAt, dateFormat) : null
     const endedAt = this.search.endedAt ? moment(this.search.endedAt, dateFormat) : null
@@ -238,15 +261,16 @@ class Game extends Component {
         <span className={styles['button-wrap']}>
           <Button
             type='primary'
-            onClick={this.searchClick}
+            onClick={this.searchClick.bind(this, 'search')}
             style={{marginBottom: '20px', marginRight: 20}}
             >
             筛选
           </Button>
           <Button
             type='export'
-            onClick={this.searchClick}
+            onClick={this.searchClick.bind(this, 'export')}
             style={{marginBottom: '20px', marginRight: 20}}
+            icon='download'
             >
             导出
           </Button>
@@ -286,6 +310,17 @@ class Game extends Component {
            change={this.change}
            scroll={{ x: 800 }}
         />
+        <Modal title="导出"
+          wrapClassName="playModal"
+          visible={visible}
+          onCancel={this.hideModal}
+          >
+          <form name="export" >
+            <span className="form-text">确定导出游戏列表吗？</span>
+            <button onClick={this.hideModal} type="button" id="cancel">取消</button>
+            <a href={exportUrl} target="_blank" id="submit" download onClick={this.hideModal}>确认</a>
+          </form>
+        </Modal>
       </div>
     )
   }

@@ -20,12 +20,12 @@ const gameService = {
     let url = `/game/game/${id}`
     return request.put(url, data)
   },
-  export: (id, data) => {
+  export: (data) => {
     let url
     if(!data) {
       url = `/game/games/export`
     } else {
-      url = `/game/games/export?offset=${data.offset || 0 }&limit=${data.limit || 10 }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}`    
+      url = `/game/games/export?offset=${data.offset || 0 }&limit=${data.limit || 10 }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=created_at&asc=${0}`            
     }
     return request.get(url)
   },

@@ -24,14 +24,13 @@ export default {
     }
   },
   effects: {
-    *list({ payload: { data } }, { call, put, select }) {
+    *list({ payload: { data } }, { call, put }) {
       const result = yield call(gameService.list, data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         result.message && message.error(result.message)
       }
-      const supplier = yield select(state => state.supplier);
     },
     *allGames({ payload }, { call, put }) {
       const result = yield call(gameService.list)
