@@ -99,6 +99,10 @@ class Element extends Component {
   change = (url) => {
    // this.fetch(url)
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, element: { key, visible, record, data: { objects, pagination } }, loading  } = this.props
     const title = record.id ? '编辑元素' : '添加元素'
@@ -124,7 +128,7 @@ class Element extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

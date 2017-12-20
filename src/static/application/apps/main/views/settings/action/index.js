@@ -123,6 +123,10 @@ class Action extends Component {
   change = (url) => {
    this.fetch(url)
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, action: { key, visible, record,  data: { objects, pagination } }, loading  } = this.props
     const title = record.id ? '编辑api' : '添加api'
@@ -172,7 +176,7 @@ class Action extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

@@ -92,6 +92,10 @@ class MenuModal extends Component {
       return item
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, permission: { menuData, menuVisible, key, currentData } } = this.props
     const menuTree = this.intToString(arrayToTree(menuData))
@@ -102,7 +106,7 @@ class MenuModal extends Component {
         visible={menuVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
-        key={key}
+        afterClose={this.reset}
        >
         <Form>
           <FormItem>

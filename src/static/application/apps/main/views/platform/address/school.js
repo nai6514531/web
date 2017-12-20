@@ -309,6 +309,10 @@ class School extends Component {
       })
     }
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { common: { search }, form: { getFieldDecorator }, school: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData, districtData, districtDetailData }, loading  } = this.props
     const title = record.id ? '编辑学校' : '添加学校'
@@ -392,7 +396,7 @@ class School extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

@@ -229,6 +229,10 @@ class District extends Component {
       cityId: undefined,
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { common: { search }, form: { getFieldDecorator }, district: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData }, loading  } = this.props
     const title = record.id ? '编辑区' : '添加区'
@@ -298,7 +302,7 @@ class District extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

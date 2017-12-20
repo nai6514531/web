@@ -151,6 +151,10 @@ class City extends Component {
   change = (url) => {
    this.fetch(url)
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { common: { search }, form: { getFieldDecorator }, city: { key, visible, record,  data: { objects, pagination }, provinceData }, loading  } = this.props
     const title = record.id ? '编辑市' : '添加市'
@@ -206,7 +210,7 @@ class City extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

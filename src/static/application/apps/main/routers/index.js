@@ -1,5 +1,7 @@
 import React from 'react'
 import { Switch, Redirect, Route, Router } from 'react-router-dom'
+import { LocaleProvider } from 'antd'
+import zhCN from 'antd/lib/locale-provider/zh_CN'
 import { getComponent } from '../components/bundle/'
 import Layout from '../components/layout/'
 
@@ -17,21 +19,23 @@ import NotFound from 'bundle-loader?lazy!../views/not-found'
 
 function RouterConfig({ history, app }) {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
-        <Layout>
-            { settings(app) }
-            { finance(app) }
-            { idle(app) }
-            { advertisement(app) }
-            { platform(app) }
-            { crm(app) }
-            { business(app) }
-        </Layout>
-        <Route component={getComponent(NotFound)} />
-      </Switch>
-    </Router>
+    <LocaleProvider locale={zhCN}>
+      <Router history={history}>
+        <Switch>
+          <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
+          <Layout>
+              { settings(app) }
+              { finance(app) }
+              { idle(app) }
+              { advertisement(app) }
+              { platform(app) }
+              { crm(app) }
+              { business(app) }
+          </Layout>
+          <Route component={getComponent(NotFound)} />
+        </Switch>
+      </Router>
+    </LocaleProvider>
   )
 }
 

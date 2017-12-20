@@ -98,6 +98,10 @@ class Province extends Component {
       }
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, province: { key, visible, record,  data: { objects, pagination } }, loading  } = this.props
     const title = record.id ? '编辑省' : '添加省'
@@ -123,7 +127,7 @@ class Province extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

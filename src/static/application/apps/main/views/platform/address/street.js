@@ -310,6 +310,10 @@ class Street extends Component {
       })
     }
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { common: { search }, form: { getFieldDecorator }, street: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData, districtData, districtDetailData }, loading  } = this.props
     const title = record.id ? '编辑街道' : '添加街道'
@@ -393,7 +397,7 @@ class Street extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem
