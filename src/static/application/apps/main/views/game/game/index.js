@@ -53,7 +53,7 @@ class Game extends Component {
             return item.id == record.supplierId
           })
           return (
-            supplierName[0].name
+            supplierName[0]?supplierName[0].name:''
           )
         }
       },  
@@ -270,7 +270,7 @@ class Game extends Component {
               </Button>
             </Link>
             <Link
-              to={`/game/new`}>
+              to={`/game/game/new`}>
               <Button
                 type='primary'
                 style={{marginBottom: '20px', marginRight: 20}}>
