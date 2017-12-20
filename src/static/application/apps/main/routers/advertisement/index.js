@@ -14,7 +14,7 @@ import AdOrder from 'bundle-loader?lazy!../../views/advertisement/ad-config/orde
 import adOrderModal from 'bundle-loader?lazy!../../models/advertisement/ad-config/order.js'
 import adConfigModal from 'bundle-loader?lazy!../../models/advertisement/ad-config/index.js'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
       <Route exact path='/advertisement/position-manager' component={getComponent(AdPosition,app,adPositionModal)} />

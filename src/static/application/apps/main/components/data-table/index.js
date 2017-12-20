@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { Table } from 'antd'
 import { connect } from 'dva'
 import { transformUrl, toQueryString } from '../../utils/'
-import history from '../../utils/history.js'
+import { withRouter } from 'react-router-dom'
 import styles from './index.pcss'
 
 class DataTable extends Component {
@@ -26,7 +26,7 @@ class DataTable extends Component {
     }
   }
   componentDidMount() {
-    this.unlisten = history.listen((value) => {
+    this.unlisten = this.props.history.listen((value) => {
       const pager = { ...this.state.pagination }
       const url = transformUrl(value.search)
       pager.current = Number(url.offset/url.limit + 1)
@@ -57,7 +57,7 @@ class DataTable extends Component {
       this.props.dispatch({
         type: 'common/resetIndex'
       })
-      history.push(`${location.pathname}?${queryString}`)
+      this.props.history.push(`${location.pathname}?${queryString}`)
     }
   }
   render() {
@@ -113,4 +113,4 @@ function mapStateToProps(state,props) {
     common: state.common
   }
 }
-export default connect(mapStateToProps)(DataTable)
+export default connect(mapStateToProps)(withRouter(DataTable))

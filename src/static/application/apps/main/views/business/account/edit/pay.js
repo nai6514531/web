@@ -309,7 +309,7 @@ class Pay extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/business/account?parentId=${parentId}`)
+        return this.props.history.push(`/business/account/sub?parentId=${parentId}`)
       }
       return this.props.history.push(`/business/account`)
     }).catch((err) => {

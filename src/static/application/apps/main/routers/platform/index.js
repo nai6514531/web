@@ -21,7 +21,7 @@ import StreetModel from 'bundle-loader?lazy!../../models/platform/address/street
 import School from 'bundle-loader?lazy!../../views/platform/address/school.js'
 import SchoolModel from 'bundle-loader?lazy!../../models/platform/address/school.js'
 
-export default function (history, app) {
+export default function (app) {
   return (
     <Switch>
       <Route exact path='/platform/application' component={getComponent(Platform,app,platformModel)} />

@@ -111,18 +111,18 @@ class App extends Component {
                 account: cashAccount.account || '-',
                 mobile: record.mobile || '-'
               })
-          } 
+          }
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               ].join(' | '))({
                 realName: cashAccount.realName
               })
-          } 
+          }
           return '-'
         }
       },
-     
+
       {
         title: '订单量',
         dataIndex: 'count'
@@ -159,12 +159,12 @@ class App extends Component {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
-          const type = !!~this.props.location.search.indexOf('alipay') ? 'alipay' : 
+          const type = !!~this.props.location.search.indexOf('alipay') ? 'alipay' :
             !!~this.props.location.search.indexOf('wechat') ? 'wechat' : ''
           const id = this.props.match.params.id
 
           return (
-            <Link to={`/finance/settlement/daily-bills/${record.id}?type=${type}&billId=${id}`}>明细</Link> 
+            <Link to={`/finance/settlement/daily-bills/${record.id}?type=${type}&billId=${id}`}>明细</Link>
           )
         }
       }
@@ -192,11 +192,11 @@ class App extends Component {
       }
       const data = res.data
       this.setState({
-        bills: data.objects, 
+        bills: data.objects,
         pagination: {
           ...pagination,
           total: data.pagination.total,
-        }, 
+        },
         loading: false
       })
     }).catch((err) => {
@@ -205,7 +205,7 @@ class App extends Component {
     })
   }
   changeHistory (options) {
-    let payType = !!~this.props.location.search.indexOf('alipay') ? 'alipay' : 
+    let payType = !!~this.props.location.search.indexOf('alipay') ? 'alipay' :
       !!~this.props.location.search.indexOf('wechat') ? 'wechat' : ''
     let pagination = _.clone(this.state.pagination)
     let id = this.props.match.params.id
@@ -213,11 +213,11 @@ class App extends Component {
     options.type = payType
 
     let query = querystring.stringify(_.pick(options, 'offset', 'limit', 'type'))
-    history.push(`/finance/settlement/bills/${id}?${query}`)
+    this.props.history.push(`/finance/settlement/bills/${id}?${query}`)
   }
   render () {
     const self = this
-    const type = !!~this.props.location.search.indexOf('alipay') ? 1 : 
+    const type = !!~this.props.location.search.indexOf('alipay') ? 1 :
                   !!~this.props.location.search.indexOf('wechat') ? 2 : 0
 
     const pagination = {
