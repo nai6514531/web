@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, message } from 'antd'
+import { Spin, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, message, Message } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../utils/debug.js'
 import { trim, difference } from 'lodash'
@@ -149,6 +149,7 @@ class GameEdit extends Component {
         const { match: { params: { id } }, history, game: { fileList } } = this.props
         const { imageList, iconList, oldLabelIds } = this.state
 
+        console.log('iconList', iconList)
         if(iconList[0] && iconList[0].image) {
           values.icon = iconList[0].image
         } else {
@@ -296,8 +297,7 @@ class GameEdit extends Component {
   render() {
     const {  form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
-    const help = this.state.help
-    const {  detail, suppliers, labels, previewImage, visible, imageList, imageHelp, iconList, iconHelp, oldLabelIds  } = this.state
+    const {  detail, suppliers, labels, previewImage, visible, imageList, imageHelp, iconList, iconHelp, oldLabelIds } = this.state
     const { startedAt, endedAt } = detail    
     const uploadButton = (
       <div>
