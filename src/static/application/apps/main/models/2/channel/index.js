@@ -39,20 +39,20 @@ export default {
   effects: {
     *list({ payload: { data } }, { call, put }) {
       const result = yield call(channelService.list, data)
-      let idList = []
-      result.data.objects.map((value, index) => {
-        idList.push(value.id)
-      })
-      const topicCount = yield call(commonService.topicCount, idList)
-      if(result.status == 'OK' && topicCount.status == 'OK') {
-        if(!data) {
+      // let idList = []
+      // result.data.objects.map((value, index) => {
+      //   idList.push(value.id)
+      // })
+      // const topicCount = yield call(commonService.topicCount, idList)
+      if(result.status == 'OK') {
+        if(data.showTime) {
           result.data.objects.map((value) => {
             value.updatedTime = moment(value.updatedAt)
           })
           const maxObj = maxBy(result.data.objects,'updatedTime')
           yield put({ type: 'updateData', payload: { updatedTime: maxObj.updatedAt } })
         }
-        result.data.objects = merge(result.data.objects, topicCount.data)
+        // result.data.objects = merge(result.data.objects, topicCount.data)
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)
@@ -60,12 +60,12 @@ export default {
     },
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(channelService.detail, id)
-      const topicCount = yield call(commonService.topicCount, [Number(id)])
+      const topicCount = yield call(commonService.topicCount, id)
       const inboxConsultation = yield call(commonService.inboxConsultation, { channelId: id })
       if(result.status == 'OK' && inboxConsultation.status == 'OK' && topicCount.status == 'OK') {
         result.data.consultation = inboxConsultation.data
-        for(let key in topicCount.data[0]) {
-          result.data[key] = topicCount.data[0][key]
+        for(let key in topicCount.data) {
+          result.data[key] = topicCount.data[key]
         }
         yield put({ type: 'updateData', payload: { detail: result.data } })
       } else {
@@ -116,7 +116,8 @@ export default {
           payload: {
             data: {
               status: 0,
-              pagination: false
+              pagination: false,
+              showTime: true
             }
           }
         })

@@ -65,7 +65,9 @@ export default {
         result.data.chipcardCount = chipcards.data.value
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
-        message.error(chipcards.message)
+        if(chipcards.status !== NOT_FOUND_ENTITY) {
+          message.error(chipcards.message)
+        }
       }
     },
     *updatePassword({ payload: { data: { mobile, password } }}, { call, put }) {

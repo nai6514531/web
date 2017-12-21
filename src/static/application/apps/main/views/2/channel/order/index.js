@@ -38,8 +38,8 @@ class ChannelOrder extends Component {
         }
        },
       { title: '频道名称', dataIndex: 'title',key: 'title' },
-      { title: '已上架商品数', dataIndex: 'onSaleCount',key: 'onSaleCount' },
-      { title: '处于交易中的商品数', dataIndex: 'tradingCount', key: 'tradingCount' },
+      // { title: '已上架商品数', dataIndex: 'onSaleCount',key: 'onSaleCount' },
+      // { title: '处于交易中的商品数', dataIndex: 'tradingCount', key: 'tradingCount' },
       // { title: '待确认上架商品数', dataIndex: 'b',key: 'b' },
       {
         title: '频道状态',
@@ -55,7 +55,8 @@ class ChannelOrder extends Component {
       payload: {
         data: {
           pagination: false,
-          status: 0
+          status: 0,
+          showTime: true
         }
       }
     })
