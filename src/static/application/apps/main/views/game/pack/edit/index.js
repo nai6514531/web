@@ -34,7 +34,8 @@ class PackEdit extends Component {
     super(props)
     this.state = {
       games: [],
-      absPath: '',
+      fileList: [],
+      help: {},
     }
   }
   componentDidMount() {
@@ -63,38 +64,85 @@ class PackEdit extends Component {
     const isExcel = file.type === excelType;
     if (!isExcel) {
       message.error('只能上传以 .xlsx 为后缀名的文件');
+      const help = {
+        validateStatus: 'error',
+        help: '请选择 .xlsx 后缀的文件上传'
+      }
+      this.setState({
+        help: help
+      })
     }
     return isExcel 
   }
-  handleChange(info) {
-    if (info.file.status === 'done') {
-      if (info.file.response.status == 'OK') {
-        message.success(`${info.file.name} 文件上传成功`);        
-        this.setState({
-          absPath: info.file.response.data
-        })
-      } else {
-        message.error(`${info.file.name} 文件上传失败`);        
-      }
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} 文件上传失败`);
+  onRemove = (id) => {
+    const help = {
+      validateStatus: 'error',
+      help: '请选择 .xlsx 后缀的文件上传'
     }
+    this.setState({
+      fileList: [],
+      help: help
+    })
+  }
+  handleChange({fileList, event, file}) {
+    fileList = [fileList[fileList.length-1]]
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        file.absPath = file.response.data
+      }
+      return file
+    })
+    fileList = fileList.filter((file) => {
+      if (file.response) {
+        if(file.response.status === 'OK') {
+          this.setState({
+            help: {
+              validateStatus: 'success',
+              help: '文件上传成功'
+            }
+          })
+          return file.response.status === 'OK'
+        } else {
+          this.setState({
+            help: {
+              validateStatus: 'error',
+              help: '文件上传失败,请重新尝试'
+            }
+          })
+          return false
+        }
+      }
+      return true
+    })
+    this.setState({fileList})
   }
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { match: { params: { id } }, history } = this.props
+        const { fileList } = this.state 
         let type = 'pack/add'
         if(id !== 'new') {
           type = 'pack/update'
         }
+        if(fileList[0] && fileList[0].absPath) {
+          values.absPath = fileList[0].absPath
+        } else {
+          this.setState({
+            help: {
+              validateStatus: 'error',
+              help: '请选择 .xlsx 后缀的文件上传'
+            }
+          })
+          return
+        }
+
         values.gameId = Number(trim(values.gameId))
         values.name = trim(values.name) 
         values.profile = trim(values.profile) 
         values.description = trim(values.description)      
         values.status = Number(trim(values.status))
-        values.absPath = trim(this.state.absPath)  
         values.startedAt = moment(values.time[0],moment.ISO_8601).format()
         values.endedAt = moment(values.time[1],moment.ISO_8601).format()
 
@@ -124,6 +172,7 @@ class PackEdit extends Component {
     const { pack: { detail }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const { startedAt, endedAt, gameList } = detail   
+    const { fileList, help } = this.state
     const breadItems = [
       {
         title: '礼包管理'
@@ -222,6 +271,7 @@ class PackEdit extends Component {
           { !isEdit ? <FormItem
                 {...formItemLayout}
                 label='CDK'
+                {...help}
             >
             {getFieldDecorator('absPath', {
                rules: [{
@@ -232,8 +282,10 @@ class PackEdit extends Component {
               <Upload  
                 action={fileServer}
                 name='uploadExcel'
+                fileList={fileList}
                 onChange={this.handleChange.bind(this)}
                 beforeUpload={this.beforeUpload.bind(this)}
+                onRemove={this.onRemove.bind(this)}
                 headers={{ Authorization: 'Bearer ' + (storage.val('token') || '') }}
                 withCredentials={true}>
                 <Button>
