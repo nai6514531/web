@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import labelService from '../../../services/game/game.js'
+import labelService from '../../../services/game/label.js'
 import { cloneDeep, maxBy, merge } from 'lodash'
 import moment from 'moment'
 
