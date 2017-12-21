@@ -1,6 +1,6 @@
 import React, { Component }from 'react'
 import querystring from 'querystring'
-import { Tabs, Modal } from 'antd'
+import { Tabs, Modal, message } from 'antd'
 const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
 

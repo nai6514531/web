@@ -146,7 +146,6 @@ class App extends Component {
     }
 
     this.getSettlementReports(search)
-
   }
   getTotalUnsettledBill(){
     DailyBillsService.getTotalUnsettledBill().then((res) => {
@@ -193,7 +192,7 @@ class App extends Component {
         list: _.sortBy(data.objects, (data) => { return -moment(data.date).valueOf() }) || [],
         pagination: {
           ...this.state.pagination,
-          total: data.objects.length.total
+          total: data.objects.length
         },
         searchLoading: false,
         loading: false
@@ -285,7 +284,6 @@ class App extends Component {
   render () {
     const self = this
     const { search: { startAt, endAt }, totalUnsettledBill, totalWalletValue, searchLoading } = this.state
-
     const pagination = {
       total: this.state.pagination.total,
       current: parseInt(this.state.pagination.offset / this.state.pagination.limit) + 1,

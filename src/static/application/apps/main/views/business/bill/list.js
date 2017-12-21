@@ -109,7 +109,7 @@ class App extends Component {
           if (!!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(status)) {
             return <span>
               <a onClick={this.handleSettlemenet.bind(this, id)}>重新申请</a>
-              <span className='ant-divider' />
+              <span className={styles.divider}>|</span>
               <Link to={`/business/bill/${id}`}>明细</Link>
             </span>
           } else {
@@ -292,7 +292,7 @@ class App extends Component {
         />
         <Select
           defaultValue={status}
-          style={{ width: 120, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 150, marginRight: 10, marginBottom: 10 }}
           onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
           <Option value=''>请选择结算状态</Option>
           <Option value='1'>等待结算</Option>
