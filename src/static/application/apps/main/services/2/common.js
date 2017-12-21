@@ -1,7 +1,7 @@
 import request from '../../utils/request'
 const commonService = {
-  topicCount: (data) => {
-    return request.post(`/2/topic-count/channels`, data)
+  topicCount: (id) => {
+    return request.get(`/2/topic-count/channels/${id}`)
   },
   inboxConsultation: (data) => {
     let { topicId, channelId } = data
