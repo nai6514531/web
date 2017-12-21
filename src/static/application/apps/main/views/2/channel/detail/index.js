@@ -61,8 +61,10 @@ class ChannelDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
+              <div><span className={styles.title}>总商品数：</span>{detail.total}</div>
               <div><span className={styles.title}>在售商品数：</span>{detail.onSaleCount}</div>
               {/*<div><span className={styles.title}>待确认商品数：</span>{detail.checkingCount}</div>*/}
+              {/* <div><span className={styles.title}>已上架商品数：</span>{detail.onSaleCount}</div> */}
               <div><span className={styles.title}>处于交易中商品数：</span>{detail.tradingCount}</div>
               <div><span className={styles.title}>交易成功商品数：</span>{detail.soldCount}</div>
               <div><span className={styles.title}>询问人数：</span>{detail.consultation}</div>
