@@ -3,9 +3,9 @@ import { render } from 'react-dom'
 import { connect } from 'dva'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { Row, Col, Spin, Card, Modal } from 'antd'
-import styles from './detail.pcss'
 import moment from 'moment'
 import dict from '../../../../utils/dict.js'
+import styles from '../../../../assets/css/page-detail.pcss'
 import { transformUrl, toQueryString } from '../../../../utils/'
 
 class TopicDetail extends Component {
