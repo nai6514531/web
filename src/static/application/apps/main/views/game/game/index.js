@@ -42,7 +42,8 @@ class Game extends Component {
         title: '序号',
         key: 'index',                
         render: (text, record, index) => {
-          return index + 1
+          const pagination = this.props.game.data.pagination
+          return index + pagination.from
         }
       },
       { title: '游戏名', dataIndex: 'title', key: 'title' },
@@ -331,7 +332,6 @@ class Game extends Component {
 function mapStateToProps(state,props) {
   return {
     game: state.game,
-    supplier: state.supplier,
     loading: state.loading.global,
     common: state.common,
     ...props
