@@ -258,7 +258,7 @@ class App extends Component {
       <div>
         <Select
           value={type}
-          style={{ width: 120, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 150, marginRight: 10, marginBottom: 10 }}
           onChange={(value) => { this.setState({ search: { ...this.state.search, type: value } }) }}>
           <Option value=''>请选择收款方式</Option>
           <Option value='1'>支付宝</Option>
@@ -267,7 +267,7 @@ class App extends Component {
         </Select>
         <Select
           value={status}
-          style={{ width: 120, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 150, marginRight: 10, marginBottom: 10 }}
           onChange={(value) => { this.setState({ search: { ...this.state.search, status: value } }) }}>
           <Option value=''>请选择结算状态</Option>
           <Option value='0'>未申请结算</Option>
@@ -298,7 +298,7 @@ class App extends Component {
         />
         <Input
           value={keys}
-          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 190, marginRight: 10, marginBottom: 10 }}
           placeholder='输入运营商名称或者银行名称或户名'
           onChange={this.changeKeys.bind(this)}
           onPressEnter={this.search.bind(this)}
