@@ -10,8 +10,13 @@ import history from '../../../../utils/history.js'
 import billboardService from '../../../../services/game/billboard'
 import gameService from '../../../../services/game/game'
 import styles from '../index.pcss'
-import { dropWhile, findIndex, trim } from 'lodash'
+import { dropWhile, findIndex, trim, find } from 'lodash'
 import moment from 'moment'
+
+import Dragula from 'react-dragula'
+import 'dragula/dist/dragula.css'
+import './drag.css'
+
 const Option = Select.Option
 const confirm = Modal.confirm
 const FormItem = Form.Item
@@ -35,8 +40,17 @@ class BillboardGames extends Component {
       allGames: [],
       id: 0,
       gameId: 0,
+      sorting: [],
     }
     this.columns = [
+        { 
+          title: 'ID', 
+          dataIndex: 'id', 
+          key: 'id',
+          render: (text, record, index) => {
+              return record.id
+          }
+        },
         { 
             title: '游戏名', 
             dataIndex: 'name', 
@@ -102,8 +116,15 @@ class BillboardGames extends Component {
     const self = this;
     billboardService.gamesList(id).then(function(result){
       if(result.status == 'OK') {
+       let newBillboards = []
+       // 按照 order 正序排序
+       newBillboards = result.data.sort(function(prev, next){
+            if ( prev.order < next.order ) return -1;
+            if ( prev.order > next.order ) return 1;         
+            return 0;        
+        });
         self.setState((prevState, props) => {
-          return { billboardGames: result.data };
+          return { billboardGames: newBillboards };
         });
       } else {
         result.message && message.error(result.message)
@@ -138,6 +159,9 @@ class BillboardGames extends Component {
     })
   }
   handleAdd = (data) => {
+    if (this.state.allGames.length == 0) {
+      this.allGames();
+    }
     this.showModal();
   }
   showModal = () => {
@@ -171,10 +195,70 @@ class BillboardGames extends Component {
     this.setState({id})
     this.billboardGames(id);
     this.billboard(id);
-    this.allGames();
+    this.sorting = [];
   }
   handleChange(gameId) {
     this.setState({gameId}) 
+  }
+  handleSort() {
+    const sorting = this.sorting;
+    const {  match: { params: { id } } } = this.props
+    if (sorting.length > 0) {
+      const data = sorting.map(function(item, index){
+        const _item = {
+          id: item,          
+          order: index,
+        }
+        return _item;
+      })
+      const self = this
+      billboardService.updateGameOrders(id, data).then(function(result){
+          if(result.status == 'OK') {
+            message.success('排序成功')
+          } else {
+            result.message && message.error(result.message)
+          }
+        })
+    } else {
+      message.success('请先重新排列')      
+    }
+   
+  }
+  getBodyWrapper = (body) => {
+    return (
+      <tbody className='container ant-table-tbody' ref={this.dragulaDecorator}>
+        {body.props.children}
+      </tbody>
+    )
+  }
+  dragulaDecorator = (componentBackingInstance) => {
+    if (componentBackingInstance) {
+      let drake = Dragula([componentBackingInstance])
+      drake.on("drag", (el, target, source, sibling) => {
+        el.className = ' ex-drag'
+      })
+      drake.on("drop", (el, target, source, sibling) => {
+        el.className = el.className.replace('ex-drag', 'ex-moved')
+        this._onDrop(el, target, source, sibling)
+      })
+
+      drake.on("over", (el, container) => {
+        container.className += ' ex-over';
+      })
+      drake.on("cancel", (el, target) => {
+         el.className = el.className.replace('ex-drag', 'ex-moved')
+      })
+    }
+  }
+  _onDrop = (el, target, source, sibling) => {
+    let sorting = []
+    let orders = this.state.billboardGames
+    for(let i = 0; i < target.children.length; i++) {
+      let child = target.children[i]
+      let id = parseInt(child.children[0].innerText)
+      sorting.push(id)
+    }
+    this.sorting = sorting;
   }
   render() {
     const {  loading  } = this.props
@@ -182,13 +266,15 @@ class BillboardGames extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Row className={styles['input-wrap']}>
-          <Button type="primary" onClick={this.handleAdd}>添加游戏</Button>
+          <Button type="primary" onClick={this.handleAdd.bind(this)} style={{ marginRight: 10 }}>添加游戏</Button>
+          <Button type="primary" onClick={this.handleSort.bind(this)}>同步排序到现网</Button>          
         </Row>
         <DataTable
            dataSource={this.state.billboardGames}
            columns={this.columns}
            loading={loading}
            scroll={{ x: 800 }}
+           getBodyWrapper={this.getBodyWrapper.bind(this)}
         />
           <LabelCreateForm
             ref={this.saveFormRef}

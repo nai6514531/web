@@ -32,8 +32,8 @@ const billboardService = {
     return request.post(url)
   },
   updateGameOrders: (id, data) => {
-    let url = `/game/billboard/${id}/game/orders`
-    return request.post(url, data)
+    let url = `/game/billboard/${id}/games/orders`
+    return request.put(url, data)
   },
 }
 export default billboardService
