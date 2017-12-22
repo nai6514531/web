@@ -14,7 +14,7 @@ const model = {
 }
 
 export default {
-  namespace: 'city',
+  namespace: 'twoCity',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

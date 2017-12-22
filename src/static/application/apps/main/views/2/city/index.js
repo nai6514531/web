@@ -74,10 +74,10 @@ class City extends Component {
       }
     })
     this.props.dispatch({
-      type: 'city/summary'
+      type: 'twoCity/summary'
     })
     this.props.dispatch({
-      type: 'city/provinceList'
+      type: 'twoCity/provinceList'
     })
     this.fetch(url)
   }
@@ -94,7 +94,7 @@ class City extends Component {
   }
   handleSelect = () => {
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         disabled: false
       }
@@ -106,20 +106,20 @@ class City extends Component {
         return new RegExp( filterKey , 'img' ).test( value.name );
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         disabled: true
       }
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         provinceData: result
       }
     })
     if(!filterKey) {
       this.props.dispatch({
-        type: 'city/updateData',
+        type: 'twoCity/updateData',
         payload: {
           provinceData: clonedProvinceData,
           disabled: false
@@ -135,7 +135,7 @@ class City extends Component {
       type: 'common/resetIndex'
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         provinceData: this.props.city.clonedProvinceData
       }
@@ -148,7 +148,7 @@ class City extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'city/list',
+      type: 'twoCity/list',
       payload: {
         data: url
       }
@@ -197,14 +197,14 @@ class City extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'city/clear'})
+    this.props.dispatch({ type: 'twoCity/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
     this.props.dispatch({ type: 'common/resetIndex' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    city: state.city,
+    city: state.twoCity,
     common: state.common,
     loading: state.loading.global,
     ...props
