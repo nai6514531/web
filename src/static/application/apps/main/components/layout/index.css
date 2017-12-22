@@ -12,15 +12,28 @@ body {
   padding: 0;
   margin: 0;
   border: 0;
-  background-color: #FCFCFC;
+}
+
+.wrapper {
+  padding: 80px 20px 20px 20px;
+  background: #FCFCFC;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all .3s ease-out;
+  min-height: calc(100vh - 55px);
 }
 
 @media (min-width: 768px) {
+  .layout {
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+  }
   .side {
     height: 100vh;
   }
   .unfold-side {
-    overflow: scroll;
+    overflow-y: auto;
   }
   .side::-webkit-scrollbar {
     display:none
@@ -48,36 +61,14 @@ body {
     transition: all .3s ease-out;
     margin: 0 auto;
   }
-  .wrapper {
-    position: absolute;
-    top: 50px;
-    bottom: 0;
-    padding: 20px;
-    background: #FCFCFC;
-    overflow: scroll;
-    transition: all .3s ease-out;
-  }
-  .wrapper-fold {
-    width: calc(100% - 200px);
-  }
-  .wrapper-unfold {
-    width: calc(100% - 64px);
-  }
 }
 @media (max-width: 768px) {
+  .layout {
+    overflow-y: auto;
+    width: 100vw;
+  }
   .side {
     display: none;
-  }
-  .wrapper {
-    width: 100vw;
-    z-index: 99;
-    /*position: absolute;*/
-   /* top: 50px;
-    bottom: 0;*/
-    margin-top: 50px;
-    background: #FCFCFC;
-    overflow: scroll;
-    padding: 0 20px;
   }
 }
 .loading {
@@ -112,7 +103,7 @@ body {
 .ant-table-body::-webkit-scrollbar-track{
     width: 13px;
     border-radius: 6px;
-    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.1);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.1);
     background-color: #fff;
 }
 /*定义滑块，内阴影及圆角*/
