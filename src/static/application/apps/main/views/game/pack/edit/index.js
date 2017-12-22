@@ -125,17 +125,18 @@ class PackEdit extends Component {
         let type = 'pack/add'
         if(id !== 'new') {
           type = 'pack/update'
-        }
-        if(fileList[0] && fileList[0].absPath) {
-          values.absPath = fileList[0].absPath
         } else {
-          this.setState({
-            help: {
-              validateStatus: 'error',
-              help: '请选择 .xlsx 后缀的文件上传'
-            }
-          })
-          return
+          if(fileList[0] && fileList[0].absPath) {
+            values.absPath = fileList[0].absPath
+          } else {
+            this.setState({
+              help: {
+                validateStatus: 'error',
+                help: '请选择 .xlsx 后缀的文件上传'
+              }
+            })
+            return
+          }
         }
 
         values.gameId = Number(trim(values.gameId))
