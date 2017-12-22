@@ -9,7 +9,7 @@ import InputWithClear from '../../../components/input-with-clear/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
@@ -130,6 +130,7 @@ class MonthStatistics extends Component {
           pagination={false}
           rowKey='key'
           rowClassName={() => {}}
+          scroll={{ x: 1000 }}
         />
     )
   }
@@ -306,7 +307,7 @@ class DeviceStatistics extends Component {
         <Button
           type='primary'
           onClick={this.searchClick}
-          style={{marginBottom: '20px', marginRight: 20}}
+          className={styles.button}
           >
           筛选
         </Button>
@@ -317,6 +318,7 @@ class DeviceStatistics extends Component {
             pagination={pagination}
             change={this.change}
             rowKey='key'
+            scroll={{ x: 1000 }}
             rowClassName={() => {}}
           />
       </div>

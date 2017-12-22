@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import DatePicker from '../../../components/date-picker/'
 import dict from '../../../utils/dict.js'
 import { trim } from 'lodash'
@@ -194,13 +194,10 @@ class Consume extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <span className={styles.input}>
           <DatePicker
             date={date}
             search={this.search}
             defaultTime={true}/>
-          </span>
           <Input
             placeholder='运营商名称/账号'
             className={styles.input}
@@ -222,7 +219,6 @@ class Consume extends Component {
             onPressEnter={this.searchClick}
             defaultValue={this.search.deviceSerial}
           />
-          <span className={styles['button-wrap']}>
             <Button
               type='primary'
               onClick={this.searchClick}
@@ -239,8 +235,6 @@ class Consume extends Component {
               >
              导出
             </Button>
-          </span>
-        </Row>
         <DataTable
           dataSource={objects}
           columns={this.columns}
@@ -251,7 +245,7 @@ class Consume extends Component {
           rowKey='ticketId'
         />
         <Modal title="导出"
-          wrapClassName="playModal"
+          wrapClassName="exportModal"
           visible={visible}
           onCancel={this.hide}
           key={key}

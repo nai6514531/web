@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 const breadItems = [
   {
@@ -90,39 +90,35 @@ class LoginLog extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <Input
-            placeholder='用户ID'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userId')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userId}
-          />
-          <Input
-            placeholder='用户名'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userName')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userName}
-          />
-          <Input
-            placeholder='账号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userAccount')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userAccount}
-          />
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              icon='search'
-              >
-              筛选
-            </Button>
-          </span>
-        </Row>
+        <Input
+          placeholder='用户ID'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userId')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userId}
+        />
+        <Input
+          placeholder='用户名'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userName')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userName}
+        />
+        <Input
+          placeholder='账号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userAccount')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userAccount}
+        />
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          icon='search'
+          >
+          筛选
+        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}

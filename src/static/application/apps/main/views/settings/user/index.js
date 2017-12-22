@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import RoleModal from './roleModal.js'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
 const FormItem = Form.Item
@@ -151,23 +151,21 @@ class User extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
          />
-        <span className={styles['button-wrap']}>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          搜索
+        </Button>
+        <Link
+          to={`/admin/settings/user/new`}>
           <Button
             type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            搜索
+            className={styles.button}>
+              添加用户
           </Button>
-          <Link
-            to={`/admin/settings/user/new`}>
-            <Button
-              type='primary'
-              style={{marginBottom: 20, marginRight: 20 }}>
-                添加用户
-            </Button>
-          </Link>
-        </span>
+        </Link>
         <DataTable
           scroll={{ x: 700 }}
           dataSource={objects || []}

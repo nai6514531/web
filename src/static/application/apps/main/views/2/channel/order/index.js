@@ -175,7 +175,7 @@ class ChannelOrder extends Component {
           columns={this.columns}
           loading={loading}
           pagination={false}
-          scroll={{ x: 700 }}
+          scroll={{ x: 600 }}
           getBodyWrapper={this.getBodyWrapper}
           rowKey={'id'}
         />

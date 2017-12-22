@@ -6,7 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const Option = Select.Option
 const breadItems = [
@@ -162,26 +162,25 @@ class City extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
+        <span className={styles.input}>
         <AutoComplete
           placeholder='省'
           value={search.provinceId}
           allowClear
-          className={styles.input}
           dataSource={dataSource}
           onSearch={this.handleSearch}
           onSelect={this.handleSelect}
           onChange={this.changeHandler.bind('this','provinceId')}>
         </AutoComplete>
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            disabled={disabled}
-            >
-            筛选
-          </Button>
         </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          disabled={disabled}
+          >
+          筛选
+        </Button>
         {
           summary ? <div className={styles.summary}>{`共计有${summary.cityCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
         }

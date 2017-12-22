@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 
 const breadItems = [
@@ -54,7 +54,7 @@ class Consume extends Component {
       { title: '洗衣密码', dataIndex: 'token',key: 'token', width: 100 },
       {
         title: '洗衣金额',
-        width: 50,
+        width: 100,
         render:(text, record) => {
           return  `${(record.value/100).toFixed(2)}元`
         }
@@ -202,40 +202,36 @@ class Consume extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <Input
-            placeholder='请输入洗衣手机号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'customerMobile')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.customerMobile}
-          />
-          <Input
-            placeholder='请输入模块编号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'deviceSerial')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.deviceSerial}
-          />
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              icon='search'
-              >
-              筛选
-            </Button>
-            <Button
-              type='primary'
-              className={styles.button}
-              onClick={this.export}
-              icon='download'
-              >
-             导出
-            </Button>
-          </span>
-        </Row>
+        <Input
+          placeholder='请输入洗衣手机号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'customerMobile')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.customerMobile}
+        />
+        <Input
+          placeholder='请输入模块编号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'deviceSerial')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.deviceSerial}
+        />
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          icon='search'
+          >
+          筛选
+        </Button>
+        <Button
+          type='primary'
+          className={styles.button}
+          onClick={this.export}
+          icon='download'
+          >
+          导出
+        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}

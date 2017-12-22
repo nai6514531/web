@@ -6,6 +6,7 @@ import { Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -111,7 +112,7 @@ class Province extends Component {
         <Button
           type='primary'
           onClick={this.show.bind(this,{})}
-          style={{marginBottom: '20px', marginRight: 20}}
+          className={styles.button}
           >
           添加省
         </Button>

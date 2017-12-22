@@ -131,6 +131,7 @@ class Channel extends Component {
           pagination={pagination}
           change={this.change}
           rowClassName={() => {}}
+          scroll={{ x: 600 }}
         />
       </div>
     )

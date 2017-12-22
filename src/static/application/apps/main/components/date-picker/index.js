@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import zhCN from 'antd/lib/date-picker/locale/zh_CN';
-
+import styles from '../../assets/css/search-bar.pcss'
 const CustomDatePicker = React.createClass({
   getInitialState() {
     let { startAt, endAt } = this.props.search
@@ -93,28 +93,26 @@ const CustomDatePicker = React.createClass({
   },
   render() {
     return (
-      <span>
+      <span className={styles['date-picker-wrap']}>
         <DatePicker
-          style={{width:120,marginLeft:4}}
           value={this.state.startAt}
           disabledDate={this.disabledStartDate}
           placeholder="开始日期"
           onChange={this.onStartChange}
           onOpenChange={this.handleStartOpenChange}
-          className="item"
+          className={styles['date-picker']}
           locale={zhCN}
         />
-        -
+        <span>-</span>
         <DatePicker
-          style={{width:120,marginRight:4}}
           disabledDate={this.disabledEndDate}
           placeholder="结束日期"
           value={this.state.defaultEndAt}
           format="YYYY-MM-DD"
           onChange={this.onEndChange}
           open={this.state.endOpen}
+          className={styles['date-picker']}
           onOpenChange={this.handleEndOpenChange}
-          className="item"
           locale={zhCN}
         />
       </span>
