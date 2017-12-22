@@ -15,7 +15,7 @@ import moment from 'moment'
 
 import Dragula from 'react-dragula'
 import 'dragula/dist/dragula.css'
-import './drag.css'
+import '../../../advertisement/ad-config/drag.css'
 
 const Option = Select.Option
 const confirm = Modal.confirm
