@@ -356,27 +356,30 @@ class Topic extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <InputWithClear
-          placeholder='帖子发布人'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'name')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.name}
-         />
-        <InputWithClear
-          placeholder='帖子关键字'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
-         />
-        <InputWithClear
-          placeholder='帖子学校'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'schoolName')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.schoolName}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子发布人'
+            onChange={this.changeHandler.bind(this, 'name')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.name}
+          />
+        </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子关键字'
+            onChange={this.changeHandler.bind(this, 'keywords')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.keywords}
+            />
+        </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子学校'
+            onChange={this.changeHandler.bind(this, 'schoolName')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.schoolName}
+            />
+        </span>
         <Select
           value={ search.channelId }
           allowClear

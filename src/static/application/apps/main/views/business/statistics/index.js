@@ -297,13 +297,14 @@ class DeviceStatistics extends Component {
           disabledDate={this.disabledDate}
           defaultValue={ defaultValue }
           placeholder="请选择月份" />
-        <InputWithClear
-          placeholder='模块编号'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'deviceSerial')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.deviceSerial}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='模块编号'
+            onChange={this.changeHandler.bind(this, 'deviceSerial')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.deviceSerial}
+          />
+        </span>
         <Button
           type='primary'
           onClick={this.searchClick}

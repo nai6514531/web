@@ -127,13 +127,14 @@ class Customer extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <InputWithClear
-          placeholder='请输入用户手机号'
-          className={searchStyles.input}
-          onChange={this.changeHandler.bind(this, 'mobile')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.mobile}
-         />
+        <span className={searchStyles.input}>
+          <InputWithClear
+            placeholder='请输入用户手机号'
+            onChange={this.changeHandler.bind(this, 'mobile')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.mobile}
+          />
+        </span>
         <Button
           type='primary'
           onClick={this.searchClick}

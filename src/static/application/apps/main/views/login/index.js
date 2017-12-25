@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import { Link } from 'react-router-dom'
 import { Button, Row, Col, Form, Input, Checkbox } from 'antd'

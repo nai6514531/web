@@ -270,20 +270,22 @@ class Reply extends Component {
             <Option value={'likes'} key={'1'}>按赞数排序</Option>
             <Option value={'id'} key={'2'}>按发布时间排序</Option>
         </Select>
-        <InputWithClear
-          placeholder='回复发布人'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'name')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.name}
-         />
-        <InputWithClear
-          placeholder='回复关键字'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='回复发布人'
+            onChange={this.changeHandler.bind(this, 'name')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.name}
+          />
+        </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='回复关键字'
+            onChange={this.changeHandler.bind(this, 'keywords')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.keywords}
+          />
+        </span>
         <Button
           type='primary'
           onClick={this.searchClick}

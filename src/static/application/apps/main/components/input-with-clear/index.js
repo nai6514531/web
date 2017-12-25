@@ -1,65 +1,42 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
+import React, { Component }from 'react'
 import PropTypes from 'prop-types'
-import { Input, Icon } from 'antd'
+import { Input as ReactInput, Icon } from 'antd'
 
-class InputWithClear extends Component {
+import styles from './index.pcss'
+
+class Input extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-     show: false
-   }
+      value: this.props.defaultValue,
+    };
   }
-  componentDidMount() {
-    this._mounted = true
+  emitEmpty (e) {
+    this.input.focus();
+    this.setState({ value: '' })
+    this.onChangeValue(e)
   }
-  emitEmpty = () => {
-    this.refs.searchInput.refs.input.value = ''
+  onChangeValue(e) {
     this.setState({
-      show: false
+      value: e.target.value
     })
-    this.props.onChange(undefined)
-  }
-
-  change = (v) => {
-    this.setState({
-      show: !!v.target.value
-    })
-    this.props.onChange(v.target.value || undefined)
-  }
-  show = (v) => {
-    this.setState({
-      show: !!v.target.value
-    })
-  }
-  hide = (v) => {
-    setTimeout(()=>{
-      if(this._mounted) {
-        this.setState({
-          show: false
-        })
-      }
-    },250)
+    this.props.onChange(e.target.value || undefined)
   }
   render() {
-    const { placeholder, className, onPressEnter, defaultValue } = this.props
-    return(
-      <Input
-        ref="searchInput"
-        placeholder={placeholder}
-        className={className}
-        onPressEnter={onPressEnter}
-        defaultValue={defaultValue}
-        onFocus={this.show}
-        onBlur={this.hide}
-        onChange={this.change}
-        suffix={this.state.show && <Icon type="close-circle" onClick={this.emitEmpty} />}
+    const { value } = this.state
+    const suffix = value ? <Icon type="close-circle" onClick={this.emitEmpty.bind(this)} className={styles.close} /> : null
+    return (
+      <ReactInput
+        {...this.props}
+        suffix={suffix}
+        value={value}
+        onChange={this.onChangeValue.bind(this)}
+        className={styles.closeInput}
+        ref={node => this.input = node}
       />
-    )
-  }
-  componentWillUnmount() {
-    this._mounted = false
+    );
   }
 }
 
-export default InputWithClear
+
+export default Input

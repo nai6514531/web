@@ -6,7 +6,7 @@ import { Input, Button, message } from 'antd'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 import InputWithClear from '../../../../components/input-with-clear/'
 
@@ -115,13 +115,14 @@ class Operator extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <InputWithClear
-          placeholder='运营商名称/登录账号'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='运营商名称/登录账号'
+            onChange={this.changeHandler.bind(this, 'keywords')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.keywords}
+          />
+        </span>
         <Button
           type='primary'
           onClick={this.searchClick}
