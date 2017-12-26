@@ -81,7 +81,7 @@ class App extends Component {
       }, {
         title: '账户信息',
         render: (record) => {
-          let { cashAccount: { type, realName, account, bank }, user: { mobile } } = record
+          let { cashAccount: { type, realName, account, bankName }, user: { mobile } } = record
 
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
             return _.without([`${realName}`, `账号:${account || '-'}`, `手机:${mobile || '-'}`], '').join(' | ')
@@ -90,7 +90,7 @@ class App extends Component {
             return realName || '-'
           }
           if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
-            return _.without([`户名:${realName}`, `${bank.name}`, `${account}`, `${mobile}`], '').join(' | ')
+            return _.without([`户名:${realName}`, `${bankName}`, `${account}`, `${mobile}`], '').join(' | ')
           }
           return '-'
         }

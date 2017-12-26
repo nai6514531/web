@@ -220,7 +220,7 @@ class App extends Component {
     // 结束时间和开始时间跨度　大于等于３1天
     // 获取截至结束时间
     const endDate =  Date.now() < startAt + second ? Date.now() : startAt + second
-    return current && current.valueOf() < startAt || current.valueOf() > endDate
+    return current && current.valueOf() < startAt || current && current.valueOf() > endDate
   }
   handleStartOpenChange(open) {
     if (!open) {
