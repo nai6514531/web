@@ -158,7 +158,7 @@ class DeviceStatistics extends Component {
       {
         title: '月份',
         render: (text, record, index) => {
-          if(record.time && record.device.serialNumber) {
+          if(record.time && record.device) {
             return (
               <Link to={`/business/statistics/device/${record.time}/${record.device.serialNumber}`}>{record.time}</Link>
             )
@@ -171,9 +171,12 @@ class DeviceStatistics extends Component {
       {
         title: '编号/楼道信息',
         render: (text, record, index) => {
-          return (
-            `${record.device.serialNumber}/ ${record.device.address || '无'}`
-          )
+          if(record.device) {
+            return (
+              `${record.device.serialNumber}/ ${record.device.address || '无'}`
+            )
+          }
+          return '-'
         },
       },
       {
