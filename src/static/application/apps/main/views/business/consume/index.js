@@ -242,7 +242,7 @@ class Consume extends Component {
           rowKey='ticketId'
         />
         <Modal title="导出"
-          wrapClassName="playModal"
+          wrapClassName="exportModal"
           visible={visible}
           onCancel={this.hide}
           key={key}
