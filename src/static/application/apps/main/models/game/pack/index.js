@@ -19,6 +19,9 @@ export default {
     },
     clear(state) {
       return model
+    },
+    clearList() {
+      return { data: {} }      
     }
   },
   effects: {

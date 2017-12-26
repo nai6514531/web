@@ -20,6 +20,7 @@ import BillboardGames from 'bundle-loader?lazy!../../views/game/billboard/games/
 
 import pack from 'bundle-loader?lazy!../../views/game/pack/index.js'
 import packEdit from 'bundle-loader?lazy!../../views/game/pack/edit/index.js'
+import packOrder from 'bundle-loader?lazy!../../views/game/pack/order/index.js'
 import packModel from 'bundle-loader?lazy!../../models/game/pack/index.js'
 
 
@@ -38,7 +39,8 @@ export default function (history, app) {
         <Route exact path='/game/billboard/:id/games' component={getComponent(BillboardGames, app, billboardModel)} />
 
         <Route exact path='/game/pack' component={getComponent(pack, app, packModel)} />
-        <Route exact path='/game/pack/:id' component={getComponent(packEdit, app, packModel)} />        
+        <Route exact path='/game/pack/:id' component={getComponent(packEdit, app, packModel)} />
+        <Route exact path='/game/packs/orders' component={getComponent(packOrder, app, packModel)} />                        
         
            
       </Switch>

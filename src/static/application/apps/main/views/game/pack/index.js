@@ -249,7 +249,7 @@ class Pack extends Component {
         </Row>
         <Row>
             <Link
-              to={`/game/packs/order`}>
+              to={`/game/packs/orders`}>
               <Button
                 type='primary'
                 style={{marginBottom: '20px', marginRight: 20}}>
@@ -289,6 +289,7 @@ class Pack extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'pack/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
