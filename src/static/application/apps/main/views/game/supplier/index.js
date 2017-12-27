@@ -186,6 +186,7 @@ class Supplier extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'supplier/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
