@@ -1,0 +1,39 @@
+.container > div,
+.gu-mirror {
+  background-color: white;
+  transition: opacity 0.4s ease-in-out;
+  border: 1px solid #e9e9e9;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 3px 0 rgba(0,0,0,0.19) !important;	
+  list-style: none;
+  text-align: center;
+  padding: 10px 0 5px 0;
+  position: relative;
+}
+.container > div, .gu-mirror > p { 
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+.container > div {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+.gu-mirror {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.container .ex-drag {
+  background-color: #62b8f6;
+}
+.container.ex-over {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.container .ex-moved {
+  background-color: rgba(0, 0, 0, 0);
+}

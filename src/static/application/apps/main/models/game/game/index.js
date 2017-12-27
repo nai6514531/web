@@ -32,8 +32,8 @@ export default {
         result.message && message.error(result.message)
       }
     },
-    *allGames({ payload }, { call, put }) {
-      const result = yield call(gameService.list)
+    *allGames({  payload: { data }}, { call, put }) {
+      const result = yield call(gameService.list, data)
       if(result.status === 'OK') {
         yield put({ type: 'updateData', payload: { allGames: result.data.objects } })
       } else {

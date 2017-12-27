@@ -5,7 +5,7 @@ const gameService = {
     if(!data) {
       url = `/game/games`
     } else {
-      url = `/game/games?offset=${data.offset || 0 }&limit=${data.limit || 10 }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=created_at&asc=${0}`    
+      url = `/game/games?offset=${data.offset || '' }&limit=${data.limit || '' }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=${data.orderBy || 'created_at'}&asc=${data.asc || 0}`    
     }
     return request.get(url)
   },
@@ -25,7 +25,7 @@ const gameService = {
     if(!data) {
       url = `/game/games/export`
     } else {
-      url = `/game/games/export?offset=${data.offset || 0 }&limit=${data.limit || 10 }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=created_at&asc=${0}`            
+      url = `/game/games?offset=${data.offset || 0 }&limit=${data.limit || 10 }&id=${data.id || ''}&supplierId=${data.supplierId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=${data.orderBy || 'created_at'}&asc=${data.asc || 0}`          
     }
     return request.get(url)
   },

@@ -287,7 +287,7 @@ class Game extends Component {
               </Button>
             </Link>
             <Link
-              to={`/game/games/order`}>
+              to={`/game/games/orders`}>
               <Button
                 type='primary'
                 style={{marginBottom: '20px', marginRight: 20}}>
@@ -327,6 +327,7 @@ class Game extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'game/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
