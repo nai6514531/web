@@ -36,57 +36,6 @@ class GameOrder extends Component {
     super(props)
     this.state = {
     }
-    this.columns = [
-      {
-        title: '序号',
-        key: 'index',                
-        render: (text, record, index) => {
-          const pagination = this.props.game.data.pagination
-          return index + pagination.from
-        }
-      },
-      { title: '游戏名', dataIndex: 'title', key: 'title' },
-      { title: '游戏ID', dataIndex: 'id', key: 'id' },
-      {
-        title: '供应商',
-        key: 'supplierId',
-        render: (text, record, index) => {
-          const supplierName = this.state.suppliers.filter(function(item, index){
-            return item.id == record.supplierId
-          })
-          return (
-            supplierName[0]?supplierName[0].name:''
-          )
-        }
-      },  
-      {
-        title: '展示时间',
-        key: 'time',
-        render: (text, record, index) => {
-          return (
-            `${moment(record.startedAt).format('YYYY-MM-DD HH:mm:ss')}  ~  ${moment(record.endedAt).format('YYYY-MM-DD HH:mm:ss')}`
-          )
-        }
-      }, 
-      {
-        title: '上下架',
-        key: 'status',        
-        render: (text, record, index) => {
-          return record.status ? '下架' : '上架'
-        }
-      },
-      {
-        title: '操作',
-        key: 'operation',
-        render: (text, record, index) => {
-          return (
-            <span>
-              <Link to={`/game/game/${record.id}`}>编辑</Link> 
-            </span>
-          )
-        }
-      }
-    ]
   }
   componentDidMount() {
     this.props.dispatch({
@@ -133,7 +82,6 @@ class GameOrder extends Component {
   }
   handleSort() {
     const sorting = this.sorting;
-    const {  match: { params: { id } } } = this.props
     if (sorting.length > 0) {
       const data = sorting.map(function(item, index){
         const _item = {
@@ -146,6 +94,7 @@ class GameOrder extends Component {
       gameService.order(data).then(function(result){
           if(result.status == 'OK') {
             message.success('排序成功')
+            self.sorting = []
           } else {
             result.message && message.error(result.message)
           }
@@ -167,14 +116,14 @@ class GameOrder extends Component {
         </Row>
         <ul ref={this.dragulaDecorator} className="container" className={styles['card']}>
         {
-          allGames.map(value => {
+          allGames.map((value, index) => {
             return (
-            <li id={value.id + ''} key={value.id} >
-                <div style={{width: '50%', height: '50%', margin: '0 auto'}}>
-                  <img src={value.icon} style={{width: '100%'}}/>
-                </div>
-                <p>{value.title}</p>
-            </li>     
+              <li id={value.id + ''} key={value.id} >
+                  <div style={{width: '50%', height: '50%', margin: '0 auto'}}>
+                    <img src={value.icon} style={{width: '100%'}}/>
+                  </div>
+                  <p>{value.title}</p>
+              </li>     
             )
           })
         }
