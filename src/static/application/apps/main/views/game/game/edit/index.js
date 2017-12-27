@@ -367,8 +367,9 @@ class GameEdit extends Component {
             >
                 {
                 suppliers.map(value => {
+                  const disabled = value.status == 0 ?  false : true
                   return (
-                      <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                      <Option value={value.id + ''} key={value.id} disabled={disabled}>{value.name}</Option>
                   )
                 })
             }
