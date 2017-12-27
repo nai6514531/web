@@ -30,6 +30,12 @@ const breadItems = [
   }
 ]
 
+const listStyle = {
+  height: 107,
+  textAlign: "center",
+  width: 50,
+  lineHeight: '107px',
+}
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 class GameOrder extends Component {
   constructor(props) {
@@ -114,20 +120,36 @@ class GameOrder extends Component {
           <Button type="primary" onClick={this.handleSort.bind(this)}  style={{marginBottom: '20px', marginRight: 20}}>同步排序到现网</Button>          
         </span>
         </Row>
-        <ul ref={this.dragulaDecorator} className="container" className={styles['card']}>
-        {
-          allGames.map((value, index) => {
-            return (
-              <li id={value.id + ''} key={value.id} >
-                  <div style={{width: '50%', height: '50%', margin: '0 auto'}}>
-                    <img src={value.icon} style={{width: '100%'}}/>
-                  </div>
-                  <p>{value.title}</p>
-              </li>     
-            )
-          })
-        }
-        </ul>
+        <div className={styles['wrapper']}>
+            <ul >
+            {
+              allGames.map((value, index) => {
+                const item = index%10 == 0
+                if (item) {
+                  return (
+                    <li key={value.id} style={listStyle}>
+                      {index} ~ {index+10}
+                    </li>   
+                  )
+                }
+              })
+            }
+            </ul>
+            <ul ref={this.dragulaDecorator} className="container" className={styles['card']}>
+              {
+                allGames.map((value, index) => {
+                  return (
+                    <li id={value.id + ''} key={value.id} >
+                        <div style={{width: '50%', height: '50%', margin: '0 auto'}}>
+                          <img src={value.icon} style={{width: '100%'}}/>
+                        </div>
+                        <p>{value.title}</p>
+                    </li>     
+                  )
+                })
+              }
+              </ul>
+          </div>
       </div>
     )
   }
