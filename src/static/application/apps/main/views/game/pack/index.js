@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Button, Modal, Select, Row, DatePicker, Input } from 'antd'
+import { Button, Modal, Select, Row, DatePicker, Input, message } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
@@ -12,9 +12,6 @@ import moment from 'moment'
 import supplierService from '../../../services/game/supplier'
 import gameService from '../../../services/game/game'
 import packService from '../../../services/game/pack'
-
-import { message } from 'antd'
-
 
 const Option = Select.Option
 const confirm = Modal.confirm
