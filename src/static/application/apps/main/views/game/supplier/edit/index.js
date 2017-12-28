@@ -151,9 +151,11 @@ class SupplierEdit extends Component {
                 label='联系电话'
             >
             {getFieldDecorator('telephone', {
-              rules: [{
-                message: '请输入20字以内的联系电话',
-              },{
+              rules: [
+                {
+                  pattern: /^\d+$/, message: '请输入正确格式'
+                },
+               {
                 max: 20, message: '长度最多20个字符'
               }],
               initialValue: detail.telephone
@@ -182,7 +184,7 @@ class SupplierEdit extends Component {
             >
             {getFieldDecorator('email', {
               rules: [{
-                message: '请输入20字以内的邮箱',
+                type: 'email', message: '请输入合法的邮箱地址',
               },{
                 max: 20, message: '长度最多20个字符'
               }],
