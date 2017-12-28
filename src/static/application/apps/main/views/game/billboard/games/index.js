@@ -304,11 +304,12 @@ const LabelCreateForm = Form.create()(
         okText="确认"
         onCancel={onCancel}
         onOk={onCreate}
+        style={{ textAlign: 'center' }}     
       >
         <Select
             showSearch
             allowClear
-            style={{ width: 150, marginRight: 10 }}          
+            style={{ width: 300 }}          
             placeholder="游戏名"
             optionFilterProp="children"
             onChange={onChange}
