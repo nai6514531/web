@@ -28,7 +28,7 @@ const packService = {
     if(!data) {
       url = `/game/packs/export`
     } else {
-      url = `/game/packs/export?offset=${data.offset || 0 }&limit=${data.limit || 10 }&gameId=${data.gameId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=${data.orderBy || 'created_at'}&asc=${data.asc || 0}`          
+      url = `/game/packs/export?offset=${data.offset || ''}&limit=${data.limit || '' }&gameId=${data.gameId || ''}&status=${data.status || ''}&startedAt=${data.startedAt || ''}&endedAt=${data.endedAt || ''}&orderBy=${data.orderBy || 'created_at'}&asc=${data.asc || 0}`          
     }
     return request.get(url)
   },

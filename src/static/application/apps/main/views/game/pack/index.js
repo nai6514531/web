@@ -116,19 +116,19 @@ class Pack extends Component {
     }
   }
   searchClick = (type) => {
-    this.search.offset = 0
+    this.search.offset = transformUrl(location.search).offset || 0
     this.search.limit = transformUrl(location.search).limit || 10
-    const queryString = toQueryString({ ...this.search })
-    this.props.dispatch({
-      type: 'common/resetIndex'
-    })
-    history.push(`${location.pathname}?${queryString}`)
-    if (type == 'export') {
+     if (type == 'export') {
       this.export(this.search)
     } else {
+      this.search.offset = 0
+      const queryString = toQueryString({ ...this.search })
+      this.props.dispatch({
+        type: 'common/resetIndex'
+      })
+      history.push(`${location.pathname}?${queryString}`)
       this.fetch(this.search)
     }
-   
   }
   export = (url) => {
     const self = this;
