@@ -216,6 +216,7 @@ const LabelCreateForm = Form.create()(
           <FormItem label="色值">
             {getFieldDecorator('color', {
               rules: [
+                { pattern: "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$", message: '请输入正确的颜色格式'},
                 { required: true, message: '请填写标签色值' },
                 { max: 6, message: '长度最多6个字符' }                
               ],
