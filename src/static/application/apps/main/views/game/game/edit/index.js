@@ -574,7 +574,7 @@ class GameEdit extends Component {
                 {
                 labels.map(value => {
                 return (
-                    <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                    <Option value={value.id + ''} key={value.id}><span style={{color: '#'+value.color}}>{value.name}</span></Option>
                 )
                 })
             }
