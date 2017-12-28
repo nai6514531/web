@@ -32,8 +32,6 @@ class Billboard extends Component {
       record: {},
       isAdd: true,
     }
-    // const search = transformUrl(location.search)
-    // this.search = search
     this.columns = [
       {
         title: '序号',
@@ -199,7 +197,7 @@ const LabelCreateForm = Form.create()(
             {getFieldDecorator('name', {
               rules: [
                 { required: true, message: '请填写榜单名' },
-                { max: 4, message: '长度最多10个字符'}],
+                { max: 4, message: '长度最多4个字符'}],
               initialValue: initialValue.name
             })(
               <Input />
