@@ -12,15 +12,23 @@ export default {
     captchaHelp: null
   },
   reducers: {
-    captcha(state) {
-      const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
-      return { ...state, captcha }
+    // captcha(state) {
+    //   const captcha = `${API_SERVER}/captcha?${Date.now()}`
+    //   return { ...state, captcha }
+    // },
+    updateData(state, { payload }) {
+      return { ...state, ...payload }
     },
-    handleHelp(state, payload) {
-      return { ...state, ...payload.payload }
-    }
   },
   effects: {
+    *captcha ({ payload }, { put, call }) {
+      const result = yield call(commonService.captcha)
+      if( result.status === 'OK' ) {
+        yield put({ type: 'updateData', payload: { captcha: result.data } })
+      } else {
+        yield put({ type: 'updateData', payload: { captchaHelp: result.message } })
+      }
+    },
     *login ({
       payload,
     }, { put, call }) {
@@ -36,13 +44,11 @@ export default {
           storage.clear('login')
         }
         const help = { accountHelp, passwordHelp, captchaHelp }
-        yield put({ type: 'handleHelp', payload: help })
+        yield put({ type: 'updateData', payload: help })
         storage.val('token', data.data)
         payload.history.push('/admin')
 
       } else {
-        const captcha = `${API_SERVER}/captcha.png?${Date.now()}`
-
         if(data.status === 'NOT_FOUND_ENTITY' ) {
           accountHelp = {
             help: data.message,
@@ -62,8 +68,8 @@ export default {
           }
         }
         const help = { accountHelp, passwordHelp, captchaHelp }
-        yield put({ type: 'captcha', payload: { captcha } })
-        yield put({ type: 'handleHelp', payload: help })
+        yield put({ type: 'captcha' })
+        yield put({ type: 'updateData', payload: help })
       }
     }
   }
