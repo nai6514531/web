@@ -442,9 +442,9 @@ class GameEdit extends Component {
             >
             {getFieldDecorator('divide', {
               rules: [{
-                pattern: /^0+(\.\d{4})?$/, message: '请输入正确格式，最大不超过1'
+                pattern: /^(0(\.\d{4})?|1(\.0{4})?)$/, message: '请输入正确格式，最大不超过1'                
               }],
-              initialValue:  detail.divide !== undefined ? detail.divide/10000: 0  
+              initialValue:  detail.divide !== undefined ? (detail.divide/10000).toFixed(4): 0.0000  
             })(
               <Input placeholder='请按0.0000格式输入我方分成比例'/>
             )}
