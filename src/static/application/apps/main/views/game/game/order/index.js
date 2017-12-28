@@ -92,7 +92,7 @@ class GameOrder extends Component {
       const data = sorting.map(function(item, index){
         const _item = {
           id: item,          
-          gameOrder: index,
+          gameOrder: index+1,
         }
         return _item;
       })
@@ -128,7 +128,7 @@ class GameOrder extends Component {
                 if (item) {
                   return (
                     <li key={value.id} style={listStyle}>
-                      {index} ~ {index+10}
+                      {index+1} ~ {index+10}
                     </li>   
                   )
                 }

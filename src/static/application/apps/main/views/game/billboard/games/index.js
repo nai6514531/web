@@ -207,7 +207,7 @@ class BillboardGames extends Component {
       const data = sorting.map(function(item, index){
         const _item = {
           id: item,          
-          order: index,
+          order: index + 1,
         }
         return _item;
       })

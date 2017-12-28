@@ -168,7 +168,7 @@ class PackOrder extends Component {
       const data = sorting.map(function(item, index){
         const _item = {
           id: item,          
-          packOrder: index,
+          packOrder: index + 1,
         }
         return _item;
       })
