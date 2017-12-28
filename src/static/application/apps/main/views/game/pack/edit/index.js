@@ -319,13 +319,13 @@ class PackEdit extends Component {
                 {...formItemLayout}
                 label='礼包内容'
             >
-            {getFieldDecorator('description', {
+            {getFieldDecorator('profile', {
               rules: [{
                 required: true, message: '请输入50字以内的礼包内容',
               },{
                 max: 50, message: '长度最多50个字符'
               }],
-              initialValue: detail.description
+              initialValue: detail.profile
             })(
               <Input type="textarea"  placeholder='请输入礼包内容'/>
             )}
@@ -334,13 +334,13 @@ class PackEdit extends Component {
                 {...formItemLayout}
                 label='使用说明'
             >
-            {getFieldDecorator('profile', {
+            {getFieldDecorator('description', {
               rules: [{
                 required: true, message: '请输入200字以内的使用说明',
               },{
                 max: 200, message: '长度最多200个字符'
               }],
-              initialValue: detail.profile
+              initialValue: detail.description
             })(
               <Input type="textarea"  placeholder='请输入使用说明'/>
             )}
