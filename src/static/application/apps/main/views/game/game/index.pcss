@@ -1,0 +1,95 @@
+
+.button-wrap {
+	@media (max-width: 768px) {
+		display: block;
+		margin-top: 10px;
+	}
+}
+
+
+.input-wrap {
+	@media (min-width: 768px) {
+		margin-bottom: 20px;
+	}
+	@media (max-width: 768px) {
+		margin-bottom: 20px;
+	}
+}
+
+
+:global(.playModal){
+	text-align: right;
+	:global(.ant-modal-title){
+		text-align: left;
+	}
+	:global(.ant-modal-footer){
+		display: none;
+	}
+	:global(.form-text) {
+		display: block;
+		text-align: center;
+		height: 36px;
+	}
+	:global(#body){
+		display: none;
+	}
+	:global(#submit){
+		margin-right: 8px;
+		margin-bottom: 12px;
+		color: #fff;
+		display: inline-block;
+		font-weight: 500;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid transparent;
+		white-space: nowrap;
+		line-height: 1.5;
+		padding: 4px 15px;
+		font-size: 12px;
+		border-radius: 6px;
+		background: #2db7f5;
+		color: #fff;
+	}
+	:global(#cancel){
+		margin-right: 8px;
+		margin-bottom: 12px;
+		color: #fff;
+		display: inline-block;
+		font-weight: 500;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid transparent;
+		white-space: nowrap;
+		line-height: 1.5;
+		padding: 4px 15px;
+		font-size: 12px;
+		border-radius: 6px;
+		background: #d9534f;
+		color: #fff;
+
+	}
+}
+
+.card > li {
+	width: 9%;
+	margin: 5px;
+	padding: 10px 0 5px 0;
+	height: 97px;
+	text-align: center;
+	display: inline-block;
+	border: 1px solid #e9e9e9;
+	position: relative;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 3px 0 rgba(0,0,0,0.19) !important;	
+}
+
+.card > li > p {  
+	position: absolute;
+	bottom: 8px;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+}
+.wrapper {
+	display: flex;
+	flex-direction: row;
+}
