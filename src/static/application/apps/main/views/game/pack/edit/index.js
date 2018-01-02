@@ -176,6 +176,9 @@ class PackEdit extends Component {
     const { fileList, help } = this.state
     const breadItems = [
       {
+        title: '游戏管理平台'
+      },
+      {
         title: '礼包管理'
       },
       {

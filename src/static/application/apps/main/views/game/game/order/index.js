@@ -23,6 +23,9 @@ const RangePicker = DatePicker.RangePicker
 const Grid = Card.Grid
 const breadItems = [
   {
+    title: '游戏管理平台'
+  },
+  {
     title: '游戏管理'
   },
   {
