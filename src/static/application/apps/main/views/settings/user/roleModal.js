@@ -31,6 +31,10 @@ class RoleModal extends Component {
   checkboxChange = (values) => {
     this.checkList = values
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, user: { data: { objects, pagination }, roleData, currentRole, key, visible }, loading  } = this.props
     return(
@@ -39,7 +43,7 @@ class RoleModal extends Component {
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
-        key={key}
+        afterClose={this.reset}
        >
         <Row>
           <Checkbox.Group onChange={this.checkboxChange} defaultValue={currentRole}>

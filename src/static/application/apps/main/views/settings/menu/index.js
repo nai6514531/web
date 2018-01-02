@@ -226,6 +226,10 @@ class Menu extends Component {
       }
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, menu: { key, visible, record, data: { objects, pagination }, treeData }, loading  } = this.props
     this.options = transformMenu(objects)
@@ -279,7 +283,7 @@ class Menu extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
               <FormItem

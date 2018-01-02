@@ -8,7 +8,7 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import DatePicker from '../../../components/date-picker/'
 import moment from 'moment'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 const breadItems = [
   {
@@ -92,59 +92,53 @@ class ActionLog extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <Input
-            placeholder='用户id'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userId')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userId}
-          />
-          <Input
-            placeholder='用户名'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userName')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userName}
-          />
-          <Input
-            placeholder='账号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'userAccount')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.userAccount}
-          />
-          <Input
-            placeholder='接口名'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'apiName')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.apiName}
-          />
-          <span className={styles.input}>
-            <DatePicker
-              date={date}
-              search={this.search}
-              defaultTime={false}/>
-          </span>
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              icon='search'
-              >
-              筛选
-            </Button>
-          </span>
-        </Row>
+        <Input
+          placeholder='用户id'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userId')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userId}
+        />
+        <Input
+          placeholder='用户名'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userName')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userName}
+        />
+        <Input
+          placeholder='账号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'userAccount')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.userAccount}
+        />
+        <Input
+          placeholder='接口名'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'apiName')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.apiName}
+        />
+        <DatePicker
+          date={date}
+          search={this.search}
+          defaultTime={false}/>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          icon='search'
+          >
+          筛选
+        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}
           loading={loading}
           pagination={pagination}
           change={this.change}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1100 }}
         />
       </div>
     )

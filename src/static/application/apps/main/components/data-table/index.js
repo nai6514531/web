@@ -84,11 +84,13 @@ class DataTable extends Component {
             }
           }
         }
-        onRowClick={(record,index)=>{
-          this.props.dispatch({
-            type: 'common/updateIndex',
-            payload: index
-          })
+        onRow={(record, index) => {
+          onClick: ()=>{
+            this.props.dispatch({
+              type: 'common/updateIndex',
+              payload: index
+            })
+          }
         }}
         rowSelection={this.props.rowSelection}
       />

@@ -109,7 +109,7 @@ class App extends Component {
           if (!!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(status)) {
             return <span>
               <a onClick={this.handleSettlemenet.bind(this, id)}>重新申请</a>
-              <span className='ant-divider' />
+              <span className={styles.divider}>|</span>
               <Link to={`/business/bill/${id}`}>明细</Link>
             </span>
           } else {
@@ -220,7 +220,7 @@ class App extends Component {
     // 结束时间和开始时间跨度　大于等于３1天
     // 获取截至结束时间
     const endDate =  Date.now() < startAt + second ? Date.now() : startAt + second
-    return current && current.valueOf() < startAt || current.valueOf() > endDate
+    return current && current.valueOf() < startAt || current && current.valueOf() > endDate
   }
   handleStartOpenChange(open) {
     if (!open) {
@@ -292,7 +292,7 @@ class App extends Component {
         />
         <Select
           defaultValue={status}
-          style={{ width: 120, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 150, marginRight: 10, marginBottom: 10 }}
           onChange={(value) => { this.setState({search: {...this.state.search, status: value}})}}>
           <Option value=''>请选择结算状态</Option>
           <Option value='1'>等待结算</Option>

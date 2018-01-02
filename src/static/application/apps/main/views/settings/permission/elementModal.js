@@ -33,6 +33,10 @@ class ElementModal extends Component {
       }
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, permission: { elementData, elementVisible, key, currentData } } = this.props
     return(
@@ -41,7 +45,7 @@ class ElementModal extends Component {
         visible={elementVisible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
-        key={key}
+        afterClose={this.reset}
        >
         <Checkbox.Group onChange={this.onChange} defaultValue={currentData}>
           <Row>

@@ -6,7 +6,7 @@ import { Form, Modal, Input, Button, Popconfirm, Select } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -310,6 +310,10 @@ class Street extends Component {
       })
     }
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { common: { search }, form: { getFieldDecorator }, street: { key, visible, record,  data: { objects, pagination }, provinceData, cityData, cityDetailData, districtData, districtDetailData }, loading  } = this.props
     const title = record.id ? '编辑街道' : '添加街道'
@@ -365,35 +369,34 @@ class Street extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            搜索
-          </Button>
-          <Button
-            type='primary'
-            onClick={this.show.bind(this,{})}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            添加街道
-          </Button>
-        </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          搜索
+        </Button>
+        <Button
+          type='primary'
+          onClick={this.show.bind(this,{})}
+          className={styles.button}
+          >
+          添加街道
+        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}
           loading={loading}
           pagination={pagination}
           change={this.change}
+          scroll={{ x: 600 }}
         />
         <Modal
           title={title}
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

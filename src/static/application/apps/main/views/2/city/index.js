@@ -6,7 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const Option = Select.Option
 const breadItems = [
@@ -74,10 +74,10 @@ class City extends Component {
       }
     })
     this.props.dispatch({
-      type: 'city/summary'
+      type: 'twoCity/summary'
     })
     this.props.dispatch({
-      type: 'city/provinceList'
+      type: 'twoCity/provinceList'
     })
     this.fetch(url)
   }
@@ -94,7 +94,7 @@ class City extends Component {
   }
   handleSelect = () => {
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         disabled: false
       }
@@ -106,20 +106,20 @@ class City extends Component {
         return new RegExp( filterKey , 'img' ).test( value.name );
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         disabled: true
       }
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         provinceData: result
       }
     })
     if(!filterKey) {
       this.props.dispatch({
-        type: 'city/updateData',
+        type: 'twoCity/updateData',
         payload: {
           provinceData: clonedProvinceData,
           disabled: false
@@ -135,7 +135,7 @@ class City extends Component {
       type: 'common/resetIndex'
     })
     this.props.dispatch({
-      type: 'city/updateData',
+      type: 'twoCity/updateData',
       payload: {
         provinceData: this.props.city.clonedProvinceData
       }
@@ -148,7 +148,7 @@ class City extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'city/list',
+      type: 'twoCity/list',
       payload: {
         data: url
       }
@@ -162,26 +162,25 @@ class City extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
+        <span className={styles.input}>
         <AutoComplete
           placeholder='省'
           value={search.provinceId}
           allowClear
-          className={styles.input}
           dataSource={dataSource}
           onSearch={this.handleSearch}
           onSelect={this.handleSelect}
           onChange={this.changeHandler.bind('this','provinceId')}>
         </AutoComplete>
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            disabled={disabled}
-            >
-            筛选
-          </Button>
         </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          disabled={disabled}
+          >
+          筛选
+        </Button>
         {
           summary ? <div className={styles.summary}>{`共计有${summary.cityCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
         }
@@ -198,14 +197,14 @@ class City extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'city/clear'})
+    this.props.dispatch({ type: 'twoCity/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
     this.props.dispatch({ type: 'common/resetIndex' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    city: state.city,
+    city: state.twoCity,
     common: state.common,
     loading: state.loading.global,
     ...props

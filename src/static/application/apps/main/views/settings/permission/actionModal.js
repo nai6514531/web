@@ -49,6 +49,10 @@ class ActionModal extends Component {
   onChange = (values) => {
     this.checkList = values
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, permission: { actionData, actionVisible, key, currentData }, loading } = this.props
     return(
@@ -58,7 +62,7 @@ class ActionModal extends Component {
         onCancel={this.hide}
         onOk={this.handleSubmit}
         style={{height:300}}
-        key={key}
+        afterClose={this.reset}
         width={700}
        >
         <Row>

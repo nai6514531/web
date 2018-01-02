@@ -6,6 +6,7 @@ import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popc
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import styles from './index.pcss'
+import searchStyles from '../../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 import md5 from 'md5'
 import moment from 'moment'
@@ -126,21 +127,20 @@ class Customer extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <InputWithClear
-          placeholder='请输入用户手机号'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'mobile')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.mobile}
-         />
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            >
-            查询
-          </Button>
+        <span className={searchStyles.input}>
+          <InputWithClear
+            placeholder='请输入用户手机号'
+            onChange={this.changeHandler.bind(this, 'mobile')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.mobile}
+          />
         </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          >
+          查询
+        </Button>
         {
           data ?
           <Spin

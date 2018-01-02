@@ -41,14 +41,17 @@ class DayDetailConsume extends Component {
       {
         title: '编号/楼道信息',
         render: (text, record, index) => {
-          if(record.totalAmount) {
+          if(record.device) {
+            if(record.totalAmount) {
+              return (
+               <span><Link to={`/business/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>/{record.device.address || '-'}</span>
+              )
+            }
             return (
-             <span><Link to={`/business/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>/{record.device.address || '-'}</span>
+              `${record.device.serialNumber || '-'}/ ${record.device.address || '-'}`
             )
           }
-          return (
-            `${record.device.serialNumber || '-'}/ ${record.device.address || '-'}`
-          )
+          return '-'
         },
       },
       {

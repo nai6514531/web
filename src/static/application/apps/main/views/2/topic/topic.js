@@ -9,7 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import InputWithClear from '../../../components/input-with-clear/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
 
 const FormItem = Form.Item
@@ -356,27 +356,30 @@ class Topic extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <InputWithClear
-          placeholder='帖子发布人'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'name')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.name}
-         />
-        <InputWithClear
-          placeholder='帖子关键字'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
-         />
-        <InputWithClear
-          placeholder='帖子学校'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'schoolName')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.schoolName}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子发布人'
+            onChange={this.changeHandler.bind(this, 'name')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.name}
+          />
+        </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子关键字'
+            onChange={this.changeHandler.bind(this, 'keywords')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.keywords}
+            />
+        </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='帖子学校'
+            onChange={this.changeHandler.bind(this, 'schoolName')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.schoolName}
+            />
+        </span>
         <Select
           value={ search.channelId }
           allowClear
@@ -399,21 +402,19 @@ class Topic extends Component {
           onChange={this.selectHandler.bind('this','status')}>
             { this.renderStatus(dict.topicStatus) }
         </Select>
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            筛选
-          </Button>
-          <Button
-            type='primary'
-            onClick={this.createTopic}
-            style={{marginBottom: 20, marginRight: 20 }}>
-              新建帖子
-          </Button>
-        </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          筛选
+        </Button>
+        <Button
+          type='primary'
+          onClick={this.createTopic}
+          className={styles.button}>
+            新建帖子
+        </Button>
         <DataTable
           scroll={{ x: 1000 }}
           dataSource={objects || []}

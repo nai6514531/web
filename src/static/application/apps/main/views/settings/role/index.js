@@ -55,6 +55,10 @@ class RoleModal extends Component {
       }
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, role: { key, visible, record } } = this.props
     const title = record.id ? '编辑角色' : '添加角色'
@@ -64,7 +68,7 @@ class RoleModal extends Component {
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleChange}
-        key={key}
+        afterClose={this.reset}
        >
         <Form>
           <FormItem

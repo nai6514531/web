@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import { map } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import moment from 'moment'
 import dict from '../../../utils/dict'
 
@@ -273,25 +273,23 @@ class TwoUser extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.mobile}
          />
-        <span className={styles['button-wrap']}>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          搜索
+        </Button>
+        <Link
+          to={`/2/users/new`}>
           <Button
             type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            搜索
+            className={styles.button}>
+              添加用户
           </Button>
-          <Link
-            to={`/2/users/new`}>
-            <Button
-              type='primary'
-              style={{marginBottom: 20, marginRight: 20 }}>
-                添加用户
-            </Button>
-          </Link>
-        </span>
-        <DataTable
-          scroll={{ x: 700 }}
+        </Link>
+      <DataTable
+          scroll={{ x: 1000 }}
           dataSource={objects || []}
           columns={this.columns}
           loading={loading}

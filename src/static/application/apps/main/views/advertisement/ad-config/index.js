@@ -7,7 +7,7 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -213,99 +213,92 @@ class AdConfig extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row>
-          <Select
-            value={ search.appId }
-            allowClear
-            className={styles.input}
-            placeholder='所属应用'
-            onChange={this.selectHandler.bind('this','appId')}>
-              {
-                appData.map(value => {
-                  return (
-                    <Option value={value.appId + ''} key={value.appId}>{value.name}</Option>
-                  )
-                })
-              }
-          </Select>
-          <Select
-            value={ search.adPositionId }
-            allowClear
-            className={styles.input}
-            placeholder='广告位'
-            onChange={this.selectHandler.bind('this','adPositionId')}>
-              {
-                postionData.map(value => {
-                  return (
-                    <Option value={value.adPositionId + ''} key={value.adPositionId}>{value.name}</Option>
-                  )
-                })
-              }
-          </Select>
-          <Input
-            placeholder='广告名'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'name')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.name}
-           />
-          <span className={styles.input}>
-          <RangePicker
-            showTime
-            defaultValue={[startAt,endAt]}
-            format={dateFormat}
-            onChange={this.timeChange}
-            showTime={{
-              hideDisabledOptions: true,
-              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-            }} />
-          </span>
-        </Row>
-        <Row className={styles['input-wrap']}>
-          <Select
-            defaultValue={this.search.display}
-            allowClear
-            className={styles.input}
-            placeholder='展示状态'
-            onChange={this.selectHandler.bind('this','display')}>
-              <Option value={'1'}>{'全部显示'}</Option>
-              <Option value={'2'}>{'按尾号显示'}</Option>
-          </Select>
-          <Select
-            defaultValue={this.search.status}
-            allowClear
-            className={styles.input}
-            placeholder='上下架'
-            onChange={this.selectHandler.bind('this','status')}>
-              <Option value={'0'}>{'上架'}</Option>
-              <Option value={'1'}>{'下架'}</Option>
-          </Select>
-          <span className={styles['button-wrap']}>
+        <Select
+          value={ search.appId }
+          allowClear
+          className={styles.input}
+          placeholder='所属应用'
+          onChange={this.selectHandler.bind('this','appId')}>
+            {
+              appData.map(value => {
+                return (
+                  <Option value={value.appId + ''} key={value.appId}>{value.name}</Option>
+                )
+              })
+            }
+        </Select>
+        <Select
+          value={ search.adPositionId }
+          allowClear
+          className={styles.input}
+          placeholder='广告位'
+          onChange={this.selectHandler.bind('this','adPositionId')}>
+            {
+              postionData.map(value => {
+                return (
+                  <Option value={value.adPositionId + ''} key={value.adPositionId}>{value.name}</Option>
+                )
+              })
+            }
+        </Select>
+        <Input
+          placeholder='广告名'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'name')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.name}
+          />
+        <RangePicker
+          className={styles['date-picker-wrap']}
+          showTime
+          defaultValue={[startAt,endAt]}
+          format={dateFormat}
+          onChange={this.timeChange}
+          showTime={{
+            hideDisabledOptions: true,
+            defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+          }} />
+        <Select
+          defaultValue={this.search.display}
+          allowClear
+          className={styles.input}
+          placeholder='展示状态'
+          onChange={this.selectHandler.bind('this','display')}>
+            <Option value={'1'}>{'全部显示'}</Option>
+            <Option value={'2'}>{'按尾号显示'}</Option>
+        </Select>
+        <Select
+          defaultValue={this.search.status}
+          allowClear
+          className={styles.input}
+          placeholder='上下架'
+          onChange={this.selectHandler.bind('this','status')}>
+            <Option value={'0'}>{'上架'}</Option>
+            <Option value={'1'}>{'下架'}</Option>
+        </Select>
+          <Button
+            type='primary'
+            onClick={this.searchClick}
+            className={styles.button}
+            >
+            筛选
+          </Button>
+          <Link to={`/advertisement/config/order`}>
             <Button
               type='primary'
-              onClick={this.searchClick}
               className={styles.button}
               >
-              筛选
+              排序
             </Button>
-            <Link to={`/advertisement/config/order`}>
-              <Button
-                type='primary'
-                className={styles.button}
-                >
-               排序
-              </Button>
-            </Link>
-            <Link
-              to={`/advertisement/config/new`}>
-              <Button
-                type='primary'
-                className={styles.button}>
-                添加广告
-              </Button>
-            </Link>
-          </span>
-        </Row>
+          </Link>
+          <Link
+            to={`/advertisement/config/new`}>
+            <Button
+              type='primary'
+              className={styles.button}>
+              添加广告
+            </Button>
+          </Link>
         <DataTable
           dataSource={objects}
           columns={this.columns}

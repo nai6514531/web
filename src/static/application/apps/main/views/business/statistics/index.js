@@ -9,7 +9,7 @@ import InputWithClear from '../../../components/input-with-clear/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
@@ -130,6 +130,7 @@ class MonthStatistics extends Component {
           pagination={false}
           rowKey='key'
           rowClassName={() => {}}
+          scroll={{ x: 1000 }}
         />
     )
   }
@@ -157,7 +158,7 @@ class DeviceStatistics extends Component {
       {
         title: '月份',
         render: (text, record, index) => {
-          if(record.time && record.device.serialNumber) {
+          if(record.time && record.device) {
             return (
               <Link to={`/business/statistics/device/${record.time}/${record.device.serialNumber}`}>{record.time}</Link>
             )
@@ -170,9 +171,12 @@ class DeviceStatistics extends Component {
       {
         title: '编号/楼道信息',
         render: (text, record, index) => {
-          return (
-            `${record.device.serialNumber}/ ${record.device.address || '无'}`
-          )
+          if(record.device) {
+            return (
+              `${record.device.serialNumber}/ ${record.device.address || '无'}`
+            )
+          }
+          return '-'
         },
       },
       {
@@ -296,17 +300,18 @@ class DeviceStatistics extends Component {
           disabledDate={this.disabledDate}
           defaultValue={ defaultValue }
           placeholder="请选择月份" />
-        <InputWithClear
-          placeholder='模块编号'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'deviceSerial')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.deviceSerial}
-         />
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='模块编号'
+            onChange={this.changeHandler.bind(this, 'deviceSerial')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.deviceSerial}
+          />
+        </span>
         <Button
           type='primary'
           onClick={this.searchClick}
-          style={{marginBottom: '20px', marginRight: 20}}
+          className={styles.button}
           >
           筛选
         </Button>
@@ -317,6 +322,7 @@ class DeviceStatistics extends Component {
             pagination={pagination}
             change={this.change}
             rowKey='key'
+            scroll={{ x: 1000 }}
             rowClassName={() => {}}
           />
       </div>

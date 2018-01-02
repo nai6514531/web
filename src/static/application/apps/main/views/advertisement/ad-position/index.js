@@ -6,7 +6,7 @@ import { Button, Popconfirm, Select } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const Option = Select.Option
 const breadItems = [
@@ -127,23 +127,21 @@ class AdPosition extends Component {
               })
             }
         </Select>
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            筛选
-          </Button>
-          <Link
-            to={`/advertisement/position-manager/new`}>
-              <Button
-                type='primary'
-                style={{marginBottom: '20px'}}>
-                添加广告位
-              </Button>
-          </Link>
-        </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          筛选
+        </Button>
+        <Link
+          to={`/advertisement/position-manager/new`}>
+            <Button
+              type='primary'
+              className={styles.button}>
+              添加广告位
+            </Button>
+        </Link>
         <DataTable
           dataSource={objects}
           columns={this.columns}

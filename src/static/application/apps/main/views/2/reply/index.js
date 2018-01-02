@@ -9,7 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import InputWithClear from '../../../components/input-with-clear/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
 
 const FormItem = Form.Item
@@ -270,35 +270,35 @@ class Reply extends Component {
             <Option value={'likes'} key={'1'}>按赞数排序</Option>
             <Option value={'id'} key={'2'}>按发布时间排序</Option>
         </Select>
-        <InputWithClear
-          placeholder='回复发布人'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'name')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.name}
-         />
-        <InputWithClear
-          placeholder='回复关键字'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
-         />
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            筛选
-          </Button>
-          <Button
-            type='primary'
-            onClick={this.createreply}
-            style={{marginBottom: 20, marginRight: 20 }}>
-              新建回复
-          </Button>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='回复发布人'
+            onChange={this.changeHandler.bind(this, 'name')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.name}
+          />
         </span>
+        <span className={styles.input}>
+          <InputWithClear
+            placeholder='回复关键字'
+            onChange={this.changeHandler.bind(this, 'keywords')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.keywords}
+          />
+        </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          筛选
+        </Button>
+        <Button
+          type='primary'
+          onClick={this.createreply}
+          className={styles.button}>
+            新建回复
+        </Button>
         <DataTable
           scroll={{ x: 1000 }}
           dataSource={objects || []}

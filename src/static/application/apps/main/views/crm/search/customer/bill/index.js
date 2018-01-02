@@ -6,7 +6,7 @@ import { Button, Popconfirm, Select } from 'antd'
 import DataTable from '../../../../../components/data-table/'
 import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../../../assets/css/search-bar.pcss'
 import DatePicker from '../../../../../components/date-picker/'
 import moment from 'moment'
 
@@ -173,7 +173,7 @@ class Bill extends Component {
           defaultTime={false}/>
         <Select
           placeholder='收入/支出'
-          className={styles.select}
+          className={styles.input}
           allowClear
           defaultValue={ this.search.action }
           onChange={this.selectHandler.bind(this, 'action')}>
@@ -182,7 +182,7 @@ class Bill extends Component {
         </Select>
         <Select
           placeholder='业务名称'
-          className={styles.select}
+          className={styles.input}
           allowClear
           value={ search.type }
           onChange={this.selectHandler.bind(this, 'type')}>

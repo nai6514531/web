@@ -6,7 +6,7 @@ import { Button, Popconfirm, Select } from 'antd'
 import DataTable from '../../../../../components/data-table/'
 import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../../../assets/css/search-bar.pcss'
 import DatePicker from '../../../../../components/date-picker/'
 import moment from 'moment'
 
@@ -132,7 +132,7 @@ class Chipcard extends Component {
           defaultTime={false}/>
         <Select
           placeholder='充值/消费'
-          className={styles.select}
+          className={styles.input}
           allowClear
           defaultValue={this.search.action}
           onChange={this.selectHandler.bind(this, 'action')}>

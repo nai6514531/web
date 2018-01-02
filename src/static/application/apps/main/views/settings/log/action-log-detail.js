@@ -5,7 +5,7 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { Row, Col, Spin, Card, Modal } from 'antd'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
-import styles from './detail.pcss'
+import styles from '../../../assets/css/page-detail.pcss'
 import moment from 'moment'
 import { transformUrl, toQueryString } from '../../../utils/'
 

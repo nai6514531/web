@@ -1,13 +1,15 @@
-import React from 'react';
-import _ from 'underscore';
+import React, { Component } from 'react'
 import {
   DatePicker
-} from 'antd';
-import moment from 'moment';
-import zhCN from 'antd/lib/date-picker/locale/zh_CN';
+} from 'antd'
+import moment from 'moment'
+import zhCN from 'antd/lib/date-picker/locale/zh_CN'
+import styles from '../../assets/css/search-bar.pcss'
 
-const CustomDatePicker = React.createClass({
-  getInitialState() {
+class CustomDatePicker extends Component {
+  constructor(props) {
+    super(props)
+
     let { startAt, endAt } = this.props.search
     let date = this.props.date || new Date()
     let defaultStartDate, defaultEndDate
@@ -25,31 +27,32 @@ const CustomDatePicker = React.createClass({
       defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : null
       defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : null
     }
-    return {
-      startAt: defaultStartDate, //搜索结账开始时间
-      endAt: defaultEndDate, //搜索结账结束时间
+
+    this.state = {
+      startAt: defaultStartDate,
+      endAt: defaultEndDate,
       defaultEndAt: defaultEndDate,
       endOpen: false,
-    };
-  },
+    }
+  }
   componentDidMount() {
     this.disabledStartDate(this.state.startAt)
     // this.disabledEndDate(this.state.endAt)
-  },
-  onStartChange(value) {
-    this.handleAtChange('startAt', value);
-    this.handleAtChange('endAt', value);
+  }
+  onStartChange = (value) => {
+    this.handleAtChange('startAt', value)
+    this.handleAtChange('endAt', value)
     this.setState({
       defaultEndAt: value
     })
-  },
-  onEndChange(value) {
-    this.handleAtChange('endAt', value);
+  }
+  onEndChange = (value) => {
+    this.handleAtChange('endAt', value)
     this.setState({
       defaultEndAt: value
     })
-  },
-  handleAtChange(field, value) {
+  }
+  handleAtChange = (field, value) => {
     if(value) {
       this.props.search[field] = moment(value).format('YYYY-MM-DD')
     } else {
@@ -59,67 +62,65 @@ const CustomDatePicker = React.createClass({
     // 此处需要对时间进行统一处理
     this.setState({
       [field]: value
-    });
-  },
-  disabledStartDate(startAt) {
-    const endAt = new Date(this.state.endAt ? this.state.endAt : null).getTime();
-    let dateRange = startAt && startAt.valueOf() > Date.now();
+    })
+  }
+  disabledStartDate = (startAt) => {
+    const endAt = new Date(this.state.endAt ? this.state.endAt : null).getTime()
+    let dateRange = startAt && startAt.valueOf() > Date.now()
     // if (!startAt || !endAt) {
-    //   return dateRange;
+    //   return dateRange
     // }
-    return dateRange;
+    return dateRange
 
-  },
-  disabledEndDate(endAt) {
-    const startAt = new Date(this.state.startAt ? this.state.startAt : null).getTime();
-    let second = 31 * 24 * 60 * 60 * 1000;
-    let dateRange = (endAt && endAt.valueOf() >= startAt.valueOf() + second) || ( endAt && endAt.valueOf() > Date.now());
+  }
+  disabledEndDate = (endAt) => {
+    const startAt = new Date(this.state.startAt ? this.state.startAt : null).getTime()
+    let second = 31 * 24 * 60 * 60 * 1000
+    let dateRange = (endAt && endAt.valueOf() >= startAt.valueOf() + second) || ( endAt && endAt.valueOf() > Date.now())
     if (!endAt || !startAt) {
-      return dateRange;
+      return dateRange
     }
-    return dateRange || endAt.valueOf() <= startAt.valueOf();
-  },
-  handleStartOpenChange(open) {
+    return dateRange || endAt.valueOf() <= startAt.valueOf()
+  }
+  handleStartOpenChange = (open) => {
     if (!open) {
       this.setState({
         endOpen: true
-      });
+      })
     }
-  },
-  handleEndOpenChange(open) {
+  }
+  handleEndOpenChange = (open) => {
     this.setState({
       endOpen: open
-    });
-  },
+    })
+  }
   render() {
     return (
-      <span>
+      <span className={styles['date-picker-wrap']}>
         <DatePicker
-          style={{width:120,marginLeft:4}}
           value={this.state.startAt}
           disabledDate={this.disabledStartDate}
           placeholder="开始日期"
           onChange={this.onStartChange}
           onOpenChange={this.handleStartOpenChange}
-          className="item"
+          className={styles['date-picker']}
           locale={zhCN}
         />
-        -
+        <span>-</span>
         <DatePicker
-          style={{width:120,marginRight:4}}
           disabledDate={this.disabledEndDate}
           placeholder="结束日期"
           value={this.state.defaultEndAt}
           format="YYYY-MM-DD"
           onChange={this.onEndChange}
           open={this.state.endOpen}
+          className={styles['date-picker']}
           onOpenChange={this.handleEndOpenChange}
-          className="item"
           locale={zhCN}
         />
       </span>
     )
   }
-});
+}
 
-export default CustomDatePicker;
+export default CustomDatePicker

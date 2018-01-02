@@ -24,6 +24,7 @@ class Nav extends React.Component {
   }
 
   handleVisibleChange = (menuPopoverVisible) => {
+    menuPopoverVisible && window.scrollTo(0,0)
     this.props.dispatch({
       type: 'common/popMenu',
       payload: { menuPopoverVisible }

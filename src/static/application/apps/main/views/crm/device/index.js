@@ -8,7 +8,7 @@ import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -243,38 +243,34 @@ class Device extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <Button
-            type='primary'
-            className={styles.button}
-            onClick={this.batchDelete}
-            >
-           批量删除
-          </Button>
-          <Input
-            placeholder='运营商名称/账号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'keywords')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.keywords}
-           />
-          <Input
-            placeholder='模块编号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'deviceSerial')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.deviceSerial}
+        <Button
+          type='primary'
+          className={styles.button}
+          onClick={this.batchDelete}
+          >
+          批量删除
+        </Button>
+        <Input
+          placeholder='运营商名称/账号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'keywords')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.keywords}
           />
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              >
-              筛选
-            </Button>
-          </span>
-        </Row>
+        <Input
+          placeholder='模块编号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'deviceSerial')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.deviceSerial}
+        />
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          筛选
+        </Button>
         <DataTable
           dataSource={objects}
           columns={this.columns}

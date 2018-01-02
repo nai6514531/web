@@ -7,9 +7,8 @@ import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
-import styles from './index.pcss'
 import { trim } from 'lodash'
-import dict from '../../../utils/dict.js'
+import styles from '../../../assets/css/search-bar.pcss'
 const breadItems = [
   {
     title: '客服系统'
@@ -126,31 +125,28 @@ class Sms extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Row className={styles['input-wrap']}>
-          <span className={styles.input}>
-          <DatePicker
-            onChange={this.dateChange}
-            disabledDate={this.disabledDate}
-            defaultValue={ this.search.date ? moment(this.search.date, 'YYYY-MM-DD') : null }/>
-          </span>
-          <Input
-            placeholder='手机号'
-            className={styles.input}
-            onChange={this.changeHandler.bind(this, 'mobile')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.mobile}
-          />
-          <span className={styles['button-wrap']}>
-            <Button
-              type='primary'
-              onClick={this.searchClick}
-              className={styles.button}
-              icon='search'
-              >
-              筛选
-            </Button>
-          </span>
-        </Row>
+        <DatePicker
+          style={{ marginRight: '20px', width: '140px'}}
+          onChange={this.dateChange}
+          disabledDate={this.disabledDate}
+          defaultValue={ this.search.date ? moment(this.search.date, 'YYYY-MM-DD') : null }/>
+        <Input
+          placeholder='手机号'
+          className={styles.input}
+          onChange={this.changeHandler.bind(this, 'mobile')}
+          onPressEnter={this.searchClick}
+          defaultValue={this.search.mobile}
+        />
+        <span className={styles['button-wrap']}>
+          <Button
+            type='primary'
+            onClick={this.searchClick}
+            className={styles.button}
+            icon='search'
+            >
+            筛选
+          </Button>
+        </span>
         <DataTable
           dataSource={objects}
           columns={this.columns}

@@ -6,7 +6,7 @@ import { Form, Modal, Input, Button, Popconfirm } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import styles from './index.pcss'
+import styles from '../../../assets/css/search-bar.pcss'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -123,6 +123,10 @@ class Action extends Component {
   change = (url) => {
    this.fetch(url)
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, action: { key, visible, record,  data: { objects, pagination } }, loading  } = this.props
     const title = record.id ? '编辑api' : '添加api'
@@ -143,22 +147,20 @@ class Action extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.method}
          />
-        <span className={styles['button-wrap']}>
-          <Button
-            type='primary'
-            onClick={this.searchClick}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            搜索
-          </Button>
-          {/* <Button
-            type='primary'
-            onClick={this.show.bind(this,{})}
-            style={{marginBottom: '20px', marginRight: 20}}
-            >
-            添加接口
-          </Button> */}
-        </span>
+        <Button
+          type='primary'
+          onClick={this.searchClick}
+          className={styles.button}
+          >
+          搜索
+        </Button>
+        {/* <Button
+          type='primary'
+          onClick={this.show.bind(this,{})}
+          style={{marginBottom: '20px', marginRight: 20}}
+          >
+          添加接口
+        </Button> */}
         <DataTable
           scroll={{ x: 1000 }}
           dataSource={objects}
@@ -172,7 +174,7 @@ class Action extends Component {
           visible={visible}
           onCancel={this.hide}
           onOk={this.handleSubmit}
-          key={key}
+          afterClose={this.reset}
          >
           <Form onSubmit={this.handleSubmit}>
             <FormItem

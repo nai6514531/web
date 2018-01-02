@@ -42,6 +42,10 @@ class PermissionModal extends Component {
       }
     })
   }
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
     const { form: { getFieldDecorator }, permission: { key, visible, record } } = this.props
     const title = record.id ? '编辑权限' : '添加权限'
@@ -51,7 +55,7 @@ class PermissionModal extends Component {
         visible={visible}
         onCancel={this.hide}
         onOk={this.handleSubmit}
-        key={key}
+        afterClose={this.reset}
        >
         <Form onSubmit={this.handleSubmit}>
           <FormItem
