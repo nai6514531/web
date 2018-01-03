@@ -16,7 +16,7 @@ const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const fileServer = `${API_SERVER}/game/packs/import`
-const excelType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+const excelType = 'xlsx'
 
 const formItemLayout = {
   labelCol: {
@@ -61,7 +61,9 @@ class PackEdit extends Component {
     })
   }
   beforeUpload(file) {
-    const isExcel = file.type === excelType;
+    const splitExcelName = file.name.split('.') 
+    const fileExtension = splitExcelName[splitExcelName.length - 1]
+    const isExcel = fileExtension === excelType;    
     if (!isExcel) {
       message.error('只能上传以 .xlsx 为后缀名的文件');
       const help = {
