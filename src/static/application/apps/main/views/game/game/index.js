@@ -142,7 +142,7 @@ class Game extends Component {
       this.props.dispatch({
         type: 'common/resetIndex'
       })
-      history.push(`${location.pathname}?${queryString}`)
+      this.props.history.push(`${location.pathname}?${queryString}`)
       this.fetch(this.search)
     }
   }
