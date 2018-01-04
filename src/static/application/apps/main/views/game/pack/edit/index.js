@@ -14,6 +14,7 @@ import { storage } from '../../../../utils/storage.js'
 const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
+const { TextArea } = Input;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const fileServer = `${API_SERVER}/game/packs/import`
 const excelType = 'xlsx'
@@ -329,7 +330,7 @@ class PackEdit extends Component {
               }],
               initialValue: detail.profile
             })(
-              <Input type="textarea"  placeholder='请输入礼包内容'/>
+              <TextArea placeholder='请输入礼包内容'/>
             )}
           </FormItem>
           <FormItem
@@ -344,7 +345,7 @@ class PackEdit extends Component {
               }],
               initialValue: detail.description
             })(
-              <Input type="textarea"  placeholder='请输入使用说明'/>
+              <TextArea placeholder='请输入使用说明'  autosize={{ minRows: 2, maxRows: 6 }}/>
             )}
           </FormItem>
           
