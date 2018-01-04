@@ -108,6 +108,7 @@ class Label extends Component {
         });
         labels[index] = result.data;
         self.setState({ labels });
+        self.hideModal()        
       } else {
         result.message && message.error(result.message)
       }
@@ -120,6 +121,7 @@ class Label extends Component {
         self.setState((prevState, props) => {
           return { labels: [result.data, ...self.state.labels] };
         });
+        self.hideModal()
       } else {
         result.message && message.error(result.message)
       }
@@ -136,8 +138,11 @@ class Label extends Component {
   showModal = () => {
     this.setState({ visible: true });
   }
-  handleCancel = () => {
+  hideModal = () => {
     this.setState({ visible: false });
+  }
+  handleCancel = () => {
+    this.hideModal();
     const form = this.form;
     form.resetFields();
   }
@@ -156,7 +161,6 @@ class Label extends Component {
         this.update(id, values);        
       }
       form.resetFields();
-      this.setState({ visible: false });
     });
   }
   saveFormRef = (form) => {
