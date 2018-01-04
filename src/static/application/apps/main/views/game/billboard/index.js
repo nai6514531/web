@@ -95,6 +95,7 @@ class Billboard extends Component {
         });
         billboards[index] = result.data;
         self.setState({ billboards });
+        self.hideModal();        
       } else {
         result.message && message.error(result.message)
       }
@@ -107,6 +108,7 @@ class Billboard extends Component {
         self.setState((prevState, props) => {
           return { billboards: [result.data, ...self.state.billboards] };
         });
+        self.hideModal();
       } else {
         result.message && message.error(result.message)
       }
@@ -123,8 +125,11 @@ class Billboard extends Component {
   showModal = () => {
     this.setState({ visible: true });
   }
-  handleCancel = () => {
+  hideModal = () => {
     this.setState({ visible: false });
+  }
+  handleCancel = () => {
+    this.hideModal();
     const form = this.form;
     form.resetFields();
   }
@@ -142,7 +147,6 @@ class Billboard extends Component {
         this.update(id, values);        
       }
       form.resetFields();
-      this.setState({ visible: false });
     });
   }
   saveFormRef = (form) => {
