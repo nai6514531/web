@@ -200,12 +200,12 @@ class Label extends Component {
 
 const LabelCreateForm = Form.create()(
   (props) => {
-    const { visible, onCancel, onCreate, form, initialValue } = props;
+    const { visible, onCancel, onCreate, form, initialValue, isAdd } = props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         visible={visible}
-        title="新增标签"
+        title={isAdd ? "新增标签": "编辑标签"}
         okText="确认"
         onCancel={onCancel}
         onOk={onCreate}

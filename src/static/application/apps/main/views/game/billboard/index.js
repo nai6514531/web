@@ -186,12 +186,12 @@ class Billboard extends Component {
 
 const LabelCreateForm = Form.create()(
   (props) => {
-    const { visible, onCancel, onCreate, form, initialValue } = props;
+    const { visible, onCancel, onCreate, form, initialValue, isAdd } = props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         visible={visible}
-        title="新增榜单"
+        title={ isAdd ? "新增榜单" : "编辑榜单"}
         okText="确认"
         onCancel={onCancel}
         onOk={onCreate}
