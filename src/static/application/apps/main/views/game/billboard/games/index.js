@@ -157,6 +157,7 @@ class BillboardGames extends Component {
         self.setState((prevState, props) => {
           return { billboardGames: [result.data, ...self.state.billboardGames] };
         });
+        self.handleCancel()
       } else {
         result.message && message.error(result.message)
       }
@@ -177,7 +178,6 @@ class BillboardGames extends Component {
   handleCreate = () => {
     const { id, gameId } = this.state
     this.add(id, gameId);
-    this.setState({ visible: false });
   }
   saveFormRef = (form) => {
     this.form = form;
