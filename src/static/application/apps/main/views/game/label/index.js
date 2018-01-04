@@ -108,7 +108,7 @@ class Label extends Component {
         });
         labels[index] = result.data;
         self.setState({ labels });
-        self.hideModal()        
+        self.handleCancel()        
       } else {
         result.message && message.error(result.message)
       }
@@ -121,7 +121,7 @@ class Label extends Component {
         self.setState((prevState, props) => {
           return { labels: [result.data, ...self.state.labels] };
         });
-        self.hideModal()
+        self.handleCancel()
       } else {
         result.message && message.error(result.message)
       }
@@ -160,7 +160,6 @@ class Label extends Component {
         const id = this.state.record.id;
         this.update(id, values);        
       }
-      form.resetFields();
     });
   }
   saveFormRef = (form) => {
