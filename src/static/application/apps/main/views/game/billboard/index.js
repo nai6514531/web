@@ -17,7 +17,7 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 const breadItems = [
   {
-    title: '游戏平台管理'
+    title: '游戏管理系统'
   },
   {
     title: '榜单管理'

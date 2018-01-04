@@ -90,7 +90,7 @@ class SupplierEdit extends Component {
     const { settleAt } = detail    
     const breadItems = [
       {
-        title: '游戏管理平台'
+        title: '游戏管理系统'
       },
       {
         title: '供应商管理',

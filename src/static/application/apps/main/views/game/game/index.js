@@ -19,7 +19,7 @@ const RangePicker = DatePicker.RangePicker
 
 const breadItems = [
   {
-    title: '游戏平台管理'
+    title: '游戏管理系统'
   },
   {
     title: '游戏管理'
