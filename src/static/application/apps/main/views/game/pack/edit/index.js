@@ -181,14 +181,11 @@ class PackEdit extends Component {
         title: '游戏管理平台'
       },
       {
-        title: '礼包管理'
+        title: '礼包管理',
+        url: '/game/pack'        
       },
       {
-        title: '新增/编辑礼包',
-        url: '/game/pack'
-      },
-      {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑礼包' : '新增礼包'
       }
     ]
     return(

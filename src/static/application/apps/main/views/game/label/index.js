@@ -20,7 +20,8 @@ const breadItems = [
     title: '游戏管理平台'
   },
   {
-    title: '游戏管理'
+    title: '游戏管理',
+    url: '/game/game'
   },
   {
     title: '标签管理'

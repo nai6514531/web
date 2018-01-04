@@ -311,14 +311,11 @@ class GameEdit extends Component {
         title: '游戏管理平台'
       },
       {
-        title: '游戏管理'
-      },
-      {
-        title: '新增/编辑游戏',
+        title: '游戏管理',
         url: '/game/game'
       },
       {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑游戏' : '新增游戏'
       }
     ]
     return(

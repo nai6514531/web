@@ -93,14 +93,11 @@ class SupplierEdit extends Component {
         title: '游戏管理平台'
       },
       {
-        title: '供应商管理'
+        title: '供应商管理',
+        url: '/game/supplier'        
       },
       {
-        title: '新增/编辑供应商',
-        url: '/game/supplier'
-      },
-      {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑供应商' : '新增供应商'
       }
     ]
     return(

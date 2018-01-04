@@ -23,7 +23,8 @@ const breadItems = [
     title: '游戏管理平台'
   },
   {
-    title: '礼包管理'
+    title: '礼包管理',
+    url: '/game/pack'        
   },
   {
     title: '礼包排序'
