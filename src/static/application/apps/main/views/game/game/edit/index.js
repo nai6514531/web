@@ -308,14 +308,14 @@ class GameEdit extends Component {
    
     const breadItems = [
       {
-        title: '游戏管理'
+        title: '游戏管理系统'
       },
       {
-        title: '新增/编辑游戏',
+        title: '游戏管理',
         url: '/game/game'
       },
       {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑游戏' : '新增游戏'
       }
     ]
     return(
@@ -442,7 +442,7 @@ class GameEdit extends Component {
             >
             {getFieldDecorator('divide', {
               rules: [{
-                pattern: /^(0(\.\d{4})?|1(\.0{4})?)$/, message: '请输入正确格式，最大不超过1'                
+                pattern: /^(0(\.\d{4})?|1(\.0{4})?)$/, message: '请按0.0000格式输入，最大不超过1'                
               }],
               initialValue:  detail.divide !== undefined ? (detail.divide/10000).toFixed(4): 0.0000  
             })(
@@ -569,7 +569,7 @@ class GameEdit extends Component {
                 style={{ width: '100%'}}          
                 placeholder="标签"
                 optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                filterOption={(input, option) => option.props.children.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
             >
                 {
                 labels.map(value => {

@@ -17,7 +17,11 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 const breadItems = [
   {
-    title: '游戏管理'
+    title: '游戏管理系统'
+  },
+  {
+    title: '游戏管理',
+    url: '/game/game'
   },
   {
     title: '标签管理'
@@ -104,6 +108,7 @@ class Label extends Component {
         });
         labels[index] = result.data;
         self.setState({ labels });
+        self.handleCancel()        
       } else {
         result.message && message.error(result.message)
       }
@@ -116,6 +121,7 @@ class Label extends Component {
         self.setState((prevState, props) => {
           return { labels: [result.data, ...self.state.labels] };
         });
+        self.handleCancel()
       } else {
         result.message && message.error(result.message)
       }
@@ -132,8 +138,11 @@ class Label extends Component {
   showModal = () => {
     this.setState({ visible: true });
   }
-  handleCancel = () => {
+  hideModal = () => {
     this.setState({ visible: false });
+  }
+  handleCancel = () => {
+    this.hideModal();
     const form = this.form;
     form.resetFields();
   }
@@ -151,8 +160,6 @@ class Label extends Component {
         const id = this.state.record.id;
         this.update(id, values);        
       }
-      form.resetFields();
-      this.setState({ visible: false });
     });
   }
   saveFormRef = (form) => {
@@ -192,12 +199,12 @@ class Label extends Component {
 
 const LabelCreateForm = Form.create()(
   (props) => {
-    const { visible, onCancel, onCreate, form, initialValue } = props;
+    const { visible, onCancel, onCreate, form, initialValue, isAdd } = props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         visible={visible}
-        title="新增标签"
+        title={isAdd ? "新增标签": "编辑标签"}
         okText="确认"
         onCancel={onCancel}
         onOk={onCreate}

@@ -14,9 +14,10 @@ import { storage } from '../../../../utils/storage.js'
 const RangePicker = DatePicker.RangePicker
 const { Option } = Select
 const FormItem = Form.Item
+const { TextArea } = Input;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const fileServer = `${API_SERVER}/game/packs/import`
-const excelType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+const excelType = 'xlsx'
 
 const formItemLayout = {
   labelCol: {
@@ -61,7 +62,9 @@ class PackEdit extends Component {
     })
   }
   beforeUpload(file) {
-    const isExcel = file.type === excelType;
+    const splitExcelName = file.name.split('.') 
+    const fileExtension = splitExcelName[splitExcelName.length - 1]
+    const isExcel = fileExtension === excelType;    
     if (!isExcel) {
       message.error('只能上传以 .xlsx 为后缀名的文件');
       const help = {
@@ -176,14 +179,14 @@ class PackEdit extends Component {
     const { fileList, help } = this.state
     const breadItems = [
       {
-        title: '礼包管理'
+        title: '游戏管理系统'
       },
       {
-        title: '新增/编辑礼包',
-        url: '/game/pack'
+        title: '礼包管理',
+        url: '/game/pack'        
       },
       {
-        title: isEdit ? '编辑' : '添加'
+        title: isEdit ? '编辑礼包' : '新增礼包'
       }
     ]
     return(
@@ -327,7 +330,7 @@ class PackEdit extends Component {
               }],
               initialValue: detail.profile
             })(
-              <Input type="textarea"  placeholder='请输入礼包内容'/>
+              <TextArea placeholder='请输入礼包内容'/>
             )}
           </FormItem>
           <FormItem
@@ -342,7 +345,7 @@ class PackEdit extends Component {
               }],
               initialValue: detail.description
             })(
-              <Input type="textarea"  placeholder='请输入使用说明'/>
+              <TextArea placeholder='请输入使用说明'  autosize={{ minRows: 2, maxRows: 6 }}/>
             )}
           </FormItem>
           

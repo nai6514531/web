@@ -24,7 +24,11 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 const breadItems = [
   {
-    title: '榜单管理'
+    title: '游戏管理系统'
+  },
+  {
+    title: '榜单管理',
+    url: '/game/billboard'
   },
   {
     title: '游戏管理'
@@ -153,6 +157,7 @@ class BillboardGames extends Component {
         self.setState((prevState, props) => {
           return { billboardGames: [result.data, ...self.state.billboardGames] };
         });
+        self.handleCancel()
       } else {
         result.message && message.error(result.message)
       }
@@ -173,7 +178,6 @@ class BillboardGames extends Component {
   handleCreate = () => {
     const { id, gameId } = this.state
     this.add(id, gameId);
-    this.setState({ visible: false });
   }
   saveFormRef = (form) => {
     this.form = form;

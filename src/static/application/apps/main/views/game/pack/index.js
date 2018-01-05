@@ -19,7 +19,7 @@ const RangePicker = DatePicker.RangePicker
 
 const breadItems = [
   {
-    title: '游戏平台管理'
+    title: '游戏管理系统'
   },
   {
     title: '礼包管理'
@@ -126,7 +126,7 @@ class Pack extends Component {
       this.props.dispatch({
         type: 'common/resetIndex'
       })
-      history.push(`${location.pathname}?${queryString}`)
+      this.props.history.push(`${location.pathname}?${queryString}`)
       this.fetch(this.search)
     }
   }

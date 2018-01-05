@@ -17,7 +17,7 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 const breadItems = [
   {
-    title: '游戏平台管理'
+    title: '游戏管理系统'
   },
   {
     title: '榜单管理'
@@ -95,6 +95,7 @@ class Billboard extends Component {
         });
         billboards[index] = result.data;
         self.setState({ billboards });
+        self.handleCancel();        
       } else {
         result.message && message.error(result.message)
       }
@@ -107,6 +108,7 @@ class Billboard extends Component {
         self.setState((prevState, props) => {
           return { billboards: [result.data, ...self.state.billboards] };
         });
+        self.handleCancel();
       } else {
         result.message && message.error(result.message)
       }
@@ -123,8 +125,11 @@ class Billboard extends Component {
   showModal = () => {
     this.setState({ visible: true });
   }
-  handleCancel = () => {
+  hideModal = () => {
     this.setState({ visible: false });
+  }
+  handleCancel = () => {
+    this.hideModal();
     const form = this.form;
     form.resetFields();
   }
@@ -141,8 +146,6 @@ class Billboard extends Component {
         const id = this.state.record.id;
         this.update(id, values);        
       }
-      form.resetFields();
-      this.setState({ visible: false });
     });
   }
   saveFormRef = (form) => {
@@ -182,12 +185,12 @@ class Billboard extends Component {
 
 const LabelCreateForm = Form.create()(
   (props) => {
-    const { visible, onCancel, onCreate, form, initialValue } = props;
+    const { visible, onCancel, onCreate, form, initialValue, isAdd } = props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         visible={visible}
-        title="新增榜单"
+        title={ isAdd ? "新增榜单" : "编辑榜单"}
         okText="确认"
         onCancel={onCancel}
         onOk={onCreate}

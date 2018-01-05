@@ -23,7 +23,11 @@ const RangePicker = DatePicker.RangePicker
 const Grid = Card.Grid
 const breadItems = [
   {
-    title: '游戏管理'
+    title: '游戏管理系统'
+  },
+  {
+    title: '游戏管理',
+    url: '/game/game'
   },
   {
     title: '游戏排序'

@@ -20,7 +20,11 @@ const Option = Select.Option
 
 const breadItems = [
   {
-    title: '礼包管理'
+    title: '游戏管理系统'
+  },
+  {
+    title: '礼包管理',
+    url: '/game/pack'        
   },
   {
     title: '礼包排序'
