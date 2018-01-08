@@ -21,13 +21,17 @@ class Login extends Component {
   }
 
   handleOk = () => {
-    const { form:{ validateFieldsAndScroll }, dipatch, history } = this.props
+    const { form:{ validateFieldsAndScroll }, dipatch, history , login: { captcha } } = this.props
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
         return
       }
       values.initPassword = values.password
       values.password = md5(values.password)
+      values.captcha = {
+        code: values.code,
+        key: captcha.split("//")[1].match(/\/(.*)/)[0]
+      }
       this.props.dispatch({
         type: 'login/login',
         payload: { data: values, history }
@@ -88,7 +92,7 @@ class Login extends Component {
             </FormItem>
             <FormItem
               {...captchaHelp}>
-              {getFieldDecorator('captcha', {
+              {getFieldDecorator('code', {
                 rules: [
                   {
                     required: true, message: '请输入图形验证码',

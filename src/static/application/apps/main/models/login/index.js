@@ -35,6 +35,7 @@ export default {
       let [ accountHelp, passwordHelp, captchaHelp ] = [ null, null, null ]
       const originData = _.cloneDeep(payload.data)
       delete originData.initPassword
+      delete originData.code
       const data = yield call(commonService.login, originData)
       if(data.status == 'OK') {
         //登录成功后存储账户密码token等
@@ -54,18 +55,18 @@ export default {
             help: data.message,
             className:'has-error'
           }
-        }
-        if(data.status === 'UNPROCESSABLE_ENTITY' ) {
+        } else if(data.status === 'UNPROCESSABLE_ENTITY' ) {
           passwordHelp = {
             help: data.message,
             className:'has-error'
           }
-        }
-        if(data.status === 'CAPTCHA_REQUIRED' ) {
+        } else if(data.status === 'INVALID_CODE' ) {
           captchaHelp = {
             help: data.message,
             className:'has-error'
           }
+        } else {
+          message.error(data.message)
         }
         const help = { accountHelp, passwordHelp, captchaHelp }
         yield put({ type: 'captcha' })
