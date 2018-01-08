@@ -4,6 +4,14 @@ export default {
     '2' : 'secondPulseName',
     '3' : 'thirdPulseName',
     '4' : 'fourthPulseName',
+  },
+  deviceStatus: {
+    '0' : '空闲',
+    '9' : '锁定',
+    '601' : '使用中',
+    '602' : '使用中',
+    '603' : '使用中',
+    '604' : '使用中',
 	},
 	app: {
 		'1': '洗衣业务',

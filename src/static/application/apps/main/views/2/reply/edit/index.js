@@ -149,14 +149,8 @@ class ReplyEdit extends Component {
       }
     })
   }
-  handleSearch = (filterKey) => {
+  handleSearch = _.debounce((filterKey) => {
     if(filterKey) {
-      this.props.dispatch({
-        type: 'replyEdit/updateData',
-        payload: {
-          disabled: true
-        }
-      })
       this.props.dispatch({
         type: 'replyEdit/userList',
         payload: {
@@ -167,7 +161,17 @@ class ReplyEdit extends Component {
           }
         }
       })
-    } else {
+    }
+  },1000)
+  debounceSearch =(filterKey)=> {
+    if(filterKey) {
+      this.props.dispatch({
+        type: 'replyEdit/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+    }  else {
       this.props.dispatch({
         type: 'replyEdit/updateData',
         payload: {
@@ -175,10 +179,8 @@ class ReplyEdit extends Component {
         }
       })
     }
+     this.handleSearch(filterKey)
   }
-  debounceSearch = _.debounce((filterKey) => {
-      return this.handleSearch(filterKey)
-  }, 1000)
   render() {
     const { replyEdit: { toUser, userData, disabled }, form: { getFieldDecorator, getFieldProps }, loading } = this.props
 

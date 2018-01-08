@@ -12,8 +12,10 @@ import Sms from 'bundle-loader?lazy!../../views/crm/sms/'
 import SmsModel from 'bundle-loader?lazy!../../models/crm/sms/'
 
 import Device from 'bundle-loader?lazy!../../views/crm/device/'
+import OperationDetail from 'bundle-loader?lazy!../../views/crm/device/operation-detail.js'
 import DeviceDetail from 'bundle-loader?lazy!../../views/crm/device/detail.js'
 import DeviceModel from 'bundle-loader?lazy!../../models/crm/device/'
+import DeviceDetailModel from 'bundle-loader?lazy!../../models/crm/device/detail.js'
 
 import Customer from 'bundle-loader?lazy!../../views/crm/search/customer/'
 import CustomerModel from 'bundle-loader?lazy!../../models/crm/search/customer/'
@@ -37,7 +39,8 @@ export default function (app) {
       <Route exact path='/crm/consume/:id' component={getComponent(ConsumeDetail,app,ConsumeDetailModel)} />
       <Route exact path='/crm/sms' component={getComponent(Sms,app,SmsModel)} />
       <Route exact path='/crm/device' component={getComponent(Device,app,DeviceModel)} />
-      <Route exact path='/crm/device/:id' component={getComponent(DeviceDetail,app,DeviceModel)} />
+      <Route exact path='/crm/device/operation/:id' component={getComponent(OperationDetail,app,DeviceModel)} />
+      <Route exact path='/crm/device/:id' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
       <Route exact path='/crm/search/customer' component={getComponent(Customer,app,CustomerModel)} />
       <Route exact path='/crm/search/operator' component={getComponent(Operator,app,OperatorModel)} />
       <Route exact path='/crm/search/operator/:id' component={getComponent(OperatorDetail,app,OperatorDetailModel)} />

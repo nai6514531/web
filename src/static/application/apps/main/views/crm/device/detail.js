@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal, message } from 'antd'
+import { Button, Row, Col, Card, message, Spin } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
+import styles from '../../../assets/css/page-detail.pcss'
+import dict from '../../../utils/dict.js'
 
 class DeviceDetail extends Component {
   constructor(props) {
@@ -14,55 +16,6 @@ class DeviceDetail extends Component {
     const search = transformUrl(location.search)
     const { keywords, deviceSerial } = search
     this.search = search
-    this.columns = [
-      { title: '序号', dataIndex: 'id', key: 'id' },
-      {
-        title: '操作时间',
-        render: (record) => {
-            if(record.createdAt) {
-                return (
-                    moment(record.createdAt).format('YYYY-MM-DD HH:mm')
-                )
-            }
-           return '-'
-        }
-      },
-      { title: '操作类型', dataIndex: 'operatorType.description', key: 'operatorType.description' },
-      {
-        title: '说明',
-        render: (record) => {
-            const { operator, operatorType, toUser } = record
-            let operatorText = <span style={{color: '#108ee9'}}> { operator.name || '-' } </span>
-            let userText = <span style={{color: '#108ee9'}}> { toUser.name || '-' } </span>
-            let description = ''
-            switch (operatorType.value) {
-                case 1:
-                    description = <span>设备被{operatorText}删除，返回测试员账号</span>
-                    break;
-                case 2:
-                description = <span>设备信息被{operatorText}更新</span>
-                    break;
-                case 3:
-                    description = <span>{operatorText}将设备入库</span>
-                    break;
-                case 4:
-                    description = <span>设备被{operatorText}分配给{userText}</span>
-                    break;
-                case 5:
-                    description = <span>设备被{operatorText}删除</span>
-                    break;
-                case 6:
-                    description = <span>设备信息被{operatorText}批量更新</span>
-                    break;
-                default:
-                    break;
-            }
-            return(
-                description
-            )
-        }
-      }
-    ]
     this.breadItems = [
         {
           title: '客服系统'
@@ -72,7 +25,7 @@ class DeviceDetail extends Component {
           url: `/crm/device?deviceSerial=${deviceSerial}&keywords=${keywords}`
         },
         {
-          title: '设备操作详情'
+          title: '设备详情'
         }
       ]
   }
@@ -82,42 +35,92 @@ class DeviceDetail extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmDevice/detail',
+      type: 'crmDeviceDetail/detail',
       payload: {
-        data:  { 
-            ...url,  
-            serialNumber: this.props.match.params.id 
+        data:  {
+            ...url,
+            deviceSerial: this.props.match.params.id
         }
       }
     })
   }
-  change = (url) => {
-    this.search = { ...this.search, ...url }
-    this.fetch(url)
-  }
   render() {
-    const { crmDevice: { detail: { objects, pagination } }, loading  } = this.props
-    pagination && (pagination.showSizeChanger = true)
+    const { crmDeviceDetail: { data }, loading } = this.props
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
-        <DataTable
-          dataSource={objects}
-          columns={this.columns}
-          loading={loading}
-          pagination={pagination}
-          change={this.change}
-        />
+        {
+          data ?
+          <Spin
+            tip='加载中...'
+            spinning={loading}
+            className={styles.wrap}>
+            <Card className={styles.card}>
+              <div className={styles.header}>
+                  <h1>设备详情</h1>
+              </div>
+              <div className={styles['sub-card']}>
+                <div className={styles['card-item']}>
+                  <div><span className={styles.title}>模块号:</span>{data.serialNumber || '-'}</div>
+                  <div>
+                    <span className={styles.title}>价格:</span>
+                    {`${data.firstPulseName}${data.firstPulsePrice / 100}
+                    /${data.secondPulseName}${data.secondPulsePrice / 100}
+                    /${data.thirdPulseName}${data.thirdPulsePrice / 100}
+                    /${data.fourthPulseName}${data.fourthPulsePrice / 100}`}
+                  </div>
+                  <div><span className={styles.title}>类型:</span>{data.referenceDevice.name || '-'}</div>
+                  <div><span className={styles.title}>楼层:</span>{data.address || '-'}</div>
+                  <div><span className={styles.title}>状态:</span>{dict.deviceStatus[data.status.value] || '-' }</div>
+                </div>
+              </div>
+            </Card>
+            <Card className={styles.card}>
+              <div className={styles.header}>
+                  <h1>商家详情</h1>
+              </div>
+              <div className={styles['sub-card']}>
+                <div className={styles['card-item']}>
+                  <div><span className={styles.title}>商家名称:</span>{data.owner.name || '-'}</div>
+                  <div><span className={styles.title}>商家ID:</span>{data.owner.id || '-'}</div>
+                  <div><span className={styles.title}>登录账号:</span>{data.owner.account || '-'}</div>
+                  <div><span className={styles.title}>注册时间:</span>{moment(data.owner.createdAt).format('YYYY-MM-DD HH:mm:ss') || '-'}</div>
+                  <div><span className={styles.title}>联系人:</span>{data.owner.contact || '-'}</div>
+                  <div><span className={styles.title}>手机号:</span>{data.owner.mobile || '-'}</div>
+                  <div><span className={styles.title}>服务电话:</span>{data.owner.telephone || '-'}</div>
+                  <div><span className={styles.title}>地址:</span><span className={styles.overText}>{data.owner.address || '-'}</span></div>
+                </div>
+              </div>
+            </Card>
+            <Card className={styles.card}>
+              <div className={styles.header}>
+                  <h1>上级商家详情</h1>
+              </div>
+              <div className={styles['sub-card']}>
+                <div className={styles['card-item']}>
+                  <div><span className={styles.title}>商家名称:</span>{data.fromUser.name || '-'}</div>
+                  <div><span className={styles.title}>商家ID:</span>{data.fromUser.id || '-'}</div>
+                  <div><span className={styles.title}>登录账号:</span>{data.fromUser.account || '-'}</div>
+                  <div><span className={styles.title}>注册时间:</span>{moment(data.fromUser.createdAt).format('YYYY-MM-DD HH:mm:ss') || '-'}</div>
+                  <div><span className={styles.title}>联系人:</span>{data.fromUser.contact || '-'}</div>
+                  <div><span className={styles.title}>手机号:</span>{data.fromUser.mobile || '-'}</div>
+                  <div><span className={styles.title}>服务电话:</span>{data.fromUser.telephone || '-'}</div>
+                  <div><span className={styles.title}>地址:</span><span className={styles.overText}>{data.fromUser.address || '-'}</span></div>
+                </div>
+              </div>
+            </Card>
+          </Spin> : null
+        }
       </div>
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmDevice/clear'})
+    this.props.dispatch({ type: 'crmDeviceDetail/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmDevice: state.crmDevice,
+    crmDeviceDetail: state.crmDeviceDetail,
     loading: state.loading.global,
     ...props
   }
