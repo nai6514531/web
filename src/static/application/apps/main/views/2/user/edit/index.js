@@ -204,14 +204,8 @@ class UserEdit extends Component {
       }
     })
   }
-  handleSearch = (filterKey) => {
+  handleSearch = _.debounce((filterKey) => {
     if(filterKey) {
-      this.props.dispatch({
-        type: 'userEdit/updateData',
-        payload: {
-          disabled: true
-        }
-      })
       this.props.dispatch({
         type: 'userEdit/schoolList',
         payload: {
@@ -221,7 +215,17 @@ class UserEdit extends Component {
           }
         }
       })
-    } else {
+    }
+  },1000)
+  debounceSearch =(filterKey)=> {
+    if(filterKey) {
+      this.props.dispatch({
+        type: 'userEdit/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+    }  else {
       this.props.dispatch({
         type: 'userEdit/updateData',
         payload: {
@@ -229,10 +233,8 @@ class UserEdit extends Component {
         }
       })
     }
+     this.handleSearch(filterKey)
   }
-  debounceSearch = _.debounce((filterKey) => {
-      return this.handleSearch(filterKey)
-  }, 1000)
   render() {
     const { userEdit: { detail, help, visible, previewImage, fileList, schoolData, disabled  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'

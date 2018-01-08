@@ -138,14 +138,8 @@ class CommentEdit extends Component {
       }
     })
   }
-  handleSearch = (filterKey) => {
+  handleSearch = _.debounce((filterKey) => {
     if(filterKey) {
-      this.props.dispatch({
-        type: 'commentEdit/updateData',
-        payload: {
-          disabled: true
-        }
-      })
       this.props.dispatch({
         type: 'commentEdit/userList',
         payload: {
@@ -156,7 +150,17 @@ class CommentEdit extends Component {
           }
         }
       })
-    } else {
+    }
+  },1000)
+  debounceSearch =(filterKey)=> {
+    if(filterKey) {
+      this.props.dispatch({
+        type: 'commentEdit/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+    }  else {
       this.props.dispatch({
         type: 'commentEdit/updateData',
         payload: {
@@ -164,10 +168,8 @@ class CommentEdit extends Component {
         }
       })
     }
+     this.handleSearch(filterKey)
   }
-  debounceSearch = _.debounce((filterKey) => {
-      return this.handleSearch(filterKey)
-  }, 1000)
   render() {
     const { commentEdit: { toUser, userData, disabled }, form: { getFieldDecorator, getFieldProps }, loading } = this.props
     return(

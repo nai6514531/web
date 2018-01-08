@@ -242,14 +242,8 @@ class TopicEdit extends Component {
       })
     }
   }
-  handleSearch = (filterKey) => {
+  handleSearch = _.debounce((filterKey) => {
     if(filterKey) {
-      this.props.dispatch({
-        type: 'topicEdit/updateData',
-        payload: {
-          disabled: true
-        }
-      })
       this.props.dispatch({
         type: 'topicEdit/userList',
         payload: {
@@ -260,7 +254,17 @@ class TopicEdit extends Component {
           }
         }
       })
-    } else {
+    }
+  },1000)
+  debounceSearch =(filterKey)=> {
+    if(filterKey) {
+      this.props.dispatch({
+        type: 'topicEdit/updateData',
+        payload: {
+          disabled: true
+        }
+      })
+    }  else {
       this.props.dispatch({
         type: 'topicEdit/updateData',
         payload: {
@@ -268,10 +272,8 @@ class TopicEdit extends Component {
         }
       })
     }
+     this.handleSearch(filterKey)
   }
-  debounceSearch = _.debounce((filterKey) => {
-      return this.handleSearch(filterKey)
-  }, 1000)
   render() {
     const { topicEdit: { detail, help, visible, previewImage, fileList, userData, channelData, disabled, showTitile, showPrice  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'

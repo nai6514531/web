@@ -9,6 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
 import styles from '../../../assets/css/search-bar.pcss'
+import dict from '../../../utils/dict.js'
 
 const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -29,17 +30,14 @@ class Device extends Component {
     this.search = search
     this.checkList = []
     this.columns = [
-      { title: '模块号', dataIndex: 'serialNumber', key: 'serialNumber', width: 100 },
-      // { title: '经销商', dataIndex: '',key: '' },
-      // {
-      //   title: '分配人',
-      //   width: 200,
-      //   render: (record) => {
-      //     return (
-      //       `${record.assigner || '-'}(${record.assignerMobile || '-'})`
-      //     )
-      //   }
-      // },
+      {
+        title: '模块号',
+        width: 100,
+        render: (record) => {
+          const { keywords, deviceSerial } = this.search
+          return  <Link to={`/crm/device/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{record.serialNumber}</Link>
+        }
+      },
       {
         title: '运营商',
         width: 150,
@@ -64,15 +62,7 @@ class Device extends Component {
         dataIndex: 'status',
         key: 'status',
         render: ({ value }) => {
-          let statusText = '';
-          if(value == 0){
-            statusText = '空闲';
-          } else if(value == 9) {
-            statusText = '锁定';
-          } else if(value == 601 || value == 602 || value == 603 || value == 604) {
-            statusText = '使用中';
-          }
-          return statusText;
+          return dict.deviceStatus[value]
         }
       },
       {
@@ -127,7 +117,7 @@ class Device extends Component {
               <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.id])}>
                 <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
               </Popconfirm>
-              <Link to={`/crm/device/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
+              <Link to={`/crm/device/operation/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
             </span>
           )
         }
