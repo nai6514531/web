@@ -9,6 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
 import styles from '../../../assets/css/search-bar.pcss'
+import dict from '../../../utils/dict.js'
 const breadItems = [
   {
     title: '客服系统'
@@ -54,7 +55,7 @@ class Sms extends Component {
             )
           }
           return(
-            dict[record.status] || '-'
+            dict.sms[record.status] || '-'
           )
         }
       },
