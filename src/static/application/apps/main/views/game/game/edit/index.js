@@ -397,9 +397,9 @@ class GameEdit extends Component {
             >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入20字以内的详情介绍',
+                required: true, message: '请输入200字以内的详情介绍',
               },{
-                max: 20, message: '长度最多20个字符'
+                max: 200, message: '长度最多200个字符'
               }],
               initialValue: detail.description
             })(
