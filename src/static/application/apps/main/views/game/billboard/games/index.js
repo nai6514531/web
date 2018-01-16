@@ -93,8 +93,8 @@ class BillboardGames extends Component {
             render: (text, record, index) => {
                 return (
                     <span>
-                    <Popconfirm title='确认移除?' onConfirm={ this.delete.bind(this, this.state.id, record.game.id) } >
-                        <a href='javascript:void(0)'>{'\u00A0'}移除榜单</a>
+                    <Popconfirm title='确认移出?' onConfirm={ this.delete.bind(this, this.state.id, record.game.id) } >
+                        <a href='javascript:void(0)'>{'\u00A0'}移出榜单</a>
                     </Popconfirm>
                     </span>
                 )
