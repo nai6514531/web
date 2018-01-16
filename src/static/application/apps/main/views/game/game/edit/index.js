@@ -15,6 +15,7 @@ import { storage } from '../../../../utils/storage.js'
 const RangePicker = DatePicker.RangePicker
 const confirm = Modal.confirm
 const { Option } = Select
+const { TextArea } = Input;
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageServer = `${API_SERVER}/upload/game`
@@ -397,13 +398,13 @@ class GameEdit extends Component {
             >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入20字以内的详情介绍',
+                required: true, message: '请输入200字以内的详情介绍',
               },{
-                max: 20, message: '长度最多20个字符'
+                max: 200, message: '长度最多200个字符'
               }],
               initialValue: detail.description
             })(
-              <Input placeholder='请输入详情介绍' type="textarea"/>
+              <TextArea placeholder='请输入详情介绍'  autosize={{ minRows: 2, maxRows: 6 }}/>
             )}
           </FormItem>
           <FormItem
