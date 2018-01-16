@@ -15,6 +15,7 @@ import { storage } from '../../../../utils/storage.js'
 const RangePicker = DatePicker.RangePicker
 const confirm = Modal.confirm
 const { Option } = Select
+const { TextArea } = Input;
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageServer = `${API_SERVER}/upload/game`
@@ -403,7 +404,7 @@ class GameEdit extends Component {
               }],
               initialValue: detail.description
             })(
-              <Input placeholder='请输入详情介绍' type="textarea"/>
+              <TextArea placeholder='请输入详情介绍'  autosize={{ minRows: 2, maxRows: 6 }}/>
             )}
           </FormItem>
           <FormItem
