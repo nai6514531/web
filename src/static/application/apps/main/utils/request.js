@@ -55,16 +55,17 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.data) {
-      if (response.data.status === 'UNAUTHORIZED') {
+      let data=error.response.data
+      if (data.status === 'UNAUTHORIZED') {
         storage.clear('token')
         session.clear()
         confirm({
-          title: response.data.message,
+          title: data.message,
           onOk() {
             window.location.href = '/'
           }
         })
-        return Promise.reject(response.data)
+        return Promise.reject(data)
       }
       message.error(error.response.status, ' 系统开小差了,请重试!', 3)
       console.error(error.response.status, error.response.data)
