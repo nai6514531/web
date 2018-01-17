@@ -51,23 +51,23 @@ api.interceptors.response.use(
     if (!response.data) {
       return Promise.reject('服务器返回数据异常!')
     }
-    if(response.data.status === 'UNAUTHORIZED' || response.data.status === 'SESSION_EXPIRED') {
-      storage.clear('token')
-      session.clear()
-      confirm({
-        title: response.data.message,
-        onOk() {
-          window.location.href = '/'
-        }
-      })
-      return Promise.reject(response.data)
-    }
     return response.data
   },
   (error) => {
-    if (error.response) {
-      message.error(error.response.status,' 系统开小差了,请重试!', 3)
-      console.error(error.response.status,error.response.data)
+    if (error.response && error.response.data) {
+      if (response.data.status === 'UNAUTHORIZED') {
+        storage.clear('token')
+        session.clear()
+        confirm({
+          title: response.data.message,
+          onOk() {
+            window.location.href = '/'
+          }
+        })
+        return Promise.reject(response.data)
+      }
+      message.error(error.response.status, ' 系统开小差了,请重试!', 3)
+      console.error(error.response.status, error.response.data)
     } else {
       message.error('系统开小差了,请重试!', 3)
       console.error('Error', error.message)
