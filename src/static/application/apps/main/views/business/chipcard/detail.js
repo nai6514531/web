@@ -4,7 +4,8 @@ const FormItem = Form.Item;
 const confirm = Modal.confirm;
 
 import Breadcrumb from '../../../components/layout/breadcrumb'
-import { Input } from '../../../components/form/input'
+import { InputClear } from '../../../components/form/input'
+
 import ChipcardService from '../../../services/soda-manager/chipcard'
 import { conversionUnit } from '../../../utils/functions'
 
@@ -202,7 +203,7 @@ class Detail extends Component {
   	                required: true, message: "账号不可为空",
   	              }]
   	            })(
-  	              <Input placeholder="如有多个账号，需用英文逗号隔开"/>
+  	              <InputClear placeholder="如有多个账号，需用英文逗号隔开"/>
   	            )}
   	          </FormItem>
   	          <FormItem {...tailFormItemLayout}>

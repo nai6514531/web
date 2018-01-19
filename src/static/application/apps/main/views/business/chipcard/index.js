@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom'
 import { Affix, Input, Spin, Button, Form, Table, Icon, Popconfirm, Select, DatePicker, message, Modal } from 'antd'
 const Option = Select.Option
 const confirm = Modal.confirm
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
-import { Input as ReInput } from '../../../components/form/input'
+import { InputClear } from '../../../components/form/input'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import ChipcardService from '../../../services/soda-manager/chipcard'
 import history from '../../../utils/history'
@@ -272,7 +272,7 @@ class App extends Component {
     return (<section className={styles.view}>
       <Breadcrumb items={breadItems} />
       <div>
-        <ReInput
+        <InputClear
           value={mobile}
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
           placeholder='请输入手机号'

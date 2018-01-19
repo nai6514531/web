@@ -36,7 +36,7 @@ module.exports = co(async function () {
   // log
   app.use(rt())
   app.use(logger())
-
+  
   // favicon
   app.use(favicon(path.resolve(__dirname, isProduction ? '../../build/static/vendors/favicon.ico' : '../static/application/vendors/favicon.ico')))
 

@@ -3,9 +3,10 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Input, Select, Row, message, DatePicker, Tabs } from 'antd'
+
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
-import InputWithClear from '../../../components/input-with-clear/'
+import { InputScan } from '../../../components/form/input'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
@@ -235,9 +236,11 @@ class DeviceStatistics extends Component {
       }
     })
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if (val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
@@ -301,7 +304,7 @@ class DeviceStatistics extends Component {
           defaultValue={ defaultValue }
           placeholder="请选择月份" />
         <span className={styles.input}>
-          <InputWithClear
+          <InputScan
             placeholder='模块编号'
             onChange={this.changeHandler.bind(this, 'deviceSerial')}
             onPressEnter={this.searchClick}

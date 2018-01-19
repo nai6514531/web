@@ -3,12 +3,15 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Input, Button, message } from 'antd'
-import DataTable from '../../../../components/data-table/'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../../utils/'
-import styles from '../../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
-import InputWithClear from '../../../../components/input-with-clear/'
+
+import DataTable from '../../../../components/data-table'
+import Breadcrumb from '../../../../components/layout/breadcrumb'
+import { InputClear } from '../../../../components/form/input'
+
+import { transformUrl, toQueryString } from '../../../../utils'
+
+import styles from '../../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
@@ -75,9 +78,11 @@ class Operator extends Component {
       this.fetch(this.search)
     }
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if(val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
@@ -116,7 +121,7 @@ class Operator extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='运营商名称/登录账号'
             onChange={this.changeHandler.bind(this, 'keywords')}
             onPressEnter={this.searchClick}

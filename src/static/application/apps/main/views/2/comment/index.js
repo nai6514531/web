@@ -3,12 +3,14 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
 import { connect } from 'dva'
+import moment from 'moment'
+import { trim } from 'lodash'
+
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import InputWithClear from '../../../components/input-with-clear/'
-import moment from 'moment'
-import { trim } from 'lodash'
+import { InputClear } from '../../../components/form/input'
+
 import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
 
@@ -216,9 +218,11 @@ class Comment extends Component {
       })
     }
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if (val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
@@ -268,7 +272,7 @@ class Comment extends Component {
             <Option value={'id'} key={'2'}>按发布时间排序</Option>
         </Select>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='留言发布人'
             onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
@@ -276,7 +280,7 @@ class Comment extends Component {
           />
         </span>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='留言关键字'
             onChange={this.changeHandler.bind(this, 'keywords')}
             onPressEnter={this.searchClick}

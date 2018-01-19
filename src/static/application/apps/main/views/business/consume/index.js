@@ -2,13 +2,16 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
+import moment from 'moment'
 import { Button, Popconfirm, Input, Select, Row, Modal, message } from 'antd'
+
+import { InputScan } from '../../../components/form/input'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import moment from 'moment'
-import styles from '../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
+
+import styles from '../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
@@ -209,7 +212,7 @@ class Consume extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.customerMobile}
         />
-        <Input
+        <InputScan
           placeholder='请输入模块编号'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'deviceSerial')}
