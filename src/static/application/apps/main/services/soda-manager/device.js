@@ -9,16 +9,16 @@ const deviceService = {
     }
     return request.get(url)
   },
-  detail:(id) => {
-    return request.get(`/mng/devices/${id}`)
+  detail:(deviceSerial) => {
+    return request.get(`/mng/devices/${deviceSerial}`)
   },
   operations: (data) => {
-    let url = `/mng/operations/devices?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
+    let url = `/mng/devices-operations?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
     return request.get(url)
   },
-  reset: (id) => {
-    let url = `/mng/batch-reset-devices`
-    return request.put(url, id)
+  reset: (idList) => {
+    let url = `/mng/devices/actions/reset`
+    return request.put(url, idList)
   },
   resetToken: (serialNumber) => {
     let url = `/mng/devices/${serialNumber}/token`

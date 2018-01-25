@@ -30,7 +30,7 @@ class Login extends Component {
       values.password = md5(values.password)
       values.captcha = {
         code: values.code,
-        key: captcha.split("//")[1].match(/\/(.*)/)[0]
+        key: captcha && captcha.split("//")[1].match(/\/(.*)/)[0]
       }
       this.props.dispatch({
         type: 'login/login',
