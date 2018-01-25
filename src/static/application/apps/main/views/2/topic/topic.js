@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
+import { trim } from 'lodash'
 import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
 import { connect } from 'dva'
+
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import InputWithClear from '../../../components/input-with-clear/'
-import moment from 'moment'
-import { trim } from 'lodash'
+import { InputClear } from '../../../components/form/input'
+
 import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
 
@@ -270,9 +272,11 @@ class Topic extends Component {
       })
     }
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if(val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
@@ -357,7 +361,7 @@ class Topic extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='帖子发布人'
             onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
@@ -365,7 +369,7 @@ class Topic extends Component {
           />
         </span>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='帖子关键字'
             onChange={this.changeHandler.bind(this, 'keywords')}
             onPressEnter={this.searchClick}
@@ -373,7 +377,7 @@ class Topic extends Component {
             />
         </span>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='帖子学校'
             onChange={this.changeHandler.bind(this, 'schoolName')}
             onPressEnter={this.searchClick}

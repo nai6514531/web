@@ -3,13 +3,16 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal, message } from 'antd'
-import DataTable from '../../../components/data-table/'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from '../../../assets/css/search-bar.pcss'
+
+import { InputScan } from '../../../components/form/input'
+import DataTable from '../../../components/data-table'
+import Breadcrumb from '../../../components/layout/breadcrumb'
+import { transformUrl, toQueryString } from '../../../utils'
 import dict from '../../../utils/dict.js'
+
+import styles from '../../../assets/css/search-bar.pcss'
 
 const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -247,7 +250,7 @@ class Device extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.keywords}
           />
-        <Input
+        <InputScan
           placeholder='模块编号'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'deviceSerial')}

@@ -14,7 +14,7 @@ export const isProduction = env.ENV === ENVIRONMENT.PRODUCTION
 export const isStaging = env.ENV === ENVIRONMENT.STAGING
 export const isDevelopment = env.ENV === ENVIRONMENT.DEVELOPMENT
 
-export const isDebug = isDevelopment || ('debug' in qs)
+export const isDebug = 'debug' in qs
 
 export const __scene = qs.__scene
 
@@ -33,7 +33,7 @@ switch (env.ENV) {
 
 export const API_SERVER = _API_SERVER
 
-if (isDebug || isStaging) {
+if (isDebug || isDevelopment || isStaging) {
   console.log(
     `-----===== ${env.PKG_NAME} =====-----
 

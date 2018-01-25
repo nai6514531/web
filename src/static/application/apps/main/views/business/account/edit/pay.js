@@ -20,7 +20,7 @@ import BusinessService from '../../../../services/soda-manager/business'
 import CONSTANT from '../../constant'
 
 import styles from '../index.pcss'
-const DEFAULT_URL = isProduction ? 'http://m.sodalife.xyz/act/relate-wechat' : 'http://m.sodalife.club/act/relate-wechat';
+const DEFAULT_URL = isProduction ? 'http://m.sodalife.xyz' : 'http://m.sodalife.club'
 
 const formItemLayout = {
   labelCol: {
@@ -52,7 +52,7 @@ class Code extends Component {
   }
   render() {
     let { keyLoading, qrCodeUrl, wechat , detail: { nickName, cashAccount } } = this.props
-    let url = DEFAULT_URL + `?key=${wechat.key}`
+    let url = DEFAULT_URL + `/act/erp-relate-wechat?key=${wechat.key}`
 
     return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading })} >
       <Col xs={24} sm={10} md={6}>
