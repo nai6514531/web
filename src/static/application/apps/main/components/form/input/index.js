@@ -1,48 +1,89 @@
 import React, { Component }from 'react'
 import PropTypes from 'prop-types'
-import { Input as ReactInput, Icon } from 'antd'
+import _ from 'underscore'
+import { parse as urlParse } from 'url'
+import querystring from 'querystring'
+import cx from 'classnames'
+import { Input, Icon } from 'antd'
 
+import { Scan } from '../../scan'
 import styles from './index.pcss'
 
-class Input extends React.Component {
+class InputClear extends Component {
   static propTypes = {
-    value: PropTypes.string,
+    value: PropTypes.string
   }
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      value: this.props.value,
+      value: this.props.value || this.props.defaultValue
     };
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== this.state.value) {
-      this.setState({ value: nextProps.value })
+    if (nextProps.value !== this.state.value || nextProps.defaultValue !== this.state.value) {
+      this.setState({ value: nextProps.value || nextProps.defaultValue})
     }
   }
   emitEmpty (e) {
-    this.input.focus();
-    this.setState({ value: '' })
+    this.input.focus()
     this.onChangeValue(e)
   }
   onChangeValue(e) {
+    this.setState({
+      value: e.target.value || ''
+    })
     if (this.props.onChange) {
       this.props.onChange(e)
     }
   }
   render() {
-    const { value } = this.state
-    const suffix = value ? <Icon type="close-circle" onClick={this.emitEmpty.bind(this)} className={styles.close} /> : null
+    let { value } = this.state
+    let { addon, className } = this.props
+    let suffix = value ? <Icon type="close-circle" onClick={this.emitEmpty.bind(this)} className={styles.close} /> : addon || null
+
     return (
-      <ReactInput
-        {...this.props}
-        suffix={suffix}
+      <Input
+        {..._.omit(this.props, 'value', 'defaultValue', 'addon')}
         value={value}
+        suffix={suffix}
         onChange={this.onChangeValue.bind(this)}
-        className={styles.closeInput}
+        className={cx(styles.closeInput, className)}
         ref={node => this.input = node}
       />
     );
   }
 }
 
-export { Input }
+class InputScan extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      value: this.props.value || this.props.defaultValue
+    };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value !== this.state.value || nextProps.defaultValue !== this.state.value) {
+      this.setState({ value: nextProps.value || nextProps.defaultValue})
+    }
+  }
+  handleScanResult(value) {
+    let serial = querystring.parse(urlParse(value).query).no
+    this.setState({
+      value: serial
+    })
+    if (this.props.onChange) {
+      this.props.onChange({ target: { value: serial }})
+    }
+  }
+  render() {
+    let { className } = this.props
+
+    return <InputClear
+      {..._.omit(this.props, 'value', 'defaultValue', 'addon')}
+      value={this.state.value}
+      className={cx(styles.scan, className)}
+      addon={<Scan handleScanResult={this.handleScanResult.bind(this)} />} />
+  }
+}
+
+export { InputClear, InputScan }

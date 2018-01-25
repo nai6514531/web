@@ -8,7 +8,7 @@ import querystring from 'querystring'
 import { Link } from 'react-router-dom'
 import { Table, Button, message } from 'antd';
 
-import { Input } from '../../../components/form/input'
+import { InputClear } from '../../../components/form/input'
 import UserService from '../../../services/soda-manager/user'
 import ChipcardService from '../../../services/soda-manager/chipcard'
 import history from '../../../utils/history'
@@ -220,7 +220,7 @@ class App extends Component {
             onClick={() => {  this.props.history.push(`/business/account/add?parentId=${parentId}`) }}>
             添加新运营商
           </Button>
-          <Input
+          <InputClear
             value={keys}
             style={{ width: 160, marginRight: 10, marginBottom: 10 }}
             placeholder='输入运营商或联系人'

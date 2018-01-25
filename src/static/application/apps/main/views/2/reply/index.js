@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
-import { connect } from 'dva'
-import DataTable from '../../../components/data-table/'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../utils/'
-import InputWithClear from '../../../components/input-with-clear/'
 import moment from 'moment'
 import { trim } from 'lodash'
-import styles from '../../../assets/css/search-bar.pcss'
+import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
+import { connect } from 'dva'
+
+import DataTable from '../../../components/data-table'
+import Breadcrumb from '../../../components/layout/breadcrumb'
+import { InputClear } from '../../../components/form/input'
+
+import { transformUrl, toQueryString } from '../../../utils/'
 import dict from '../../../utils/dict.js'
+
+import styles from '../../../assets/css/search-bar.pcss'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -219,9 +222,11 @@ class Reply extends Component {
       })
     }
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if (val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
@@ -271,7 +276,7 @@ class Reply extends Component {
             <Option value={'id'} key={'2'}>按发布时间排序</Option>
         </Select>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='回复发布人'
             onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
@@ -279,7 +284,7 @@ class Reply extends Component {
           />
         </span>
         <span className={styles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='回复关键字'
             onChange={this.changeHandler.bind(this, 'keywords')}
             onPressEnter={this.searchClick}

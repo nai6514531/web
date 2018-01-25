@@ -50,6 +50,7 @@
     "dva-loading": "^0.2.1",
     "history": "^4.6.3",
     "keymirror": "^0.1.1",
+    "load-script": "^1.0.0",
     "md5": "^2.2.1",
     "normalize.css": "^6.0.0",
     "nprogress": "^0.2.0",

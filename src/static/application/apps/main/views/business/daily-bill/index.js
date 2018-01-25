@@ -8,7 +8,7 @@ import { Affix, Button, Table, Icon, Popconfirm, Select, DatePicker, message, Mo
 const Option = Select.Option
 const confirm = Modal.confirm
 
-import { Input } from '../../../components/form/input'
+import { InputClear } from '../../../components/form/input'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import DailyBillsService from '../../../services/soda-manager/daily-bills'
 import history from '../../../utils/history'
@@ -296,7 +296,7 @@ class App extends Component {
           onChange={this.onEndChange.bind(this)}
           onOpenChange={this.handleEndOpenChange.bind(this)}
         />
-        <Input
+        <InputClear
           value={keys}
           style={{ width: 190, marginRight: 10, marginBottom: 10 }}
           placeholder='输入运营商名称或者银行名称或户名'

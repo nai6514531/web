@@ -20,6 +20,10 @@ const deviceService = {
     let url = `/mng/devices/actions/reset`
     return request.put(url, idList)
   },
+  resetToken: (serialNumber) => {
+    let url = `/mng/devices/${serialNumber}/token`
+    return request.put(url)
+  },
   status: (id, data) => {
     let url = `/mng/devices/${id}/status`
     return request.post(url, data)

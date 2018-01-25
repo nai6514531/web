@@ -10,7 +10,9 @@ import searchStyles from '../../../../assets/css/search-bar.pcss'
 import { trim } from 'lodash'
 import md5 from 'md5'
 import moment from 'moment'
-import InputWithClear from '../../../../components/input-with-clear/'
+
+import { InputClear } from '../../../../components/form/input'
+
 import walletService from '../../../../services/soda/wallet'
 const confirm = Modal.confirm
 
@@ -44,19 +46,22 @@ class Customer extends Component {
   }
   componentDidMount() {
     const { mobile } = this.search
-    if(mobile) {
+    if (mobile) {
       this.fetch(mobile)
     }
   }
-  changeHandler = (type, value) => {
-    if(value) {
-      this.search = { ...this.search, [type]: trim(value) }
+  changeHandler = (type, e) => {
+    let val = e.target.value || ''
+
+    if (val) {
+      this.search = { ...this.search, [type]: trim(val) }
     } else {
       delete this.search[type]
     }
   }
   searchClick = () => {
     const { mobile } = this.search
+    console.log(mobile)
     if(!mobile) {
       message.info('请输入筛选条件')
       return
@@ -128,7 +133,7 @@ class Customer extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <span className={searchStyles.input}>
-          <InputWithClear
+          <InputClear
             placeholder='请输入用户手机号'
             onChange={this.changeHandler.bind(this, 'mobile')}
             onPressEnter={this.searchClick}
