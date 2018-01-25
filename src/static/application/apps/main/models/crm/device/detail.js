@@ -9,7 +9,8 @@ const model = {
     status: {},
     owner: {},
     fromUser: {}
-  }
+  },
+  token: ''
 }
 
 export default {
@@ -28,6 +29,15 @@ export default {
       const result = yield call(deviceService.detail, data.deviceSerial)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *resetToken({ payload: { data } }, { call, put }) {
+      const result = yield call(deviceService.resetToken, data.serialNumber)
+      if(result.status == 'OK') {
+        yield put({ type: 'updateData', payload: { token: result.data } })
+        message.success('重置成功')
       } else {
         message.error(result.message)
       }

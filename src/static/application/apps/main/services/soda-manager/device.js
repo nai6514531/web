@@ -17,8 +17,12 @@ const deviceService = {
     return request.get(url)
   },
   reset: (id) => {
-    let url = `/mng/devices/batch/reset`
+    let url = `/mng/batch-reset-devices`
     return request.put(url, id)
+  },
+  resetToken: (serialNumber) => {
+    let url = `/mng/devices/${serialNumber}/token`
+    return request.put(url)
   },
   status: (id, data) => {
     let url = `/mng/devices/${id}/status`

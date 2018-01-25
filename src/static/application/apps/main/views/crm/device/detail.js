@@ -2,13 +2,15 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Button, Row, Col, Card, message, Spin } from 'antd'
+import { Button, Row, Col, Card, message, Spin, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import styles from '../../../assets/css/page-detail.pcss'
 import dict from '../../../utils/dict.js'
+
+const confirm = Modal.confirm
 
 class DeviceDetail extends Component {
   constructor(props) {
@@ -44,8 +46,24 @@ class DeviceDetail extends Component {
       }
     })
   }
+  resetToken = () => {
+    const { serialNumber } = this.props.crmDeviceDetail.data
+    const self = this
+    confirm({
+      title: '重置密码?',
+      content: `设备号为${serialNumber}的密码将被重置,是否确认修改？`,
+      onOk() {
+        self.props.dispatch({
+          type: 'crmDeviceDetail/resetToken',
+          payload: {
+            data: { serialNumber }
+          }
+        })
+      }
+    })
+  }
   render() {
-    const { crmDeviceDetail: { data }, loading } = this.props
+    const { crmDeviceDetail: { data, token }, loading } = this.props
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
@@ -72,6 +90,14 @@ class DeviceDetail extends Component {
                   <div><span className={styles.title}>类型:</span>{data.referenceDevice.name || '-'}</div>
                   <div><span className={styles.title}>楼层:</span>{data.address || '-'}</div>
                   <div><span className={styles.title}>状态:</span>{dict.deviceStatus[data.status.value] || '-' }</div>
+                  <div>
+                    <span className={styles.title}>重置密码:</span>
+                    {data.resettable === 1 ? '支持': '不支持' }
+                    {data.resettable === 1 ?  <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>重置</Button> : null }
+                  </div>
+                  {
+                    token ? <div><span className={styles.title}>密码:</span>{token || '-'}</div> : null
+                  }
                 </div>
               </div>
             </Card>
