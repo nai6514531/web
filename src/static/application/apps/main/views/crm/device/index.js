@@ -5,7 +5,7 @@ import { connect } from 'dva'
 import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal, message } from 'antd'
 import moment from 'moment'
 import { trim } from 'lodash'
-
+import _ from 'lodash'
 import { InputScan } from '../../../components/form/input'
 import DataTable from '../../../components/data-table'
 import Breadcrumb from '../../../components/layout/breadcrumb'
@@ -98,18 +98,18 @@ class Device extends Component {
           const status = record.status.value
           const { keywords, deviceSerial } = this.search
           if(status == 9) {
-            action = <Popconfirm title='确认取消锁定吗?' onConfirm={this.changeStatus.bind(this, record.id, 0)}>
+            action = <Popconfirm title='确认取消锁定吗?' onConfirm={this.unlock.bind(this, record.serialNumber)}>
               <a href='javascript:void(0)'>取消锁定</a>
             </Popconfirm>
           }
           else if (status == 0 || status == 2) {
-            action = <Popconfirm title='确认锁定吗?' onConfirm={this.changeStatus.bind(this, record.id, 9)}>
+            action = <Popconfirm title='确认锁定吗?' onConfirm={this.lock.bind(this, record.serialNumber)}>
               <a href='javascript:void(0)'>锁定</a>
             </Popconfirm>
           }
           else if (status == 601 || status == 602 || status == 603
             || status == 604 || status == 605 || status == 606 || status == 607 || status == 608) {
-            action = <Popconfirm title='确认取消占用吗?' onConfirm={this.changeStatus.bind(this, record.id, 0)}>
+            action = <Popconfirm title='确认取消占用吗?' onConfirm={this.unlock.free(this, record.serialNumber)}>
               <a href='javascript:void(0)'>取消占用</a>
             </Popconfirm>
           }
@@ -117,7 +117,7 @@ class Device extends Component {
           return (
             <span>
               {action}
-              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.id])}>
+              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.serialNumber])}>
                 <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
               </Popconfirm>
               <Link to={`/crm/device/operation/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
@@ -174,28 +174,40 @@ class Device extends Component {
      }
    })
   }
-  changeStatus = (id, status) => {
+  lock = (serialNumber) => {
     this.props.dispatch({
-      type: 'crmDevice/status',
+      type: 'crmDevice/lock',
       payload: {
-        id: id,
-        url: this.search,
-        data: { status }
+        serialNumber: serialNumber
       }
     })
   }
-  reset = (id) => {
+  unlock = (serialNumber) => {
+    this.props.dispatch({
+      type: 'crmDevice/unlock',
+      payload: {
+        serialNumber: serialNumber
+      }
+    })
+  }
+  reset = (list) => {
     this.props.dispatch({
       type: 'crmDevice/reset',
       payload: {
-        id: id,
+        list: list,
         url: this.search
       }
     })
   }
-  batchDelete = () => {
-    const checkList = this.props.crmDevice.selectedRowKeys
-    const self = this
+  batchReset = () => {
+    const { crmDevice: { data: { objects }, selectedRowKeys } } = this.props
+    const idList = selectedRowKeys
+    let checkList = []
+    objects.map((item) => {
+      if(selectedRowKeys.indexOf(item.id) > -1) {
+        checkList.push(item.serialNumber)
+      }
+    })
     if(!checkList.length) {
       message.info('请至少选择一个设备')
       return
@@ -239,7 +251,7 @@ class Device extends Component {
         <Button
           type='primary'
           className={styles.button}
-          onClick={this.batchDelete}
+          onClick={this.batchReset}
           >
           批量删除
         </Button>
