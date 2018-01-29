@@ -16,13 +16,13 @@ const deviceService = {
     let url = `/mng/devices-operations?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
     return request.get(url)
   },
-  reset: (list) => {
+  reset: (idList) => {
     let url = `/mng/devices/actions/reset`
-    return request.put(url, list)
+    return request.patch(url, idList)
   },
   resetToken: (serialNumber) => {
-    let url = `/mng/devices/${serialNumber}/actions/reset-token`
-    return request.put(url)
+    let url = `/mng/devices/${serialNumber}/token`
+    return request.get(url)
   },
   lock: (serialNumber) => {
     let url = `/mng/devices/${serialNumber}/actions/lock`

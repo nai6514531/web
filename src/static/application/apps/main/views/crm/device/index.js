@@ -178,7 +178,8 @@ class Device extends Component {
     this.props.dispatch({
       type: 'crmDevice/lock',
       payload: {
-        serialNumber: serialNumber
+        serialNumber: serialNumber,
+        url: this.search
       }
     })
   }
@@ -186,7 +187,8 @@ class Device extends Component {
     this.props.dispatch({
       type: 'crmDevice/unlock',
       payload: {
-        serialNumber: serialNumber
+        serialNumber: serialNumber,
+        url: this.search
       }
     })
   }
@@ -200,6 +202,7 @@ class Device extends Component {
     })
   }
   batchReset = () => {
+    const self = this
     const { crmDevice: { data: { objects }, selectedRowKeys } } = this.props
     const idList = selectedRowKeys
     let checkList = []
