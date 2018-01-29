@@ -1678,6 +1678,10 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
+eruda@^1.4.1:
+  version "1.4.1"
+  resolved "http://registry.npm.taobao.org/eruda/download/eruda-1.4.1.tgz#c0380665e33d4afa35f355e001d9a09435b4fa14"
+
 escape-string-regexp@^1.0.2:
   version "1.0.5"
   resolved "http://registry.npm.taobao.org/escape-string-regexp/download/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"

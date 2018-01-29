@@ -10,6 +10,7 @@ import createLoading from 'dva-loading'
 import 'moment/locale/zh-cn';
 import moment from 'moment';
 import './utils/debug'
+import './utils/init'
 import './assets/css/overlay.pcss'
 moment.locale('zh-cn');
 
@@ -43,3 +44,4 @@ app.model(require('./models/common/'))
 app.router(require('./routers'))
 
 app.start('#application-container')
+
