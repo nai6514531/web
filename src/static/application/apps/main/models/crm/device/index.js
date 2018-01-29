@@ -40,8 +40,22 @@ export default {
         message.error(result.message)
       }
     },
-    *status({ payload }, { call, put }) {
-      const result = yield call(deviceService.status, payload.id, payload.data)
+    *lock({ payload }, { call, put }) {
+      const result = yield call(deviceService.lock, payload.serialNumber)
+      if(result.status == 'OK') {
+        message.success('操作成功')
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.url
+          }
+        })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *unlock({ payload }, { call, put }) {
+      const result = yield call(deviceService.unlock, payload.serialNumber)
       if(result.status == 'OK') {
         message.success('操作成功')
         yield put({
@@ -55,7 +69,7 @@ export default {
       }
     },
     *reset({ payload }, { call, put }) {
-      const result = yield call(deviceService.reset, payload.id)
+      const result = yield call(deviceService.reset, payload.list)
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({

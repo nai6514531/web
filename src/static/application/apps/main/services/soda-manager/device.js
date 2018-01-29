@@ -9,8 +9,8 @@ const deviceService = {
     }
     return request.get(url)
   },
-  detail:(deviceSerial) => {
-    return request.get(`/mng/devices/${deviceSerial}`)
+  detail:(serialNumber) => {
+    return request.get(`/mng/devices/${serialNumber}`)
   },
   operations: (data) => {
     let url = `/mng/devices-operations?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
@@ -21,12 +21,16 @@ const deviceService = {
     return request.put(url, idList)
   },
   resetToken: (serialNumber) => {
-    let url = `/mng/devices/${serialNumber}/token`
-    return request.put(url)
+    let url = `/mng/devices/${serialNumber}/actions/reset-token`
+    return request.patch(url)
   },
-  status: (id, data) => {
-    let url = `/mng/devices/${id}/status`
-    return request.post(url, data)
+  lock: (serialNumber) => {
+    let url = `/mng/devices/${serialNumber}/actions/lock`
+    return request.patch(url)
+  },
+  unlock: (serialNumber) => {
+    let url = `/mng/devices/${serialNumber}/actions/unlock`
+    return request.patch(url)
   }
 }
 export default deviceService
