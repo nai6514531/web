@@ -1,6 +1,8 @@
 import moment from 'moment'
 import querystring from 'querystring'
 
+import platform from './platform'
+
 export const env = window.__ENV__ = __ENV__
 const qs = querystring.parse(window.location.search.slice(1))
 
@@ -43,4 +45,8 @@ if (isDebug || isDevelopment || isStaging) {
 
   .....----- ${env.PKG_NAME.replace(/./g, '=')} -----.....
   `)
+
+  if (platform.os.isIOS() | platform.os.isAndroid() || isDebug) {
+    require('bundle!eruda')((eruda) => eruda.init())
+  }
 }
