@@ -18,19 +18,19 @@ const deviceService = {
   },
   reset: (idList) => {
     let url = `/mng/devices/actions/reset`
-    return request.patch(url, idList)
+    return request.put(url, idList)
   },
   resetToken: (serialNumber) => {
-    let url = `/mng/devices/${serialNumber}/token`
-    return request.get(url)
+    let url = `/mng/devices/${serialNumber}/actions/reset-token`
+    return request.patch(url)
   },
   lock: (serialNumber) => {
     let url = `/mng/devices/${serialNumber}/actions/lock`
-    return request.put(url)
+    return request.patch(url)
   },
   unlock: (serialNumber) => {
     let url = `/mng/devices/${serialNumber}/actions/unlock`
-    return request.put(url)
+    return request.patch(url)
   }
 }
 export default deviceService
