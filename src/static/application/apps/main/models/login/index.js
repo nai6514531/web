@@ -1,7 +1,7 @@
 import commonService from '../../services/common.js'
 import { message } from 'antd'
 import { storage } from '../../utils/storage.js'
-import { API_SERVER } from '../../utils/debug'
+import { API_SERVER } from '../../constant'
 
 export default {
   namespace: 'login',
