@@ -3,8 +3,8 @@ import { render } from 'react-dom'
 import { connect } from 'dva'
 import { Link } from 'react-router-dom'
 import { Button, Modal, Form, Input, Checkbox, Col, Row, Popconfirm } from 'antd'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
-import DataTable from '../../../components/data-table/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import DataTable from '../../../../components/data-table/'
 
 const FormItem = Form.Item
 
@@ -34,7 +34,7 @@ const breadItems = [
 class RoleModal extends Component {
   hide = () => {
     this.props.dispatch({
-      type: 'role/hideModal'
+      type: 'adminRole/hideModal'
     })
   }
   handleChange = (e) => {
@@ -42,9 +42,9 @@ class RoleModal extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const id = this.props.role.record.id
-        let type = 'role/add'
+        let type = 'adminRole/add'
         if(id) {
-          type = 'role/update'
+          type = 'adminRole/update'
         }
         this.props.dispatch({
           type: type,
@@ -119,7 +119,7 @@ class Role extends Component {
                 <a href='javascript:void(0)'>{'\u00A0'}删除 | {'\u00A0'}</a>
               </Popconfirm>
               <Link
-                to={`/admin/settings/role/${record.id}/assign-permission?name=${record.name}`}>
+                to={`/admin/settings/admin-role/${record.id}/assign-permission?name=${record.name}`}>
                 配置权限
               </Link>
             </span>
@@ -130,12 +130,12 @@ class Role extends Component {
   }
   componentDidMount() {
     this.props.dispatch({
-      type: 'role/list'
+      type: 'adminRole/list'
     })
   }
   show = (record) => {
     this.props.dispatch({
-      type: 'role/showModal',
+      type: 'adminRole/showModal',
       payload: {
         data: record
       }
@@ -143,7 +143,7 @@ class Role extends Component {
   }
   delete = (id) => {
     this.props.dispatch({
-      type: 'role/delete',
+      type: 'adminRole/delete',
       payload: {
         id: id
       }
@@ -172,13 +172,13 @@ class Role extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'role/clear'})
+    this.props.dispatch({ type: 'adminRole/clear'})
   }
 }
 
 function mapStateToProps(state,props) {
   return {
-    role: state.role,
+    role: state.adminRole,
     loading: state.loading.global,
     ...props
   }

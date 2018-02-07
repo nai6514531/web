@@ -35,7 +35,7 @@ class Menu extends Component {
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '菜单名', dataIndex: 'name',key: 'name' },
-      // { title: '层级', dataIndex: 'level', key: 'level' },
+      { title: '菜单别名', dataIndex: 'alias', key: 'alias' },
       { title: '图标', dataIndex: 'icon', key: 'icon' },
       { title: '路由', dataIndex: 'url', key: 'url' },
       {
@@ -135,10 +135,14 @@ class Menu extends Component {
     const { eventKey: dragKey, pos: dragNode } = info.dragNode.props
     const dropPos = info.node.props.pos.split('-')
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
-    const currentPos = dragNode.slice(0, dragNode.length-2)
-    const targetPos = targetNode.slice(0, targetNode.length-2)
+    const dragList = dragNode.split('-')
+    const targetList = targetNode.split('-')
+    const currentPos = dragNode.slice(0, dragNode.length - dragList[dragList.length - 1].length)
+    const targetPos = targetNode.slice(0, targetNode.length - targetList[targetList.length - 1].length)
+
     if(currentPos !== targetPos || !info.dropToGap ) {
       // 判断是否是同级并且是否拖拽到了空隙位置
+      console.log("error")
       return
     }
     const loop = (data, key, callback) => {
@@ -295,6 +299,19 @@ class Menu extends Component {
                     required: true, message: '请输入菜单名!',
                   }],
                   initialValue: record.name
+                })(
+                  <Input />
+                )}
+              </FormItem>
+              <FormItem
+                {...formItemLayout}
+                label='菜单别名'
+              >
+                {getFieldDecorator('alias', {
+                  rules: [{
+                    required: true, message: '请输入菜单别名!',
+                  }],
+                  initialValue: record.alias
                 })(
                   <Input />
                 )}

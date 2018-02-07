@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Radio, Popover, Button } from 'antd'
-import { transformUrl, toQueryString } from '../../../utils/'
+import { transformUrl, toQueryString } from '../../../../utils/'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -16,12 +16,12 @@ class RoleModal extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'user/hideModal'
+      type: 'adminUser/hideModal'
     })
   }
   handleSubmit = () => {
     this.props.dispatch({
-      type: 'user/updateRoles',
+      type: 'adminUser/updateRoles',
       payload: {
         id: this.props.id,
         data: this.checkList

@@ -39,7 +39,7 @@ class ResetPassword extends Component {
         values.newPassword = md5(values.newPassword)
         delete values.rePassword
         this.props.dispatch({
-          type: 'user/reset',
+          type: 'adminUser/reset',
           payload: {
             data: values,
             history
@@ -51,7 +51,7 @@ class ResetPassword extends Component {
   handleConfirmBlur = (e) => {
     const value = e.target.value
     this.props.dispatch({
-      type: 'user/updateConfirmDirty',
+      type: 'adminUser/updateConfirmDirty',
       payload: {
         confirmDirty: !!value
       }
@@ -142,7 +142,7 @@ class ResetPassword extends Component {
 function mapStateToProps(state,props) {
   return {
     loading: state.loading.global,
-    user: state.user,
+    user: state.adminUser,
     ...props
   }
 }

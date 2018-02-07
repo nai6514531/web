@@ -32,6 +32,7 @@ class Element extends Component {
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '元素名称', dataIndex: 'name',key: 'name' },
+      { title: '元素值', dataIndex: 'reference',key: 'reference' },
       {
         title: '操作',
         key: 'operation',
@@ -140,6 +141,19 @@ class Element extends Component {
                   required: true, message: '请输入元素名称!',
                 }],
                 initialValue: record.name
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label='元素值'
+            >
+              {getFieldDecorator('reference', {
+                rules: [{
+                  required: true, message: '请输入元素值',
+                }],
+                initialValue: record.reference
               })(
                 <Input />
               )}

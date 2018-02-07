@@ -1,8 +1,8 @@
 import { message } from 'antd'
-import userService from '../../services/soda-manager/user.js'
-import roleService from '../../services/soda-manager/role.js'
-import commonService from '../../services/common.js'
-import { storage, session } from '../../utils/storage.js'
+import userService from '../../../services/soda-manager/user.js'
+import roleService from '../../../services/soda-manager/role.js'
+import commonService from '../../../services/common.js'
+import { storage, session } from '../../../utils/storage.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -16,7 +16,7 @@ const model = {
 }
 
 export default {
-  namespace: 'user',
+  namespace: 'adminUser',
   state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
@@ -39,7 +39,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(userService.list, payload.data)
+      const result = yield call(userService.adminUserlist, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
@@ -85,34 +85,6 @@ export default {
             data: data
           }
         })
-      } else {
-        message.error(result.message)
-      }
-    },
-    *roles({ payload }, { call, put }) {
-      const { id } = payload
-      const result = yield call(userService.roles, id)
-      const roleData = yield call(roleService.list)
-      if(result.status == 'OK' && roleData.status == 'OK') {
-        yield put({
-          type: 'showModal',
-          payload: {
-            data: result.data
-          }
-        })
-        yield put({ type: 'updateData', payload: { roleData: roleData.data } })
-      } else {
-        result.message && message.error(result.message)
-        roleData.message && message.error(roleData.message)
-      }
-    },
-    *updateRoles({ payload }, { call, put }) {
-      const { data, id } = payload
-      const result = yield call(userService.updateRoles, data, id)
-      if(result.status == 'OK') {
-        message.success('更新成功')
-        yield put({ type: 'hideModal' })
-        yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
       }

@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import roleService from '../../services/soda-manager/role.js'
-import permissionService from '../../services/soda-manager/permission.js'
+import roleService from '../../../services/soda-manager/role.js'
+import permissionService from '../../../services/soda-manager/permission.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -16,7 +16,7 @@ const model = {
 }
 
 export default {
-  namespace: 'role',
+  namespace: 'adminRole',
   state: cloneDeep(model),
   reducers: {
     showModal(state, { payload: { data } }) {
