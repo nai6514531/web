@@ -109,7 +109,7 @@ class Device extends Component {
           }
           else if (status == 601 || status == 602 || status == 603
             || status == 604 || status == 605 || status == 606 || status == 607 || status == 608) {
-            action = <Popconfirm title='确认取消占用吗?' onConfirm={this.unlock.free(this, record.serialNumber)}>
+            action = <Popconfirm title='确认取消占用吗?' onConfirm={this.unlock.bind(this, record.serialNumber)}>
               <a href='javascript:void(0)'>取消占用</a>
             </Popconfirm>
           }
