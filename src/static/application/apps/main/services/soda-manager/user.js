@@ -18,11 +18,11 @@ const userService = {
   delete: (id) => {
     return request.delete(`/mng/users/${id}`)
   },
-  roles: (id) => {
-    return request.get(`/mng/users/${id}/roles`)
+  userRoles: (id) => {
+    return request.get(`/mng/user-roles?userId=${id || ''}`)
   },
-  updateRoles: (data, id) => {
-    return request.put(`/mng/users/${id}/roles`, data)
+  updateRoles: (data) => {
+    return request.put(`/mng/user-roles`, data)
   },
   updatePassword: (id,data) => {
     // b端用户修改密码

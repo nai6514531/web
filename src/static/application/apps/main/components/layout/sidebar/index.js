@@ -43,7 +43,7 @@ class SideBar extends React.Component {
       return (
         <Menu.Item key={item.id}>
           <Link
-            to={item.url}
+            to={item.url || ''}
             onClick={()=>{
               this.props.dispatch({
                 type: 'common/resetIndex'

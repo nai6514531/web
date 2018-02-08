@@ -2,3 +2,18 @@
   text-align: left!important;
   padding-left: 100px!important;
 }
+.box {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  margin: 0px 0 0 10px;
+}
+.menu {
+  background-color: #87d068;
+}
+.element {
+  background-color: #f50;
+}
+.api {
+  background-color: #2db7f5;
+}

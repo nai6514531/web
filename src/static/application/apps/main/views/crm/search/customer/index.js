@@ -61,7 +61,6 @@ class Customer extends Component {
   }
   searchClick = () => {
     const { mobile } = this.search
-    console.log(mobile)
     if(!mobile) {
       message.info('请输入筛选条件')
       return

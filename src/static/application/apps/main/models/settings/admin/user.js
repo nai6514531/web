@@ -99,6 +99,6 @@ export default {
       } else {
         message.error(result.message)
       }
-    },
+    }
   }
 }

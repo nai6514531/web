@@ -74,32 +74,6 @@ export default {
       } else {
         message.error(result.message)
       }
-    },
-    *permissions({ payload }, { call, put }) {
-      const { id } = payload
-      const result = yield call(roleService.permissions, id)
-      if(result.status == 'OK') {
-        yield put({
-          type: 'showPermissionsModal',
-          payload: {
-            data: result.data,
-            id : id
-          }
-        })
-      } else {
-        message.error(result.message)
-      }
-    },
-    *updatePermissions({ payload }, { call, put }) {
-      const { data, id } = payload
-      const result = yield call(roleService.updatePermissions, data, id)
-      if(result.status == 'OK') {
-        message.success('更新成功')
-        yield put({ type: 'hideModal' })
-        yield put({ type: 'common/info' })
-      } else {
-        message.error(result.message)
-      }
     }
   }
 }

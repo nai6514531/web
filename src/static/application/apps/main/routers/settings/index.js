@@ -63,8 +63,8 @@ export default function (app) {
       <Route exact path='/admin/settings/role/:id/assign-permission' component={getComponent(AssignPermission,app,assignPermissionModel)} />
 
       <Route exact path='/admin/settings/menu' component={getComponent(Menu,app,menuModel)} />
-      <Route exact path='/admin/settings/group' component={getComponent(Group,app,groupModel)} />
-      <Route exact path='/admin/settings/group/:id' component={getComponent(GroupDetail,app,groupModel)} />
+      <Route exact path='/admin/settings/permission-group' component={getComponent(Group,app,groupModel)} />
+      <Route exact path='/admin/settings/permission-group/:id' component={getComponent(GroupDetail,app,groupModel)} />
       <Route exact path='/admin/settings/permission' component={getComponent(Permission,app,permissionModel)} />
       <Route exact path='/admin/settings/change-password' component={getComponent(Password,app,adminUserModel)} />
       <Route exact path='/admin/settings/action' component={getComponent(Action,app,actionModel)} />

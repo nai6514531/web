@@ -1,6 +1,5 @@
 import { message } from 'antd'
 import menuService from '../../../services/soda-manager/menu.js'
-import roleService from '../../../services/soda-manager/role.js'
 import permissionService from '../../../services/soda-manager/permission.js'
 import { cloneDeep, difference } from 'lodash'
 import { arrayToTree } from '../../../utils/'
@@ -35,7 +34,7 @@ export default {
         const defaultCheckedList = result.data.map(value => value.permissionId)
         data.map(value => {
           value.checkedList = defaultCheckedList.filter(id => value.permission.some(item => item.id === id))
-          value.checkAll =  value.permission.length === value.checkedList.length
+          value.checkAll =  value.permission.length && value.permission.length === value.checkedList.length
         })
         yield put({
           type: 'updateData',
@@ -69,8 +68,9 @@ export default {
             value.checkedList = []
           }
           value.disabled = true
-          value.checkAll =  value.permission.length === value.checkedList.length
+          value.checkAll = value.permission.length && value.permission.length === value.checkedList.length
           value.indeterminate = false
+
         })
         yield put({
           type: 'updateData',

@@ -21,7 +21,7 @@ export default {
   reducers: {
     showModal(state, { payload: { data } }) {
       // 单角色
-      const currentRole = data[0]
+      const currentRole = data
       const visible = true
       return { ...state, visible, currentRole }
     },
@@ -91,7 +91,7 @@ export default {
     },
     *roles({ payload }, { call, put }) {
       const { id } = payload
-      const result = yield call(userService.roles, id)
+      const result = yield call(userService.userRoles, id)
       const roleData = yield call(roleService.list)
       if(result.status == 'OK' && roleData.status == 'OK') {
         yield put({
@@ -107,8 +107,8 @@ export default {
       }
     },
     *updateRoles({ payload }, { call, put }) {
-      const { data, id } = payload
-      const result = yield call(userService.updateRoles, data, id)
+      const { data } = payload
+      const result = yield call(userService.updateRoles, data)
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({ type: 'hideModal' })

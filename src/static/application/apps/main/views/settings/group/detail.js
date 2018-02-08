@@ -31,7 +31,7 @@ class App extends Component {
       },
       {
         title: '权限分组',
-        url: '/admin/settings/group'
+        url: '/admin/settings/permission-group'
       },
       {
         title: `配置权限（${transformUrl(location.search).name}）`
@@ -161,13 +161,13 @@ class App extends Component {
           >
           筛选
         </Button>
-        {/* <Checkbox
+        <Checkbox
             indeterminate={indeterminate}
             onChange={this.onCheckAllChange}
             checked={checkAll}
           >
             全选
-        </Checkbox> */}
+        </Checkbox>
         <Card className={styles.card} style={{ marginTop: '0px' }}>
           <div className={styles.header}>
               <h1>元素权限:</h1>
@@ -203,7 +203,7 @@ class App extends Component {
             style={{margin: '20px 50px 0 0'}}
             loading={loading}
             onClick={this.cancelHandler}>
-            取消
+            返回
           </Button>
           <Button
             type='primary'

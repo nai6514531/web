@@ -45,9 +45,9 @@ class App extends Component {
         width: 700,
         className: 'td-left',
         render: (text, record, index) => {
-          if(!record.permission) {
+          if(!record.permission.length) {
             return (
-              <span>/</span>
+              <span></span>
             )
           }
           return (
@@ -71,6 +71,7 @@ class App extends Component {
       {
         title: '操作',
         render: (text, record, index) => {
+          const { loading } = this.props
           return (
             <span>
                 <Checkbox
@@ -81,14 +82,14 @@ class App extends Component {
                   >
                     全选
                 </Checkbox>
-               {
-                 record.disabled ?
-                 <a onClick={this.edit.bind(this, record.id)}>修改</a>
-                 :<span>
-                    <a onClick={this.save.bind(this, record.id)} style={{ marginRight: '10px' }}>保存</a>
-                    <a onClick={this.cancel.bind(this, record.id)}>取消</a>
+                {
+                  record.disabled ?
+                  <Button size='small' type="primary" onClick={this.edit.bind(this, record.id)} disabled={loading}>修改</Button>
+                  :<span>
+                    <Button size='small' type="primary" onClick={this.save.bind(this, record.id)} style={{ marginRight: '10px' }} disabled={loading}>保存</Button>
+                    <Button size='small' type="primary" onClick={this.cancel.bind(this, record.id)} disabled={loading}>取消</Button>
                   </span>
-               }
+                }
             </span>
           )
         }

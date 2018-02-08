@@ -4,15 +4,15 @@ import roleService from '../../services/soda-manager/role.js'
 import permissionService from '../../services/soda-manager/permission.js'
 import { cloneDeep, difference } from 'lodash'
 import { arrayToTree } from '../../utils/'
-import { groupBy } from 'lodash'
+import { groupBy, uniqBy } from 'lodash'
 import dict from '../../utils/dict'
 
 const model = {
   orignData: [], //扁平化的菜单权限对应数据，用于取消时重置页面数据
   baseData: [], //扁平化的菜单权限对应数据,对应面的操作基于这分数据
   menuPermissionData: [],//树形结构的菜单权限对应数据
-  assignedPermission: [],
-  defaultCheckedList: [],
+  assignedPermission: [], //已被分配的权限
+  defaultCheckedList: []
 }
 
 export default {
@@ -35,7 +35,7 @@ export default {
         const defaultCheckedList = result.data.map(value => value.permissionId)
         data.map(value => {
           value.checkedList = defaultCheckedList.filter(id => value.permission.some(item => item.id === id))
-          value.checkAll =  value.permission.length === value.checkedList.length
+          value.checkAll =  value.permission.length && value.permission.length === value.checkedList.length
         })
         yield put({
           type: 'updateData',
@@ -53,11 +53,10 @@ export default {
     },
     *menuPermission({ payload }, { call, put, select }) {
       // 拉取菜单和权限的对应关系
-      const menu = yield call(menuService.list)
+      const data = yield select(state => state.common.userInfo.menuList)
       const menuPermission = yield call(permissionService.menuPermission)
       const defaultCheckedList = yield select(state => state.assignPermissions.defaultCheckedList)
-      if(menu.status == 'OK' && menuPermission.status == 'OK') {
-        const data = menu.data.objects
+      if( menuPermission.status == 'OK') {
         const permissionGroup = _.groupBy(menuPermission.data, 'menuId')
         data.map(value => {
           if( permissionGroup[value.id]) {
@@ -69,7 +68,7 @@ export default {
             value.checkedList = []
           }
           value.disabled = true
-          value.checkAll =  value.permission.length === value.checkedList.length
+          value.checkAll =  value.permission.length && value.permission.length === value.checkedList.length
           value.indeterminate = false
         })
         yield put({
@@ -81,8 +80,6 @@ export default {
           }
         })
       } else {
-
-        menu.message && message.error(menu.message)
         menuPermission.message && message.error(menuPermission.message)
       }
 

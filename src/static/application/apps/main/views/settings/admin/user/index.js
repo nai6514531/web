@@ -61,21 +61,21 @@ class User extends Component {
         dataIndex: 'address',
         key: 'address',
       },
-      {
-        title: '操作',
-        key: 'operation',
-        render: (text, record, index) => {
-          return (
-            <span>
-              <Link to={`/admin/settings/admin-user/${record.id}`}>编辑</Link> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除</a>
-              </Popconfirm>
-              {/* <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a> */}
-            </span>
-          )
-        }
-      }
+      // {
+      //   title: '操作',
+      //   key: 'operation',
+      //   render: (text, record, index) => {
+      //     return (
+      //       <span>
+      //         <Link to={`/admin/settings/admin-user/${record.id}`}>编辑</Link> |
+      //         <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+      //           <a href='javascript:void(0)'>{'\u00A0'}删除</a>
+      //         </Popconfirm>
+      //         {/* <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a> */}
+      //       </span>
+      //     )
+      //   }
+      // }
     ]
   }
   componentDidMount() {
@@ -158,14 +158,14 @@ class User extends Component {
           >
           搜索
         </Button>
-        <Link
+        {/* <Link
           to={`/admin/settings/admin-user/new`}>
           <Button
             type='primary'
             className={styles.button}>
               添加用户
           </Button>
-        </Link>
+        </Link> */}
         <DataTable
           scroll={{ x: 700 }}
           dataSource={objects || []}

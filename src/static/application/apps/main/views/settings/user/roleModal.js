@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Radio, Popover, Button } from 'antd'
 import { transformUrl, toQueryString } from '../../../utils/'
+import { difference } from 'lodash'
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -12,7 +13,7 @@ const formItemLayout = {
 class RoleModal extends Component {
   constructor(props) {
     super(props)
-    this.checkList = [this.props.user.currentRole]
+    this.checkedList = this.props.user.currentRole.map(value => value.roleId)
   }
   hide = () => {
     this.props.dispatch({
@@ -20,16 +21,34 @@ class RoleModal extends Component {
     })
   }
   handleSubmit = () => {
+    const defaultCheckedList = this.props.user.currentRole.map(value => value.roleId)
+    const userId = Number(this.props.id)
+    const deleteList = []
+    difference(defaultCheckedList,this.checkedList).map(roleId => {
+      return  this.props.user.currentRole.map(item => {
+        if(roleId == item.roleId) {
+          deleteList.push(item.id)
+        }
+      })
+    })
+    const createList = difference(this.checkedList,defaultCheckedList).map(roleId => {
+      return {
+        userId,
+        roleId
+      }
+    })
     this.props.dispatch({
       type: 'user/updateRoles',
       payload: {
-        id: this.props.id,
-        data: this.checkList
+        data: {
+          delete: deleteList,
+          create: createList
+        }
       }
     })
   }
   changeHandler = (e) => {
-    this.checkList = [e.target.value]
+    this.checkedList = [e.target.value]
   }
   reset = () => {
     const { resetFields, getFieldsValue } = this.props.form
@@ -46,8 +65,8 @@ class RoleModal extends Component {
         afterClose={this.reset}
        >
 
-          <Radio.Group onChange={this.changeHandler} defaultValue={currentRole}>
-
+          <Radio.Group onChange={this.changeHandler} defaultValue={this.checkedList[0]}>
+          {/* 默认单选 */}
           {
             roleData.map((item, index) => {
               return(

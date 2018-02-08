@@ -142,7 +142,6 @@ class Menu extends Component {
 
     if(currentPos !== targetPos || !info.dropToGap ) {
       // 判断是否是同级并且是否拖拽到了空隙位置
-      console.log("error")
       return
     }
     const loop = (data, key, callback) => {
