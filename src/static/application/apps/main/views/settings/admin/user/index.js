@@ -57,6 +57,22 @@ class User extends Component {
         key: 'account',
       },
       {
+        title: '角色',
+       render: (text, record, index) => {
+         return (
+          record.role[0] && record.role[0].name //只支持单角色
+         )
+       }
+      },
+      {
+        title: '状态',
+       render: (text, record, index) => {
+         return (
+          record.status === 0 ? '正常' : '拉黑'
+         )
+       }
+      },
+      {
         title: '地址',
         dataIndex: 'address',
         key: 'address',

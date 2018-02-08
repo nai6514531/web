@@ -41,7 +41,10 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(userService.list, payload.data)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { data: result.data } })
+        yield put({
+          type: 'updateData',
+          payload: { data: result.data}
+        })
       } else {
         message.error(result.message)
       }
@@ -60,7 +63,7 @@ export default {
       if(result.status == 'OK') {
         history.goBack()
         message.success('更新成功')
-        yield put({ type: 'common/info' })
+        // yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
       }
@@ -90,20 +93,28 @@ export default {
       }
     },
     *roles({ payload }, { call, put }) {
+      const result = yield call(roleService.list)
+      if(result.status == 'OK') {
+        yield put({
+          type: 'updateData',
+          payload: { roleData: result.data}
+        })
+      } else {
+        result.message && message.error(result.message)
+      }
+    },
+    *assignedRoles({ payload }, { call, put }) {
       const { id } = payload
       const result = yield call(userService.userRoles, id)
-      const roleData = yield call(roleService.list)
-      if(result.status == 'OK' && roleData.status == 'OK') {
+      if(result.status == 'OK') {
         yield put({
           type: 'showModal',
           payload: {
             data: result.data
           }
         })
-        yield put({ type: 'updateData', payload: { roleData: roleData.data } })
       } else {
         result.message && message.error(result.message)
-        roleData.message && message.error(roleData.message)
       }
     },
     *updateRoles({ payload }, { call, put }) {
@@ -112,7 +123,7 @@ export default {
       if(result.status == 'OK') {
         message.success('更新成功')
         yield put({ type: 'hideModal' })
-        yield put({ type: 'common/info' })
+        yield put({ type: 'list', payload: { data: data.url } })
       } else {
         message.error(result.message)
       }

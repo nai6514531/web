@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row } from 'antd'
+import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row, Select } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
@@ -11,6 +11,7 @@ import styles from '../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
 const FormItem = Form.Item
+const Option = Select.Option
 const formItemLayout = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
@@ -32,11 +33,6 @@ class User extends Component {
     this.checkList = []
     this.columns = [
       {
-        title: '用户编号',
-        dataIndex: 'id',
-        key: 'id',
-      },
-      {
         title: '用户名称',
         dataIndex: 'name',
         key: 'name',
@@ -55,6 +51,22 @@ class User extends Component {
         title: '登录账号',
         dataIndex: 'account',
         key: 'account',
+      },
+      {
+        title: '角色',
+       render: (text, record, index) => {
+         return (
+          record.role[0] && record.role[0].name //只支持单角色
+         )
+       }
+      },
+      {
+        title: '状态',
+       render: (text, record, index) => {
+         return (
+          record.status === 0 ? '正常' : '拉黑'
+         )
+       }
       },
       {
         title: '地址',
@@ -80,7 +92,17 @@ class User extends Component {
   }
   componentDidMount() {
     const url = transformUrl(location.search)
+    if( !url.roleId ) {
+      delete url.roleId
+    }
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: url
+      }
+    })
     this.fetch(url)
+    this.fetchRole()
   }
   fetch = (params) => {
     this.props.dispatch({
@@ -88,6 +110,11 @@ class User extends Component {
       payload: {
         data: params
       }
+    })
+  }
+  fetchRole = (params) => {
+    this.props.dispatch({
+      type: 'user/roles'
     })
   }
   delete = (id) => {
@@ -103,7 +130,7 @@ class User extends Component {
   show = (id) => {
     this.id = id
     this.props.dispatch({
-      type: 'user/roles',
+      type: 'user/assignedRoles',
       payload: {
         id: id
       }
@@ -111,6 +138,20 @@ class User extends Component {
   }
   changeHandler =  (type, e) => {
     this.search = { ...this.search, [type]: e.target.value }
+  }
+  selectHandler =  (type, value) => {
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: {
+          [type]: value
+        }
+      }
+    })
+    if(!value) {
+      value = ''
+    }
+    this.search = { ...this.search, [type]: value }
   }
   searchClick = () => {
     this.search.offset = 0
@@ -126,7 +167,7 @@ class User extends Component {
    this.fetch(url)
   }
   render() {
-    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, key, visible }, loading  } = this.props
+    const { form: { getFieldDecorator }, common: { search }, user: { data: { objects, pagination }, key, visible, roleData }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -137,13 +178,13 @@ class User extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.name}
          />
-        <Input
+        {/* <Input
           placeholder='请输入用户id搜索'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'id')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.id}
-         />
+         /> */}
         <Input
           placeholder='请输入账号搜索'
           className={styles.input}
@@ -151,6 +192,20 @@ class User extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
          />
+         <Select
+          value={ search.roleId }
+          allowClear
+          className={styles.input}
+          placeholder='请选择角色搜索'
+          onChange={this.selectHandler.bind('this','roleId')}>
+            {
+              roleData.map(value => {
+                return (
+                  <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                )
+              })
+            }
+        </Select>
         <Button
           type='primary'
           onClick={this.searchClick}
@@ -180,11 +235,13 @@ class User extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'user/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
     user: state.user,
+    common: state.common,
     loading: state.loading.global,
     ...props
   }

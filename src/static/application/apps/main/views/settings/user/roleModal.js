@@ -23,6 +23,7 @@ class RoleModal extends Component {
   handleSubmit = () => {
     const defaultCheckedList = this.props.user.currentRole.map(value => value.roleId)
     const userId = Number(this.props.id)
+    const url = transformUrl(location.search)
     const deleteList = []
     difference(defaultCheckedList,this.checkedList).map(roleId => {
       return  this.props.user.currentRole.map(item => {
@@ -42,7 +43,8 @@ class RoleModal extends Component {
       payload: {
         data: {
           delete: deleteList,
-          create: createList
+          create: createList,
+          url
         }
       }
     })
