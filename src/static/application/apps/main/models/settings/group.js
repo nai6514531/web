@@ -3,7 +3,7 @@ import menuService from '../../services/soda-manager/menu.js'
 import permissionService from '../../services/soda-manager/permission.js'
 import { cloneDeep } from 'lodash'
 import { arrayToTree } from '../../utils/'
-import { groupBy } from 'lodash'
+import { groupBy, difference } from 'lodash'
 import dict from '../../utils/dict'
 
 const model = {
@@ -31,17 +31,21 @@ export default {
     }
   },
   effects: {
-    *permissionByMenuId({ payload }, { call, put }) {
+    *permissionByMenuId({ payload }, { call, put, select }) {
       const result = yield call(permissionService.adminMenuPermission, payload.data)
       if( result.status == 'OK') {
         const defaultCheckedList = result.data.map(value => value.permissionId)
-
+        const allPermission = yield select(state => state.group.allPermission)
+        const allPermissionList = allPermission.map(value => value.id)
+        const comparison = difference(allPermissionList, defaultCheckedList)
         yield put({
           type: 'updateData',
           payload: {
             defaultMenuPermissionData: result.data,
             checkedList: defaultCheckedList,
-            defaultCheckedList
+            defaultCheckedList,
+            checkAll: !comparison.length,
+            indeterminate: comparison.length,
           }
         })
       } else {
@@ -51,24 +55,25 @@ export default {
     *updatePermission({ payload }, { call, put }) {
       const result = yield call(permissionService.updatePermission, payload.data)
       if( result.status == 'OK') {
-        yield put({
-          type: 'updateData',
-          payload: data
-        })
         message.success("更新成功")
       } else {
         result.message && message.error(result.message)
       }
     },
-    *permissionList({ payload }, { call, put }) {
+    *permissionList({ payload }, { call, put, select }) {
       const result = yield call(permissionService.list, payload.data)
+      const defaultCheckedList = yield select(state => state.group.defaultCheckedList)
       if( result.status == 'OK') {
+        const allPermissionList = result.data.objects.map(value => value.id)
+        const comparison = difference(allPermissionList, defaultCheckedList)
         const group = _.groupBy( result.data.objects, 'type')
         const data = {
             element: group[dict.permission.type.element],
             menu:  group[dict.permission.type.menu],
             api:  group[dict.permission.type.api],
-            allPermission:  result.data.objects
+            allPermission:  result.data.objects,
+            checkAll: !comparison.length,
+            indeterminate: comparison.length,
         }
         yield put({
           type: 'updateData',

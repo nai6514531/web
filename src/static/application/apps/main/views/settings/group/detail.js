@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Form, Modal, Input, Button, Popconfirm, Tag, Checkbox, Row, Col, Card, Spin } from 'antd'
-import { trim, difference } from 'lodash'
+import { trim, difference, uniq } from 'lodash'
 import { transformUrl, toQueryString } from '../../../utils/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import barStyles from '../../../assets/css/search-bar.pcss'
@@ -74,12 +74,12 @@ class App extends Component {
     this.fetchAllPermission()
   }
   onCheckAllChange = (e) => {
-    const {  group: { allPermission }  } = this.props
+    const {  group: { allPermission, checkedList }  } = this.props
     const allCheckedList = allPermission.map(value => value.id)
     this.props.dispatch({
       type: 'group/updateData',
       payload: {
-        checkedList: e.target.checked ? allCheckedList : [],
+        checkedList: e.target.checked ? uniq([...checkedList, ...allCheckedList]) : difference(checkedList, allCheckedList),
         indeterminate: false,
         checkAll: e.target.checked,
       }
