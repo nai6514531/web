@@ -53,17 +53,17 @@ class Group extends Component {
             <span>
               <div>
                {
-                 element && element.map(value => <Tag style={{ margin: '3px' }} color={'#f50'} key={value.id}>{ value.name }</Tag> )
+                 element && element.map(value => <Tag style={{ margin: '3px' }} color={'#f50'} key={record.id * value.id}>{ value.name }</Tag> )
                }
               </div>
               <div>
                {
-                 menu && menu.map(value => <Tag style={{ margin: '3px' }} color={'#87d068'} key={value.id}>{ value.name }</Tag> )
+                 menu && menu.map(value => <Tag style={{ margin: '3px' }} color={'#87d068'} key={record.id * value.id}>{ value.name }</Tag> )
                }
               </div>
               <div>
                {
-                 api && api.map(value => <Tag style={{ margin: '3px' }} color={'#2db7f5'} key={value.id}>{ value.name }</Tag> )
+                 api && api.map(value => <Tag style={{ margin: '3px' }} color={'#2db7f5'} key={record.id * value.id}>{ value.name }</Tag> )
                }
               </div>
             </span>

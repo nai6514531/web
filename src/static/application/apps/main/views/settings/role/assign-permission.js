@@ -57,7 +57,7 @@ class App extends Component {
                   <Row>
                     {
                       record.permission.map( value =>
-                      <Col span={12} key={value.id}>
+                      <Col span={12} key={record.id * value.id}>
                         <Checkbox disabled={record.disabled} value={value.id}>{value.name}</Checkbox>
                       </Col> )
                     }

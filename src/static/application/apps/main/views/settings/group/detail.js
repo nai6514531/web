@@ -100,7 +100,7 @@ class App extends Component {
     this.props.history.goBack()
   }
   handleSubmit = () => {
-    const {match: { params: { id } }, group: { checkedList, defaultCheckedList, defaultMenuPermissionData } } = this.props
+    const {match: { params: { id } }, group: { checkedList, defaultCheckedList, defaultMenuPermissionData }, history } = this.props
     // 删除需要通过permissionId找到菜单权限对应关系表中的id
     const deleteList = []
     difference(defaultCheckedList,checkedList).map(permissionId => {
@@ -122,8 +122,9 @@ class App extends Component {
       payload: {
         data: {
           delete: deleteList,
-          create: createList
-        }
+          create: createList,
+        },
+        history
       }
     })
   }
@@ -140,7 +141,7 @@ class App extends Component {
     )
   }
   render() {
-    const {  group: { api, menu, element, indeterminate, checkAll }, loading  } = this.props
+    const {  group: { api, menu, element, unAssignedPermission, indeterminate, checkAll }, loading  } = this.props
     return(
       <Spin
         tip='加载中...'
@@ -168,6 +169,16 @@ class App extends Component {
           >
             全选
         </Checkbox>
+        <Card className={styles.card} style={{ marginTop: '0px' }}>
+          <div className={styles.header}>
+              <h1>未分组权限:</h1>
+          </div>
+          <div className={styles['sub-card']}>
+            <div className={styles['card-item']}>
+            {this.renderChenckBox(unAssignedPermission)}
+            </div>
+          </div>
+        </Card>
         <Card className={styles.card} style={{ marginTop: '0px' }}>
           <div className={styles.header}>
               <h1>元素权限:</h1>

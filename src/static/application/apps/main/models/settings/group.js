@@ -13,6 +13,7 @@ const model = {
   element: [],
   menu: [],
   api: [],
+  unAssignedPermission: [],
   allPermission: [],
   checkedList: [],
   defaultMenuPermissionData: [],
@@ -56,18 +57,22 @@ export default {
       const result = yield call(permissionService.updatePermission, payload.data)
       if( result.status == 'OK') {
         message.success("更新成功")
+        payload.history.goBack()
       } else {
         result.message && message.error(result.message)
       }
     },
     *permissionList({ payload }, { call, put, select }) {
       const result = yield call(permissionService.list, payload.data)
+      const menuPermission = yield call(permissionService.adminMenuPermission)
       const defaultCheckedList = yield select(state => state.group.defaultCheckedList)
-      if( result.status == 'OK') {
+      if( result.status == 'OK' && menuPermission.status == 'OK') {
         const allPermissionList = result.data.objects.map(value => value.id)
         const comparison = difference(allPermissionList, defaultCheckedList)
         const group = _.groupBy( result.data.objects, 'type')
+        const unAssignedPermission = result.data.objects.filter(item => !menuPermission.data.some(other => item.id === other.permissionId))
         const data = {
+            unAssignedPermission,
             element: group[dict.permission.type.element],
             menu:  group[dict.permission.type.menu],
             api:  group[dict.permission.type.api],
