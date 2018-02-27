@@ -1,6 +1,6 @@
 import km from 'keymirror'
 
-import { isProduction, isStaging, isDevelopment} from './utils/debug'
+import { isProduction, isStaging, isDevelopment} from '../utils/debug'
 
 export const COOKIE = km({
   DEBUG: null

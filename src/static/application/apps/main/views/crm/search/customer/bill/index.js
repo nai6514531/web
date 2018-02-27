@@ -25,7 +25,7 @@ class Bill extends Component {
     this.search = search
     this.breadItems = [
       {
-        title: '客服系统'
+        title: '苏打生活'
       },
       {
         title: '用户查询'

@@ -17,7 +17,7 @@ const confirm = Modal.confirm
 import { isProduction } from '../../../../utils/debug'
 import UserService from '../../../../services/soda-manager/user'
 import BusinessService from '../../../../services/soda-manager/business'
-import CONSTANT from '../../constant'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
 
 import styles from '../index.pcss'
 const DEFAULT_URL = isProduction ? 'http://m.sodalife.xyz' : 'http://m.sodalife.club'
@@ -53,7 +53,7 @@ class Code extends Component {
   render() {
     let { keyLoading, qrCodeUrl, wechat , detail: { nickName, cashAccount } } = this.props
     let url = DEFAULT_URL + `/act/erp-relate-wechat?key=${wechat.key}`
-    let isRelatedWchat = !!wechat.nickName || (!wechat.key && cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT)
+    let isRelatedWchat = !!wechat.nickName || (!wechat.key && cashAccount.type === CASH_ACCOUNT.TYPE_IS_WECHAT)
 
     return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading, [`${styles.success}`]: isRelatedWchat })} >
       <Col xs={24} sm={10} md={6}>
@@ -104,7 +104,7 @@ class Alipay extends Component {
                 {required: true,  message: '必填'},
                 {max:30, message: '不超过三十个字'},
               ],
-              initialValue: cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? cashAccount.account : '',
+              initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.account : '',
 
             })(
               <Input placeholder="邮箱或手机号" />
@@ -125,7 +125,7 @@ class Alipay extends Component {
                 {required: true, message: '必填'},
                 {max:30, message: '不超过三十个字'},
               ],
-              initialValue: cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? cashAccount.realName : '',
+              initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.realName : '',
 
             })(
               <Input placeholder="必须为实名认证过的姓名" />
@@ -189,7 +189,7 @@ class Wechat extends Component {
             {required: true, message: '必填'},
             {max:30, message: '不超过三十个字'},
           ],
-          initialValue: cashAccount.type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT ? cashAccount.realName : '',
+          initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_WECHAT ? cashAccount.realName : '',
 
         })(
           <Input placeholder="如：张三" />
@@ -209,7 +209,7 @@ class Wechat extends Component {
 
 class Pay extends Component {
   static defaultProps = {
-    type: CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT,
+    type: CASH_ACCOUNT.TYPE_IS_WECHAT,
     loading: false
   }
   constructor(props) {
@@ -271,11 +271,11 @@ class Pay extends Component {
         return
       }
       // 未选任何结算方式,对当前结算方式为银行表现兼容处理
-      if (!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+      if (!~[CASH_ACCOUNT.TYPE_IS_WECHAT, CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(type)) {
           return message.error('请选择收款方式')
         }
       // 当前为修改微信账号状态，且未关联微信
-      if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT　&& !!wechat.key && !wechat.nickName) {
+      if (type === CASH_ACCOUNT.TYPE_IS_WECHAT　&& !!wechat.key && !wechat.nickName) {
         return message.error('请使用你作为收款用途的微信扫描二维码进行关联')
       }
       let options = {
@@ -289,7 +289,7 @@ class Pay extends Component {
         nickName: wechat.nickName || detail.nickName
       }
       // 结算帐号为微信，且重新关连
-      if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT　&& !!wechat.key ) {
+      if (type === CASH_ACCOUNT.TYPE_IS_WECHAT　&& !!wechat.key ) {
         options = { ...options, wechat }
       }
 
@@ -329,7 +329,7 @@ class Pay extends Component {
     this.timer = null
     this.setState({ type: type, wechat: { key: '', nickName: '' } })
     // 选择微信支付账户 且用户默认不是微信支付
-    if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT && cashAccount.type !== CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT) {
+    if (type === CASH_ACCOUNT.TYPE_IS_WECHAT && cashAccount.type !== CASH_ACCOUNT.TYPE_IS_WECHAT) {
       this.createWechatKey()
     }
   }
@@ -397,10 +397,10 @@ class Pay extends Component {
             initialValue: String(type)
           })(
             <RadioGroup>
-              <Radio value="2" onClick={this.changeTye.bind(this, CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT)}>
+              <Radio value="2" onClick={this.changeTye.bind(this, CASH_ACCOUNT.TYPE_IS_WECHAT)}>
                 <span>微信(申请后T+1结算，收取结算金额的1%作为手续费)</span>
               </Radio>
-              <Radio value="1" onClick={this.changeTye.bind(this, CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY)}>
+              <Radio value="1" onClick={this.changeTye.bind(this, CASH_ACCOUNT.TYPE_IS_ALIPAY)}>
                 <span style={{ whiteSpace: 'initial' }}>
                   支付宝(申请后T+1结算，200元以下每次结算收取2元手续费，200元及以上收取结算金额的1%作为手续费)
                 </span>
@@ -412,7 +412,7 @@ class Pay extends Component {
           {...formItemLayout}
           label="是否自动结算" >
           {getFieldDecorator('auto', {
-            initialValue: !!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT, CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(cashAccount.type) ? cashAccount.isAuto : true,
+            initialValue: !!~[CASH_ACCOUNT.TYPE_IS_WECHAT, CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(cashAccount.type) ? cashAccount.isAuto : true,
             valuePropName: 'checked',
           })(
             <Checkbox>
@@ -421,13 +421,13 @@ class Pay extends Component {
           )}
         </FormItem>
         {
-          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT ?
+          type === CASH_ACCOUNT.TYPE_IS_WECHAT ?
           <Wechat {...this.props}
           wechat={wechat}
           qrCodeUrl={qrCodeUrl}
           keyLoading={keyLoading}
           createWechatKey={this.createWechatKey.bind(this)} /> :
-          type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ?
+          type === CASH_ACCOUNT.TYPE_IS_ALIPAY ?
           <Alipay {...this.props} /> : null
         }
         <FormItem {...tailFormItemLayout}>

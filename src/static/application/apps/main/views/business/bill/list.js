@@ -8,7 +8,9 @@ import { Link } from 'react-router-dom'
 
 import BillsService from '../../../services/soda-manager/bills'
 import { conversionUnit } from '../../../utils/functions'
-import CONSTANT from '../constant'
+
+import CASH_ACCOUNT from '../../../constant/cash-account'
+import BILL from '../../../constant/bill'
 
 import styles from './index.pcss'
 
@@ -41,10 +43,10 @@ class App extends Component {
         render: (record) => {
           let { cashAccount: { realName, account, type } } = record
 
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(type)) {
             return _.without([`支付宝`, `${realName}`, `账号:${account || '-'}`], '').join(' | ')
           } 
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_WECHAT].indexOf(type)) {
             return _.without([`微信`, `${realName}`], '').join(' | ')
           } 
           return '-'
@@ -73,19 +75,19 @@ class App extends Component {
         render: (status, record) => {
         	let label
           switch (status) {
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT:
+            case BILL.SETTLEMENT_STATUS_IS_DEFAULT:
               label = <span>未申请结算</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING:
+            case BILL.SETTLEMENT_STATUS_IS_WAITING:
               label = <span><i className={styles.waiting}></i>等待结算</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS:
+            case BILL.SETTLEMENT_STATUS_IS_SUCCESS:
               label = <span><i className={styles.success}></i>结算成功</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING:
+            case BILL.SETTLEMENT_STATUS_IS_PAYING:
               label = <span><i className={styles.paying}></i>结算中</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL:
+            case BILL.SETTLEMENT_STATUS_IS_FAIL:
           		label = <span>结算失败<Icon type='question-circle' className={styles.failIcon}　onClick={this.showFailInfo} /></span>
               break;
             default:
@@ -98,7 +100,7 @@ class App extends Component {
         title: '结算时间',
         dataIndex: 'settledAt',
         render: (date, record) => {
-          return date && record.status === CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
+          return date && record.status === BILL.SETTLEMENT_STATUS_IS_SUCCESS ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
         }
       }, {
         title: '操作',
@@ -106,7 +108,7 @@ class App extends Component {
         render: (record) => {
           const id = record.id
           const status = record.status
-          if (!!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(status)) {
+          if (!!~[BILL.SETTLEMENT_STATUS_IS_FAIL].indexOf(status)) {
             return <span>
               <a onClick={this.handleSettlemenet.bind(this, id)}>重新申请</a>
               <span className={styles.divider}>|</span>
@@ -154,7 +156,7 @@ class App extends Component {
     if (bill.totalAmount <= 200) {
       return message.info('可结算金额必须超过2元才可结算')
     }
-    if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK) {
+    if (type === CASH_ACCOUNT.TYPE_IS_BANK) {
       return message.info('你当前收款方式为银行卡，不支持结算，请修改收款方式再进行结算操作。')
     }
     if (!hasCashType) {

@@ -8,7 +8,8 @@ import history from '../../../utils/history'
 import { conversionUnit } from '../../../utils/functions'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 
-import CONSTANT from '../constant'
+import BILL from '../../../constant/bill'
+import DEVICE from '../../../constant/device'
 
 import styles from './index.pcss'
 
@@ -92,7 +93,7 @@ class App extends Component{
         title: '服务类型',
         dataIndex: 'type',
         render: (type) => {
-          return CONSTANT.SERVICE_TYPE[type]
+          return DEVICE.SERVICE_TYPE[type]
         }
       }, {
         title: '金额',
@@ -102,7 +103,7 @@ class App extends Component{
       },{
         title: '支付方式',
         render: (record) => {
-          return CONSTANT.PAYMENT_TYPE[record.pay.type] || '-'
+          return BILL.PAYMENT_TYPE[record.pay.type] || '-'
         }
       },{
         title: '洗衣手机号',
@@ -121,10 +122,10 @@ class App extends Component{
         dataIndex: 'status',
         render: (status) => {
           switch (status) {
-            case CONSTANT.CONSUME_STATUS_IS_DEFAULT:
+            case BILL.CONSUME_STATUS_IS_DEFAULT:
               return <span>正常</span>
               break;
-            case CONSTANT.CONSUME_STATUS_IS_REFUND:
+            case BILL.CONSUME_STATUS_IS_REFUND:
               return <span className={styles.refund}>已退款</span>
               break;
             default:

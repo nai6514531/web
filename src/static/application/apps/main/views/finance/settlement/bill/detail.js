@@ -11,7 +11,9 @@ import { conversionUnit } from '../../../../utils/functions'
 
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 
-import CONSTANT from '../../constant'
+import BILL from '../../../../constant/bill'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
+import DEVICE from '../../../../constant/device'
 
 import styles from './index.pcss'
 
@@ -19,7 +21,7 @@ const PAEG_SIZE = 10
 
 const wechatBreadItems = [
   {
-    title: '财务系统'
+    title: '苏打生活'
   },
   {
     title: '结算管理',
@@ -39,7 +41,7 @@ const wechatBreadItems = [
 
 const alipayBreadItems = [
   {
-    title: '财务系统'
+    title: '苏打生活'
   },
   {
     title: '结算管理',
@@ -64,7 +66,7 @@ class Bread extends Component {
   render () {
     let { billId } = querystring.parse(window.location.search) 
     let { type } = this.props
-    let items = type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems
+    let items = type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems
 
     items = _.map(items, (item) => {
       if (item.url) {
@@ -106,7 +108,7 @@ class App extends Component {
         title: '服务类型',
         dataIndex: 'type',
         render: (type) => {
-          return CONSTANT.SERVICE_TYPE[type]
+          return DEVICE.SERVICE_TYPE[type]
         }
       },
       {
@@ -121,7 +123,7 @@ class App extends Component {
         title: '支付方式',
         dataIndex: 'pay',
         render: (pay) => {
-          return CONSTANT.CASH_ACCOUNT_TYPE[pay.type] || '-'
+          return CASH_ACCOUNT.TYPE[pay.type] || '-'
         }
       },
       {
@@ -142,7 +144,7 @@ class App extends Component {
         title: '状态',
         dataIndex: 'status',
         render: (status) => {
-          return CONSTANT.CONSUME_STATUS[status] || '-'
+          return BILL.CONSUME_STATUS[status] || '-'
         }
       },
       {

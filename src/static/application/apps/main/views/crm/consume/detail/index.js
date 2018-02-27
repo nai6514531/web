@@ -15,7 +15,7 @@ class CrmConsumeDetail extends Component {
     this.ticketId = this.props.match.params.id
     this.breadItems = [
       {
-        title: '客服系统'
+        title: '苏打生活'
       },
       {
         title: '消费查询',

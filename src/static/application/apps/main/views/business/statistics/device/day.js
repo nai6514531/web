@@ -18,7 +18,7 @@ class DeviceSearchByDay extends Component {
     this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
-        title: '商家系统'
+        title: '苏打生活'
       },
       {
         title: '统计报表',

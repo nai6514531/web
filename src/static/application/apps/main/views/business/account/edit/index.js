@@ -9,7 +9,7 @@ import UserService from '../../../../services/soda-manager/user'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 import Detail from './detail'
 import Pay from './pay'
-import CONSTANT from '../../constant'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
 
 import styles from '../index.pcss'
 
@@ -111,7 +111,7 @@ class App extends Component {
         address: '',
         accountName: '',
         cashAccount: {
-          type: CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT,
+          type: CASH_ACCOUNT.TYPE_IS_WECHAT,
           account: '',
           realName: '',
           isAuto: true

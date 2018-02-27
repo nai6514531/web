@@ -15,7 +15,7 @@ import styles from '../../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
-    title: '客服系统'
+    title: '苏打生活'
   },
   {
     title: '用户查询'

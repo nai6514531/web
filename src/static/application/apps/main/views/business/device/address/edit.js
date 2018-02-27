@@ -14,7 +14,6 @@ const { confirm } = Modal
 import DeviceAddressService from '../../../../services/soda-manager/device-service-address'
 import AddressService from '../../../../services/soda-manager/address'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
-import CONSTANT from '../../constant'
 
 import styles from '../index.pcss'
 

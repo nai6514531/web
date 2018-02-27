@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, message } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
-import { API_SERVER } from '../../../../constant'
+import { API_SERVER } from '../../../../constant/index'
 import { trim } from 'lodash'
 import moment from 'moment'
 

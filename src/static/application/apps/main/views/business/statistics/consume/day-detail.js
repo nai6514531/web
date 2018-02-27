@@ -18,7 +18,7 @@ class DayDetailConsume extends Component {
     this.day = this.props.match.params.day
     this.breadItems = [
       {
-        title: '商家系统'
+        title: '苏打生活'
       },
       {
         title: '统计报表',

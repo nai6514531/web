@@ -21,7 +21,7 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '财务系统'
+    title: '苏打生活'
   },
   {
     title: '结算管理'

@@ -3,7 +3,6 @@ import Promise from 'bluebird'
 import _ from 'underscore'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-
 import { Table, Popconfirm, Select, DatePicker, message, Modal } from 'antd'
 const Option = Select.Option
 const confirm = Modal.confirm
@@ -12,7 +11,9 @@ import DailyBillsService from '../../../services/soda-manager/daily-bills'
 import BillsService from '../../../services/soda-manager/bills'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import { conversionUnit } from '../../../utils/functions'
-import CONSTANT from '../constant'
+
+import CASH_ACCOUNT from '../../../constant/cash-account'
+import BILL from '../../../constant/bill'
 
 import styles from './index.pcss'
 
@@ -73,13 +74,13 @@ class Detail extends Component{
         render: (record) => {
           let { cashAccount: { type, realName, account, bankName }, user: { mobile } } = record
 
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(type)) {
             return `${realName || '-'} | 账号:${account || '-'}`
           }
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_WECHAT].indexOf(type)) {
             return `${realName || '-'}`
           }
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_BANK].indexOf(type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_BANK].indexOf(type)) {
             return _.without([`户名:${realName || '-'}`, `${bankName}`, `${account}`, `${mobile}`], '').join(' | ')
           }
           return '-'
@@ -93,19 +94,19 @@ class Detail extends Component{
         render: (status, record) => {
           let label
           switch (status) {
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT:
+            case BILL.SETTLEMENT_STATUS_IS_DEFAULT:
               label = <span>未申请结算</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING:
+            case BILL.SETTLEMENT_STATUS_IS_WAITING:
               label = <span><i className={styles.waiting}></i>等待结算</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS:
+            case BILL.SETTLEMENT_STATUS_IS_SUCCESS:
               label = <span><i className={styles.success}></i>结算成功</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING:
+            case BILL.SETTLEMENT_STATUS_IS_PAYING:
               label = <span><i className={styles.paying}></i>结算中</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL:
+            case BILL.SETTLEMENT_STATUS_IS_FAIL:
               label = <span><i className={styles.fail}></i>结算失败</span>
               break;
             default:

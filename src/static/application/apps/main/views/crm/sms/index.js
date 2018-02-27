@@ -12,7 +12,7 @@ import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
 const breadItems = [
   {
-    title: '客服系统'
+    title: '苏打生活'
   },
   {
     title: '短信查询'

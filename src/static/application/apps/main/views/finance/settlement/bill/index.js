@@ -17,7 +17,8 @@ import { conversionUnit } from '../../../../utils/functions'
 import ConfirmForm from './alipay-confirm-form'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 
-import CONSTANT from '../../constant'
+import BILL from '../../../../constant/bill'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
 
 import styles from './index.pcss'
 
@@ -29,7 +30,7 @@ const formItemLayout = {
 }
 const wechatBreadItems = [
   {
-    title: '财务系统'
+    title: '苏打生活'
   },
   {
     title: '结算管理'
@@ -41,7 +42,7 @@ const wechatBreadItems = [
 
 const alipayBreadItems = [
   {
-    title: '财务系统'
+    title: '苏打生活'
   },
   {
     title: '结算管理'
@@ -105,7 +106,7 @@ class App extends Component {
         dataIndex: 'cashAccount',
         width: 130,
         render: (cashAccount, record) => {
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY].indexOf(cashAccount.type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               '账号：<%- account %>'
@@ -114,7 +115,7 @@ class App extends Component {
                 account: cashAccount.account || '-',
               })
           }
-          if (!!~[CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT].indexOf(cashAccount.type)) {
+          if (!!~[CASH_ACCOUNT.TYPE_IS_WECHAT].indexOf(cashAccount.type)) {
             return _.template([
               '<%- realName %>',
               ].join(' | '))({
@@ -165,16 +166,16 @@ class App extends Component {
         render: (status) => {
           let label
           switch (status) {
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING:
+            case BILL.SETTLEMENT_STATUS_IS_WAITING:
               label = <span><i className={styles.waiting}></i>等待结算</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS:
+            case BILL.SETTLEMENT_STATUS_IS_SUCCESS:
               label = <span><i className={styles.success}></i>结算成功</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING:
+            case BILL.SETTLEMENT_STATUS_IS_PAYING:
               label = <span><i className={styles.paying}></i>结算中</span>
               break;
-            case CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL:
+            case BILL.SETTLEMENT_STATUS_IS_FAIL:
               label = <span><i className={styles.fail}></i>结算失败</span>
               break;
             default:
@@ -189,7 +190,7 @@ class App extends Component {
         dataIndex: 'settledAt',
         width: 135,
         render: (date, record) => {
-          return date && record.status === CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
+          return date && record.status === BILL.SETTLEMENT_STATUS_IS_SUCCESS ? moment(date).format('YYYY-MM-DD HH:mm') : '-'
         }
       },
       {
@@ -204,7 +205,7 @@ class App extends Component {
         key: 'operation',
         width: 90,
         render: (text, record, index) => {
-          const disabled = !!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT, CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS, CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING, CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status)
+          const disabled = !!~[BILL.SETTLEMENT_STATUS_IS_DEFAULT, BILL.SETTLEMENT_STATUS_IS_SUCCESS, BILL.SETTLEMENT_STATUS_IS_PAYING, BILL.SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status)
           const type = !!~this.props.location.pathname.indexOf('alipay') ? 'alipay' :
             !!~this.props.location.pathname.indexOf('wechat') ? 'wechat' : ''
           const count = record.count / 100
@@ -219,8 +220,8 @@ class App extends Component {
     ]
   }
   componentDidMount () {
-    let payType = !!~this.props.location.pathname.indexOf('alipay') ? CONSTANT.BILL_SETTLEMENT_STATUS_IS_WAITING :
-                    !!~this.props.location.pathname.indexOf('wechat') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT : 0
+    let payType = !!~this.props.location.pathname.indexOf('alipay') ? BILL.SETTLEMENT_STATUS_IS_WAITING :
+                    !!~this.props.location.pathname.indexOf('wechat') ? CASH_ACCOUNT.TYPE_IS_WECHAT : 0
 
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
@@ -281,7 +282,7 @@ class App extends Component {
       }
       const data = res.data
       // 支付宝账单二次确认
-      if (type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY) {
+      if (type === CASH_ACCOUNT.TYPE_IS_ALIPAY) {
         this.alipayInfo = data
         this.setState({ alipayConfirmShow: true, payConfirmShow: false })
       }
@@ -332,7 +333,7 @@ class App extends Component {
   }
   selectInit (record) {
     // 已结账、结算中、失败状态不可选
-    return { disabled: !!~[CONSTANT.BILL_SETTLEMENT_STATUS_IS_DEFAULT, CONSTANT.BILL_SETTLEMENT_STATUS_IS_SUCCESS, CONSTANT.BILL_SETTLEMENT_STATUS_IS_PAYING, CONSTANT.BILL_SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status) }
+    return { disabled: !!~[BILL.SETTLEMENT_STATUS_IS_DEFAULT, BILL.SETTLEMENT_STATUS_IS_SUCCESS, BILL.SETTLEMENT_STATUS_IS_PAYING, BILL.SETTLEMENT_STATUS_IS_FAIL].indexOf(record.status) }
   }
   hideConfirmShow () {
     this.setState({alipayConfirmShow: false})
@@ -401,8 +402,8 @@ class App extends Component {
     })
   }
   reset() {
-    const payType = !!~this.props.location.pathname.indexOf('alipay') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY :
-                    !!~this.props.location.pathname.indexOf('wechat') ? CONSTANT.CASH_ACCOUNT_TYPE_IS_WECHAT : 0
+    const payType = !!~this.props.location.pathname.indexOf('alipay') ? CASH_ACCOUNT.TYPE_IS_ALIPAY :
+                    !!~this.props.location.pathname.indexOf('wechat') ? CASH_ACCOUNT.TYPE_IS_WECHAT : 0
     const options = {
       search: {
         status: '',
@@ -472,7 +473,7 @@ class App extends Component {
 
     return(
       <div className={styles.view}>
-        <Breadcrumb items={type === CONSTANT.CASH_ACCOUNT_TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems} />
+        <Breadcrumb items={type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? alipayBreadItems : wechatBreadItems} />
         <div>
           <Button
               type="primary"

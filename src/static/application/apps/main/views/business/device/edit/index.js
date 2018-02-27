@@ -17,7 +17,6 @@ import DeviceAddressService from '../../../../services/soda-manager/device-servi
 
 import Mode from './mode'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
-import CONSTANT from '../../constant'
 
 import styles from '../index.pcss'
 

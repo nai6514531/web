@@ -16,5 +16,13 @@ module.exports = _.extend({
   MODE_STATUS_IS_FREE: 0,
   // 锁定
   MODE_STATUS_IS_LOCK: 9,
+
+  // 服务类型
+  SERVICE_TYPE: {
+    1: '单脱',
+    2: '快洗',
+    3: '标准',
+    4: '大物洗',
+  },
   
 }, km({}))

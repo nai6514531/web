@@ -9,7 +9,6 @@ const { confirm } = Modal
 
 import { conversionUnit } from '../../../../utils/functions'
 import DeviceService from '../../../../services/soda-manager/device'
-import CONSTANT from '../../constant'
 
 import styles from '../index.pcss'
 
