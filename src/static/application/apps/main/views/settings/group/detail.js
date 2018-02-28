@@ -92,7 +92,7 @@ class App extends Component {
       payload: {
         checkedList: checkedList,
         indeterminate: !!checkedList.length && (checkedList.length < allPermission.length),
-        checkAll: checkedList.length === allPermission.length,
+        checkAll: checkedList.length === allPermission.length,//判断checkedList包含allPermission才算全选状态(因为有筛选)
       }
     })
   }
@@ -162,13 +162,13 @@ class App extends Component {
           >
           筛选
         </Button>
-        <Checkbox
+        {/* <Checkbox
             indeterminate={indeterminate}
             onChange={this.onCheckAllChange}
             checked={checkAll}
           >
             全选
-        </Checkbox>
+        </Checkbox> */}
         <Card className={styles.card} style={{ marginTop: '0px' }}>
           <div className={styles.header}>
               <h1>未分组权限:</h1>
