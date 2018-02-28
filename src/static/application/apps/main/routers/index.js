@@ -32,7 +32,7 @@ function RouterConfig({ history, app }) {
               { advertisement(app) }
               { platform(app) }
               { crm(app) }
-              {/* { business(app) } */}
+              { business(app) }
               { game(app) }
               { soda(app) }
           </Layout>
