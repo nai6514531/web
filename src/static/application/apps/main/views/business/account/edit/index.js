@@ -17,7 +17,7 @@ const id = querystring.parse(window.location.search.slice(1)).parentId
 
 const breadItems = [
   {
-    title: '商家系统'
+    title: '苏打生活'
   },
   {
     title: '运营商管理',
@@ -30,7 +30,7 @@ const breadItems = [
 
 const subEditBreadItems = [
   {
-    title: '商家系统',
+    title: '苏打生活',
   },
   {
     title: '运营商管理',
@@ -47,7 +47,7 @@ const subEditBreadItems = [
 
 const subAddBreadItems = [
   {
-    title: '商家系统',
+    title: '苏打生活',
   },
   {
     title: '运营商管理',
@@ -64,7 +64,7 @@ const subAddBreadItems = [
 
 const settlementBreadItems = [
   {
-    title: '商家系统',
+    title: '苏打生活',
   },
   {
     title: '结算查询',
@@ -169,14 +169,14 @@ class App extends Component {
 
     return <div>
       <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} parentId={parentId} />
-      <Tabs 
+      <Tabs
         activeKey={activeKey}
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="基本信息" key="default">
           { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} parentId={parentId} redirectUrl={redirectUrl} /> : null }
         </TabPane>
         <TabPane tab="收款信息" key="cash" disabled={isAdd ? true : false} >
-          { activeKey === 'cash' ? <Pay {...this.props} 
+          { activeKey === 'cash' ? <Pay {...this.props}
           loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} parentId={parentId} /> : null }
         </TabPane>
       </Tabs>

@@ -4,7 +4,7 @@ const sodaService = {
     return request.post(`/soda/tickets/${id}/crm/refund`)
   },
   crmExport: (data) => {
-    let url = `/soda/consumptions/excel/crm/export?&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&userId=${data.userId || ''}`
+    let url = `/soda/consumptions/excel/soda/export?&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&userId=${data.userId || ''}`
     return request.get(url)
   },
   bizRefund: (id) => {

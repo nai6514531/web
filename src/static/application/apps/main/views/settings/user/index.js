@@ -80,9 +80,11 @@ class User extends Component {
           return (
             <span>
               <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除</a> |
-              </Popconfirm>
+              {
+                record.status === 0 ? <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+                    <a href='javascript:void(0)'>{'\u00A0'}拉黑</a> |
+                  </Popconfirm> : ''
+              }
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a>
             </span>
           )

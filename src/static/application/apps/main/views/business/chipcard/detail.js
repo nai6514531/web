@@ -13,7 +13,7 @@ import styles from './index.pcss'
 
 const breadItems = [
   {
-    title: '商家系统'
+    title: '苏打生活'
   },
   {
     title: '运营商管理',
@@ -85,15 +85,15 @@ class Detail extends Component {
         loading: false
       })
     }).catch((err) => {
-      this.setState({ 
+      this.setState({
         chipcard: {
           chipcardId: '',
           mobile: '',
           value: 0,
           recharge: 0,
           apply: []
-        }, 
-        loading: false 
+        },
+        loading: false
       })
       message.error(err.message || '服务器异常，刷新重试')
     })
@@ -175,7 +175,7 @@ class Detail extends Component {
             </Col>
           </Row>
           <Row className={styles.info}>
-            { 
+            {
               applySign.map((value, index) => {
                 if (index === 0) {
                   return <Col xs={{ span: 23, offset: 1 }} sm={{ span: 11, offset: 1 }} key={index} className={styles.apply}>{`${index + 1}. ${value}`}</Col>
@@ -187,7 +187,7 @@ class Detail extends Component {
         </Spin>
       </div>
       {
-        visible ? 
+        visible ?
         <Modal
           footer={null}
           visible={visible}
@@ -214,7 +214,7 @@ class Detail extends Component {
   			      </FormItem>
   	        </Form>
           </Spin>
-       </Modal> : null 
+       </Modal> : null
      }
     </section>)
   }
