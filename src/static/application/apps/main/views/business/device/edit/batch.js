@@ -378,6 +378,26 @@ class BatchMode extends Component {
   changeSchool(value) {
     this.setState({ activeSchoolId: value })
   }
+  checkDuration(rule, value, callback) {
+    let { form: { validateFields } } = this.props
+    let { active: { price: activePrice, duration: activeDuration } } = this.state
+
+    if (activeDuration && value) {
+      validateFields([(rule.field).replace('price', 'duration')], { force: true });
+    }
+    callback();
+  }
+  checkValue(rule, duration, callback) {
+    let { form: { getFieldValue } } = this.props
+    let { active: { price: activePrice, duration: activeDuration } } = this.state
+    let value = getFieldValue((rule.field).replace('duration', 'price'))
+
+    if (activePrice && +duration === 0 && +value > 0) {
+      callback('服务时间不能为0')
+    } else {
+      callback()
+    }
+  }
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { 
@@ -514,6 +534,7 @@ class BatchMode extends Component {
                       rules: [
                         { required: true, message: '必填' },
                         { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确价格'},
+                        { validator: this.checkDuration.bind(this) },
                       ],
                       initialValue: "0"
                     })(
@@ -539,6 +560,7 @@ class BatchMode extends Component {
                       rules: [
                         { required: true, message: '必填' },
                         { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确时间'},
+                        { validator: this.checkValue.bind(this) }
                       ],
                       initialValue: "0"
                     })(

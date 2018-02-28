@@ -38,6 +38,24 @@ class Mode extends Component {
     // 切换类型 reset表单的内容
     resetFields([`${id}_NAME`, `${id}_VALUE`, `${id}_DURATION`])
   }
+  checkDuration(rule, value, callback) {
+    let {  mode: { id }, form: { validateFields } } = this.props
+
+    if (value) {
+      validateFields([`${id}_DURATION`], { force: true });
+    }
+    callback();
+  }
+  checkValue(rule, duration, callback) {
+    let {  mode: { id }, form: { getFieldValue } } = this.props
+    let value = getFieldValue(`${id}_VALUE`)
+    
+    if (+duration === 0 && +value > 0) {
+      callback('服务时间不能为0')
+    } else {
+      callback()
+    }
+  }
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { mode: { id, name, duration, value, pulse: { id: pulseId }, status }, index } = this.props
@@ -72,6 +90,7 @@ class Mode extends Component {
                 rules: [
                   { required: true, message: '必填' },
                   { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确价格'},
+                  { validator: this.checkDuration.bind(this) }
                 ],
                 initialValue: value ? conversionUnit(value) : "0",
               })(
@@ -90,6 +109,7 @@ class Mode extends Component {
                 rules: [
                   { required: true, message: '必填' },
                   { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确时间'},
+                  { validator: this.checkValue.bind(this) },
                 ],
                 initialValue: duration ? String(duration/1000) : "0",
               })(
