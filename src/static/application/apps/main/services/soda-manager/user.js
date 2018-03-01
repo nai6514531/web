@@ -13,6 +13,9 @@ const userService = {
     return request.put(`/mng/users/${id}`, data)
   },
   add: (data) => {
+    return request.post(`/mng/users`, data)
+  },
+  addStaffs: (data) => {
     return request.post(`/mng/staffs`, data)
   },
   delete: (id) => {

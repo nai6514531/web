@@ -69,7 +69,7 @@ export default {
       }
     },
     *add({ payload }, { call, put }) {
-      const result = yield call(userService.add, payload.data)
+      const result = yield call(userService.addStaffs, payload.data)
       if(result.status == 'OK') {
         payload.history.goBack()
         message.success('添加成功')
