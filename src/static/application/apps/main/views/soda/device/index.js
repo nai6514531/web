@@ -99,7 +99,7 @@ class Device extends Component {
           let isLock = !!~[...DEVICE.STATUS_IS_LOCK].indexOf(value)
           let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(value)
           const { keys, serials } = this.search
-          
+
           return (
             <span>
               { isLock ? <Popconfirm title='确认取消锁定吗?' onConfirm={this.unlock.bind(this, serial)}>
@@ -152,7 +152,7 @@ class Device extends Component {
   }
   fetch(url) {
     this.props.dispatch({
-      type: 'crmDevice/list',
+      type: 'sodaDevice/list',
       payload: {
         data: url
       }
@@ -163,7 +163,7 @@ class Device extends Component {
    this.fetch(url)
    // 分页变化时清空checkbox
    this.props.dispatch({
-     type: 'crmDevice/updateData',
+     type: 'sodaDevice/updateData',
      payload: {
        selectedRowKeys: []
      }
@@ -171,7 +171,7 @@ class Device extends Component {
   }
   lock(serial) {
     this.props.dispatch({
-      type: 'crmDevice/lock',
+      type: 'sodaDevice/lock',
       payload: {
         serials: Array(serial),
         url: this.search
@@ -180,7 +180,7 @@ class Device extends Component {
   }
   unlock(serial) {
     this.props.dispatch({
-      type: 'crmDevice/unlock',
+      type: 'sodaDevice/unlock',
       payload: {
         serials: Array(serial),
         url: this.search
@@ -189,7 +189,7 @@ class Device extends Component {
   }
   reset(serialsArray) {
     this.props.dispatch({
-      type: 'crmDevice/reset',
+      type: 'sodaDevice/reset',
       payload: {
         serials: serialsArray,
         url: this.search
@@ -198,7 +198,7 @@ class Device extends Component {
   }
   batchReset() {
     const self = this
-    const { crmDevice: { data: { objects }, selectedRowKeys } } = this.props
+    const { sodaDevice: { data: { objects }, selectedRowKeys } } = this.props
     const idList = selectedRowKeys
     let checkList = []
     objects.map((item) => {
@@ -217,7 +217,7 @@ class Device extends Component {
       onOk() {
         self.reset(checkList)
         self.props.dispatch({
-          type: 'crmDevice/updateData',
+          type: 'sodaDevice/updateData',
           payload: {
             selectedRowKeys: []
           }
@@ -227,10 +227,10 @@ class Device extends Component {
   }
   rowSelection() {
     return {
-      selectedRowKeys: this.props.crmDevice.selectedRowKeys,
+      selectedRowKeys: this.props.sodaDevice.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
         this.props.dispatch({
-          type: 'crmDevice/updateData',
+          type: 'sodaDevice/updateData',
           payload: {
             selectedRowKeys
           }
@@ -239,7 +239,7 @@ class Device extends Component {
     }
   }
   render() {
-    const { crmDevice: { data: { objects, pagination }, selectedRowKeys }, loading } = this.props
+    const { sodaDevice: { data: { objects, pagination }, selectedRowKeys }, loading } = this.props
     pagination && (pagination.showSizeChanger = true)
 
     return(
@@ -286,12 +286,12 @@ class Device extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmDevice/clear'})
+    this.props.dispatch({ type: 'sodaDevice/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmDevice: state.crmDevice,
+    sodaDevice: state.sodaDevice,
     loading: state.loading.global,
     ...props
   }

@@ -2,14 +2,15 @@ import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { getComponent } from '../../components/bundle/'
 
-import Consume from 'bundle-loader?lazy!../../views/soda/consume/'
-import ConsumeModel from 'bundle-loader?lazy!../../models/soda/consume/'
+import Consume from 'bundle-loader?lazy!../../views/soda/ticket/consume/'
+import ConsumeModel from 'bundle-loader?lazy!../../models/soda/ticket/consume/'
 
-import ConsumeDetail from 'bundle-loader?lazy!../../views/soda/consume/detail/'
-import ConsumeDetailModel from 'bundle-loader?lazy!../../models/soda/consume/detail.js'
+import ConsumeDetail from 'bundle-loader?lazy!../../views/soda/ticket/consume/detail/'
+import ConsumeDetailModel from 'bundle-loader?lazy!../../models/soda/ticket/consume/detail.js'
 
-import BizConsumeSearch from 'bundle-loader?lazy!../../views/soda/business/consume/'
-import BizConsumeSearchModel from 'bundle-loader?lazy!../../models/soda/business-consume/'
+
+import BizConsumeSearch from 'bundle-loader?lazy!../../views/soda/ticket/business-consume/'
+import BizConsumeSearchModel from 'bundle-loader?lazy!../../models/soda/ticket/business-consume/'
 
 import Sms from 'bundle-loader?lazy!../../views/soda/sms/'
 import SmsModel from 'bundle-loader?lazy!../../models/soda/sms/'
@@ -20,20 +21,20 @@ import DeviceDetail from 'bundle-loader?lazy!../../views/soda/device/detail.js'
 import DeviceModel from 'bundle-loader?lazy!../../models/soda/device/'
 import DeviceDetailModel from 'bundle-loader?lazy!../../models/soda/device/detail.js'
 
-import Customer from 'bundle-loader?lazy!../../views/soda/search/customer/'
-import CustomerModel from 'bundle-loader?lazy!../../models/soda/search/customer/'
+import SodaUser from 'bundle-loader?lazy!../../views/soda/user/soda/'
+import SodaUserModel from 'bundle-loader?lazy!../../models/soda/user/soda/'
 
-import BillDetail from 'bundle-loader?lazy!../../views/soda/search/customer/bill/'
-import BillDetailModel from 'bundle-loader?lazy!../../models/soda/search/customer/bill.js'
+import BillDetail from 'bundle-loader?lazy!../../views/soda/user/soda/bill/'
+import BillDetailModel from 'bundle-loader?lazy!../../models/soda/user/soda/bill.js'
 
-import Chipcard from 'bundle-loader?lazy!../../views/soda/search/customer/chipcard/'
-import ChipcardModel from 'bundle-loader?lazy!../../models/soda/search/customer/chipcard.js'
+import Chipcard from 'bundle-loader?lazy!../../views/soda/user/soda/chipcard/'
+import ChipcardModel from 'bundle-loader?lazy!../../models/soda/user/soda/chipcard.js'
 
-import Operator from 'bundle-loader?lazy!../../views/soda/search/operator/'
-import OperatorModel from 'bundle-loader?lazy!../../models/soda/search/operator/'
+import MngUser from 'bundle-loader?lazy!../../views/soda/user/mng/'
+import MngUserModel from 'bundle-loader?lazy!../../models/soda/user/mng/'
 
-import OperatorDetail from 'bundle-loader?lazy!../../views/soda/search/operator/detail/'
-import OperatorDetailModel from 'bundle-loader?lazy!../../models/soda/search/operator/detail/'
+import MngUserDetail from 'bundle-loader?lazy!../../views/soda/user/mng/detail/'
+import MngUserDetailModel from 'bundle-loader?lazy!../../models/soda/user/mng/detail/'
 
 import BusinessStatistics from 'bundle-loader?lazy!../../views/soda/statistics/'
 import BusinessStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/'
@@ -84,9 +85,10 @@ export default function (app) {
       <Route exact path='/soda/device/operation/:id' component={getComponent(OperationDetail,app,DeviceModel)} />
       <Route exact path='/soda/device/:id' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
 
-      <Route exact path='/soda/search/customer' component={getComponent(Customer,app,CustomerModel)} />
-      <Route exact path='/soda/search/operator' component={getComponent(Operator,app,OperatorModel)} />
-      <Route exact path='/soda/search/operator/:id' component={getComponent(OperatorDetail,app,OperatorDetailModel)} />
+      <Route exact path='/soda/user' component={getComponent(SodaUser,app,SodaUserModel)} />
+      <Route exact path='/mng/user' component={getComponent(MngUser,app,MngUserModel)} />
+      <Route exact path='/mng/user/:id' component={getComponent(MngUserDetail,app,MngUserDetailModel)} />
+
       <Route exact path='/soda/:id/bill' component={getComponent(BillDetail,app,BillDetailModel)} />
       <Route exact path='/soda/:id/chipcard' component={getComponent(Chipcard,app,ChipcardModel)} />
 
@@ -110,9 +112,9 @@ export default function (app) {
       <Route path='/soda/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
 
       <Route path='/soda/business/device/address/edit/:id' component={getComponent(deviceAddressEdit,　app)} />
-      <Route path='/soda/business/device/address/add' component={getComponent(deviceAddressEdit,　app)} />      
+      <Route path='/soda/business/device/address/add' component={getComponent(deviceAddressEdit,　app)} />
       <Route path='/soda/business/device/address' component={getComponent(deviceAddress,　app)} />
-      
+
       <Route path='/soda/business/device/edit/:id' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/add' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/edit' component={getComponent(deviceBatchEdit,　app)} />

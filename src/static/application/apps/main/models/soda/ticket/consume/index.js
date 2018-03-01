@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import sodaService from '../../../services/soda/index.js'
-import userService from '../../../services/soda-manager/user.js'
+import sodaService from '../../../../services/soda/index.js'
+import userService from '../../../../services/soda-manager/user.js'
 import { cloneDeep } from 'lodash'
 
 const model = {

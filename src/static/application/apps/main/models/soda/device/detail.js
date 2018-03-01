@@ -14,7 +14,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmDeviceDetail',
+  namespace: 'sodaDeviceDetail',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

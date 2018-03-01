@@ -220,7 +220,7 @@ class User extends Component {
           <Button
             type='primary'
             className={styles.button}>
-              添加用户
+              添加员工
           </Button>
         </Link>
         <DataTable

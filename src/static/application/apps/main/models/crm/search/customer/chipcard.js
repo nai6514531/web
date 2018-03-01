@@ -9,7 +9,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmChipcard',
+  namespace: 'sodaChipcard',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

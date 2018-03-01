@@ -39,7 +39,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(userService.list, payload.data)
+      const result = yield call(userService.list, { ...payload.data, type: 1 })
       if(result.status == 'OK') {
         yield put({
           type: 'updateData',

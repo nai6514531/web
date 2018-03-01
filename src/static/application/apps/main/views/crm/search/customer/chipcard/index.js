@@ -108,7 +108,7 @@ class Chipcard extends Component {
   fetch =(url) => {
     const mobile = this.props.match.params.id
     this.props.dispatch({
-      type: 'crmChipcard/list',
+      type: 'sodaChipcard/list',
       payload: {
         data: {
           url,
@@ -122,7 +122,7 @@ class Chipcard extends Component {
     this.fetch(url)
   }
   render() {
-    const { crmChipcard: { data: { objects, pagination } }, loading  } = this.props
+    const { sodaChipcard: { data: { objects, pagination } }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -161,13 +161,13 @@ class Chipcard extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmChipcard/clear'})
+    this.props.dispatch({ type: 'sodaChipcard/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmChipcard: state.crmChipcard,
+    sodaChipcard: state.sodaChipcard,
     loading: state.loading.global,
     ...props
   }
