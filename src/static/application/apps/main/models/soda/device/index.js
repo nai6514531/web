@@ -41,7 +41,9 @@ export default {
       }
     },
     *lock({ payload }, { call, put }) {
-      const result = yield call(deviceService.lock, payload.serialNumber)
+      const result = yield call(deviceService.lock, {
+        serials: payload.serials
+      })
       if(result.status == 'OK') {
         message.success('操作成功')
         yield put({
@@ -55,7 +57,9 @@ export default {
       }
     },
     *unlock({ payload }, { call, put }) {
-      const result = yield call(deviceService.unlock, payload.serialNumber)
+      const result = yield call(deviceService.unlock, {
+        serials: payload.serials
+      })
       if(result.status == 'OK') {
         message.success('操作成功')
         yield put({
@@ -69,7 +73,9 @@ export default {
       }
     },
     *reset({ payload }, { call, put }) {
-      const result = yield call(deviceService.reset, payload.list)
+      const result = yield call(deviceService.reset,{
+        serials: payload.serials
+      })
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({

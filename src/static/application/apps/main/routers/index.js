@@ -27,12 +27,10 @@ function RouterConfig({ history, app }) {
           <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
           <Layout>
               { settings(app) }
-              { finance(app) }
               { idle(app) }
               { advertisement(app) }
               { platform(app) }
               { crm(app) }
-              { business(app) }
               { game(app) }
               { soda(app) }
           </Layout>

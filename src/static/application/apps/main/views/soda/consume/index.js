@@ -101,7 +101,7 @@ class Consume extends Component {
           }
           return(
             <span>
-              <Link to={`/soda/consume/${record.ticketId}`}>详情{'\u00A0'} | {'\u00A0'}</Link>
+              <Link to={`/crm/consume/${record.ticketId}`}>详情{'\u00A0'} | {'\u00A0'}</Link>
               { refund }
             </span>
           )

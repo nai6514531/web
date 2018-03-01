@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
+import op from 'object-path'
+import _ from 'lodash'
 import { connect } from 'dva'
 import { Button, Row, Col, Card, message, Spin, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
@@ -9,6 +11,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import styles from '../../../assets/css/page-detail.pcss'
 import dict from '../../../utils/dict.js'
+import { conversionUnit } from '../../../utils/functions'
 
 const confirm = Modal.confirm
 
@@ -16,7 +19,7 @@ class DeviceDetail extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    const { keywords, deviceSerial } = search
+    const { keys, serials } = search
     this.search = search
     this.breadItems = [
         {
@@ -24,7 +27,7 @@ class DeviceDetail extends Component {
         },
         {
           title: '设备查询',
-          url: `/soda/device?deviceSerial=${deviceSerial}&keywords=${keywords}`
+          url: `/soda/device?serials=${serials}&keys=${keys}`
         },
         {
           title: '设备详情'
@@ -36,27 +39,28 @@ class DeviceDetail extends Component {
     this.fetch(url)
   }
   fetch = (url) => {
+    console.log(this.props.match.params.id)
     this.props.dispatch({
       type: 'crmDeviceDetail/detail',
       payload: {
         data:  {
-            ...url,
-            deviceSerial: this.props.match.params.id
+          ...url,
+          id: this.props.match.params.id
         }
       }
     })
   }
   resetToken = () => {
-    const { serialNumber } = this.props.crmDeviceDetail.data
+    const { serial } = this.props.crmDeviceDetail.data
     const self = this
     confirm({
       title: '重置密码?',
-      content: `设备号为${serialNumber}的密码将被重置,是否确认修改？`,
+      content: `设备号为${serial}的密码将被重置,是否确认修改？`,
       onOk() {
         self.props.dispatch({
           type: 'crmDeviceDetail/resetToken',
           payload: {
-            data: { serialNumber }
+            data: { serial }
           }
         })
       }
@@ -79,17 +83,16 @@ class DeviceDetail extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>模块号:</span>{data.serialNumber || '-'}</div>
+                  <div><span className={styles.title}>模块号:</span>{data.serial || '-'}</div>
                   <div>
                     <span className={styles.title}>价格:</span>
-                    {`${data.firstPulseName}${data.firstPulsePrice / 100}
-                    /${data.secondPulseName}${data.secondPulsePrice / 100}
-                    /${data.thirdPulseName}${data.thirdPulsePrice / 100}
-                    /${data.fourthPulseName}${data.fourthPulsePrice / 100}`}
+                    {(data.modes || []).map((mode) => {
+                      return [`${mode.name}`, `${conversionUnit(mode.value)}元`, `${mode.duration/1000}分钟`].join(' ')
+                    }).join('/')}
                   </div>
-                  <div><span className={styles.title}>类型:</span>{data.referenceDevice.name || '-'}</div>
-                  <div><span className={styles.title}>楼层:</span>{data.address || '-'}</div>
-                  <div><span className={styles.title}>状态:</span>{dict.deviceStatus[data.status.value] || '-' }</div>
+                  <div><span className={styles.title}>类型:</span>{op(data).get('feature.name') || '-'}</div>
+                  <div><span className={styles.title}>服务地点:</span>{_.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'}</div>
+                  <div><span className={styles.title}>状态:</span>{op(data).get('status.description') || '-' }</div>
                   <div>
                     <span className={styles.title}>重置密码:</span>
                     {data.resettable === 1 ? '支持': '不支持' }
@@ -107,14 +110,14 @@ class DeviceDetail extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>商家名称:</span>{data.owner.name || '-'}</div>
-                  <div><span className={styles.title}>商家ID:</span>{data.owner.id || '-'}</div>
-                  <div><span className={styles.title}>登录账号:</span>{data.owner.account || '-'}</div>
-                  <div><span className={styles.title}>注册时间:</span>{moment(data.owner.createdAt).format('YYYY-MM-DD HH:mm:ss') || '-'}</div>
-                  <div><span className={styles.title}>联系人:</span>{data.owner.contact || '-'}</div>
-                  <div><span className={styles.title}>手机号:</span>{data.owner.mobile || '-'}</div>
-                  <div><span className={styles.title}>服务电话:</span>{data.owner.telephone || '-'}</div>
-                  <div><span className={styles.title}>地址:</span><span className={styles.overText}>{data.owner.address || '-'}</span></div>
+                  <div><span className={styles.title}>商家名称:</span>{op(data).get('user.name') || '-'}</div>
+                  <div><span className={styles.title}>商家ID:</span>{op(data).get('user.id') || '-'}</div>
+                  <div><span className={styles.title}>登录账号:</span>{op(data).get('user.account') || '-'}</div>
+                  <div><span className={styles.title}>注册时间:</span>{op(data).get('user.createdAt') ? moment(op(data).get('user.createdAt')).format('YYYY-MM-DD HH:mm:ss') : '-'}</div>
+                  <div><span className={styles.title}>联系人:</span>{op(data).get('user.contact') || '-'}</div>
+                  <div><span className={styles.title}>手机号:</span>{op(data).get('user.mobile') || '-'}</div>
+                  <div><span className={styles.title}>服务电话:</span>{op(data).get('user.telephone') || '-'}</div>
+                  <div><span className={styles.title}>地点:</span><span className={styles.overText}>{op(data).get('user.address') || '-'}</span></div>
                 </div>
               </div>
             </Card>
@@ -124,14 +127,14 @@ class DeviceDetail extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div><span className={styles.title}>商家名称:</span>{data.fromUser.name || '-'}</div>
-                  <div><span className={styles.title}>商家ID:</span>{data.fromUser.id || '-'}</div>
-                  <div><span className={styles.title}>登录账号:</span>{data.fromUser.account || '-'}</div>
-                  <div><span className={styles.title}>注册时间:</span>{moment(data.fromUser.createdAt).format('YYYY-MM-DD HH:mm:ss') || '-'}</div>
-                  <div><span className={styles.title}>联系人:</span>{data.fromUser.contact || '-'}</div>
-                  <div><span className={styles.title}>手机号:</span>{data.fromUser.mobile || '-'}</div>
-                  <div><span className={styles.title}>服务电话:</span>{data.fromUser.telephone || '-'}</div>
-                  <div><span className={styles.title}>地址:</span><span className={styles.overText}>{data.fromUser.address || '-'}</span></div>
+                  <div><span className={styles.title}>商家名称:</span>{op(data).get('assignedUser.name') || '-'}</div>
+                  <div><span className={styles.title}>商家ID:</span>{op(data).get('assignedUser.id') || '-'}</div>
+                  <div><span className={styles.title}>登录账号:</span>{op(data).get('assignedUser.account') || '-'}</div>
+                  <div><span className={styles.title}>注册时间:</span>{op(data).get('assignedUser.createdAt') ? moment(op(data).get('user.createdAt')).format('YYYY-MM-DD HH:mm:ss') : '-'}</div>
+                  <div><span className={styles.title}>联系人:</span>{op(data).get('assignedUser.contact') || '-'}</div>
+                  <div><span className={styles.title}>手机号:</span>{op(data).get('assignedUser.mobile') || '-'}</div>
+                  <div><span className={styles.title}>服务电话:</span>{op(data).get('assignedUser.telephone') || '-'}</div>
+                  <div><span className={styles.title}>地点:</span><span className={styles.overText}>{op(data).get('assignedUser.address') || '-'}</span></div>
                 </div>
               </div>
             </Card>

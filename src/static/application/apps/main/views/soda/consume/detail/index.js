@@ -19,7 +19,7 @@ class CrmConsumeDetail extends Component {
       },
       {
         title: '消费查询',
-        url: `/soda/consume`
+        url: `/crm/consume`
       },
       {
         title: '消费详情'

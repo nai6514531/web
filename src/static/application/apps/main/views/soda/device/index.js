@@ -3,14 +3,19 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal, message } from 'antd'
+const { Option } = Select
 import moment from 'moment'
 import { trim } from 'lodash'
 import _ from 'lodash'
-import { InputScan } from '../../../components/form/input'
+
+import { InputScan, InputClear } from '../../../components/form/input'
 import DataTable from '../../../components/data-table'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import { transformUrl, toQueryString } from '../../../utils'
 import dict from '../../../utils/dict.js'
+import { conversionUnit } from '../../../utils/functions'
+
+import DEVICE from '../../../constant/device'
 
 import styles from '../../../assets/css/search-bar.pcss'
 
@@ -24,7 +29,6 @@ const breadItems = [
     title: '设备查询'
   }
 ]
-const { Option } = Select
 
 class Device extends Component {
   constructor(props) {
@@ -37,26 +41,23 @@ class Device extends Component {
         title: '模块号',
         width: 100,
         render: (record) => {
-          const { keywords, deviceSerial } = this.search
-          return  <Link to={`/soda/device/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{record.serialNumber}</Link>
+          const { keys, serials } = this.search
+          return  <Link to={`/soda/device/${record.id}?serials=${serials || ''}&keys=${keys || ''}`}>{record.serial}</Link>
         }
       },
       {
-        title: '运营商',
+        title: '运营商名称',
         width: 150,
         render: (record) => {
-          return (
-            `${record.owner.name || '-'}(${record.owner.mobile || '-'})`
-          )
+          return `${record.user.name || '-'}(${record.user.mobile || '-'})`
         }
       },
       {
-        title: '楼层',
+        title: '服务地点',
         width: 100,
         render: (record) => {
-          return (
-            record.address || '-'
-          )
+          let { serviceAddress: { school: { address } } } = record
+          return `${address || '-'}`
         }
       },
       {
@@ -64,63 +65,57 @@ class Device extends Component {
         width: 70,
         dataIndex: 'status',
         key: 'status',
-        render: ({ value }) => {
-          return dict.deviceStatus[value]
+        render: (status) => {
+          return `${status.description}`
         }
       },
       {
         title: '价格',
         width: 200 ,
         render: (record) => {
-          return (
-            `${record.firstPulseName}${record.firstPulsePrice / 100}
-            /${record.secondPulseName}${record.secondPulsePrice / 100}
-            /${record.thirdPulseName}${record.thirdPulsePrice / 100}
-            /${record.fourthPulseName}${record.fourthPulsePrice / 100}`
-          )
+          let { modes } = record
+          return (<div>
+            {(modes || []).map((mode) => {
+              return <p key={mode.id}>
+                  {[`${mode.name}`, `${conversionUnit(mode.value)}元`, `${mode.duration/1000}分钟`].join('/')}
+                </p>
+            })}
+          </div>)
         }
       },
       {
-        title: '类型',
-        dataIndex: 'referenceDevice',
-        key: 'referenceDevice',
+        title: '关联设备类型',
+        dataIndex: 'feature',
         width: 70,
-        render(referenceDevice) {
-          return referenceDevice.name
+        render(feature) {
+          return `${feature.name}`
         }
       },
       {
         title: '操作',
-        key: 'operation',
         width: 150,
         render: (text, record, index) => {
-          let action = '/'
-          const status = record.status.value
-          const { keywords, deviceSerial } = this.search
-          if(status == 9) {
-            action = <Popconfirm title='确认取消锁定吗?' onConfirm={this.unlock.bind(this, record.serialNumber)}>
-              <a href='javascript:void(0)'>取消锁定</a>
-            </Popconfirm>
-          }
-          else if (status == 0 || status == 2) {
-            action = <Popconfirm title='确认锁定吗?' onConfirm={this.lock.bind(this, record.serialNumber)}>
-              <a href='javascript:void(0)'>锁定</a>
-            </Popconfirm>
-          }
-          else if (status == 601 || status == 602 || status == 603
-            || status == 604 || status == 605 || status == 606 || status == 607 || status == 608) {
-            action = <Popconfirm title='确认取消占用吗?' onConfirm={this.unlock.bind(this, record.serialNumber)}>
-              <a href='javascript:void(0)'>取消占用</a>
-            </Popconfirm>
-          }
-          // 删除
+          let { id, status: { value }, serial } = record
+          let isLock = !!~[...DEVICE.STATUS_IS_LOCK].indexOf(value)
+          let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(value)
+          const { keys, serials } = this.search
+          
           return (
             <span>
-              {action}
-              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, [record.serialNumber])}>
+              { isLock ? <Popconfirm title='确认取消锁定吗?' onConfirm={this.unlock.bind(this, serial)}>
+                  <a href='javascript:void(0)'>取消锁定</a>
+                </Popconfirm> :
+                isUsing ? <Popconfirm title='确认取消占用吗?' onConfirm={this.unlock.bind(this, serial)}>
+                  <a href='javascript:void(0)'>取消占用</a>
+                </Popconfirm> :
+                <Popconfirm title='确认锁定吗?' onConfirm={this.lock.bind(this, serial)}>
+                  <a href='javascript:void(0)'>锁定</a>
+                </Popconfirm>
+              }
+              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, Array(serial))}>
                 <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
               </Popconfirm>
-              <Link to={`/soda/device/operation/${record.serialNumber}?deviceSerial=${deviceSerial || ''}&keywords=${keywords || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
+              <Link to={`/soda/device/operation/${serial}?serials=${serials || ''}&keys=${keys || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
             </span>
           )
         }
@@ -129,20 +124,20 @@ class Device extends Component {
   }
   componentDidMount() {
     const url = this.search
-    if( url.keywords || url.deviceSerial ) {
+    if( url.keys || url.serials ) {
       this.fetch(url)
     }
   }
-  changeHandler = (type, e) => {
+  changeHandler(type, e) {
     if(e.target.value) {
       this.search = { ...this.search, [type]: trim(e.target.value) }
     } else {
       delete this.search[type]
     }
   }
-  searchClick = () => {
-    const { keywords, deviceSerial } = this.search
-    if(!keywords && !deviceSerial) {
+  searchClick() {
+    const { keys, serials } = this.search
+    if(!keys && !serials) {
       message.info('请输入筛选条件')
       return
     }
@@ -155,7 +150,7 @@ class Device extends Component {
     this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
-  fetch = (url) => {
+  fetch(url) {
     this.props.dispatch({
       type: 'crmDevice/list',
       payload: {
@@ -163,7 +158,7 @@ class Device extends Component {
       }
     })
   }
-  change = (url) => {
+  change(url) {
    this.search = { ...this.search, ...url }
    this.fetch(url)
    // 分页变化时清空checkbox
@@ -174,41 +169,41 @@ class Device extends Component {
      }
    })
   }
-  lock = (serialNumber) => {
+  lock(serial) {
     this.props.dispatch({
       type: 'crmDevice/lock',
       payload: {
-        serialNumber: serialNumber,
+        serials: Array(serial),
         url: this.search
       }
     })
   }
-  unlock = (serialNumber) => {
+  unlock(serial) {
     this.props.dispatch({
       type: 'crmDevice/unlock',
       payload: {
-        serialNumber: serialNumber,
+        serials: Array(serial),
         url: this.search
       }
     })
   }
-  reset = (list) => {
+  reset(serialsArray) {
     this.props.dispatch({
       type: 'crmDevice/reset',
       payload: {
-        list: list,
+        serials: serialsArray,
         url: this.search
       }
     })
   }
-  batchReset = () => {
+  batchReset() {
     const self = this
     const { crmDevice: { data: { objects }, selectedRowKeys } } = this.props
     const idList = selectedRowKeys
     let checkList = []
     objects.map((item) => {
       if(selectedRowKeys.indexOf(item.id) > -1) {
-        checkList.push(item.serialNumber)
+        checkList.push(item.serial)
       }
     })
     if(!checkList.length) {
@@ -230,7 +225,7 @@ class Device extends Component {
       }
     })
   }
-  rowSelection = () => {
+  rowSelection() {
     return {
       selectedRowKeys: this.props.crmDevice.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
@@ -244,37 +239,36 @@ class Device extends Component {
     }
   }
   render() {
-    const { crmDevice: { data: { objects, pagination }, selectedRowKeys }, loading  } = this.props
-    const startAt = this.search.startAt ? moment(this.search.startAt, dateFormat) : null
-    const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
+    const { crmDevice: { data: { objects, pagination }, selectedRowKeys }, loading } = this.props
     pagination && (pagination.showSizeChanger = true)
+
     return(
       <div>
         <Breadcrumb items={breadItems} />
         <Button
           type='primary'
           className={styles.button}
-          onClick={this.batchReset}
+          onClick={this.batchReset.bind(this)}
           >
           批量删除
         </Button>
-        <Input
+        <InputClear
           placeholder='运营商名称/账号'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'keywords')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.keywords}
+          onChange={this.changeHandler.bind(this, 'keys')}
+          onPressEnter={this.searchClick.bind(this)}
+          defaultValue={this.search.keys}
           />
         <InputScan
           placeholder='模块编号'
           className={styles.input}
-          onChange={this.changeHandler.bind(this, 'deviceSerial')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.deviceSerial}
+          onChange={this.changeHandler.bind(this, 'serials')}
+          onPressEnter={this.searchClick.bind(this)}
+          defaultValue={this.search.serials}
         />
         <Button
           type='primary'
-          onClick={this.searchClick}
+          onClick={this.searchClick.bind(this)}
           className={styles.button}
           >
           筛选
@@ -284,7 +278,7 @@ class Device extends Component {
           columns={this.columns}
           loading={loading}
           pagination={pagination}
-          change={this.change}
+          change={this.change.bind(this)}
           scroll={{ x: 1000 }}
           rowSelection={this.rowSelection()}
         />
