@@ -89,8 +89,8 @@ export default function (app) {
       <Route exact path='/mng/user' component={getComponent(MngUser,app,MngUserModel)} />
       <Route exact path='/mng/user/:id' component={getComponent(MngUserDetail,app,MngUserDetailModel)} />
 
-      <Route exact path='/soda/:id/bill' component={getComponent(BillDetail,app,BillDetailModel)} />
-      <Route exact path='/soda/:id/chipcard' component={getComponent(Chipcard,app,ChipcardModel)} />
+      <Route exact path='/soda/user/:id/bill' component={getComponent(BillDetail,app,BillDetailModel)} />
+      <Route exact path='/soda/user/:id/chipcard' component={getComponent(Chipcard,app,ChipcardModel)} />
 
       <Route exact path='/soda/statistics' component={getComponent(BusinessStatistics,app,BusinessStatisticsModel)} />
       <Route exact path='/soda/statistics/consume/:month' component={getComponent(ConsumeSearchByDay,app,BusinessStatisticsModel)} />
@@ -104,7 +104,7 @@ export default function (app) {
       <Route exact path='/soda/business/account' component={getComponent(account,　app)} />
       <Route exact path='/soda/business/bill/:id' component={getComponent(billDetailList,　app)} />
       <Route exact path='/soda/business/bill' component={getComponent(bill,　app)} />
-      <Route exact path='/soda/business/bill/detail' component={getComponent(bill,　app)} />
+      <Route exact path='/soda/business/bill/detail' component={getComponent(billDetailList,　app)} />
       <Route exact path='/soda/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
       <Route exact path='/soda/business/daily-bill' component={getComponent(dailyBill,　app)} />
 

@@ -132,9 +132,9 @@ export default {
       const result = yield call(commonService.reset, payload.data)
       if(result.status == 'OK') {
         message.success('重置密码成功')
-        storage.clear('token')
-        session.clear()
-        payload.history.push('/')
+        // storage.clear('token')
+        // session.clear()
+        // payload.history.push('/')
       } else {
         message.error(result.message)
       }

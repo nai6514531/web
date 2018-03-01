@@ -61,7 +61,7 @@ class Operator extends Component {
           )
         }
       },
-      { title: '模块数量', dataIndex: 'deviceCount',key: 'deviceCount' },
+      // { title: '模块数量', dataIndex: 'deviceCount',key: 'deviceCount' },
       {
         title: '操作',
         render: (record) => {

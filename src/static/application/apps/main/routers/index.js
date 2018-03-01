@@ -6,12 +6,10 @@ import { getComponent } from '../components/bundle/'
 import Layout from '../components/layout/'
 
 import settings from './settings/'
-import finance from './finance/'
+// import finance from './finance/'
 import idle from './2/'
 import advertisement from './advertisement/'
 import platform from './platform/'
-import crm from './crm/'
-import business from './business/'
 import game from './game/'
 import soda from './soda/'
 
@@ -30,7 +28,6 @@ function RouterConfig({ history, app }) {
               { idle(app) }
               { advertisement(app) }
               { platform(app) }
-              { crm(app) }
               { game(app) }
               { soda(app) }
           </Layout>

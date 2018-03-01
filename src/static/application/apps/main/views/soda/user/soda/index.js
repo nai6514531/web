@@ -186,14 +186,14 @@ class Customer extends Component {
                   <div>
                     <span className={styles.title}>账户余额:</span>
                     <span className={styles.description}>{ (data.wallet && data.wallet.value >= 0) ? (data.wallet.value / 100).toFixed(2) : '-'}</span>
-                    <Link to={`/soda/${data.mobile}/bill`}>明细</Link>
+                    <Link to={`/soda/user/${data.mobile}/bill`}>明细</Link>
                     <span className={styles.resetValue}>
                       <Popconfirm title={`确认将用户 ${data.mobile} 账户余额清零吗?`} onConfirm={ this.resetValue.bind(this,data.mobile) } >
                         <Button type='danger' size='small'>清零</Button>
                       </Popconfirm>
                     </span>
                   </div>
-                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span><Link to={`/soda/${data.mobile}/chipcard`}>明细</Link></div>
+                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span><Link to={`/soda/user/${data.mobile}/chipcard`}>明细</Link></div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>
                 </div>

@@ -11,7 +11,7 @@ const breadItems = [
     title: '设置'
   },
   {
-    title: '修改密码'
+    title: '修改密码1'
   }
 ]
 
