@@ -90,7 +90,7 @@ class Bill extends Component {
     const url = this.search
     if(url.action) {
       this.props.dispatch({
-        type: 'crmBill/updateAppData',
+        type: 'sodaBill/updateAppData',
         payload: {
           id: url.action
         }
@@ -121,7 +121,7 @@ class Bill extends Component {
     if(type === 'action') {
       delete this.search.type
       this.props.dispatch({
-        type: 'crmBill/updateAppData',
+        type: 'sodaBill/updateAppData',
         payload: {
           id: value
         }
@@ -149,7 +149,7 @@ class Bill extends Component {
   fetch =(url) => {
     const mobile = this.props.match.params.id
     this.props.dispatch({
-      type: 'crmBill/list',
+      type: 'sodaBill/list',
       payload: {
         data: {
           url,
@@ -163,7 +163,7 @@ class Bill extends Component {
     this.fetch(url)
   }
   render() {
-    const {  common: { search }, crmBill: { data: { objects, pagination }, appData }, loading  } = this.props
+    const {  common: { search }, sodaBill: { data: { objects, pagination }, appData }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -216,14 +216,14 @@ class Bill extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmBill/clear'})
+    this.props.dispatch({ type: 'sodaBill/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
     common: state.common,
-    crmBill: state.crmBill,
+    sodaBill: state.sodaBill,
     loading: state.loading.global,
     ...props
   }

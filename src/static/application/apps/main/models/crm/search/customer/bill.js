@@ -34,7 +34,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmBill',
+  namespace: 'sodaBill',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

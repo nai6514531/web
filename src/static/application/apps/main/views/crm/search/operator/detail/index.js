@@ -34,7 +34,7 @@ class OperatorDetail extends Component {
   }
   fetch = () => {
     this.props.dispatch({
-      type: 'crmOperatorDetail/detail',
+      type: 'mngUserDetail/detail',
       payload: {
         data: this.props.match.params.id
       }
@@ -42,23 +42,23 @@ class OperatorDetail extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'crmOperatorDetail/hideModal'
+      type: 'mngUserDetail/hideModal'
     })
   }
   show = (record) => {
     this.props.dispatch({
-      type: 'crmOperatorDetail/showModal'
+      type: 'mngUserDetail/showModal'
     })
   }
   showConfirm = (values) => {
     const self = this
-    const data = this.props.crmOperatorDetail.data
+    const data = this.props.mngUserDetail.data
     const id = this.props.match.params.id
     confirm({
       content: `账号为${data.account}的密码将重置为${values.password},是否确认修改？`,
       onOk() {
         self.props.dispatch({
-          type: 'crmOperatorDetail/updatePassword',
+          type: 'mngUserDetail/updatePassword',
           payload: {
             data: {
               password: md5(values.password),
@@ -79,7 +79,7 @@ class OperatorDetail extends Component {
     })
   }
   render() {
-    const { crmOperatorDetail: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
+    const { mngUserDetail: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
     const breadItems = [
       {
         title: '客服系统'
@@ -211,12 +211,12 @@ class OperatorDetail extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmOperatorDetail/clear'})
+    this.props.dispatch({ type: 'mngUserDetail/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmOperatorDetail: state.crmOperatorDetail,
+    mngUserDetail: state.mngUserDetail,
     loading: state.loading.global,
     ...props
   }

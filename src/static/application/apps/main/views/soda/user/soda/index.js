@@ -75,7 +75,7 @@ class Customer extends Component {
   }
   fetch = (mobile) => {
     this.props.dispatch({
-      type: 'crmCustomer/list',
+      type: 'sodaUser/list',
       payload: {
         data: mobile
       }
@@ -83,17 +83,17 @@ class Customer extends Component {
   }
   hide = () => {
     this.props.dispatch({
-      type: 'crmCustomer/hideModal'
+      type: 'sodaUser/hideModal'
     })
   }
   show = (record) => {
     this.props.dispatch({
-      type: 'crmCustomer/showModal'
+      type: 'sodaUser/showModal'
     })
   }
   resetValue(mobile){
     this.props.dispatch({
-      type: 'crmCustomer/resetValue',
+      type: 'sodaUser/resetValue',
       payload: {
         data: mobile
       }
@@ -101,12 +101,12 @@ class Customer extends Component {
   }
   showConfirm = (values) => {
     const self = this
-    const data = this.props.crmCustomer.data
+    const data = this.props.sodaUser.data
     confirm({
       content: `账号为${data.mobile}的密码将重置为${values.password},是否确认修改？`,
       onOk() {
         self.props.dispatch({
-          type: 'crmCustomer/updatePassword',
+          type: 'sodaUser/updatePassword',
           payload: {
             data: {
               password: md5(values.password),
@@ -127,7 +127,7 @@ class Customer extends Component {
     })
   }
   render() {
-    const { crmCustomer: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
+    const { sodaUser: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -232,12 +232,12 @@ class Customer extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmCustomer/clear'})
+    this.props.dispatch({ type: 'sodaUser/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmCustomer: state.crmCustomer,
+    sodaUser: state.sodaUser,
     loading: state.loading.global,
     ...props
   }

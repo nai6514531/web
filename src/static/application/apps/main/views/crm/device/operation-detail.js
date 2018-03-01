@@ -82,7 +82,7 @@ class OperationDetail extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmDevice/detail',
+      type: 'sodaDevice/detail',
       payload: {
         data:  {
             ...url,
@@ -96,7 +96,7 @@ class OperationDetail extends Component {
     this.fetch(url)
   }
   render() {
-    const { crmDevice: { detail: { objects, pagination } }, loading  } = this.props
+    const { sodaDevice: { detail: { objects, pagination } }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -112,12 +112,12 @@ class OperationDetail extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmDevice/clear'})
+    this.props.dispatch({ type: 'sodaDevice/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmDevice: state.crmDevice,
+    sodaDevice: state.sodaDevice,
     loading: state.loading.global,
     ...props
   }

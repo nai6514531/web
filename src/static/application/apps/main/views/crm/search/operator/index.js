@@ -104,7 +104,7 @@ class Operator extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmOperator/list',
+      type: 'mngUser/list',
       payload: {
         data: url
       }
@@ -115,7 +115,7 @@ class Operator extends Component {
     this.fetch(url)
   }
   render() {
-    const { crmOperator: { data: { objects, pagination } }, loading  } = this.props
+    const { mngUser: { data: { objects, pagination } }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -147,12 +147,12 @@ class Operator extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmOperator/clear'})
+    this.props.dispatch({ type: 'mngUser/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmOperator: state.crmOperator,
+    mngUser: state.mngUser,
     loading: state.loading.global,
     ...props
   }

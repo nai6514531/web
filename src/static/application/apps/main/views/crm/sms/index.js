@@ -105,7 +105,7 @@ class Sms extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmSms/list',
+      type: 'sodaSms/list',
       payload: {
         data: url
       }
@@ -121,7 +121,7 @@ class Sms extends Component {
     }
   }
   render() {
-    const { crmSms: { data: { objects, pagination } }, loading  } = this.props
+    const { sodaSms: { data: { objects, pagination } }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -160,12 +160,12 @@ class Sms extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmSms/clear'})
+    this.props.dispatch({ type: 'sodaSms/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmSms: state.crmSms,
+    sodaSms: state.sodaSms,
     loading: state.loading.global,
     ...props
   }

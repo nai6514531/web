@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import userService from '../../../../../services/soda-manager/user.js' 
-import deviceService from '../../../../../services/soda-manager/device.js' 
+import userService from '../../../../../services/soda-manager/user.js'
+import deviceService from '../../../../../services/soda-manager/device.js'
 import { cloneDeep } from 'lodash'
 
 const model = {
@@ -15,7 +15,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmOperatorDetail',
+  namespace: 'mngUserDetail',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

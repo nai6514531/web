@@ -37,7 +37,7 @@ class DeviceDetail extends Component {
   }
   fetch = (url) => {
     this.props.dispatch({
-      type: 'crmDeviceDetail/detail',
+      type: 'sodaDeviceDetail/detail',
       payload: {
         data:  {
             ...url,
@@ -47,14 +47,14 @@ class DeviceDetail extends Component {
     })
   }
   resetToken = () => {
-    const { serialNumber } = this.props.crmDeviceDetail.data
+    const { serialNumber } = this.props.sodaDeviceDetail.data
     const self = this
     confirm({
       title: '重置密码?',
       content: `设备号为${serialNumber}的密码将被重置,是否确认修改？`,
       onOk() {
         self.props.dispatch({
-          type: 'crmDeviceDetail/resetToken',
+          type: 'sodaDeviceDetail/resetToken',
           payload: {
             data: { serialNumber }
           }
@@ -63,7 +63,7 @@ class DeviceDetail extends Component {
     })
   }
   render() {
-    const { crmDeviceDetail: { data, token }, loading } = this.props
+    const { sodaDeviceDetail: { data, token }, loading } = this.props
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
@@ -141,12 +141,12 @@ class DeviceDetail extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmDeviceDetail/clear'})
+    this.props.dispatch({ type: 'sodaDeviceDetail/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmDeviceDetail: state.crmDeviceDetail,
+    sodaDeviceDetail: state.sodaDeviceDetail,
     loading: state.loading.global,
     ...props
   }

@@ -1,7 +1,7 @@
 import request from '../../utils/request'
 const userService = {
   list: (data) => {
-    return request.get(`/mng/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&roleId=${data.roleId || ''}`)
+    return request.get(`/mng/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&roleId=${data.roleId || ''}&type=${data.type}`)
   },
   adminUserlist: (data) => {
     return request.get(`/mng/admin/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}&keywords=${data.keywords || ''}`)
@@ -13,7 +13,7 @@ const userService = {
     return request.put(`/mng/users/${id}`, data)
   },
   add: (data) => {
-    return request.post(`/mng/users`, data)
+    return request.post(`/mng/staffs`, data)
   },
   delete: (id) => {
     return request.delete(`/mng/users/${id}`)

@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { Row, Col, Spin, Card } from 'antd'
-import styles from '../../../../assets/css/page-detail.pcss'
 import moment from 'moment'
-import dict from '../../../../utils/dict.js'
-import { conversionUnit } from '../../../../utils/functions.js'
-import { transformUrl, toQueryString } from '../../../../utils/'
+
+import styles from '../../../../../assets/css/page-detail.pcss'
+import Breadcrumb from '../../../../../components/layout/breadcrumb/'
+import dict from '../../../../../utils/dict.js'
+import { conversionUnit } from '../../../../../utils/functions.js'
+import { transformUrl, toQueryString } from '../../../../../utils/'
 
 class CrmConsumeDetail extends Component {
   constructor(props) {

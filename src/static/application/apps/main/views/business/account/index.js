@@ -74,13 +74,15 @@ class App extends Component {
       }, {
         title: '地址',
         dataIndex: 'address',
-      }, {
-        title: '模块数量',
-        render: (record) => {
-          let count = op.get(record, 'device.count')
-          return count
-        }
-      }, {
+      },
+      // {
+      //   title: '模块数量',
+      //   render: (record) => {
+      //     let count = op.get(record, 'device.count')
+      //     return count
+      //   }
+      // },
+      {
         title: '操作',
         render: (text, record) => {
           let { isSubAccount, parentId } = this.state
@@ -144,7 +146,7 @@ class App extends Component {
     pagination = {...this.state.pagination, ...pagination}
     this.setState({ searchLoading: true, loading: true, search, pagination })
 
-    UserService.getDetailWithDevice({ ...search, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
+    UserService.list({ ...search, ...{ type: 0 }, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }

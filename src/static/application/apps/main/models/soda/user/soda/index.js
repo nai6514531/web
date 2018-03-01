@@ -10,7 +10,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmCustomer',
+  namespace: 'sodaUser',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

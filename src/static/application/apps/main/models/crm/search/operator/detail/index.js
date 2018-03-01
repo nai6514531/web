@@ -15,7 +15,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmOperatorDetail',
+  namespace: 'mngUserDetail',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {
