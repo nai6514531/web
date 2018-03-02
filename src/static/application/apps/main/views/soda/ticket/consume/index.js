@@ -187,7 +187,7 @@ class Consume extends Component {
       type: 'crmConsume/refund',
       payload: {
         id: id,
-        data: this.search
+        data: { ...this.search, status: '4,7' }
       }
     })
   }

@@ -193,7 +193,7 @@ class Consume extends Component {
           type: 'businessConsume/refund',
           payload: {
             id: id,
-            data: { ...url }
+            data: { ...url, status : '4,6,7' }
           }
         })
       }
