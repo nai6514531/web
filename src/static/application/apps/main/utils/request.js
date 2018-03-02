@@ -63,12 +63,13 @@ api.interceptors.response.use(
       if (data&&data.status === 'UNAUTHORIZED') {
         storage.clear('token')
         session.clear()
-        return confirm({
+        confirm({
           title: data.message,
           onOk() {
             window.location.href = '/'
           }
         })
+        return Promise.reject(error)
       }
     }
     message.error('系统开小差了,请重试!', 3)
