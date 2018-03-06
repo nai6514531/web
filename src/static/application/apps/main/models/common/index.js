@@ -90,6 +90,13 @@ export default {
       const result = yield call(commonService.profile)
       if(result.status === 'OK') {
         // storage.val('userInfo', result.data)
+        const { id, parentId, type } = result.data.user
+        if(type === 0) {
+          result.data.user.mainId = id
+        }
+        if(type === 1) {
+          result.data.user.mainId = parentId
+        }
          yield put({
           type: 'updateUesrInfo',
           payload: result.data

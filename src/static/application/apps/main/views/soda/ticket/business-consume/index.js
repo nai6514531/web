@@ -105,7 +105,8 @@ class Consume extends Component {
           if(record.status.value === 7) {
             const createdAt = moment(record.createdAt).format('YYYY-MM-DD')
             const today = moment(new Date()).format('YYYY-MM-DD')
-            if(createdAt == today && record.ownerId == this.props.common.userInfo.user.id ) {
+            const { mainId } =  this.props.common.userInfo.user
+            if(createdAt == today && record.ownerId == mainId ) {
               // 运营商可针对在自己名下的当日消费订单进行退款
               return (
                 <span>

@@ -79,7 +79,6 @@ class DayConsume extends Component {
     ]
   }
   componentDidMount() {
-    console.log("ok")
     this.fetch(this.search)
   }
   fetch = (url) => {
@@ -91,7 +90,7 @@ class DayConsume extends Component {
           ...url,
           startAt: `${this.month}-01`,
           endAt: `${this.month}-${daysInMonth}`,
-          userId: this.props.common.userInfo.user.id
+          userId: this.props.common.userInfo.user.mainId
         }
       }
     })

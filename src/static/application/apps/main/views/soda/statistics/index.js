@@ -115,7 +115,7 @@ class MonthStatistics extends Component {
       payload: {
         data: {
           limit: -1,
-          userId: this.props.common.userInfo.user.id
+          userId: this.props.common.userInfo.user.mainId
         }
       }
     })
@@ -266,7 +266,7 @@ class DeviceStatistics extends Component {
        ...this.search,
       startAt,
       endAt,
-      ownerId: this.props.common.userInfo.user.id,
+      ownerId: this.props.common.userInfo.user.mainId,
       allDevices: 0,
       status: '7',
       period: 'month'
