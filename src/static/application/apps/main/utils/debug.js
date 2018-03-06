@@ -3,7 +3,7 @@ import querystring from 'querystring'
 import cookie from 'component-cookie'
 
 import platform from './platform'
-import { COOKIE } from '../constant/index'
+import { COOKIE } from '../constant/cookie'
 
 export const env = window.__ENV__ = __ENV__
 const qs = querystring.parse(window.location.search.slice(1))

@@ -1,7 +1,7 @@
 import cookie from 'component-cookie'
 import querystring from 'querystring'
 
-import { COOKIE } from '../constant/index'
+import { COOKIE } from '../constant/cookie'
 
 const qs = querystring.parse(window.location.search.slice(1))
 
