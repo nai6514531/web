@@ -279,7 +279,7 @@ class Menu extends Component {
           dataSource={objects}
           columns={this.columns}
           loading={loading}
-          pagination={false}
+          pagination={true}
         />
         <Modal
           title={title}
