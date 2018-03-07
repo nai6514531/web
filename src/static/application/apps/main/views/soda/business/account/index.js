@@ -75,13 +75,13 @@ class App extends Component {
         title: '地址',
         dataIndex: 'address',
       },
-      // {
-      //   title: '模块数量',
-      //   render: (record) => {
-      //     let count = op.get(record, 'device.count')
-      //     return count
-      //   }
-      // },
+      {
+        title: '模块数量',
+        render: (record) => {
+          let count = op.get(record, 'device.count')
+          return count
+        }
+      },
       {
         title: '操作',
         render: (text, record) => {
@@ -146,7 +146,7 @@ class App extends Component {
     pagination = {...this.state.pagination, ...pagination}
     this.setState({ searchLoading: true, loading: true, search, pagination })
 
-    UserService.list({ ...search, ...{ type: 0 }, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
+    UserService.getDetailWithDevice({ ...search, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -167,7 +167,7 @@ class App extends Component {
   }
   changeHistory (options) {
     let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'keys', 'parentId',  'limit', 'offset')
-    this.props.history.push(`/soda/business/account?${querystring.stringify(query)}`)
+    this.props.history.push(`/soda/business/account/sub?${querystring.stringify(query)}`)
   }
   search() {
     let pagination = { offset: 0 }
