@@ -42,7 +42,7 @@ const userService = {
     return request.get(`/mng/users/${options.id}/cash-accounts`)
   },
   getDetailWithDevice: (options) => {
-    return request.get(`/mng/business/device`, {
+    return request.get(`/mng/users-devices`, {
       params: options
     })
   }
