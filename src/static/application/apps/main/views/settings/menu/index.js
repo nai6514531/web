@@ -44,10 +44,10 @@ class Menu extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a> |
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑</a>
+              {/* <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
                 <a href='javascript:void(0)'>{'\u00A0'}删除</a>
-              </Popconfirm>
+              </Popconfirm> */}
             </span>
           )
         }
