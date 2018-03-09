@@ -80,6 +80,7 @@ class OperatorDetail extends Component {
   }
   render() {
     const { mngUserDetail: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
+    const { name, account } = this.search
     const breadItems = [
       {
         title: '苏打生活'
@@ -89,7 +90,7 @@ class OperatorDetail extends Component {
       },
       {
         title: 'B端用户',
-        url: `/mng/user?keywords=${this.search.keywords}`
+        url: `/mng/user?name=${name}&account=${account}`
       },
       {
         title: '运营商详情'

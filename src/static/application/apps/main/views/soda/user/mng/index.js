@@ -66,15 +66,15 @@ class Operator extends Component {
         title: '操作',
         render: (record) => {
           return (
-            <Link to={`/mng/user/${record.id}?keywords=${this.search.keywords}`}>详情</Link>
+            <Link to={`/mng/user/${record.id}?name=${this.search.name || ''}&account=${this.search.account || ''}`}>详情</Link>
           )
         }
       }
     ]
   }
   componentDidMount() {
-    const { keywords } = this.search
-    if(keywords) {
+    const { name, account } = this.search
+    if(name || account) {
       this.fetch(this.search)
     }
   }
@@ -88,8 +88,8 @@ class Operator extends Component {
     }
   }
   searchClick = () => {
-    const { keywords } = this.search
-    if(!keywords) {
+    const { name, account } = this.search
+    if(!name && !account) {
       message.info('请输入筛选条件')
       return
     }
@@ -122,10 +122,18 @@ class Operator extends Component {
         <Breadcrumb items={breadItems} />
         <span className={styles.input}>
           <InputClear
-            placeholder='运营商名称/登录账号'
-            onChange={this.changeHandler.bind(this, 'keywords')}
+            placeholder='运营商名称'
+            onChange={this.changeHandler.bind(this, 'name')}
             onPressEnter={this.searchClick}
-            defaultValue={this.search.keywords}
+            defaultValue={this.search.name}
+          />
+        </span>
+        <span className={styles.input}>
+          <InputClear
+            placeholder='登录账号'
+            onChange={this.changeHandler.bind(this, 'account')}
+            onPressEnter={this.searchClick}
+            defaultValue={this.search.account}
           />
         </span>
         <Button

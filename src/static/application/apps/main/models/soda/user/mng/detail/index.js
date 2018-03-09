@@ -38,8 +38,13 @@ export default {
     *detail({ payload: { data } }, { call, put }) {
       const result = yield call(userService.detail, data)
       if(result.status == 'OK') {
-        const deviceInfo = yield call(deviceService.list, { userId: result.data.id })
-        const accountInfo = yield call(userService.cashAccount, { userId: result.data.id })
+        // 员工账号展示主账号的数据
+        let mainId = result.data.id
+        if( result.data.type === 1 ) {
+          mainId = result.data.parent.id
+        }
+        const deviceInfo = yield call(deviceService.list, { userId: mainId })
+        const accountInfo = yield call(userService.cashAccount, { userId: mainId })
 
         if(deviceInfo.status == 'OK') {
           result.data.deviceCount = deviceInfo.data.pagination.total

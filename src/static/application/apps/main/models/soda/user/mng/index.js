@@ -22,7 +22,7 @@ export default {
   },
   effects: {
     *list({ payload: { data } }, { call, put }) {
-      const result = yield call(userService.list, data)
+      const result = yield call(userService.adminUserlist, data)
       if(result.status == 'OK') {
         // let showError = true
         // yield* result.data.objects.map(function* (value, index) {
