@@ -6,7 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import RoleModal from './roleModal.js'
+import PasswordModal from './passwordModal.js'
 import styles from '../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
@@ -18,10 +18,13 @@ const formItemLayout = {
 }
 const breadItems = [
   {
-    title: '设置'
+    title: '苏打生活'
   },
   {
-    title: '用户'
+    title: '账号管理'
+  },
+  {
+    title: '员工账号'
   }
 ]
 class User extends Component {
@@ -33,19 +36,9 @@ class User extends Component {
     this.checkList = []
     this.columns = [
       {
-        title: '用户名称',
+        title: '员工姓名',
         dataIndex: 'name',
         key: 'name',
-      },
-      {
-        title: '联系人',
-        dataIndex: 'contact',
-        key: 'contact',
-      },
-      {
-        title: '手机号',
-        dataIndex: 'mobile',
-        key: 'mobile',
       },
       {
         title: '登录账号',
@@ -53,39 +46,37 @@ class User extends Component {
         key: 'account',
       },
       {
+        title: '联系手机号',
+        dataIndex: 'mobile',
+        key: 'mobile',
+      },
+      {
         title: '角色',
-       render: (text, record, index) => {
+        render: (text, record, index) => {
          return (
           record.role[0] && record.role[0].name //只支持单角色
          )
        }
       },
-      {
-        title: '状态',
-       render: (text, record, index) => {
-         return (
-          record.status === 0 ? '正常' : '拉黑'
-         )
-       }
-      },
-      {
-        title: '地址',
-        dataIndex: 'address',
-        key: 'address',
-      },
+      // {
+      //   title: '状态',
+      //  render: (text, record, index) => {
+      //    return (
+      //     record.status === 0 ? '正常' : '已拉黑'
+      //    )
+      //  }
+      // },
       {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
-              {
-                record.status === 0 ? <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                    <a href='javascript:void(0)'>{'\u00A0'}拉黑</a> |
-                  </Popconfirm> : ''
-              }
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
+              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息</Link>
+              <Popconfirm title='确定要删除该账号?' onConfirm={ this.delete.bind(this,record.id) } >
+                    | <a href='javascript:void(0)'>{'\u00A0'}删除账号</a>
+              </Popconfirm>
             </span>
           )
         }
@@ -132,10 +123,7 @@ class User extends Component {
   show = (id) => {
     this.id = id
     this.props.dispatch({
-      type: 'user/assignedRoles',
-      payload: {
-        id: id
-      }
+      type: 'user/showModal'
     })
   }
   changeHandler =  (type, e) => {
@@ -220,7 +208,7 @@ class User extends Component {
           <Button
             type='primary'
             className={styles.button}>
-              添加员工
+              新增账号
           </Button>
         </Link>
         <DataTable
@@ -231,7 +219,7 @@ class User extends Component {
           pagination={pagination}
           change={this.change}
         />
-        { visible ? <RoleModal {...this.props} id={this.id}/> : null }
+        <PasswordModal {...this.props} id={this.id}/>
       </div>
     )
   }
