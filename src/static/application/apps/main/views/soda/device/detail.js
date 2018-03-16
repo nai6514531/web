@@ -22,32 +22,43 @@ class DeviceDetail extends Component {
     const { keys, serials } = search
     this.search = search
     this.breadItems = [
-        {
-          title: '苏打生活'
-        },
-        {
-          title: '设备查询',
-          url: `/soda/device?serials=${serials}&keys=${keys}`
-        },
-        {
-          title: '设备详情'
-        }
-      ]
+      {
+        title: '苏打生活'
+      },
+      {
+        title: '设备查询',
+        url: `/soda/device?serials=${serials}&keys=${keys}&offset=0&limit=10`
+      },
+      {
+        title: '设备详情'
+      }
+    ]
   }
   componentDidMount() {
     const url = this.search
     this.fetch(url)
   }
   fetch = (url) => {
-    console.log(this.props.match.params.id)
     this.props.dispatch({
       type: 'sodaDeviceDetail/detail',
       payload: {
         data:  {
           ...url,
-          id: this.props.match.params.id
+          serial: this.props.match.params.serial
         }
       }
+    })
+    this.props.dispatch({
+      type: 'sodaDeviceDetail/modes',
+      payload: {
+        data:  {
+          ...url,
+          serials: this.props.match.params.serial
+        }
+      }
+    })
+    this.props.dispatch({
+      type: 'sodaDeviceDetail/deviceTypes'
     })
   }
   resetToken = () => {
@@ -67,7 +78,9 @@ class DeviceDetail extends Component {
     })
   }
   render() {
-    const { sodaDeviceDetail: { data, token }, loading } = this.props
+    const { sodaDeviceDetail: { data, token }, deviceTypes, modes, loading } = this.props
+    const feature = _.find(deviceTypes || [], { type : op(data).get('feature.type') }) || {}
+    
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
@@ -86,12 +99,17 @@ class DeviceDetail extends Component {
                   <div><span className={styles.title}>模块号:</span>{data.serial || '-'}</div>
                   <div>
                     <span className={styles.title}>价格:</span>
-                    {(data.modes || []).map((mode) => {
+                    {(modes || []).map((mode) => {
                       return [`${mode.name}`, `${conversionUnit(mode.value)}元`, `${mode.duration/1000}分钟`].join(' ')
                     }).join('/')}
                   </div>
-                  <div><span className={styles.title}>类型:</span>{op(data).get('feature.name') || '-'}</div>
-                  <div><span className={styles.title}>服务地点:</span>{_.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'}</div>
+                  <div><span className={styles.title}>类型:</span>{op(feature).get('name') || '-'}</div>
+                  <div>
+                    <span className={styles.title}>服务地点:</span>
+                    { _.isEmpty(op(data).get('serviceAddress')) ? null :
+                      _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
+                    }
+                  </div>
                   <div><span className={styles.title}>状态:</span>{op(data).get('status.description') || '-' }</div>
                   <div>
                     <span className={styles.title}>重置密码:</span>
@@ -150,6 +168,8 @@ class DeviceDetail extends Component {
 function mapStateToProps(state,props) {
   return {
     sodaDeviceDetail: state.sodaDeviceDetail,
+    deviceTypes: state.sodaDeviceDetail.deviceTypes,
+    modes: state.sodaDeviceDetail.modes,
     loading: state.loading.global,
     ...props
   }

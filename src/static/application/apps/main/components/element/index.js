@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom'
 import { connect } from 'dva'
 import _ from 'underscore'
 
-import CONFIG from './config'
-
 @connect(
   function mapStateToProps(state, props) {
     return {
@@ -20,7 +18,7 @@ export const Element = (options) => (View) => class extends Component {
 
   isVisible(value) {
     let { elementList } = this.props
-    return !_.chain(elementList).findWhere({ id: CONFIG[value] }).isEmpty().value()
+    return !_.chain(elementList).findWhere({ reference: value }).isEmpty().value()
   }
 
   render() {

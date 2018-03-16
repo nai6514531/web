@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Promise from 'bluebird'
 import _ from 'underscore'
+import op from 'object-path'
 import querystring from 'querystring'
 import clone from 'clone'
 import QRCode from 'qrcode.react'
@@ -97,6 +98,7 @@ class Edit extends Component {
       serviceAddresses: [],
       loading: false,
       activeModal: '',
+      activeAddressId: 0,
       activeSchoolId: 0,
       activeFeatureType: 0
     }
@@ -107,44 +109,59 @@ class Edit extends Component {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
     let { isAssigned } = query
-    let { id } = this.props.match.params
+    let { serial } = this.props.match.params
 
     this.isAdd = !~path.indexOf('edit')
-    this.isAssigned = isAssigned
+    this.isAssigned = isAssigned === 'true' || false
     if (!this.isAdd) {
-      this.getDeviceDetail(id) 
+      this.getDeviceDetail(serial)
+    } else {
+      this.getDeviceServiceAddress()
     }
-    this.getDeviceServiceAddress()
     this.getDeviceType()
   }
-  getDeviceDetail(id) {
+  getDeviceDetail(serial) {
     this.setState({ loading: true })
-    DeviceService.detail(id).then((res) => {
+    DeviceService.detail(serial).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
-      let { data } = res
-      let { serviceAddress: { school : { id: schoolId } } } = data
+      let { data: device } = res
+      this.getDeviceServiceAddress(device.user.id)
+      this.getDeviceModes(device) 
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
+  getDeviceModes(device) {
+    this.setState({ loading: true })
+    DeviceService.deviceModeList({ serials: device.serial }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      let { data: { objects } } = res
       this.setState({
-        device: data,
-        activeFeatureType: data.feature.type,
-        activeSchoolId: schoolId,
+        device: { ...device,  modes: objects },
+        activeAddressId: device.serviceAddress.id,
+        activeFeatureType: device.feature.type,
         loading: false
       })
-      return data.feature.type
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
   // 获取设备服务地点
-  getDeviceServiceAddress() {
-    DeviceAddressService.list().then((res) => {
+  getDeviceServiceAddress(userId) {
+    DeviceAddressService.list({ userId: userId}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       let { data: { objects } } = res
-      let schools = _.chain(objects).groupBy((address) => {
+      let schools = _.chain(objects).reject((address) => {
+        return address.school.address === '' || address.school.name === ''
+      }).groupBy((address) => {
         return address.school.id
       }).map((value, key) => {
         return {
@@ -185,7 +202,7 @@ class Edit extends Component {
     let { form: { validateFields } } = this.props
     let { device: { modes }, loading, deviceTypes, activeFeatureType } = this.state
     let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
-    let modesGroupByPulseId = _.indexBy(modes, (mode) => {
+    let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
       return mode.pulse.id
     })
 
@@ -228,6 +245,15 @@ class Edit extends Component {
       }
 
       if (isAdd) {
+        let isInvalid = false
+        _.chain(serials.split('\n')).map((serial) => String(serial)).groupBy((serial) => serial.length ).keys().each((value) => {
+          if (+value < 5) {
+            isInvalid = true
+          }
+        })
+        if (isInvalid) {
+          return message.error('请输入正确的设备编号')
+        }
         return this.addDevice({...options, serials: serials.split('\n') })
       }
       this.updateDevice(options)
@@ -270,11 +296,14 @@ class Edit extends Component {
     setFieldsValue({ addressId: "" })
     this.setState({ activeSchoolId: value })
   }
+  changeAddress(value) {
+    this.setState({ activeAddressId: value })
+  }
   initialActiveModes() {
     let { activeFeatureType, deviceTypes, device: { feature: { type }, modes } } = this.state
 
     let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
-    let modesGroupByPulseId = _.indexBy(modes, (mode) => {
+    let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
       return mode.pulse.id
     })
 
@@ -306,14 +335,16 @@ class Edit extends Component {
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { 
-      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeSchoolId, schools,
-      device: { id, serial, serviceAddress: { id : addressId, school: { id: schoolId } }, modes } 
+      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeAddressId, activeSchoolId, schools,
+      device: { id, serial } 
     } = this.state
     let isAdd = this.isAdd
     // 当前选择学校下的服务地点
-    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
+    let activeAddress = _.findWhere(serviceAddresses, { id: activeAddressId }) || {}
+    activeSchoolId = activeSchoolId || op(activeAddress).get('school.id')
+    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId === 0 ? '' : activeSchoolId }) || {}
     let activeModes = this.initialActiveModes()
-
+    
     return (<div>
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
       <Spin spinning={loading}>
@@ -373,33 +404,36 @@ class Edit extends Component {
             {...tailFormItemLayout}
             label="">
             <Row>
-              <Col xs={24} sm={19}>
+              <Col xs={24} sm={this.isAssigned ? 24 : 19}>
               {getFieldDecorator('addressId', {
                 rules: [
                   {required: true, message: '必填'},
                 ],
-                initialValue: addressId ? String(addressId) : ''
+                initialValue: _.chain(activeSchoolsMap.objects).findWhere({ id : activeAddressId }).isEmpty().value() ? '' : activeAddressId
               })(
                 <Select
                   showSearch
                   optionFilterProp="children"
                   placeholder="请选择服务地点"
+                  onChange={this.changeAddress.bind(this)}
                   notFoundContent="搜索无结果">
                     <Option value="">请选择服务地点</Option>
                     { 
                       (activeSchoolsMap.objects || []).map((address) => {
-                        return <Option key={address.id} value={String(address.id)}>{address.school.address}</Option>
+                        return <Option key={address.id} value={address.id}>{address.school.address}</Option>
                       })
                     }
                 </Select>
               )}
               </Col>
-              <Col xs={24} sm={{ span: 4, offset: 1 }}>
-                <Button 
-                  type='primary'
-                  className={styles.addressButton}
-                  onClick={() => { this.props.history.push(`/soda/business/device/address?isFromEditView=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
-              </Col>
+              { 
+                !this.isAssigned ? <Col xs={24} sm={{ span: 4, offset: 1 }}>
+                  <Button 
+                    type='primary'
+                    className={styles.addressButton}
+                    onClick={() => { this.props.history.push(`/soda/business/device/address?isFromEditView=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
+                </Col> : null
+              }
             </Row>
           </FormItem>
           <FormItem

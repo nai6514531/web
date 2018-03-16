@@ -27,24 +27,43 @@ class BatchTable extends Component {
         }
       }, {
         title: '学校',
+        colSpan: this.props.isAssigned ? 0 : 1,
         render: (record) => {
-          let { preview: { address: addressHighlight } } = this.props
-          let { serviceAddress : { school: { name }} } = record
-          return <span className={cx({ [styles.hightlight]: addressHighlight })}>{name || '-'}</span>
+          let { preview: { address: addressHighlight }, serviceAddresses, isAssigned } = this.props
+          let { serviceAddress: { id } } = record
+          let address = _.findWhere(serviceAddresses, { id: id })
+          if (!isAssigned) {
+            return <span className={cx({ [styles.hightlight]: addressHighlight })}>{op(address).get('school.name') || '-'}</span>
+          }
+          return {
+            props: {
+              colSpan: 0
+            }
+          }
         }
       }, {
         title: '服务地点',
+        colSpan: this.props.isAssigned ? 0 : 1,
         render: (serviceAddress, record) => {
-          let { preview: { address: addressHighlight } } = this.props
-          let { serviceAddress : { school: { address }} } = record
-          return <span className={cx({ [styles.hightlight]: addressHighlight })}>{address || '-'}</span>
+          let { preview: { address: addressHighlight }, serviceAddresses, isAssigned } = this.props
+          let { serviceAddress: { id } }= record
+          let address = _.findWhere(serviceAddresses, { id: id })
+          if (!isAssigned) {
+            return <span className={cx({ [styles.hightlight]: addressHighlight })}>{op(address).get('school.address') || '-'}</span>
+          }
+          return {
+            props: {
+              colSpan: 0
+            }
+          }
         }
       },
       {
         title: '关联设备类型',
         dataIndex: 'feature',
         render: (feature) => {
-          let { preview: { feature: featureTypeHighlight } } = this.props
+          let { preview: { feature: featureTypeHighlight }, deviceTypes } = this.props
+          feature = _.findWhere(deviceTypes, { type : op(feature).get('type') }) || {}
           return <span className={cx({ [styles.hightlight]: featureTypeHighlight })}>{op(feature).get('name') || '-'}</span>
         }
       }

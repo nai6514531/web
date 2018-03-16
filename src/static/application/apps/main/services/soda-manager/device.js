@@ -14,8 +14,11 @@ const deviceService = {
   list: (options) => {
     return request.get(`/mng/devices`, { params: options })
   },
-  detail:(id) => {
-    return request.get(`/mng/devices/${id}`)
+  adminlist: (options) => {
+    return request.get(`/mng/admin/devices`, { params: options })
+  },
+  detail:(serial) => {
+    return request.get(`/mng/devices/${serial}`)
   },
   operations: (data) => {
     let url = `/mng/devices-operations?offset=${data.offset || 0 }&limit=${data.limit || 10}&type=${data.type || ''}&serialNumber=${data.serialNumber}`
@@ -51,6 +54,10 @@ const deviceService = {
   },
   deviceType: () => {
     return request.get(`/mng/devices-type`)
+  },
+
+  deviceModeList: (options) => {
+    return request.get(`/mng/devices-modes`, { params: options })
   }
 }
 export default deviceService

@@ -49,6 +49,7 @@ import billDetailList from 'bundle-loader?lazy!../../views/soda/business/bill/de
 import dailyBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill'
 import dailyDetailBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill/detail'
 import account from 'bundle-loader?lazy!../../views/soda/business/account'
+import accountDetail from 'bundle-loader?lazy!../../views/soda/business/account/detail'
 import accountEdit from 'bundle-loader?lazy!../../views/soda/business/account/edit'
 
 import chipcardDetail from 'bundle-loader?lazy!../../views/soda/business/chipcard/detail'
@@ -83,7 +84,7 @@ export default function (app) {
 
       <Route exact path='/soda/device' component={getComponent(Device,app,DeviceModel)} />
       <Route exact path='/soda/device/operation/:id' component={getComponent(OperationDetail,app,DeviceModel)} />
-      <Route exact path='/soda/device/:id' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
+      <Route exact path='/soda/device/:serial' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
 
       <Route exact path='/soda/user' component={getComponent(SodaUser,app,SodaUserModel)} />
       <Route exact path='/mng/user' component={getComponent(MngUser,app,MngUserModel)} />
@@ -101,7 +102,7 @@ export default function (app) {
       <Route exact path='/soda/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
       <Route exact path='/soda/business/account/add' component={getComponent(accountEdit,　app)} />
       <Route exact path='/soda/business/account/sub' component={getComponent(account,　app)} />
-      <Route exact path='/soda/business/account' component={getComponent(account,　app)} />
+      <Route exact path='/soda/business/account' component={getComponent(accountDetail,　app)} />
       <Route exact path='/soda/business/bill/:id' component={getComponent(billDetailList,　app)} />
       <Route exact path='/soda/business/bill' component={getComponent(bill,　app)} />
       <Route exact path='/soda/business/bill/detail' component={getComponent(billDetailList,　app)} />
@@ -115,7 +116,7 @@ export default function (app) {
       <Route path='/soda/business/device/address/add' component={getComponent(deviceAddressEdit,　app)} />
       <Route path='/soda/business/device/address' component={getComponent(deviceAddress,　app)} />
 
-      <Route path='/soda/business/device/edit/:id' component={getComponent(deviceEdit,　app)} />
+      <Route path='/soda/business/device/edit/:serial' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/add' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/edit' component={getComponent(deviceBatchEdit,　app)} />
       <Route path='/soda/business/device' component={getComponent(device,　app)} />

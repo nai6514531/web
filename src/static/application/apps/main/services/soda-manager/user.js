@@ -1,12 +1,10 @@
 import request from '../../utils/request'
 const userService = {
-  list: (data) => {
-    let type = !isNaN(data.type) ? data.type : ''
-    let status = !isNaN(data.status) ? data.status : ''
-    return request.get(`/mng/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&roleId=${data.roleId || ''}&type=${type}&status=${status}`)
+  list: (options) => {
+    return request.get(`/mng/users?type=${type}`, { params: options })
   },
-  adminUserlist: (data) => {
-    return request.get(`/mng/admin/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}&keywords=${data.keywords || ''}`)
+  adminUserlist: (options) => {
+    return request.get(`/mng/admin/users`, { params: options })
   },
   detail: (id) => {
     return request.get(`/mng/users/${id}`)

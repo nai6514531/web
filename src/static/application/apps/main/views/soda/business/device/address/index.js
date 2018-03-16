@@ -138,7 +138,9 @@ class App extends Component {
         throw new Error(res.message)
       }
       let { data: { objects, pagination: { total } } } = res
-      let schools = _.chain(objects).groupBy((address) => {
+      let schools = _.chain(objects).reject((address) => {
+        return address.school.address === '' || address.school.name === ''
+      }).groupBy((address) => {
         return address.school.id
       }).map((value, key) => {
         return {
@@ -235,7 +237,7 @@ class App extends Component {
   }
   render() {
     let { list, loading, search: { addressName, schoolId }, schools } = this.state
-    let addressesBySchoolId = _.findWhere(schools, { id: +schoolId }) || {}
+    let addressesBySchoolId = _.findWhere(schools, { id: +schoolId === 0 ? '' : +schoolId }) || {}
 
     return (<div>
       <Breadcrumb items={breadItems} />
