@@ -16,7 +16,10 @@ const breadItems = [
     title: '苏打生活'
   },
   {
-    title: '运营商管理',
+    title: '账号管理'
+  },
+  {
+    title: '个人信息',
     url: '/soda/business/account'
   },
   {

@@ -298,7 +298,7 @@ class Pay extends Component {
   }
   updateAccount(options) {
     let { id } = this.props.match.params
-    let { isAdd, isSub, redirectUrl, parentId } = this.props
+    let { isAdd, isSub, redirectUrl } = this.props
     this.setState({ loading: true })
 
     UserService.updateCashAccount({ ...options, id: +id }).then((res) => {
@@ -311,7 +311,7 @@ class Pay extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/soda/business/account/sub?parentId=${parentId}`)
+        return this.props.history.push(`/soda/business/account/sub`)
       }
       return this.props.history.push(`/soda/business/account`)
     }).catch((err) => {
@@ -381,8 +381,11 @@ class Pay extends Component {
       })
     }, 3000)
   }
+  sendMobileCode() {
+
+  }
   render() {
-    let { form: { getFieldDecorator }, detail: { cashAccount }, isAdd, isSub } = this.props
+    let { form: { getFieldDecorator }, detail: { cashAccount, mobile }, isAdd, isSub } = this.props
     let { type, qrCodeUrl, keyLoading, wechat, isAuto, loading } = this.state
 
     return (<Spin spinning={loading}>
@@ -407,6 +410,28 @@ class Pay extends Component {
               </Radio>
             </RadioGroup>
           )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="验证码"
+          extra={mobile + '手机号验证'}
+        > 
+          <Row gutter={8}>
+            <Col span={12}>
+              {getFieldDecorator('code', {
+                rules: [
+                  { required: true, message: '必填' },
+                ],
+                initialValue: '',
+              })(
+                <Input placeholder="请输入验证码" />
+              )}
+            </Col>
+            <Col span={12}>
+              <Button onClick={this.sendMobileCode.bind(this)}>发送验证码</Button>
+            </Col>
+          </Row>
+          
         </FormItem>
         <FormItem
           {...formItemLayout}

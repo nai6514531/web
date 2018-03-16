@@ -6,13 +6,14 @@ import op from 'object-path'
 import cx from 'classnames'
 import md5 from 'md5';
 import querystring from 'querystring'
-import { Table, Button, message, Form, Tabs, Modal, Input, Spin } from 'antd'
+import { Table, Button, message, Form, Tabs, Modal, Input, Spin, Row, Col } from 'antd'
 const FormItem = Form.Item
 const createForm = Form.create
 const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
 
 import UserService from '../../../../../services/soda-manager/user'
+
 import styles from '../index.pcss'
 
 const formItemLayout = {
@@ -113,7 +114,6 @@ class Detial extends Component {
     })
   }
   createAccount(options) {
-    let { parentId } = this.props
     this.setState({ loading: true })
 
     UserService.add(options).then((res) => {
@@ -124,7 +124,7 @@ class Detial extends Component {
       this.setState({
         loading: false
       })
-      this.props.history.push(`/soda/business/account/sub?parentId=${parentId}`)
+      this.props.history.push(`/soda/business/account/sub`)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -133,7 +133,7 @@ class Detial extends Component {
   updateAccount(options) {
     let { id } = this.props.match.params
     id = +id
-    let { isAdd, isSub, parentId, redirectUrl } = this.props
+    let { isAdd, isSub, redirectUrl } = this.props
     this.setState({ loading: true })
 
     UserService.update({...options, id: id}, id ).then((res) => {
@@ -148,7 +148,7 @@ class Detial extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/soda/business/account/sub?parentId=${parentId}`)
+        return this.props.history.push(`/soda/business/account/sub`)
       }
       this.props.history.push(`/soda/business/account`)
     }).catch((err) => {
@@ -156,9 +156,24 @@ class Detial extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  handleClickCounter() {
+
+  }
   render() {
     let { form: { getFieldDecorator }, detail: { account, name, contact, mobile, telephone, address }, isAdd, isSub } = this.props
     let { loading } = this.state
+    // let counter = getFieldDecorator('smsCodeSentAt', {
+    //   initialValue: 0,
+    //   valuePropName: 'startedAt',
+    // })(
+    //   <Throttle
+    //     waitText={({ countdown }) => `重获验证码 (${countdown})`}
+    //     className={styles.send}
+    //     onClick={this.handleClickCounter.bind(this)}
+    //     disabled={loading}>
+    //     获取验证码
+    //   </Throttle>
+    // )
 
     return (<Spin spinning={loading}><Form onSubmit={this.handleSubmit.bind(this)}>
       {!isAdd ? <FormItem
@@ -263,6 +278,28 @@ class Detial extends Component {
         })(
           <Input placeholder="请输入手机号" />
         )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="验证码"
+        extra={mobile + '手机号验证'}
+      > 
+        <Row gutter={8}>
+          <Col span={12}>
+            {getFieldDecorator('code', {
+              rules: [
+                { required: true, message: '必填' },
+              ],
+              initialValue: '',
+            })(
+              <Input placeholder="请输入验证码" />
+            )}
+          </Col>
+          <Col span={12}>
+            <Button>发送验证码</Button>
+          </Col>
+        </Row>
+        
       </FormItem>
       <FormItem
         {...formItemLayout}

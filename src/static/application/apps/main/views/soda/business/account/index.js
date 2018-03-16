@@ -1,4 +1,5 @@
 import React, {  Component }from 'react'
+import { connect } from 'dva'
 import Promise from 'bluebird'
 import _ from 'underscore'
 import moment from 'moment'
@@ -6,7 +7,7 @@ import op from 'object-path'
 import cx from 'classnames'
 import querystring from 'querystring'
 import { Link } from 'react-router-dom'
-import { Table, Button, message } from 'antd';
+import { Table, Button, message } from 'antd'
 
 import { InputClear } from '../../../../components/form/input'
 import UserService from '../../../../services/soda-manager/user'
@@ -21,20 +22,10 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
-    title: '运营商管理'
-  }
-]
-
-const subBreadItems = [
-  {
     title: '苏打生活',
   },
   {
-    title: '运营商管理',
-    url: '/soda/business/account'
+    title: '账号管理',
   },
   {
     title: '下级运营商'
@@ -45,13 +36,11 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isSubAccount: false,
-      isPermissionRecharge: false,
-      parentId: '',
-      list: [],
       search: {
-        keys: ''
+        name: '',
+        contact: ''
       },
+      loading: false,
       pagination: {
         total: 0,
         limit: PAEG_SIZE,
@@ -76,21 +65,9 @@ class App extends Component {
         dataIndex: 'address',
       },
       {
-        title: '模块数量',
-        render: (record) => {
-          let count = op.get(record, 'device.count')
-          return count
-        }
-      },
-      {
         title: '操作',
         render: (text, record) => {
-          let { isSubAccount, parentId } = this.state
-
-          if (isSubAccount) {
-            return <Link to={`/soda/business/account/edit/${record.id}?parentId=${parentId}`}>修改</Link>
-          }
-          return <Link to={`/soda/business/account/edit/${record.id}`}>修改</Link>
+          return <Link to={`/soda/business/account/edit/${record.id}?isSub=true`}>修改</Link>
         }
       }
     ]
@@ -98,55 +75,19 @@ class App extends Component {
   componentWillMount() {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
-    let search = _.pick(query, 'keys', 'parentId')
+    let search = _.pick(query, 'name', 'contact')
     let pagination = _.pick(query, 'limit', 'offset')
-    let parentId = search.parentId || ''
 
-    if (!!parentId) {
-      this.setState({ isSubAccount: true, parentId })
-      this.list({ search: { keys: search.keys, id: parentId } , pagination})
-      return
-    }
-    this.detail()
-    this.getisRechargePermission()
-  }
-  getisRechargePermission() {
-    ChipcardService.getRechargePermission().then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      let data = res.data
-      this.setState({
-        isPermissionRecharge: data.value,
-      })
-    }).catch((err) => {
-      message.error(err.message || '服务器异常，刷新重试')
-    })
-  }
-  detail () {
-    UserService.getDetailWithDevice().then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      let data = res.data
-      this.setState({
-        list: new Array(data),
-        parentId: data.id,
-        loading: false
-      })
-    }).catch((err) => {
-      this.setState({ loading: false })
-      message.error(err.message || '服务器异常，刷新重试')
-    })
+    this.list({ search , pagination})
   }
   list({...options}) {
     let search = options.search || {}
     let pagination = options.pagination || {}
     search = {...this.state.search, ...search}
     pagination = {...this.state.pagination, ...pagination}
-    this.setState({ searchLoading: true, loading: true, search, pagination })
+    this.setState({ loading: true, search, pagination })
 
-    UserService.getDetailWithDevice({ ...search, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
+    UserService.list({ type: 0, ...search, ..._.pick(pagination, 'limit', 'offset') }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -157,16 +98,15 @@ class App extends Component {
           ...pagination,
           total: data.pagination.total
         },
-        searchLoading: false,
         loading: false
       })
     }).catch((err) => {
-      this.setState({ loading: false, searchLoading: false })
+      this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
   changeHistory (options) {
-    let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'keys', 'parentId',  'limit', 'offset')
+    let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'name', 'contact', 'limit', 'offset')
     this.props.history.push(`/soda/business/account/sub?${querystring.stringify(query)}`)
   }
   search() {
@@ -174,13 +114,9 @@ class App extends Component {
     this.changeHistory(pagination)
     this.list({ pagination })
   }
-  changeKeys (e) {
+  changeKeys (key, e) {
     const val = e.target.value || ''
-    this.setState({ search: {...this.state.search, keys: val.replace(/(^\s+)|(\s+$)/g,"") } })
-  }
-  toSubList () {
-    let { parentId } = this.state
-    this.props.history.push(`/soda/business/account/sub?parentId=${parentId}`)
+    this.setState({ search: {...this.state.search, [`${key}`]: val.replace(/(^\s+)|(\s+$)/g,"") } })
   }
   pagination () {
     let self = this
@@ -209,52 +145,50 @@ class App extends Component {
     }
   }
   render() {
-    let { isSubAccount, isPermissionRecharge, list, searchLoading, loading, parentId, search: { keys } } = this.state
+    let { list, loading, search: { name, contact } } = this.state
 
     return (<div>
-      <Breadcrumb items={isSubAccount ? subBreadItems : breadItems} />
-      {
-        isSubAccount ? <div>
-          <Button
-            type='primary'　
-            style={{ marginRight: 10, marginBottom: 10 }}
-            disabled={!!parentId ? false : true}
-            onClick={() => {  this.props.history.push(`/soda/business/account/add?parentId=${parentId}`) }}>
-            添加新运营商
-          </Button>
-          <InputClear
-            value={keys}
-            style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-            placeholder='输入运营商或联系人'
-            onChange={this.changeKeys.bind(this)}
-            onPressEnter={this.search.bind(this)}
-          />
-          <Button type='primary' loading={searchLoading} onClick={this.search.bind(this)}>筛选</Button>
-        </div> : <div>
-          <Button
-            type='primary'　
-            style={{ marginRight: 10, marginBottom: 10 }}
-            disabled={!!parentId ? false : true}
-            onClick={this.toSubList.bind(this)}>下级运营商</Button>
-          {isPermissionRecharge ? <Button
-            type='primary'
-            style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
-            onClick={() => { this.props.history.push('/soda/business/recharges-chipcard') }}>
-            IC卡金额转移
-          </Button> : null }
-        </div>
-      }
+      <Breadcrumb items={breadItems} />
+      <div>
+        <Button
+          type='primary'　
+          style={{ marginRight: 10, marginBottom: 10 }}
+          onClick={() => {  this.props.history.push(`/soda/business/account/add`) }}>
+          添加新运营商
+        </Button>
+        <InputClear
+          value={name}
+          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
+          placeholder='输入运营商名'
+          onChange={this.changeKeys.bind(this, 'name')}
+          onPressEnter={this.search.bind(this)}
+        />
+        <InputClear
+          value={contact}
+          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
+          placeholder='输入联系人'
+          onChange={this.changeKeys.bind(this, 'contact')}
+          onPressEnter={this.search.bind(this)}
+        />
+        <Button type='primary' loading={loading} onClick={this.search.bind(this)}>筛选</Button>
+      </div>
       <Table
         scroll={{ x: 980 }}
         style= {{ marginTop: 16 }}
         columns={this.columns}
         rowKey={record => record.id}
         dataSource={list}
-        pagination={isSubAccount ? this.pagination.call(this) : null}
+        pagination={this.pagination.call(this)}
         loading={loading}
       />
     </div>)
   }
 }
 
-export default App
+function mapStateToProps(state,props) {
+  return {
+    user: state.common.userInfo.user,
+    ...props
+  }
+}
+export default connect(mapStateToProps)(App)
