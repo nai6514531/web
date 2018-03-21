@@ -96,6 +96,7 @@ class OperatorDetail extends Component {
         title: '运营商详情'
       }
     ]
+
     return(
       <div>
         <Breadcrumb items={breadItems} />

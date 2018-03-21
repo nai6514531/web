@@ -127,11 +127,12 @@ class App extends Component {
       return
     }
     this.detail()
+    this.cashAccount()
   }
   detail() {
     let { id } = this.props.match.params
     this.setState({ loading: true })
-    UserService.GetDetailWithCashAccount({ id: id }).then((res) => {
+    UserService.detail(id).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -145,16 +146,30 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  cashAccount() {
+    let { id } = this.props.match.params
+    this.setState({ loading: true })
+    UserService.cashAccount({ userId: id }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      let data = res.data
+      this.setState({
+        cashAccount: data,
+        loading: false
+      })
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
   changeTab(key) {
     this.setState({ activeKey: key　})
   }
-  sendMobileCode() {
-
-  }
   render() {
     let { isAdd, isSub } = this.account
-    let { detail, activeKey, redirectUrl, loading } = this.state
-
+    let { detail, cashAccount, activeKey, redirectUrl, loading } = this.state
+    detail = { ...detail, cashAccount }
     return <div>
       <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} />
       <Tabs

@@ -74,7 +74,7 @@ class BatchMode extends Component {
       },
       schools: {},
       serviceAddresses: [],
-      activeSchoolId: 0,
+      activeSchoolId: '',
       activeFeatureType: 0,
       deviceTypes: [],
       devices: [],
@@ -155,19 +155,29 @@ class BatchMode extends Component {
         throw new Error(res.message)
       }
       let { data: { objects } } = res
-      let schools = _.chain(objects).reject((address) => {
-        return address.school.address === '' || address.school.name === ''
+      let schools = [], addresses
+      _.chain(objects).reject((address) => {
+        // 过滤地址为空 或 学校无校名
+        return address.school.address === '' || (address.school.name === '' && address.school.id !== 0)
       }).groupBy((address) => {
         return address.school.id
-      }).map((value, key) => {
-        return {
-          id: +key,
-          name: value[0].school.name,
-          objects: value
+      }).each((value, key) => {
+        if (value[0].school.id === 0) {
+          addresses = {
+            id: +key,
+            name: '其他',
+            objects: value
+          }
+        } else {
+           schools = [ ...schools, {
+            id: +key,
+            name: value[0].school.name,
+            objects: value
+          }]
         }
-      }).value()
+      })
       this.setState({
-        schools: schools,
+        schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         serviceAddresses: objects
       })
     })
@@ -432,7 +442,7 @@ class BatchMode extends Component {
     // 当前选择设备类型下的设备详情
     let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
     // 当前选择学校下的服务地点
-    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId === 0 ? '' : activeSchoolId }) || {}
+    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
 
     return (<div className={styles.batchEdit}>
       <Breadcrumb items={breadItems} />

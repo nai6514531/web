@@ -3,6 +3,7 @@ import _ from 'underscore'
 import querystring from 'querystring'
 import clone from 'clone'
 import QRCode from 'qrcode.react'
+import trim from 'trim'
 
 import { Modal, Button, Form, Icon, Spin, Radio, Select, Input, Row, Col, message } from 'antd'
 const { Group: RadioGroup } = Radio
@@ -17,6 +18,19 @@ import Breadcrumb from '../../../../../components/layout/breadcrumb'
 
 import styles from '../index.pcss'
 
+const breadItems = [
+  {
+    title: '苏打生活'
+  },
+  {
+    title: '地点管理',
+    url:'/soda/business/device/address'
+  },
+  {
+    title: '新增地点'
+  }
+]
+
 const editBreadItems = [
   {
     title: '苏打生活'
@@ -27,7 +41,7 @@ const editBreadItems = [
   },
   {
     title: '地点管理',
-    url:'/soda/business/device/address'
+    url:'/soda/business/device/address?fromDevice=true'
   },
   {
     title: '修改地点'
@@ -44,7 +58,7 @@ const addBreadItems = [
   },
   {
     title: '地点管理',
-    url:'/soda/business/device/address'
+    url:'/soda/business/device/address?fromDevice=true'
   },
   {
     title: '新增地点'
@@ -83,7 +97,7 @@ class Edit extends Component {
       detail: {
         id: 0,
         school: {
-          id: 0,
+          id: '',
           city: {
             id: 0,
           },
@@ -95,13 +109,10 @@ class Edit extends Component {
       },
       provinces: [],
       cities:[
-        { provinceId: 0, objects: [] }
       ],
       schools: [
-        { cityId: 0, objects: [] }
       ],
       addresses: [
-        { cityId: 0, objects: [] }
       ],
       loading: false,
       activeAddress: [{
@@ -115,6 +126,9 @@ class Edit extends Component {
     this.addAddressCount = 0
   }
   componentWillMount() {
+    let query = this.props.location.search ? this.props.location.search.slice(1) : ''
+    query = querystring.parse(query)
+    this.isFromDeviceView = query.fromDevice === 'true'
     let path = this.props.location.pathname
     let { id } = this.props.match.params
 
@@ -141,8 +155,8 @@ class Edit extends Component {
           id: id,
           address: address
         }],
-        activeCityId: cityId || 0,
-        activeProviceId: provinceId || 0
+        activeCityId: cityId,
+        activeProviceId: provinceId
       })
       this.getCityByProvinceId(provinceId)
       this.getSchoolByCityId(cityId)
@@ -265,13 +279,17 @@ class Edit extends Component {
           id: parseInt(value.provinceId, 10) || 0
         }
       }
-      let addressList = (activeAddress || []).map((item) => {
-        return { school: { ...options, address: value[item.id] } }
-      })
+      let addresses = _.chain(activeAddress || []).map((item) => {
+        return value[item.id]
+      }).union().value()
+      
       if (isAdd) {
-        return this.addAddress(addressList)
+        if (activeAddress.length !== addresses.length) {
+          return message.error('新增服务地点重复,请修改后再提交')
+        }
+        return this.addAddress({ school: { ...options, addresses: addresses }})
       }
-      this.updateAddress(addressList[0])
+      this.updateAddress({ school: { ...options, address: addresses[0] }})
     })
   }
   addAddress(options) {
@@ -338,9 +356,9 @@ class Edit extends Component {
     let isAdd = this.isAdd
     cities = _.findWhere(cities, { provinceId: activeProviceId }) || {}
     schools = _.findWhere(schools, { cityId: activeCityId }) || {}
-
+    
     return (<div>
-      <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
+      <Breadcrumb items={!this.isFromDeviceView ? breadItems : isAdd ? addBreadItems : editBreadItems} />
       <Spin spinning={loading}>
         <Form>
           <FormItem
@@ -350,7 +368,7 @@ class Edit extends Component {
               rules: [
                 {required: true, message: '必填'},
               ],
-              initialValue: provinceId ? String(provinceId) : ''
+              initialValue: provinceId === 0 ? '' : provinceId 
             })(
               <Select
                 showSearch
@@ -358,9 +376,10 @@ class Edit extends Component {
                 placeholder="请选择省份"
                 notFoundContent="搜索无结果"
                 onChange={this.changeProvince.bind(this)}>
+                  <Option value="">请选择省份</Option>
                   { 
                     (provinces || []).map((province) => {
-                      return <Option key={province.id} value={String(province.id)}>{province.name}</Option>
+                      return <Option key={province.id} value={province.id}>{province.name}</Option>
                     })
                   }
               </Select>
@@ -373,7 +392,7 @@ class Edit extends Component {
               rules: [
                 {required: true, message: '必填'},
               ],
-              initialValue: cityId ? String(cityId) : ''
+              initialValue: _.isEmpty(cities.objects) || cityId === 0 ? '' : cityId
             })(
               <Select
                 showSearch
@@ -381,9 +400,10 @@ class Edit extends Component {
                 placeholder="请选择城市"
                 notFoundContent="搜索无结果"
                 onChange={this.changeCity.bind(this)}>
+                  <Option value="">请选择城市</Option>
                   { 
                     (cities.objects || []).map((city) => {
-                      return <Option key={city.id} value={String(city.id)}>{city.name}</Option>
+                      return <Option key={city.id} value={city.id}>{city.name}</Option>
                     })
                   }
               </Select>
@@ -396,18 +416,20 @@ class Edit extends Component {
               rules: [
                 {required: true, message: '必填'},
               ],
-              initialValue:  !_.isEmpty(schools) && schoolId ? String(schoolId) : ''
+              initialValue: _.isEmpty(schools) && schoolId !== 0  ? '' : schoolId
             })(
               <Select
                 showSearch
                 optionFilterProp="children"
                 placeholder="请选择学校"
                 notFoundContent="搜索无结果">
+                  <Option value="">请选择学校</Option>
                   { 
                     (schools.objects || []).map((school) => {
-                      return <Option key={school.id} value={String(school.id)}>{school.name}</Option>
+                      return <Option key={school.id} value={school.id}>{school.name}</Option>
                     })
                   }
+                  <Option value={0}>其他</Option>
               </Select>
             )}
           </FormItem>
@@ -424,6 +446,7 @@ class Edit extends Component {
                         {required: true, message: '必填'},
                         { max:30, message: '不超过三十个字' },
                       ],
+                      normalize: trim,
                       initialValue: address.address,
                     })(
                       <Input placeholder="请输入服务地点" />

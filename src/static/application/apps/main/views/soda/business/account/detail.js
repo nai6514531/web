@@ -42,6 +42,7 @@ class App extends Component {
   }
   componentWillMount() {
     this.detail()
+    this.cashAccount()
     this.getisRechargePermission()
   }
   getisRechargePermission() {
@@ -60,7 +61,7 @@ class App extends Component {
   detail () {
     let { id } = this.props.user
     this.setState({ loading: true })
-    UserService.GetDetailWithCashAccount({ id: id }).then((res) => {
+    UserService.detail(id).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -74,14 +75,31 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  cashAccount() {
+    let { id } = this.props.user
+    this.setState({ loading: true })
+    UserService.cashAccount({ userId: id }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      let data = res.data
+      this.setState({
+        cashAccount: data,
+        loading: false
+      })
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
   toEdit () {
     let { user: { id }, history } = this.props
     history.push(`/soda/business/account/edit/${id}`)
   }
   render() {
     let { history } = this.props
-    let { user, isPermissionRecharge, loading } = this.state
-    user = op(user)
+    let { user, cashAccount, isPermissionRecharge, loading } = this.state
+    user = op({ ...user, cashAccount})
     return (<div className={styles.detail}>
       <Breadcrumb items={breadItems} />
       <Row className={styles.item}>
@@ -102,9 +120,9 @@ class App extends Component {
       <Row className={styles.item}>
         <h2>收款信息</h2>
         <form>
-          <Col xs={24} sm={12}><label>是否自定结算:</label><span>{user.get('cashAccount.isAuto') ? '是' : '否'}</span></Col>
-          <Col xs={24} sm={12}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type')] || '-'}</span></Col>
-          <Col xs={24} sm={12}><label>姓名|账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join('|')}</span></Col>
+          <Col xs={24}><label>是否自定结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
+          <Col xs={24}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
+          <Col xs={24}><label>姓名|账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join('|')}</span></Col>
         </form>
       </Row>
       <Row>

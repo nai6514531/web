@@ -32,13 +32,10 @@ const userService = {
     return request.put(`/mng/users/${id}/password`,data)
   },
   cashAccount: (data) => {
-    return request.get(`/mng/cash-accounts/${data.userId}`)
+    return request.get(`/mng/user-cash-accounts/${data.userId}`)
   },
   updateCashAccount: (options) => {
-    return request.put(`/mng/users/${options.id}/cash-accounts`, options)
-  },
-  GetDetailWithCashAccount: (options) => {
-    return request.get(`/mng/users/${options.id}/cash-accounts`)
+    return request.put(`/mng/user-cash-accounts/${options.id}`, options)
   },
   getDetailWithDevice: (options) => {
     return request.get(`/mng/users-devices`, {

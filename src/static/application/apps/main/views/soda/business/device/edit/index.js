@@ -99,7 +99,7 @@ class Edit extends Component {
       loading: false,
       activeModal: '',
       activeAddressId: 0,
-      activeSchoolId: 0,
+      activeSchoolId: '',
       activeFeatureType: 0
     }
     this.isAdd = false
@@ -159,19 +159,29 @@ class Edit extends Component {
         throw new Error(res.message)
       }
       let { data: { objects } } = res
-      let schools = _.chain(objects).reject((address) => {
-        return address.school.address === '' || address.school.name === ''
+      let schools = [], addresses = {}
+      _.chain(objects).reject((address) => {
+        // 过滤地址为空 或 学校无校名
+        return address.school.address === '' || (address.school.name === '' && address.school.id !== 0)
       }).groupBy((address) => {
         return address.school.id
-      }).map((value, key) => {
-        return {
-          id: +key,
-          name: value[0].school.name,
-          objects: value
+      }).each((value, key) => {
+        if (value[0].school.id === 0) {
+          addresses = {
+            id: +key,
+            name: '其他',
+            objects: value
+          }
+        } else {
+           schools = [ ...schools, {
+            id: +key,
+            name: value[0].school.name,
+            objects: value
+          }]
         }
-      }).value()
+      })
       this.setState({
-        schools: schools,
+        schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         serviceAddresses: objects
       })
     }).catch((err) => {
@@ -294,6 +304,7 @@ class Edit extends Component {
   changeSchool(value) {
     let { form: { setFieldsValue } } = this.props
     setFieldsValue({ addressId: "" })
+    console.log('changeSchool', value)
     this.setState({ activeSchoolId: value })
   }
   changeAddress(value) {
@@ -341,10 +352,10 @@ class Edit extends Component {
     let isAdd = this.isAdd
     // 当前选择学校下的服务地点
     let activeAddress = _.findWhere(serviceAddresses, { id: activeAddressId }) || {}
-    activeSchoolId = activeSchoolId || op(activeAddress).get('school.id')
-    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId === 0 ? '' : activeSchoolId }) || {}
+    activeSchoolId = activeSchoolId === '' ? op(activeAddress).get('school.id') : activeSchoolId
+    let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
     let activeModes = this.initialActiveModes()
-    
+
     return (<div>
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
       <Spin spinning={loading}>
@@ -384,7 +395,7 @@ class Edit extends Component {
               rules: [
                 {required: true, message: '必填'},
               ],
-              initialValue: activeSchoolId === 0 ? '' : activeSchoolId
+              initialValue: activeSchoolId
             })(
               <Select
                 showSearch
@@ -409,7 +420,7 @@ class Edit extends Component {
                 rules: [
                   {required: true, message: '必填'},
                 ],
-                initialValue: _.chain(activeSchoolsMap.objects).findWhere({ id : activeAddressId }).isEmpty().value() ? '' : activeAddressId
+                initialValue:_.isEmpty(activeSchoolsMap.objects) ? '' : activeAddressId
               })(
                 <Select
                   showSearch
@@ -431,7 +442,7 @@ class Edit extends Component {
                   <Button 
                     type='primary'
                     className={styles.addressButton}
-                    onClick={() => { this.props.history.push(`/soda/business/device/address?isFromEditView=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
+                    onClick={() => { this.props.history.push(`/soda/business/device/address?fromDevice=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
                 </Col> : null
               }
             </Row>

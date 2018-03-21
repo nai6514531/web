@@ -13,7 +13,8 @@ const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
 
 import UserService from '../../../../../services/soda-manager/user'
-
+import CommonService from '../../../../../services/common'
+import Throttle from '../../../../../components/throttle'
 import styles from '../index.pcss'
 
 const formItemLayout = {
@@ -105,10 +106,11 @@ class Detial extends Component {
         contact: values.contact,
         mobile: values.mobile,
         telephone: values.telephone,
-        address: values.address
+        address: values.address,
+        smsCode: values.smsCode
       }
       if (isAdd) {
-        return this.createAccount(options)
+        return this.createAccount(_.omit(options, 'smsCode'))
       }
       this.updateAccount(_.omit(options, 'password'))
     })
@@ -153,27 +155,42 @@ class Detial extends Component {
       this.props.history.push(`/soda/business/account`)
     }).catch((err) => {
       this.setState({ loading: false })
+      this.props.form.setFieldsValue({ smsCode: '' })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
   handleClickCounter() {
-
+    let { id } = this.props.match.params
+    let { smsLoading } = this.state
+    let { detail: { mobile } } = this.props
+    if (smsLoading) {
+      return
+    }
+    CommonService.sms({
+      motivation: 'RESET_USER',
+      mobile: mobile
+    }).then((res) => {
+      this.props.form.setFieldsValue({ smsCode: '' })
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.setState({
+        startedAt: +new Date(),
+        smsLoading: false
+      })
+    }).catch((err) => {
+      this.props.form.setFieldsValue({ smsCode: '' })
+      this.setState({
+        startedAt: +new Date(),
+        smsLoading: false
+      })
+      // this.setState({ smsLoading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
   }
   render() {
-    let { form: { getFieldDecorator }, detail: { account, name, contact, mobile, telephone, address }, isAdd, isSub } = this.props
+    let { form: { getFieldDecorator }, startedAt, smsLoading, detail: { account, name, contact, mobile, telephone, address, type }, isAdd, isSub } = this.props
     let { loading } = this.state
-    // let counter = getFieldDecorator('smsCodeSentAt', {
-    //   initialValue: 0,
-    //   valuePropName: 'startedAt',
-    // })(
-    //   <Throttle
-    //     waitText={({ countdown }) => `重获验证码 (${countdown})`}
-    //     className={styles.send}
-    //     onClick={this.handleClickCounter.bind(this)}
-    //     disabled={loading}>
-    //     获取验证码
-    //   </Throttle>
-    // )
 
     return (<Spin spinning={loading}><Form onSubmit={this.handleSubmit.bind(this)}>
       {!isAdd ? <FormItem
@@ -279,28 +296,35 @@ class Detial extends Component {
           <Input placeholder="请输入手机号" />
         )}
       </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="验证码"
-        extra={mobile + '手机号验证'}
-      > 
-        <Row gutter={8}>
-          <Col span={12}>
-            {getFieldDecorator('code', {
-              rules: [
-                { required: true, message: '必填' },
-              ],
-              initialValue: '',
-            })(
-              <Input placeholder="请输入验证码" />
-            )}
-          </Col>
-          <Col span={12}>
-            <Button>发送验证码</Button>
-          </Col>
-        </Row>
-        
-      </FormItem>
+      { !isAdd && type === 0 ? <FormItem
+          {...formItemLayout}
+          label="验证码"
+          extra={mobile + '手机号验证'}
+        > 
+          <Row gutter={8}>
+            <Col span={12}>
+              {getFieldDecorator('smsCode', {
+                rules: [
+                  { required: true, message: '必填' },
+                ],
+                initialValue: '',
+              })(
+                <Input placeholder="请输入验证码" />
+              )}
+            </Col>
+            <Col span={12}>
+              <Throttle
+                startedAt={this.state.startedAt}
+                waitText={({ countdown }) => `重获验证码 (${countdown})`}
+                className={styles.send}
+                onClick={this.handleClickCounter.bind(this)}
+                disabled={smsLoading}>
+                <Button>发送验证码</Button>
+              </Throttle>
+            </Col>
+          </Row>
+        </FormItem> : null
+      }
       <FormItem
         {...formItemLayout}
         label="服务电话" >

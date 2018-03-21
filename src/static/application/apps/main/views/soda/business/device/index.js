@@ -64,7 +64,7 @@ class App extends Component {
       search: {
         keys: '',
         serials: '',
-        schoolId: 0,
+        schoolId: '',
         serviceAddressIds: '',
         deviceType: 0,
       },
@@ -133,7 +133,7 @@ class App extends Component {
             let user = _.findWhere(users, { id: id })
             
             let suffix = isRetrofited ? _.isEmpty(user) ? '是' 
-              :`${'是 ('+ user.name + user.mobile + ')'}` : '否'
+              :`${'是 ('+ user.name + '|' + user.mobile + ')'}` : '否'
             
             return {
               children: <span className={cx({ [styles.hightlight]: isRetrofited })}>{suffix}</span>
@@ -217,7 +217,7 @@ class App extends Component {
     let search = _.extend(this.state.search, options.search || {})
     let pagination = _.extend(this.state.pagination, options.pagination || {})
     let { schoolId, serviceAddressIds } = search
-    schools = _.findWhere(schools, { id: +schoolId === 0 ? '' : +schoolId }) || {}
+    schools = _.findWhere(schools, { id: schoolId === '' ? '' : +schoolId }) || {}
     let activeAddressesMapIds = _.pluck(schools.objects || [], 'id')
     serviceAddressIds = _.isEmpty(serviceAddressIds) ? activeAddressesMapIds.join(',') : serviceAddressIds
    
@@ -268,19 +268,29 @@ class App extends Component {
         throw new Error(res.message)
       }
       let { data: { objects } } = res
-      let schools = _.chain(objects).reject((address) => {
-          return address.school.address === '' || address.school.name === ''
-        }).groupBy((address) => {
-          return address.school.id
-        }).map((value, key) => {
-          return {
+      let schools = [], addresses = {}
+      _.chain(objects).reject((address) => {
+        // 过滤地址为空 或 学校无校名
+        return address.school.address === '' || (address.school.name === '' && address.school.id !== 0)
+      }).groupBy((address) => {
+        return address.school.id
+      }).each((value, key) => {
+        if (value[0].school.id === 0) {
+          addresses = {
+            id: +key,
+            name: '其他',
+            objects: value
+          }
+        } else {
+           schools = [ ...schools, {
             id: +key,
             name: value[0].school.name,
             objects: value
-          }
-        }).value()
+          }]
+        }
+      })
       this.setState({
-        schools: schools,
+        schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         serviceAddresses: [ ...serviceAddresses, ...objects ]
       })
       if (tapActive === DEVICE_IS_MINE) {
@@ -488,7 +498,7 @@ class App extends Component {
       search: { 
         keys: '',
         serials: '',
-        schoolId: 0,
+        schoolId: '',
         serviceAddressIds: '',
         deviceType: 0
       },
@@ -541,10 +551,11 @@ class App extends Component {
     let { isVisible } = this.props
     let selectedCount = selectedRowKeys.length
     let hasSelected = selectedCount > 0
+
     // 当前商家设备列表（非分配列表），不展示更新时间和商家信息
     let columns = tapActive === DEVICE_IS_MINE ? _.reject(this.columns, (item) => { return !!~['updatedAt', 'user'].indexOf(item.label)}) : this.columns
     // 当前选择学校下的服务地点
-    let activeSchoolsMap = _.findWhere(schools, { id: +schoolId === 0 ? '' : +schoolId }) || {}
+    let activeSchoolsMap = _.findWhere(schools || [], { id: schoolId === '' ? '' : +schoolId }) || {}
 
     return (<div>
       <Breadcrumb items={breadItems} />
@@ -576,7 +587,7 @@ class App extends Component {
             placeholder="请选择学校"
             optionFilterProp="children"
             onChange={this.changeSchool.bind(this)}
-            value={+schoolId === 0 ? '' : +schoolId}
+            value={schoolId === '' ? '' : +schoolId}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
             <Option value="">请选择学校</Option>
@@ -643,7 +654,7 @@ class App extends Component {
           tapActive === DEVICE_IS_MINE ? <Button 
           type='primary'
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push('/soda/business/device/address')}}>地点管理</Button> : null
+          onClick={() => { this.props.history.push('/soda/business/device/address?fromDevice=true')}}>地点管理</Button> : null
         }
       </Row>
       { 
