@@ -27,7 +27,7 @@ class User extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    this.search = search
+    this.search = {limit: 10, offset: 0, ...search }
     this.id = ''
     this.checkList = []
     this.columns = [
@@ -95,8 +95,7 @@ class User extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.search)
-    this.fetch(url)
+    this.fetch(this.search)
   }
   fetch = (params) => {
     this.props.dispatch({

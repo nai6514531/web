@@ -40,7 +40,7 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(roleService.list)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { data: result.data } })
+        yield put({ type: 'updateData', payload: { data: result.data.objects } })
       } else {
         result.message && message.error(result.message)
       }

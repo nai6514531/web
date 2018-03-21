@@ -1,7 +1,7 @@
 import request from '../../utils/request'
 const userService = {
   list: (options) => {
-    return request.get(`/mng/users?type=${type}`, { params: options })
+    return request.get(`/mng/users`, { params: options })
   },
   adminUserlist: (options) => {
     return request.get(`/mng/admin/users`, { params: options })
@@ -18,8 +18,8 @@ const userService = {
   addStaffs: (data) => {
     return request.post(`/mng/staffs`, data)
   },
-  delete: (id) => {
-    return request.delete(`/mng/users/${id}`)
+  changeStatus: (id, data) => {
+    return request.put(`/mng/users/${id}/status`, data)
   },
   userRoles: (id) => {
     return request.get(`/mng/user-roles?userId=${id || ''}`)

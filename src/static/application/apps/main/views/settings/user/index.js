@@ -31,7 +31,7 @@ class User extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    this.search = search
+    this.search = {limit: 10, offset: 0, ...search }
     this.id = ''
     this.checkList = []
     this.columns = [
@@ -58,14 +58,14 @@ class User extends Component {
          )
        }
       },
-      // {
-      //   title: '状态',
-      //  render: (text, record, index) => {
-      //    return (
-      //     record.status === 0 ? '正常' : '已拉黑'
-      //    )
-      //  }
-      // },
+      {
+        title: '状态',
+       render: (text, record, index) => {
+         return (
+          record.status === 0 ? '正常' : '已拉黑'
+         )
+       }
+      },
       {
         title: '操作',
         key: 'operation',
@@ -73,10 +73,16 @@ class User extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
-              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息</Link>
-              <Popconfirm title='确定要删除该账号?' onConfirm={ this.delete.bind(this,record.id) } >
-                    | <a href='javascript:void(0)'>{'\u00A0'}删除账号</a>
-              </Popconfirm>
+              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
+              {
+                record.status === 0
+                ? <Popconfirm title='确定要拉黑该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 1) } >
+                      | <a href='javascript:void(0)'>{'\u00A0'}拉黑账号</a>
+                  </Popconfirm>
+                : <Popconfirm title='确定要恢复该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 0) } >
+                        | <a href='javascript:void(0)'>{'\u00A0'}恢复账号</a>
+                  </Popconfirm>
+              }
             </span>
           )
         }
@@ -106,17 +112,24 @@ class User extends Component {
     })
   }
   fetchRole = (params) => {
+    // 获取运营商子角色
     this.props.dispatch({
-      type: 'user/roles'
+      type: 'user/roles',
+      payload: {
+        data: {
+          parentId: 2
+        }
+      }
     })
   }
-  delete = (id) => {
+  changeStatus = (id, status) => {
     const url = transformUrl(location.search)
     this.props.dispatch({
-      type: 'user/delete',
+      type: 'user/changeStatus',
       payload: {
         data: url,
-        id: id
+        id: id,
+        status
       }
     })
   }
@@ -162,7 +175,7 @@ class User extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Input
-          placeholder='请输入用户名搜索'
+          placeholder='请输入员工姓名搜索'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}

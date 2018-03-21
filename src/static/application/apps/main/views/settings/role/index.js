@@ -8,6 +8,8 @@ import DataTable from '../../../components/data-table/'
 
 const FormItem = Form.Item
 
+// unuseless page for business`s roles
+
 const formItemLayoutWithCheckbox = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
@@ -130,7 +132,7 @@ class Role extends Component {
   }
   componentDidMount() {
     this.props.dispatch({
-      type: 'role/list'
+      type: 'role/list',
     })
   }
   show = (record) => {

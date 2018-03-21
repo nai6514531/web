@@ -14,10 +14,11 @@ const model = {
     objects: []
   },
   roleData: [],
+  activeKey: '',
   currentRole: -1,
   menuPermissionData: [],//树形结构的菜单权限对应数据
-  assignedPermission: [],
-  assignedPermissionIdList: []
+  assignedPermissionList: [],
+  permissionData: []
 }
 
 export default {
@@ -44,7 +45,7 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       // 正常状态的员工账号
-      const result = yield call(userService.list, { ...payload.data, type: 1, status: 0 })
+      const result = yield call(userService.list, { ...payload.data, type: 1 })
       if(result.status == 'OK') {
         yield put({
           type: 'updateData',
@@ -67,8 +68,18 @@ export default {
       const { history, data, id } = payload
       const result = yield call(userService.update, data, id)
       if(result.status == 'OK') {
-        history.goBack()
-        message.success('更新成功')
+        const { roleId, userId } = payload.role
+        yield put({
+          type: 'updateRoles',
+          payload: {
+            data: {
+              userId: userId,
+              roleIds: [roleId]
+            },
+            history
+          }
+        })
+        message.success('更新用户信息成功')
         // yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
@@ -77,15 +88,26 @@ export default {
     *add({ payload }, { call, put }) {
       const result = yield call(userService.addStaffs, payload.data)
       if(result.status == 'OK') {
+        const { roleId } = payload.role
+        yield put({
+          type: 'updateRoles',
+          payload: {
+            data: {
+              userId:  result.data.id,
+              roleIds: [roleId]
+            },
+            history
+          }
+        })
         payload.history.goBack()
         message.success('添加成功')
       } else {
         message.error(result.message)
       }
     },
-    *delete({ payload }, { call, put }) {
-      const { data, id } = payload
-      const result = yield call(userService.delete, id)
+    *changeStatus({ payload }, { call, put }) {
+      const { data, id, status } = payload
+      const result = yield call(userService.changeStatus, id, { status })
       if(result.status == 'OK') {
         message.success('删除成功')
         yield put({
@@ -98,44 +120,29 @@ export default {
         message.error(result.message)
       }
     },
+    *updateRoles({ payload }, { call, put }) {
+      const { data, history } = payload
+      const result = yield call(userService.updateRoles, data)
+      if(result.status == 'OK') {
+        message.success('更新角色成功')
+        history.goBack()
+      } else {
+        message.error(result.message)
+      }
+    },
     *roles({ payload }, { call, put }) {
-      const result = yield call(roleService.list)
+      const result = yield call(roleService.list, payload.data)
       if(result.status == 'OK') {
         yield put({
           type: 'updateData',
-          payload: { roleData: result.data}
+          payload: { roleData: result.data.objects}
         })
       } else {
         result.message && message.error(result.message)
       }
     },
-    *assignedRoles({ payload }, { call, put }) {
-      const { id } = payload
-      const result = yield call(userService.userRoles, id)
-      if(result.status == 'OK') {
-        // yield put({
-        //   type: 'showModal',
-        //   payload: {
-        //     data: result.data
-        //   }
-        // })
-      } else {
-        result.message && message.error(result.message)
-      }
-    },
-    *updateRoles({ payload }, { call, put }) {
-      const { data } = payload
-      const result = yield call(userService.updateRoles, data)
-      if(result.status == 'OK') {
-        message.success('更新成功')
-        // yield put({ type: 'hideModal' })
-        yield put({ type: 'list', payload: { data: data.url } })
-      } else {
-        message.error(result.message)
-      }
-    },
-    *updatePassword({ payload: { data: { id, password } }}, { call, put }) {
-      const result = yield call(userService.updatePassword, id, { password })
+    *updatePassword({ payload: { data: { id, newPassword } }}, { call, put }) {
+      const result = yield call(userService.updatePassword, id, { newPassword })
       if(result.status == 'OK') {
         message.success('密码修改成功')
         yield put({ type: 'hideModal' })
@@ -159,25 +166,45 @@ export default {
       const result = yield call(permissionService.rolePermission, data)
       const menuPermission = yield select(state => state.user.menuPermission)
       if( result.status == 'OK') {
-        const assignedPermissionIdList = result.data.map(value => value.permissionId)
-        const menuPermessionRel = menuPermission.filter(item => assignedPermissionIdList.some(id => item.permissionId === id))
-        const menuList = uniqBy(menuPermessionRel.map(value => value.menu), function(value) {
-          return value.id
+        const assignedPermissionList = result.data
+        // 从已被分配角色里找出拥有的菜单所分组的权限
+        const menuPermessionRel = menuPermission.filter(item => {
+          return assignedPermissionList.some(value => {
+            if(value.permission.type == 1 && value.permission.foreignId == item.menuId ) {
+              return true
+            }
+          })
         })
-        const permissionGroup = groupBy(menuPermessionRel, 'menuId')
-        menuList.map(value => {
-          if( permissionGroup[value.id]) {
-            value.permission = permissionGroup[value.id].map(item =>  item.permission)
-          } else {
-            value.permission = []
+        // 从已拥有的菜单对应的全量权限找出角色拥有的权限
+
+        const assignedMenuPermessionRel = menuPermessionRel.filter(item => assignedPermissionList.some(value => item.permissionId == value.permission.id))
+        const permissionData = groupBy(assignedMenuPermessionRel, 'menuId')
+        // console.log("menuPermessionRel",menuPermessionRel)
+        // console.log("assignedMenuPermessionRel",assignedMenuPermessionRel)
+        // console.log("assignedPermissionList",assignedPermissionList)
+        // console.log("permissionData",permissionData)
+        let menuList = []
+        for(let i = 0; i < assignedMenuPermessionRel.length; i++) {
+          let item = assignedMenuPermessionRel[i]
+          if(item.menu.url) {
+            menuList.push(item.menu)
           }
+        }
+        menuList = uniqBy(menuList,'id')
+        menuList.map(value => {
+          if( permissionData[value.id]) {
+            value.permission = permissionData[value.id].filter(item =>{
+              if(item.permission.type != 1) {
+                item.name = item.permission.name
+                return true
+              }
+            })}
         })
         yield put({
           type: 'updateData',
           payload: {
-            assignedPermission: result.data,
-            assignedPermissionIdList,
-            permissionGroup: arrayToTree(menuList)
+            assignedPermissionList,
+            permissionData: menuList
           }
         })
       } else {
@@ -186,23 +213,8 @@ export default {
     },
     *menuPermission({ payload }, { call, put, select }) {
       // 拉取菜单和权限的对应关系
-      const data = yield select(state => state.common.userInfo.menuList)
       const menuPermission = yield call(permissionService.menuPermission)
-      const assignedPermissionIdList = yield select(state => state.user.assignedPermissionIdList)
-      // console.log("assignedPermissionIdList2",assignedPermissionIdList)
-      // console.log("menuPermission2",menuPermission)
       if( menuPermission.status == 'OK') {
-        // const permissionGroup = groupBy(menuPermission.data, 'menuId')
-        // data.map(value => {
-        //   if( permissionGroup[value.id]) {
-        //     // 默认checkbox不可以编辑
-        //     value.permission = permissionGroup[value.id].map(item =>  item.permission)
-        //     value.checkedList = assignedPermissionIdList.filter(id => value.permission.some(item => item.id === id))
-        //   } else {
-        //     value.permission = []
-        //     value.checkedList = []
-        //   }
-        // })
         yield put({
           type: 'updateData',
           payload: {

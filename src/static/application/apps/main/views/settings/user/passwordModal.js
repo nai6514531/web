@@ -36,7 +36,7 @@ class PasswordModal extends Component {
           type: 'user/updatePassword',
           payload: {
             data: {
-              password: md5(values.oldPassword),
+              newPassword: md5(values.newPassword),
               id: this.props.id
             }
           }
@@ -78,7 +78,7 @@ class PasswordModal extends Component {
         afterClose={this.reset}
       >
       <Form onSubmit={this.handleSubmit}>
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             label='原始密码'
           >
@@ -91,7 +91,7 @@ class PasswordModal extends Component {
             })(
               <Input type='password'/>
             )}
-          </FormItem>
+          </FormItem> */}
           <FormItem
             {...formItemLayout}
             label='新密码'
@@ -102,13 +102,13 @@ class PasswordModal extends Component {
               }, {
                 min: 6, message: '密码最少6位'
               }, {
-                validator: this.validateToNextPassword,
+                // validator: this.validateToNextPassword,
               }]
             })(
               <Input type='password'/>
             )}
           </FormItem>
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             label='确认密码'
           >
@@ -123,7 +123,7 @@ class PasswordModal extends Component {
             })(
               <Input type='password' onBlur={this.handleConfirmBlur}/>
             )}
-          </FormItem>
+          </FormItem> */}
         </Form>
       </Modal>
     )

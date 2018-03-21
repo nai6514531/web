@@ -2,7 +2,7 @@ import { message } from 'antd'
 import roleService from '../../../services/soda-manager/role.js'
 import permissionService from '../../../services/soda-manager/permission.js'
 import { cloneDeep } from 'lodash'
-
+import { arrayToTree } from '../../../utils/'
 const model = {
   key: 1,
   visible: false,
@@ -40,7 +40,7 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(roleService.list)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { data: result.data } })
+        yield put({ type: 'updateData', payload: { data: arrayToTree(result.data.objects) } })
       } else {
         result.message && message.error(result.message)
       }
