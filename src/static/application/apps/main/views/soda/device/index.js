@@ -7,6 +7,7 @@ const { Option } = Select
 import moment from 'moment'
 import { trim } from 'lodash'
 import _ from 'lodash'
+import op from 'object-path'
 
 import { InputScan, InputClear } from '../../../components/form/input'
 import DataTable from '../../../components/data-table'
@@ -41,23 +42,25 @@ class Device extends Component {
         title: '模块号',
         width: 100,
         render: (record) => {
+          
           const { keys, serials } = this.search
-          return  <Link to={`/soda/device/${record.id}?serials=${serials || ''}&keys=${keys || ''}`}>{record.serial}</Link>
+          return  <Link to={`/soda/device/${record.serial}?serials=${serials || ''}&keys=${keys || ''}`}>{record.serial}</Link>
         }
       },
       {
         title: '运营商名称',
         width: 150,
         render: (record) => {
-          return `${record.user.name || '-'}(${record.user.mobile || '-'})`
+          let { user } = record
+          return _.isEmpty(user) ? '-' : `${user.name}-${user.mobile}`
         }
       },
       {
         title: '服务地点',
         width: 100,
         render: (record) => {
-          let { serviceAddress: { school: { address } } } = record
-          return `${address || '-'}`
+          let { serviceAddress } = record
+          return op(serviceAddress).get('school.address') || '-'
         }
       },
       {
@@ -70,25 +73,13 @@ class Device extends Component {
         }
       },
       {
-        title: '价格',
-        width: 200 ,
-        render: (record) => {
-          let { modes } = record
-          return (<div>
-            {(modes || []).map((mode) => {
-              return <p key={mode.id}>
-                  {[`${mode.name}`, `${conversionUnit(mode.value)}元`, `${mode.duration/1000}分钟`].join('/')}
-                </p>
-            })}
-          </div>)
-        }
-      },
-      {
         title: '关联设备类型',
         dataIndex: 'feature',
         width: 70,
-        render(feature) {
-          return `${feature.name}`
+        render: (feature) => {
+          let { sodaDevice: { deviceTypes } } = this.props
+          feature = _.find(deviceTypes || [], { type : op(feature).get('type') }) || {}
+          return op(feature).get('name') || '-'
         }
       },
       {
@@ -127,6 +118,7 @@ class Device extends Component {
     if( url.keys || url.serials ) {
       this.fetch(url)
     }
+    this.deviceTypes()
   }
   changeHandler(type, e) {
     if(e.target.value) {
@@ -156,6 +148,11 @@ class Device extends Component {
       payload: {
         data: url
       }
+    })
+  }
+  deviceTypes() {
+    this.props.dispatch({
+      type: 'sodaDevice/deviceTypes'
     })
   }
   change(url) {
@@ -241,7 +238,6 @@ class Device extends Component {
   render() {
     const { sodaDevice: { data: { objects, pagination }, selectedRowKeys }, loading } = this.props
     pagination && (pagination.showSizeChanger = true)
-
     return(
       <div>
         <Breadcrumb items={breadItems} />

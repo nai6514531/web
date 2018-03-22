@@ -1,9 +1,8 @@
 import { message } from 'antd'
 import menuService from '../../../services/soda-manager/menu.js'
 import permissionService from '../../../services/soda-manager/permission.js'
-import { cloneDeep, difference } from 'lodash'
+import { cloneDeep, difference, groupBy } from 'lodash'
 import { arrayToTree } from '../../../utils/'
-import { groupBy } from 'lodash'
 import dict from '../../../utils/dict'
 
 const model = {

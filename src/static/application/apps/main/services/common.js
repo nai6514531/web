@@ -7,6 +7,9 @@ const commonService = {
   captcha: () => {
     return request.get(`/captcha?${Date.now()}`)
   },
+  sms: (options) => {
+    return request.post(`/sms/code`, options)
+  },
   smsList: (data) => {
     let date = data.date ? data.date.replace(/-/g,'') : ''
     let url = `/sms/${ data.mobile }?offset=${data.offset || 0 }&limit=${data.limit || 10 }&date=${ date }`

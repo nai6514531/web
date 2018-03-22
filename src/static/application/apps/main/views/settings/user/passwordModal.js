@@ -1,19 +1,11 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { connect } from 'dva'
-import { Form, Input, Button } from 'antd'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
+import { Form, Modal, Input, Row, Col, Radio, Popover, Button } from 'antd'
+import { transformUrl, toQueryString } from '../../../utils/'
+import { difference } from 'lodash'
 import md5 from 'md5'
 
 const FormItem = Form.Item
-const breadItems = [
-  {
-    title: '设置'
-  },
-  {
-    title: '修改密码'
-  }
-]
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -24,27 +16,29 @@ const formItemLayout = {
     sm: { span: 14 },
   }
 }
-
-class ResetPassword extends Component {
+class PasswordModal extends Component {
   constructor(props) {
     super(props)
     this.state = {
       confirmDirty: false,
     }
   }
+  hide = () => {
+    this.props.dispatch({
+      type: 'user/hideModal'
+    })
+  }
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const { history } = this.props
-        values.oldPassword = md5(values.oldPassword)
-        values.newPassword = md5(values.newPassword)
-        delete values.rePassword
-        this.props.dispatch({
-          type: 'adminUser/reset',
+         this.props.dispatch({
+          type: 'user/updatePassword',
           payload: {
-            data: values,
-            history
+            data: {
+              newPassword: md5(values.newPassword),
+              id: this.props.id
+            }
           }
         })
       }
@@ -55,13 +49,13 @@ class ResetPassword extends Component {
     this.setState({ confirmDirty: this.state.confirmDirty || !!value })
   }
   compareToFirstPassword = (rule, value, callback) => {
-     const form = this.props.form
-     if (value && value !== form.getFieldValue('newPassword')) {
-       callback('两次密码输入不一致')
-     } else {
-       callback()
-     }
-   }
+    const form = this.props.form
+    if (value && value !== form.getFieldValue('newPassword')) {
+      callback('两次密码输入不一致')
+    } else {
+      callback()
+    }
+  }
   validateToNextPassword = (rule, value, callback) => {
     const form = this.props.form
     if (value && this.state.confirmDirty) {
@@ -69,14 +63,22 @@ class ResetPassword extends Component {
     }
     callback()
   }
-
+  reset = () => {
+    const { resetFields, getFieldsValue } = this.props.form
+    resetFields(Object.keys(getFieldsValue()))
+  }
   render() {
-    const { form: { getFieldDecorator }, loading } = this.props
+    const { form: { getFieldDecorator }, user: { key, visible }, loading  } = this.props
     return(
-      <div>
-        <Breadcrumb items={breadItems} />
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem
+      <Modal
+        title='修改密码'
+        visible={visible}
+        onCancel={this.hide}
+        onOk={this.handleSubmit}
+        afterClose={this.reset}
+      >
+      <Form onSubmit={this.handleSubmit}>
+          {/* <FormItem
             {...formItemLayout}
             label='原始密码'
           >
@@ -89,7 +91,7 @@ class ResetPassword extends Component {
             })(
               <Input type='password'/>
             )}
-          </FormItem>
+          </FormItem> */}
           <FormItem
             {...formItemLayout}
             label='新密码'
@@ -100,13 +102,13 @@ class ResetPassword extends Component {
               }, {
                 min: 6, message: '密码最少6位'
               }, {
-                validator: this.validateToNextPassword,
+                // validator: this.validateToNextPassword,
               }]
             })(
               <Input type='password'/>
             )}
           </FormItem>
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             label='确认密码'
           >
@@ -121,25 +123,11 @@ class ResetPassword extends Component {
             })(
               <Input type='password' onBlur={this.handleConfirmBlur}/>
             )}
-          </FormItem>
-          <FormItem style={{textAlign: 'center'}}>
-            <Button
-              type='primary'
-              loading={loading}
-              onClick={this.handleSubmit}>
-              保存
-            </Button>
-          </FormItem>
+          </FormItem> */}
         </Form>
-      </div>
+      </Modal>
     )
   }
 }
-function mapStateToProps(state,props) {
-  return {
-    loading: state.loading.global,
-    user: state.adminUser,
-    ...props
-  }
-}
-export default connect(mapStateToProps)(Form.create()(ResetPassword))
+PasswordModal = Form.create()(PasswordModal)
+export default PasswordModal

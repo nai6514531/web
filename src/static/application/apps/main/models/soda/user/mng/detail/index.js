@@ -43,7 +43,7 @@ export default {
         if( result.data.type === 1 ) {
           mainId = result.data.parent.id
         }
-        const deviceInfo = yield call(deviceService.list, { userId: mainId })
+        const deviceInfo = yield call(deviceService.adminlist, { userIds: mainId })
         const accountInfo = yield call(userService.cashAccount, { userId: mainId })
 
         if(deviceInfo.status == 'OK') {
@@ -56,14 +56,13 @@ export default {
           result.data.autoSettle = accountInfo.data.mode.value == 0 ? '是' : '否'
           result.data.payment = accountInfo.data.type.description
           if(accountInfo.data.type.value === 1) {
-            result.data.cashAccount = accountInfo.data.user.name + ' | ' + accountInfo.data.user.account
+            result.data.cashAccount = accountInfo.data.realName + ' | ' + accountInfo.data.account
           } else {
-            result.data.cashAccount = accountInfo.data.user.name
+            result.data.cashAccount = accountInfo.data.realName
           }
         } else {
           message.error(accountInfo.message)
         }
-
         yield put({ type: 'updateData', payload: { data: result.data } })
       } else {
         message.error(result.message)

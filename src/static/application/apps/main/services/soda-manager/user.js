@@ -1,11 +1,10 @@
 import request from '../../utils/request'
 const userService = {
-  list: (data) => {
-    let type = !isNaN(data.type) ? data.type : ''
-    return request.get(`/mng/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&roleId=${data.roleId || ''}&type=${type}`)
+  list: (options) => {
+    return request.get(`/mng/users`, { params: options })
   },
-  adminUserlist: (data) => {
-    return request.get(`/mng/admin/users?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&account=${data.account || ''}&id=${data.id || ''}&keywords=${data.keywords || ''}`)
+  adminUserlist: (options) => {
+    return request.get(`/mng/admin/users`, { params: options })
   },
   detail: (id) => {
     return request.get(`/mng/users/${id}`)
@@ -19,8 +18,8 @@ const userService = {
   addStaffs: (data) => {
     return request.post(`/mng/staffs`, data)
   },
-  delete: (id) => {
-    return request.delete(`/mng/users/${id}`)
+  changeStatus: (id, data) => {
+    return request.put(`/mng/users/${id}/status`, data)
   },
   userRoles: (id) => {
     return request.get(`/mng/user-roles?userId=${id || ''}`)
@@ -33,13 +32,10 @@ const userService = {
     return request.put(`/mng/users/${id}/password`,data)
   },
   cashAccount: (data) => {
-    return request.get(`/mng/cash-accounts/${data.userId}`)
+    return request.get(`/mng/user-cash-accounts/${data.userId}`)
   },
   updateCashAccount: (options) => {
-    return request.put(`/mng/users/${options.id}/cash-accounts`, options)
-  },
-  GetDetailWithCashAccount: (options) => {
-    return request.get(`/mng/users/${options.id}/cash-accounts`)
+    return request.put(`/mng/user-cash-accounts/${options.id}`, options)
   },
   getDetailWithDevice: (options) => {
     return request.get(`/mng/users-devices`, {

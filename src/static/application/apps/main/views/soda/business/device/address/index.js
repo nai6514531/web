@@ -20,6 +20,15 @@ const breadItems = [
     title: '苏打生活'
   },
   {
+    title: '地点管理'
+  }
+]
+
+const deviceBreadItems = [
+  {
+    title: '苏打生活'
+  },
+  {
     title: '设备管理',
     url:'/soda/business/device'
   },
@@ -37,7 +46,7 @@ class App extends Component {
       list: [],
       search: {
         keys: '',
-        schoolId: 0,
+        schoolId: '',
         addressName: ''
       },
       schools: [],
@@ -61,6 +70,10 @@ class App extends Component {
       }, {
         title: '所属大学',
         dataIndex: 'school.name',
+        render: (name, record) => {
+          let { school: { id } } = record
+          return id === 0 ? '其他' : `${name}`
+        }
       }, {
         title: '服务地点',
         dataIndex: 'school.address',
@@ -71,7 +84,7 @@ class App extends Component {
         title: '操作',
         render: (record) => {
           return <span>
-            <Link to={`/soda/business/device/address/edit/${record.id}`}>修改</Link>
+            <Link to={`/soda/business/device/address/edit/${record.id}?fromDevice=${this.isFromDeviceView}`}>修改</Link>
           </span>
         }
       }
@@ -82,6 +95,7 @@ class App extends Component {
     query = querystring.parse(query)
     let search = _.pick(query, 'schoolId', 'addressName')
     let pagination = _.pick(query, 'limit', 'offset')
+    this.isFromDeviceView = query.fromDevice === 'true'
     this.getList({ search, pagination })
   }
   initialListData(options) {
@@ -99,12 +113,12 @@ class App extends Component {
       let matchCurrentAddress = _.find(search.addressName.split(','), (name) => {
         return !!~(address.school.address).indexOf(name)
       })
-
+      let isSelectSchool = search.schoolId !== ''
       let isMatch = !_.isEmpty(matchCurrentAddress)
-      if (+search.schoolId && search.addressName) {
+      if (isSelectSchool && search.addressName) {
         return address.school.id === +search.schoolId && isMatch
       }
-      if (+search.schoolId) {
+      if (isSelectSchool) {
         return address.school.id === +search.schoolId
       }
       if(search.addressName) {
@@ -138,13 +152,24 @@ class App extends Component {
         throw new Error(res.message)
       }
       let { data: { objects, pagination: { total } } } = res
-      let schools = _.chain(objects).groupBy((address) => {
+      let schools = [], addresses = {}
+      _.chain(objects).reject((address) => {
+        return address.school.address === '' || (address.school.name === '' && address.school.id !== 0)
+      }).groupBy((address) => {
         return address.school.id
-      }).map((value, key) => {
-        return {
-          id: +key,
-          name: value[0].school.name,
-          objects: value
+      }).each((value, key) => {
+        if (value[0].school.id === 0) {
+          addresses = {
+            id: +key,
+            name: '其他',
+            objects: value
+          }
+        } else {
+           schools = [ ...schools, {
+            id: +key,
+            name: value[0].school.name,
+            objects: value
+          }]
         }
       }).value()
       this.serviceAddresses = objects || []
@@ -153,11 +178,12 @@ class App extends Component {
           return !!~(address.school.address).indexOf(name)
         })
 
+        let isSelectSchool = search.schoolId !== ''
         let isMatch = !_.isEmpty(matchCurrentAddress)
-        if (+search.schoolId && search.addressName) {
+        if (isSelectSchool && search.addressName) {
           return address.school.id === +search.schoolId && isMatch
         }
-        if (+search.schoolId) {
+        if (isSelectSchool) {
           return address.school.id === +search.schoolId
         }
         if(search.addressName) {
@@ -167,7 +193,7 @@ class App extends Component {
       })
       this.setState({
         list: activeList || [],
-        schools: schools,
+        schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         pagination: {
           ...pagination,
           total: activeList.length
@@ -235,10 +261,10 @@ class App extends Component {
   }
   render() {
     let { list, loading, search: { addressName, schoolId }, schools } = this.state
-    let addressesBySchoolId = _.findWhere(schools, { id: +schoolId }) || {}
+    let activeSchoolsMap = _.findWhere(schools, { id: schoolId === '' ? '' : +schoolId }) || {}
 
     return (<div>
-      <Breadcrumb items={breadItems} />
+      <Breadcrumb items={this.isFromDeviceView ? deviceBreadItems : breadItems} />
       <div>
         <Select
           showSearch
@@ -246,7 +272,7 @@ class App extends Component {
           placeholder="请选择学校"
           optionFilterProp="children"
           onChange={this.changeSchool.bind(this)}
-          value={+schoolId === 0 ? '' : +schoolId}
+          value={schoolId === '' ? '' : +schoolId}
           filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           <Option value="">请选择学校</Option>
@@ -262,7 +288,7 @@ class App extends Component {
           onPressEnter={this.search.bind(this)}
           style={{ width: 180, marginRight: 10 }}
         >
-          {(addressesBySchoolId.objects || []).map((item) => {
+          {(activeSchoolsMap.objects || []).map((item) => {
             return <Option key={item.id} value={item.school.address}>{item.school.address}</Option>
           })}
         </Select>
@@ -273,7 +299,7 @@ class App extends Component {
         <Button
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push(`/soda/business/device/address/add`) }}>新增地点</Button>
+          onClick={() => { this.props.history.push(`/soda/business/device/address/add?fromDevice=${this.isFromDeviceView}`) }}>新增地点</Button>
       </div>
       <Table
         scroll={{ x: 980 }}

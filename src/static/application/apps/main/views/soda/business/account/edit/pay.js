@@ -16,7 +16,10 @@ const confirm = Modal.confirm
 
 import { isProduction } from '../../../../../utils/debug'
 import UserService from '../../../../../services/soda-manager/user'
+import CommonService from '../../../../../services/common'
 import BusinessService from '../../../../../services/soda-manager/business'
+import Throttle from '../../../../../components/throttle'
+
 import CASH_ACCOUNT from '../../../../../constant/cash-account'
 
 import styles from '../index.pcss'
@@ -53,7 +56,7 @@ class Code extends Component {
   render() {
     let { keyLoading, qrCodeUrl, wechat , detail: { nickName, cashAccount } } = this.props
     let url = DEFAULT_URL + `/act/erp-relate-wechat?key=${wechat.key}`
-    let isRelatedWchat = !!wechat.nickName || (!wechat.key && cashAccount.type === CASH_ACCOUNT.TYPE_IS_WECHAT)
+    let isRelatedWchat = !!wechat.nickName || (!wechat.key && cashAccount.type.value === CASH_ACCOUNT.TYPE_IS_WECHAT)
 
     return (<Row className={cx(styles.code, { [`${styles.loading}`]: keyLoading, [`${styles.success}`]: isRelatedWchat })} >
       <Col xs={24} sm={10} md={6}>
@@ -104,7 +107,7 @@ class Alipay extends Component {
                 {required: true,  message: '必填'},
                 {max:30, message: '不超过三十个字'},
               ],
-              initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.account : '',
+              initialValue: cashAccount.type.value === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.account : '',
 
             })(
               <Input placeholder="邮箱或手机号" />
@@ -125,7 +128,7 @@ class Alipay extends Component {
                 {required: true, message: '必填'},
                 {max:30, message: '不超过三十个字'},
               ],
-              initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.realName : '',
+              initialValue: cashAccount.type.value === CASH_ACCOUNT.TYPE_IS_ALIPAY ? cashAccount.realName : '',
 
             })(
               <Input placeholder="必须为实名认证过的姓名" />
@@ -189,7 +192,7 @@ class Wechat extends Component {
             {required: true, message: '必填'},
             {max:30, message: '不超过三十个字'},
           ],
-          initialValue: cashAccount.type === CASH_ACCOUNT.TYPE_IS_WECHAT ? cashAccount.realName : '',
+          initialValue: cashAccount.type.value === CASH_ACCOUNT.TYPE_IS_WECHAT ? cashAccount.realName : '',
 
         })(
           <Input placeholder="如：张三" />
@@ -218,19 +221,19 @@ class Pay extends Component {
     this.state = {
       loading: loading,
       keyLoading: false,
-      type: cashAccount.type,
+      type: cashAccount.type.value,
       wechat: {
         key: '',
         nickName: ''
       },
-      isAuto: cashAccount.isAuto || true,
+      isAuto: cashAccount.mode.value === 0,
       qrCodeUrl: DEFAULT_URL
     }
   }
   componentWillReceiveProps(nextProps) {
-    let nextType = op.get(nextProps, 'detail.cashAccount.type')
+    let nextType = op.get(nextProps, 'detail.cashAccount.type.value')
     let nextLoading = op.get(nextProps, 'loading')
-    let type = op.get(this.props, 'detail.cashAccount.type')
+    let type = op.get(this.props, 'detail.cashAccount.type.value')
     let loading = op.get(this.props, 'loading')
 
     if (nextLoading !== loading) {
@@ -279,14 +282,18 @@ class Pay extends Component {
         return message.error('请使用你作为收款用途的微信扫描二维码进行关联')
       }
       let options = {
-        ...detail,
         cashAccount: {
           realName: values.realName,
           account: values.account,
-          type: +values.type,
-          isAuto: values.auto
+          type: {
+            value: +values.type
+          },
+          mode: {
+            value: values.auto ? 0 : 1
+          }
         },
-        nickName: wechat.nickName || detail.nickName
+        nickName: wechat.nickName || detail.nickName,
+        smsCode: values.smsCode
       }
       // 结算帐号为微信，且重新关连
       if (type === CASH_ACCOUNT.TYPE_IS_WECHAT　&& !!wechat.key ) {
@@ -297,11 +304,11 @@ class Pay extends Component {
     })
   }
   updateAccount(options) {
-    let { id } = this.props.match.params
-    let { isAdd, isSub, redirectUrl, parentId } = this.props
+    let { isAdd, isSub, redirectUrl, detail: { cashAccount } } = this.props
     this.setState({ loading: true })
 
-    UserService.updateCashAccount({ ...options, id: +id }).then((res) => {
+    UserService.updateCashAccount({ ...options, id: cashAccount.id }).then((res) => {
+      this.props.form.setFieldsValue({ smsCode: '' })
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -311,11 +318,12 @@ class Pay extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/soda/business/account/sub?parentId=${parentId}`)
+        return this.props.history.push(`/soda/business/account/sub`)
       }
       return this.props.history.push(`/soda/business/account`)
     }).catch((err) => {
       this.setState({ loading: false })
+      this.props.form.setFieldsValue({ smsCode: '' })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -329,7 +337,7 @@ class Pay extends Component {
     this.timer = null
     this.setState({ type: type, wechat: { key: '', nickName: '' } })
     // 选择微信支付账户 且用户默认不是微信支付
-    if (type === CASH_ACCOUNT.TYPE_IS_WECHAT && cashAccount.type !== CASH_ACCOUNT.TYPE_IS_WECHAT) {
+    if (type === CASH_ACCOUNT.TYPE_IS_WECHAT && cashAccount.type.value !== CASH_ACCOUNT.TYPE_IS_WECHAT) {
       this.createWechatKey()
     }
   }
@@ -381,9 +389,38 @@ class Pay extends Component {
       })
     }, 3000)
   }
+  handleClickCounter() {
+    let { id } = this.props.match.params
+    let { smsLoading } = this.state
+    let { detail: { cashAccount } } = this.props
+    if (smsLoading) {
+      return
+    }
+    CommonService.sms({
+      motivation: 'RESET_USER',
+      mobile: op(cashAccount).get('user.mobile')
+    }).then((res) => {
+      this.props.form.setFieldsValue({ smsCode: '' })
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.setState({
+        startedAt: +new Date(),
+        smsLoading: false
+      })
+    }).catch((err) => {
+      this.props.form.setFieldsValue({ smsCode: '' })
+      this.setState({
+        startedAt: +new Date(),
+        smsLoading: false
+      })
+      // this.setState({ smsLoading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
   render() {
-    let { form: { getFieldDecorator }, detail: { cashAccount }, isAdd, isSub } = this.props
-    let { type, qrCodeUrl, keyLoading, wechat, isAuto, loading } = this.state
+    let { form: { getFieldDecorator }, detail: { cashAccount, mobile }, isAdd, isSub } = this.props
+    let { type, qrCodeUrl, keyLoading, wechat, isAuto, loading, smsLoading } = this.state
 
     return (<Spin spinning={loading}>
       <Form className={styles.pay}>
@@ -410,9 +447,38 @@ class Pay extends Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
+          label="验证码"
+          extra={op(cashAccount).get('user.mobile') + '手机号验证'}
+        > 
+          <Row gutter={8}>
+            <Col span={12}>
+              {getFieldDecorator('smsCode', {
+                rules: [
+                  { required: true, message: '必填' },
+                ],
+                initialValue: '',
+              })(
+                <Input placeholder="请输入验证码" />
+              )}
+            </Col>
+            <Col span={12}>
+              <Throttle
+                startedAt={this.state.startedAt}
+                waitText={({ countdown }) => `重获验证码 (${countdown})`}
+                className={styles.send}
+                onClick={this.handleClickCounter.bind(this)}
+                disabled={smsLoading}>
+                <Button>发送验证码</Button>
+              </Throttle>
+            </Col>
+          </Row>
+          
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
           label="是否自动结算" >
           {getFieldDecorator('auto', {
-            initialValue: !!~[CASH_ACCOUNT.TYPE_IS_WECHAT, CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(cashAccount.type) ? cashAccount.isAuto : true,
+            initialValue: !!~[CASH_ACCOUNT.TYPE_IS_WECHAT, CASH_ACCOUNT.TYPE_IS_ALIPAY].indexOf(op(cashAccount).get('type.value')) ? isAuto : true,
             valuePropName: 'checked',
           })(
             <Checkbox>

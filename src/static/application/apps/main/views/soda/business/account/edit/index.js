@@ -20,11 +20,14 @@ const breadItems = [
     title: '苏打生活'
   },
   {
-    title: '运营商管理',
+    title: '账号管理',
+  },
+  {
+    title: '个人信息',
     url: '/soda/business/account'
   },
   {
-    title: '修改运营商'
+    title: '修改'
   }
 ]
 
@@ -33,15 +36,14 @@ const subEditBreadItems = [
     title: '苏打生活',
   },
   {
-    title: '运营商管理',
-    url: '/soda/business/account'
+    title: '账号管理',
   },
   {
     title: '下级运营商',
-    url: `/soda/business/account/sub?parentId=PARENT_ID`
+    url: `/soda/business/account/sub`
   },
   {
-    title: '修改运营商'
+    title: '修改'
   }
 ]
 
@@ -50,12 +52,11 @@ const subAddBreadItems = [
     title: '苏打生活',
   },
   {
-    title: '运营商管理',
-    url: '/soda/business/account'
+    title: '账号管理',
   },
   {
     title: '下级运营商',
-    url: `/soda/business/account/sub?parentId=PARENT_ID`
+    url: `/soda/business/account/sub`
   },
   {
     title: '新增运营商'
@@ -80,17 +81,10 @@ class Bread extends Component {
     super(props)
   }
   render () {
-    let { isSub, isAdd, redirectUrl, parentId } = this.props
-    let items = isSub ? (isAdd ? subAddBreadItems : subEditBreadItems) :
+    let { isSub, isAdd, redirectUrl } = this.props
+    let items = isAdd ? subAddBreadItems : 
+    isSub ? subEditBreadItems : 
     !!redirectUrl ? settlementBreadItems : breadItems
-
-    items = _.map(items, (item) => {
-      if (item.url) {
-        let url = item.url.replace('PARENT_ID', parentId)
-        return { title: item.title, url: url }
-      }
-      return item
-    })
 
     return <Breadcrumb items={items} />
   }
@@ -102,7 +96,6 @@ class App extends Component {
     this.state = {
       loading: false,
       activeKey: 'default',
-      parentId: '',
       detail: {
         name: '',
         contact: '',
@@ -126,19 +119,20 @@ class App extends Component {
   }
   componentWillMount() {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
-    let { parentId, type, redirectUrl } = querystring.parse(query)
+    let { isSub, type, redirectUrl } = querystring.parse(query)
     this.account.isAdd = !!~this.props.location.pathname.indexOf('add')
-    this.account.isSub = !!parentId
-    this.setState({ parentId: parentId || '' , activeKey: type || 'default', redirectUrl })
+    this.account.isSub = isSub === 'true' ? true : false
+    this.setState({ activeKey: type || 'default', redirectUrl })
     if (this.account.isAdd) {
       return
     }
     this.detail()
+    this.cashAccount()
   }
   detail() {
     let { id } = this.props.match.params
     this.setState({ loading: true })
-    UserService.GetDetailWithCashAccount({ id: id }).then((res) => {
+    UserService.detail(id).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -152,32 +146,41 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
-  changeTab(key) {
-    let self = this
-    confirm({
-      title: '确定取消当前修改?',
-      onOk() {
-        self.setState({ activeKey: key　})
-      },
-      onCancel() {
-      },
+  cashAccount() {
+    let { id } = this.props.match.params
+    this.setState({ loading: true })
+    UserService.cashAccount({ userId: id }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      let data = res.data
+      this.setState({
+        cashAccount: data,
+        loading: false
+      })
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
     })
+  }
+  changeTab(key) {
+    this.setState({ activeKey: key　})
   }
   render() {
     let { isAdd, isSub } = this.account
-    let { detail, activeKey, redirectUrl, loading, parentId } = this.state
-
+    let { detail, cashAccount, activeKey, redirectUrl, loading } = this.state
+    detail = { ...detail, cashAccount }
     return <div>
-      <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} parentId={parentId} />
+      <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} />
       <Tabs
         activeKey={activeKey}
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="基本信息" key="default">
-          { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} parentId={parentId} redirectUrl={redirectUrl} /> : null }
+          { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} /> : null }
         </TabPane>
         <TabPane tab="收款信息" key="cash" disabled={isAdd ? true : false} >
           { activeKey === 'cash' ? <Pay {...this.props}
-          loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} parentId={parentId} /> : null }
+          loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} /> : null }
         </TabPane>
       </Tabs>
     </div>

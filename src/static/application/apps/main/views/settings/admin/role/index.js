@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Button, Modal, Form, Input, Checkbox, Col, Row, Popconfirm } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import DataTable from '../../../../components/data-table/'
+import './index.css'
 
 const FormItem = Form.Item
 
@@ -74,6 +75,21 @@ class RoleModal extends Component {
         <Form>
           <FormItem
             {...formItemLayout}
+            label='父节点'
+          >
+            {getFieldDecorator('parent', {
+              rules: [{
+                required: true, message: '请输入父节点!',
+              }],
+              initialValue: '运营商'
+            })(
+              <Input disabled/>
+            )}
+          </FormItem>
+        </Form>
+        <Form>
+          <FormItem
+            {...formItemLayout}
             label='角色名称'
           >
             {getFieldDecorator('name', {
@@ -107,6 +123,8 @@ class Role extends Component {
         title: '角色名称',
         dataIndex: 'name',
         key: 'name',
+        className: 'td-left',
+        width: 300
       },
       {
         title: '操作',

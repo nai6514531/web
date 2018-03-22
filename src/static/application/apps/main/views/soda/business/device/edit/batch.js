@@ -74,7 +74,7 @@ class BatchMode extends Component {
       },
       schools: {},
       serviceAddresses: [],
-      activeSchoolId: 0,
+      activeSchoolId: '',
       activeFeatureType: 0,
       deviceTypes: [],
       devices: [],
@@ -94,9 +94,9 @@ class BatchMode extends Component {
     this.isAssigned = data.isAssigned === 'true' || false
     this.serials = data.serials
     
-   this.getDevices(this.serials)
-   this.getDeviceType()
-   this.getDeviceServiceAddress()
+    this.getDevices(this.serials)
+    this.getDeviceType()
+    this.getDeviceServiceAddress()
   }
   getDevices(serials) {
     let isAssigned = this.isAssigned
@@ -109,14 +109,36 @@ class BatchMode extends Component {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
-      let data = res.data
+      let { data: { objects } } = res
+
+      this.getDevicesModes(objects, serials)
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
+  getDevicesModes(devices, serials) {
+    let isAssigned = this.isAssigned
+    this.setState({ loading: true })
+    
+    DeviceService.deviceModeList({ 
+      serials: serials
+    }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      let { data: { objects } } = res
+      devices = (devices || []).map((device) => {
+        let modes = _.filter(objects, (mode) => { return mode.serial === device.serial})
+        return { ...device, modes }
+      })
       this.setState({
-        devices: data.objects || [],
-        featureType: op(data.objects[0]).get('feature.type'),
-        activeFeatureType: op(data.objects[0]).get('feature.type'),
+        devices: devices,
+        featureType: op(devices[0]).get('feature.type'),
+        activeFeatureType: op(devices[0]).get('feature.type'),
         loading: false
       })
-      this.devices = data.objects || []
+      this.devices = devices || []
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -125,7 +147,7 @@ class BatchMode extends Component {
   // 获取设备服务地点
   getDeviceServiceAddress() {
     let { serviceAddresses } = this.state
-    if (!_.isEmpty(serviceAddresses)) {
+    if (!_.isEmpty(serviceAddresses) || this.isAssigned) {
       return
     }
     DeviceAddressService.list().then((res) => {
@@ -133,17 +155,29 @@ class BatchMode extends Component {
         throw new Error(res.message)
       }
       let { data: { objects } } = res
-      let schools = _.chain(objects).groupBy((address) => {
+      let schools = [], addresses
+      _.chain(objects).reject((address) => {
+        // 过滤地址为空 或 学校无校名
+        return address.school.address === '' || (address.school.name === '' && address.school.id !== 0)
+      }).groupBy((address) => {
         return address.school.id
-      }).map((value, key) => {
-        return {
-          id: +key,
-          name: value[0].school.name,
-          objects: value
+      }).each((value, key) => {
+        if (value[0].school.id === 0) {
+          addresses = {
+            id: +key,
+            name: '其他',
+            objects: value
+          }
+        } else {
+           schools = [ ...schools, {
+            id: +key,
+            name: value[0].school.name,
+            objects: value
+          }]
         }
-      }).value()
+      })
       this.setState({
-        schools: schools,
+        schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         serviceAddresses: objects
       })
     })
@@ -402,7 +436,7 @@ class BatchMode extends Component {
     let { form: { getFieldDecorator } } = this.props
     let { 
       active: { address: activeAddress, feature: activeFeature, name: activeName, price: activePrice, duration: activeDuration }, 
-      schools, devices, preview, deviceTypes, featureType, activeFeatureType, activeSchoolId
+      schools, devices, preview, deviceTypes, featureType, activeFeatureType, activeSchoolId, serviceAddresses
     } = this.state
     let count = devices.length
     // 当前选择设备类型下的设备详情
@@ -415,7 +449,7 @@ class BatchMode extends Component {
 
       <div className={styles.top}>
         <p>你将对<span className={styles.hightlight}>{count}</span>个设备进行修改,请选择需要修改的项目:</p>
-        <Checkbox onChange={this.toggleCheckbox.bind(this, 'address')}>服务地点</Checkbox>
+        { !this.isAssigned ? <Checkbox onChange={this.toggleCheckbox.bind(this, 'address')}>服务地点</Checkbox> : null}
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'feature')}>关联设备类型</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'name')}>服务名称</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'price')}>价格</Checkbox>
@@ -583,10 +617,11 @@ class BatchMode extends Component {
         </FormItem> 
       </Form> 
       <BatchTable
+        isAssigned={this.isAssigned}
         devices={devices}
+        serviceAddresses={serviceAddresses}
         deviceTypes={deviceTypes}
         featureType={featureType}
-        activeFeatureType={activeFeatureType}
         preview={preview} />
     </div>)
   }

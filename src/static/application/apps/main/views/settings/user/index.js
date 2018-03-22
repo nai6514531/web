@@ -6,7 +6,7 @@ import { connect } from 'dva'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-import RoleModal from './roleModal.js'
+import PasswordModal from './passwordModal.js'
 import styles from '../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
@@ -18,34 +18,27 @@ const formItemLayout = {
 }
 const breadItems = [
   {
-    title: '设置'
+    title: '苏打生活'
   },
   {
-    title: '用户'
+    title: '账号管理'
+  },
+  {
+    title: '员工账号'
   }
 ]
 class User extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    this.search = search
+    this.search = {limit: 10, offset: 0, ...search }
     this.id = ''
     this.checkList = []
     this.columns = [
       {
-        title: '用户名称',
+        title: '员工姓名',
         dataIndex: 'name',
         key: 'name',
-      },
-      {
-        title: '联系人',
-        dataIndex: 'contact',
-        key: 'contact',
-      },
-      {
-        title: '手机号',
-        dataIndex: 'mobile',
-        key: 'mobile',
       },
       {
         title: '登录账号',
@@ -53,8 +46,13 @@ class User extends Component {
         key: 'account',
       },
       {
+        title: '联系手机号',
+        dataIndex: 'mobile',
+        key: 'mobile',
+      },
+      {
         title: '角色',
-       render: (text, record, index) => {
+        render: (text, record, index) => {
          return (
           record.role[0] && record.role[0].name //只支持单角色
          )
@@ -64,14 +62,9 @@ class User extends Component {
         title: '状态',
        render: (text, record, index) => {
          return (
-          record.status === 0 ? '正常' : '拉黑'
+          record.status === 0 ? '正常' : '已拉黑'
          )
        }
-      },
-      {
-        title: '地址',
-        dataIndex: 'address',
-        key: 'address',
       },
       {
         title: '操作',
@@ -79,13 +72,17 @@ class User extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
+              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
               {
-                record.status === 0 ? <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                    <a href='javascript:void(0)'>{'\u00A0'}拉黑</a> |
-                  </Popconfirm> : ''
+                record.status === 0
+                ? <Popconfirm title='确定要拉黑该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 1) } >
+                      | <a href='javascript:void(0)'>{'\u00A0'}拉黑账号</a>
+                  </Popconfirm>
+                : <Popconfirm title='确定要恢复该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 0) } >
+                        | <a href='javascript:void(0)'>{'\u00A0'}恢复账号</a>
+                  </Popconfirm>
               }
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a>
             </span>
           )
         }
@@ -115,27 +112,37 @@ class User extends Component {
     })
   }
   fetchRole = (params) => {
+    // 获取运营商子角色
+    const { common : { userInfo: { roleList } } } = this.props
+    const roleId = roleList[0] && roleList[0].id
+    let parentId = 2
+    if(roleId === 1) {
+      parentId = 0
+    }
     this.props.dispatch({
-      type: 'user/roles'
+      type: 'user/roles',
+      payload: {
+        data: {
+          parentId
+        }
+      }
     })
   }
-  delete = (id) => {
+  changeStatus = (id, status) => {
     const url = transformUrl(location.search)
     this.props.dispatch({
-      type: 'user/delete',
+      type: 'user/changeStatus',
       payload: {
         data: url,
-        id: id
+        id: id,
+        status
       }
     })
   }
   show = (id) => {
     this.id = id
     this.props.dispatch({
-      type: 'user/assignedRoles',
-      payload: {
-        id: id
-      }
+      type: 'user/showModal'
     })
   }
   changeHandler =  (type, e) => {
@@ -174,7 +181,7 @@ class User extends Component {
       <div>
         <Breadcrumb items={breadItems} />
         <Input
-          placeholder='请输入用户名搜索'
+          placeholder='请输入员工姓名搜索'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'name')}
           onPressEnter={this.searchClick}
@@ -220,7 +227,7 @@ class User extends Component {
           <Button
             type='primary'
             className={styles.button}>
-              添加员工
+              新增账号
           </Button>
         </Link>
         <DataTable
@@ -231,7 +238,7 @@ class User extends Component {
           pagination={pagination}
           change={this.change}
         />
-        { visible ? <RoleModal {...this.props} id={this.id}/> : null }
+        <PasswordModal {...this.props} id={this.id}/>
       </div>
     )
   }
