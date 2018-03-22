@@ -58,11 +58,16 @@ class UserEdit extends Component {
   }
   fetchRole = (params) => {
     // useID参数要变成roleId 为2
+    const roleId = this.props.common.userInfo.roleList[0].id
+    let parentId = 2
+    if(roleId === 1) {
+      parentId = 0
+    }
     this.props.dispatch({
       type: 'user/roles',
       payload: {
         data: {
-          parentId: 2
+          parentId
         }
       }
     })

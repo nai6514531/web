@@ -113,11 +113,16 @@ class User extends Component {
   }
   fetchRole = (params) => {
     // 获取运营商子角色
+    const roleId = this.props.common.userInfo.roleList[0].id
+    let parentId = 2
+    if(roleId === 1) {
+      parentId = 0
+    }
     this.props.dispatch({
       type: 'user/roles',
       payload: {
         data: {
-          parentId: 2
+          parentId
         }
       }
     })
