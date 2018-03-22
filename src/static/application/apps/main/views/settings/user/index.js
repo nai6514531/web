@@ -113,7 +113,8 @@ class User extends Component {
   }
   fetchRole = (params) => {
     // 获取运营商子角色
-    const roleId = this.props.common.userInfo.roleList[0].id
+    const { common : { userInfo: { roleList } } } = this.props
+    const roleId = roleList[0] && roleList[0].id
     let parentId = 2
     if(roleId === 1) {
       parentId = 0
