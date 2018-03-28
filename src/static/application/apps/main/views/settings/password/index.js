@@ -36,15 +36,14 @@ class ResetPassword extends Component {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const { history } = this.props
-        values.oldPassword = md5(values.oldPassword)
-        values.newPassword = md5(values.newPassword)
-        delete values.rePassword
         this.props.dispatch({
-          type: 'adminUser/reset',
+          type: 'user/updatePassword',
           payload: {
-            data: values,
-            history
+            data: {
+              oldPassword: md5(values.oldPassword),
+              newPassword: md5(values.newPassword),
+              id: this.props.common.userInfo.user.id
+            }
           }
         })
       }
@@ -138,7 +137,8 @@ class ResetPassword extends Component {
 function mapStateToProps(state,props) {
   return {
     loading: state.loading.global,
-    user: state.adminUser,
+    user: state.user,
+    common: state.common,
     ...props
   }
 }

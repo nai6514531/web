@@ -86,6 +86,7 @@ export default {
       }
     },
     *add({ payload }, { call, put }) {
+      const { history } = payload
       const result = yield call(userService.addStaffs, payload.data)
       if(result.status == 'OK') {
         const { roleId } = payload.role
@@ -99,7 +100,6 @@ export default {
             history
           }
         })
-        payload.history.goBack()
         message.success('添加成功')
       } else {
         message.error(result.message)
@@ -109,7 +109,7 @@ export default {
       const { data, id, status } = payload
       const result = yield call(userService.changeStatus, id, { status })
       if(result.status == 'OK') {
-        message.success('删除成功')
+        message.success('操作成功')
         yield put({
           type: 'list',
           payload: {
@@ -141,22 +141,11 @@ export default {
         result.message && message.error(result.message)
       }
     },
-    *updatePassword({ payload: { data: { id, newPassword } }}, { call, put }) {
-      const result = yield call(userService.updatePassword, id, { newPassword })
+    *updatePassword({ payload: { data: { id, newPassword, oldPassword } }}, { call, put }) {
+      const result = yield call(userService.updatePassword, id, { newPassword, oldPassword })
       if(result.status == 'OK') {
         message.success('密码修改成功')
         yield put({ type: 'hideModal' })
-      } else {
-        message.error(result.message)
-      }
-    },
-    *reset({ payload }, { call, put }) {
-      const result = yield call(commonService.reset, payload.data)
-      if(result.status == 'OK') {
-        message.success('重置密码成功')
-        // storage.clear('token')
-        // session.clear()
-        // payload.history.push('/')
       } else {
         message.error(result.message)
       }
