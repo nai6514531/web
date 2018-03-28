@@ -103,44 +103,44 @@ class App extends Component {
     return (<div className={styles.detail}>
       <Breadcrumb items={breadItems} />
       <Row className={styles.item}>
-        <h2>基本信息</h2>
+        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}><h2>基本信息</h2></Col>
         <form>
-          <Col xs={24} sm={12}><label>运营商名称:</label><span>{user.get('name') || ''}</span></Col>
-          <Col xs={24} sm={12}>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>运营商名称:</label><span>{user.get('name') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}>
             <label>登录账号:</label>
             <span>{user.get('account') || ''}</span>
             <a style={{ marginLeft: 15 }} onClick={() => { history.push(`/admin/settings/change-password`) }}>修改密码</a>
           </Col>
-          <Col xs={24} sm={12}><label>联系人:</label><span>{user.get('contact') || ''}</span></Col>
-          <Col xs={24} sm={12}><label>手机号:</label><span>{user.get('mobile') || ''}</span></Col>
-          <Col xs={24} sm={12}><label>服务电话:</label><span>{user.get('telephone') || ''}</span></Col>
-          <Col xs={24} sm={12}><label>地址:</label><span>{user.get('address') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>联系人:</label><span>{user.get('contact') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>手机号:</label><span>{user.get('mobile') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>服务电话:</label><span>{user.get('telephone') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>地址:</label><span>{user.get('address') || ''}</span></Col>
         </form>
       </Row>
       <Row className={styles.item}>
-        <h2>收款信息</h2>
+        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}><h2>收款信息</h2></Col>
         <form>
-          <Col xs={24}><label>是否自定结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
-          <Col xs={24}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
-          <Col xs={24}><label>姓名|账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join('|')}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>是自动结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>姓名|账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join(' | ')}</span></Col>
         </form>
       </Row>
-      <Row>
-        <Button
-          type='primary'
-          style={{ marginRight: 10 }}
-          onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}`) }}>
-          修改信息
-        </Button>
-        {isPermissionRecharge ? <Button
-          type='primary'
-          style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
-          onClick={() => { this.props.history.push('/soda/business/recharges-chipcard') }}>
-          IC卡金额转移
-        </Button> : null }
+      <Row className={styles.item}>
+        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}>
+          <Button
+            type='primary'
+            style={{ marginRight: 10 }}
+            onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}`) }}>
+            修改信息
+          </Button>
+          {isPermissionRecharge ? <Button
+            type='primary'
+            style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
+            onClick={() => { this.props.history.push('/soda/business/recharges-chipcard') }}>
+            IC卡金额转移
+          </Button> : null }
+        </Col>
       </Row>
-
-      
     </div>)
   }
 }

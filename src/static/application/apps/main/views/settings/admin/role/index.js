@@ -72,21 +72,25 @@ class RoleModal extends Component {
         onOk={this.handleChange}
         afterClose={this.reset}
        >
-        <Form>
-          <FormItem
-            {...formItemLayout}
-            label='父节点'
-          >
-            {getFieldDecorator('parent', {
-              rules: [{
-                required: true, message: '请输入父节点!',
-              }],
-              initialValue: '运营商'
-            })(
-              <Input disabled/>
-            )}
-          </FormItem>
-        </Form>
+        {
+          record.parentId !== 0 ?
+          <Form>
+            <FormItem
+              {...formItemLayout}
+              label='父节点'
+            >
+              {getFieldDecorator('parent', {
+                rules: [{
+                  required: true, message: '请输入父节点!',
+                }],
+                initialValue: '运营商'
+              })(
+                <Input disabled/>
+              )}
+            </FormItem>
+          </Form>
+          : null
+        }
         <Form>
           <FormItem
             {...formItemLayout}

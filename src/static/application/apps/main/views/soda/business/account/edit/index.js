@@ -1,4 +1,5 @@
 import React, { Component }from 'react'
+import Promise from 'bluebird'
 import querystring from 'querystring'
 import { Tabs, Modal, message } from 'antd'
 const TabPane = Tabs.TabPane
@@ -104,7 +105,9 @@ class App extends Component {
         address: '',
         accountName: '',
         cashAccount: {
-          type: CASH_ACCOUNT.TYPE_IS_WECHAT,
+          type: {
+            value: CASH_ACCOUNT.TYPE_IS_WECHAT,
+          },
           account: '',
           realName: '',
           isAuto: true
@@ -123,39 +126,26 @@ class App extends Component {
     this.account.isAdd = !!~this.props.location.pathname.indexOf('add')
     this.account.isSub = isSub === 'true' ? true : false
     this.setState({ activeKey: type || 'default', redirectUrl })
-    if (this.account.isAdd) {
-      return
+    if (!this.account.isAdd) {
+      this.detail()
     }
-    this.detail()
-    this.cashAccount()
   }
   detail() {
     let { id } = this.props.match.params
     this.setState({ loading: true })
-    UserService.detail(id).then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
+
+    Promise.all([
+      UserService.detail(id),
+      UserService.cashAccount({ userId: id })
+    ]).then((res) => {
+      let user = res[0]
+      let cashAccount = res[1]
+      if (user.status !== 'OK' || cashAccount.status !== 'OK') {
+        throw new Error(user.message || cashAccount.message)
       }
-      let data = res.data
       this.setState({
-        detail: data,
-        loading: false
-      })
-    }).catch((err) => {
-      this.setState({ loading: false })
-      message.error(err.message || '服务器异常，刷新重试')
-    })
-  }
-  cashAccount() {
-    let { id } = this.props.match.params
-    this.setState({ loading: true })
-    UserService.cashAccount({ userId: id }).then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      let data = res.data
-      this.setState({
-        cashAccount: data,
+        detail: user.data,
+        cashAccount: cashAccount.data,
         loading: false
       })
     }).catch((err) => {
