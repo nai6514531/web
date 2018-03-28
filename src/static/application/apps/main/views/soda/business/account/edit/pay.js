@@ -221,19 +221,21 @@ class Pay extends Component {
     this.state = {
       loading: loading,
       keyLoading: false,
-      type: cashAccount.type.value,
+      type: op(cashAccount).get('type.value'),
       wechat: {
         key: '',
         nickName: ''
       },
-      isAuto: cashAccount.mode.value === 0,
+      isAuto: op(cashAccount).get('mode.value') === 0,
       qrCodeUrl: DEFAULT_URL
     }
   }
   componentWillReceiveProps(nextProps) {
     let nextType = op.get(nextProps, 'detail.cashAccount.type.value')
+    let nextMode = op.get(nextProps, 'detail.cashAccount.mode.value')
     let nextLoading = op.get(nextProps, 'loading')
     let type = op.get(this.props, 'detail.cashAccount.type.value')
+    let mode = op.get(this.props, 'detail.cashAccount.mode.value')
     let loading = op.get(this.props, 'loading')
 
     if (nextLoading !== loading) {
@@ -241,6 +243,9 @@ class Pay extends Component {
     }
     if (nextType !== type) {
       this.setState({ type: nextType })
+    }
+    if (nextMode !== mode) {
+      this.setState({ isAuto: nextMode === 0 })
     }
   }
   componentWillMount() {
@@ -307,7 +312,7 @@ class Pay extends Component {
     let { isAdd, isSub, redirectUrl, detail: { cashAccount } } = this.props
     this.setState({ loading: true })
 
-    UserService.updateCashAccount({ ...options, id: cashAccount.id }).then((res) => {
+    UserService.updateCashAccount({ ...options, id: cashAccount.userId }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -342,10 +347,11 @@ class Pay extends Component {
     }
   }
   createWechatKey() {
-    let { id } = this.props.match.params
+    let { detail: { cashAccount: { userId } } } = this.props
+
     this.setState({ keyLoading: true })
 
-    BusinessService.createKey({id: +id}).then((res) => {
+    BusinessService.createKey({id: userId}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -390,7 +396,6 @@ class Pay extends Component {
     }, 3000)
   }
   handleClickCounter() {
-    let { id } = this.props.match.params
     let { smsLoading } = this.state
     let { detail: { cashAccount } } = this.props
     if (smsLoading) {
