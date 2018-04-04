@@ -79,7 +79,7 @@ export default {
             history
           }
         })
-        message.success('更新用户信息成功')
+        // message.success('更新用户信息成功')
         // yield put({ type: 'common/info' })
       } else {
         message.error(result.message)
@@ -100,7 +100,7 @@ export default {
             history
           }
         })
-        message.success('添加成功')
+        // message.success('添加成功')
       } else {
         message.error(result.message)
       }
@@ -124,10 +124,10 @@ export default {
       const { data, history } = payload
       const result = yield call(userService.updateRoles, data)
       if(result.status == 'OK') {
-        message.success('更新角色成功')
+        message.success('操作成功')
         history.goBack()
       } else {
-        message.error(result.message)
+        message.error('操作失败，请联系客服')
       }
     },
     *roles({ payload }, { call, put }) {
