@@ -16,15 +16,8 @@ const addressesService = {
     return request.delete(`/mng/provinces/${id}`)
   },
   cityList: (data, getAll) => {
-    let url
-    if(getAll) {
-      url= `/mng/cities?provinceId=${data.provinceId || ''}&name=${data.name || ''}`
-    } else {
-      url = `/mng/cities?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${data.provinceId || ''}&name=${data.name || ''}`
-    }
-    return request.get(url)
+    return request.get(`/mng/cities`, { params: data})
   },
-
   cityAdd: (data) => {
     return request.post(`/mng/cities`, data)
   },
@@ -79,11 +72,16 @@ const addressesService = {
   streetDelete: (id) => {
     return request.delete(`/mng/streets/${id}`)
   },
-  schoolList: (data) => {
-    if(data.pagination === false) {
-      return request.get(`/mng/schools?provinceId=${data.provinceId || ''}&cityId=${data.cityId || ''}&districtId=${data.districtId || ''}&name=${data.name || ''}`)
+  schoolList: (options) => {
+    // 不分页
+    if (!options.limit) {
+      return request.get(`/mng/schools`, {
+        params: options
+      })
     }
-    return request.get(`/mng/schools?offset=${data.offset || 0 }&limit=${data.limit || 10 }&provinceId=${data.provinceId || ''}&cityId=${data.cityId || ''}&districtId=${data.districtId || ''}&name=${data.name || ''}`)
+    return request.get(`/mng/schools?offset=${options.offset || 0 }&limit=${options.limit || 10 }`, {
+      params: options
+    })
   },
   schoolAdd: (data) => {
     return request.post(`/mng/schools`, data)

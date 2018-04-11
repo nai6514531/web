@@ -14,7 +14,6 @@ const breadItems = [
     title: '修改密码'
   }
 ]
-
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -23,26 +22,28 @@ const formItemLayout = {
   wrapperCol: {
     xs: { span: 24 },
     sm: { span: 14 },
-  },
+  }
 }
 
 class ResetPassword extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      confirmDirty: false,
+    }
   }
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const { history } = this.props
-        values.oldPassword = md5(values.oldPassword)
-        values.newPassword = md5(values.newPassword)
-        delete values.rePassword
         this.props.dispatch({
-          type: 'user/reset',
+          type: 'user/updatePassword',
           payload: {
-            data: values,
-            history
+            data: {
+              oldPassword: md5(values.oldPassword),
+              newPassword: md5(values.newPassword),
+              id: this.props.common.userInfo.user.id
+            }
           }
         })
       }
@@ -50,15 +51,9 @@ class ResetPassword extends Component {
   }
   handleConfirmBlur = (e) => {
     const value = e.target.value
-    this.props.dispatch({
-      type: 'user/updateConfirmDirty',
-      payload: {
-        confirmDirty: !!value
-      }
-    })
-    this.setState({ confirmDirty: !!value })
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value })
   }
-  checkPassword = (rule, value, callback) => {
+  compareToFirstPassword = (rule, value, callback) => {
      const form = this.props.form
      if (value && value !== form.getFieldValue('newPassword')) {
        callback('两次密码输入不一致')
@@ -66,9 +61,9 @@ class ResetPassword extends Component {
        callback()
      }
    }
-  checkConfirm = (rule, value, callback) => {
+  validateToNextPassword = (rule, value, callback) => {
     const form = this.props.form
-    if (value && this.props.user.confirmDirty) {
+    if (value && this.state.confirmDirty) {
       form.validateFields(['rePassword'], { force: true })
     }
     callback()
@@ -104,7 +99,7 @@ class ResetPassword extends Component {
               }, {
                 min: 6, message: '密码最少6位'
               }, {
-                validator: this.checkConfirm,
+                validator: this.validateToNextPassword,
               }]
             })(
               <Input type='password'/>
@@ -120,7 +115,7 @@ class ResetPassword extends Component {
               }, {
                 min: 6, message: '密码最少6位'
               }, {
-                validator: this.checkPassword,
+                validator: this.compareToFirstPassword,
               }]
             })(
               <Input type='password' onBlur={this.handleConfirmBlur}/>
@@ -143,6 +138,7 @@ function mapStateToProps(state,props) {
   return {
     loading: state.loading.global,
     user: state.user,
+    common: state.common,
     ...props
   }
 }

@@ -1,7 +1,7 @@
 import request from '../../utils/request'
 const roleService = {
-  list: () => {
-    return request.get(`/mng/roles`)
+  list: (options) => {
+    return request.get(`/mng/roles`,{ params: options })
   },
   update: (data, id) => {
     return request.put(`/mng/roles/${id}`, data)

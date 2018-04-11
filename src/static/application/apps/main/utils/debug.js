@@ -1,7 +1,9 @@
 import moment from 'moment'
 import querystring from 'querystring'
+import cookie from 'component-cookie'
 
 import platform from './platform'
+import { COOKIE } from '../constant/cookie'
 
 export const env = window.__ENV__ = __ENV__
 const qs = querystring.parse(window.location.search.slice(1))
@@ -15,25 +17,7 @@ export const ENVIRONMENT = {
 export const isProduction = env.ENV === ENVIRONMENT.PRODUCTION
 export const isStaging = env.ENV === ENVIRONMENT.STAGING
 export const isDevelopment = env.ENV === ENVIRONMENT.DEVELOPMENT
-
-export const isDebug = 'debug' in qs
-
-export const __scene = qs.__scene
-
-let _API_SERVER = ""
-
-switch (env.ENV) {
-  case ENVIRONMENT.PRODUCTION:
-    _API_SERVER = '//api.erp.sodalife.xyz/v1'
-    break
-  case ENVIRONMENT.STAGING:
-    _API_SERVER = '//api.erp.sodalife.club/v1'
-    break
-  default:
-    _API_SERVER = '//api.erp.sodalife.dev/v1'
-}
-
-export const API_SERVER = _API_SERVER
+export const isDebug = !!cookie(COOKIE.DEBUG)
 
 if (isDebug || isDevelopment || isStaging) {
   console.log(
@@ -46,7 +30,10 @@ if (isDebug || isDevelopment || isStaging) {
   .....----- ${env.PKG_NAME.replace(/./g, '=')} -----.....
   `)
 
-  if (platform.os.isIOS() | platform.os.isAndroid() || isDebug) {
-    require('bundle!eruda')((eruda) => eruda.init())
-  }
+  
+}
+
+// set eruda
+if (isDebug) {
+  require('bundle!eruda')((eruda) => eruda.init())
 }

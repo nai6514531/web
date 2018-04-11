@@ -1,0 +1,43 @@
+新增商家设备管理模块
+
+# 请为您的变更输入提交说明。以 '#' 开始的行将被忽略，而一个空的提交
+# 说明将会终止提交。
+#
+# 日期：  Mon Dec 18 14:21:17 2017 +0800
+#
+# 位于分支 device
+# 您的分支和 'origin/develop' 出现了偏离，
+# 并且分别有 1 和 109 处不同的提交。
+#   （使用 "git pull" 来合并远程分支）
+#
+# 要提交的变更：
+#	新文件：   application/apps/main/components/element/config.js
+#	新文件：   application/apps/main/components/element/index.js
+#	修改：     application/apps/main/components/form/input/index.js
+#	修改：     application/apps/main/routers/business/index.js
+#	修改：     application/apps/main/services/soda-manager/address.js
+#	修改：     application/apps/main/services/soda-manager/device.js
+#	修改：     application/apps/main/services/soda-manager/user.js
+#	修改：     application/apps/main/utils/functions.js
+#	修改：     application/apps/main/utils/request.js
+#	修改：     application/apps/main/views/business/account/edit/index.js
+#	修改：     application/apps/main/views/business/account/edit/pay.js
+#	新文件：   application/apps/main/views/business/account/images/reload.png
+#	修改：     application/apps/main/views/business/account/index.pcss
+#	修改：     application/apps/main/views/business/chipcard/detail.js
+#	修改：     application/apps/main/views/business/chipcard/index.js
+#	修改：     application/apps/main/views/business/constant.js
+#	新文件：   application/apps/main/views/business/device/assigned.js
+#	新文件：   application/apps/main/views/business/device/edit/batch-table.js
+#	新文件：   application/apps/main/views/business/device/edit/batch.js
+#	新文件：   application/apps/main/views/business/device/edit/index.js
+#	新文件：   application/apps/main/views/business/device/edit/mode.js
+#	新文件：   application/apps/main/views/business/device/edit/name.js
+#	新文件：   application/apps/main/views/business/device/index.js
+#	新文件：   application/apps/main/views/business/device/index.pcss
+#	新文件：   application/apps/main/views/business/device/modes.js
+#	修改：     application/apps/main/views/crm/device/index.js
+#	修改：     package-lock.json
+#	修改：     package.json
+#	修改：     yarn.lock
+#

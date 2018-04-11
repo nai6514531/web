@@ -64,7 +64,7 @@ export default {
       }
     },
     *cityList({ payload }, { call, put }) {
-      const result = yield call(addressService.cityList, payload.data, true)
+      const result = yield call(addressService.cityList, payload.data)
       if(result.status == 'OK') {
         result.data.objects.map(value => {
           value.id = String(value.id || '')

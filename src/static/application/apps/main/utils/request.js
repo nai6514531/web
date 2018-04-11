@@ -1,14 +1,13 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
 import { Modal, message } from 'antd'
-import { API_SERVER } from './debug'
+import { API_SERVER } from '../constant/api'
 import { storage, session } from './storage.js'
 import 'nprogress/nprogress.css'
 
 const confirm = Modal.confirm
 const api = axios.create({
   baseURL: API_SERVER,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'
@@ -37,6 +36,11 @@ api.interceptors.request.use(function (config) {
   if (token) {
     config.headers.Authorization = 'Bearer ' + token
   }
+  if (!!~(config.url).indexOf('http')) {
+    config.withCredentials = false
+  } else {
+    config.withCredentials = true
+  }
   let timestamp = new Date().getTime()
   if (config.url.indexOf('?') > 0) {
     config.url = config.url + `&_t=${timestamp}`
@@ -59,12 +63,13 @@ api.interceptors.response.use(
       if (data&&data.status === 'UNAUTHORIZED') {
         storage.clear('token')
         session.clear()
-        return confirm({
+        confirm({
           title: data.message,
           onOk() {
             window.location.href = '/'
           }
         })
+        return Promise.reject(error)
       }
     }
     message.error('系统开小差了,请重试!', 3)

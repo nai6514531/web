@@ -1,4 +1,12 @@
+// todo 后续需要导出多个变量。而非一个
 export default {
+  permission: {
+    type: {
+      'api': 0,
+      'menu': 1,
+      'element': 2
+    }
+  },
   device: {
     '1' : 'firstPulseName',
     '2' : 'secondPulseName',

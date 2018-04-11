@@ -26,23 +26,23 @@ class Permission extends Component {
     this.columns = [
       { title: '序号', dataIndex: 'id', key: 'id' },
       { title: '权限名称', dataIndex: 'name',key: 'name' },
-      {
-        title: '操作',
-        key: 'operation',
-        render: (text, record, index) => {
-          return (
-            <span>
-              <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑|</a>
-              <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除|</a>
-              </Popconfirm>
-              <a href='javascript:void(0)' onClick={ this.showMenu.bind(this, record.id) }>{'\u00A0'}配置菜单|</a>
-              <a href='javascript:void(0)' onClick={ this.showElement.bind(this, record.id) }>{'\u00A0'}配置元素</a>
-              {/* <a href='javascript:void(0)' onClick={ this.showAction.bind(this, record.id) }>{'\u00A0'}配置接口</a> */}
-            </span>
-          )
-        }
-      }
+      // {
+      //   title: '操作',
+      //   key: 'operation',
+      //   render: (text, record, index) => {
+      //     return (
+      //       <span>
+      //         {/* <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑|</a>
+      //         <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
+      //           <a href='javascript:void(0)'>{'\u00A0'}删除</a>
+      //         </Popconfirm> */}
+      //         {/* <a href='javascript:void(0)' onClick={ this.showMenu.bind(this, record.id) }>{'\u00A0'}配置菜单|</a> */}
+      //         {/* <a href='javascript:void(0)' onClick={ this.showElement.bind(this, record.id) }>{'\u00A0'}配置元素</a> */}
+      //         {/* <a href='javascript:void(0)' onClick={ this.showAction.bind(this, record.id) }>{'\u00A0'}配置接口</a> */}
+      //       </span>
+      //     )
+      //   }
+      // }
     ]
   }
   componentDidMount() {
@@ -101,13 +101,13 @@ class Permission extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <Button
+        {/* <Button
           type='primary'
           onClick={this.show.bind(this,{})}
           style={{marginBottom: '20px'}}
           >
           添加权限
-        </Button>
+        </Button> */}
         <DataTable
           scroll={{ x: 400 }}
           dataSource={objects}

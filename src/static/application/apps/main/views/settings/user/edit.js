@@ -2,24 +2,13 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Radio, Collapse, Tag } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import md5 from 'md5'
 
 const FormItem = Form.Item
-const breadItems = [
-  {
-    title: '设置'
-  },
-  {
-    title: '用户',
-    url: '/admin/settings/user'
-  },
-  {
-    title: '编辑用户'
-  }
-]
+const Panel = Collapse.Panel
 
 const formItemLayout = {
   labelCol: {
@@ -35,13 +24,52 @@ const formItemLayout = {
 class UserEdit extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      confirmDirty: false,
+    }
   }
   componentDidMount() {
     const { match: { params: { id } } } = this.props
-    id!== 'new' && this.props.dispatch({
-      type: 'user/detail',
+    if(id !== 'new') {
+      this.props.dispatch({
+        type: 'user/detail',
+        payload: {
+          id: id
+        }
+      })
+    }
+    this.fetch()
+    this.fetchRole()
+  }
+  fetch = () => {
+    this.props.dispatch({
+      type: 'user/menuPermission'
+    })
+  }
+  fetchAssignedPermission = (id) => {
+    this.props.dispatch({
+      type: 'user/getAssignedPermission',
       payload: {
-        id: id
+        data: {
+          roleId: id
+        }
+      }
+    })
+  }
+  fetchRole = (params) => {
+    // useID参数要变成roleId 为2
+    const { common : { userInfo: { roleList } } } = this.props
+    const roleId = roleList[0] && roleList[0].id
+    let parentId = 2
+    if(roleId === 1) {
+      parentId = 0
+    }
+    this.props.dispatch({
+      type: 'user/roles',
+      payload: {
+        data: {
+          parentId
+        }
       }
     })
   }
@@ -49,19 +77,24 @@ class UserEdit extends Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        const { match: { params: { id } }, history } = this.props
+        const { match: { params: { id } }, history, user: { data } } = this.props
         let type = 'user/add'
         if(id !== 'new') {
           type = 'user/update'
         } else {
           values.password = md5(values.password)
         }
+        const role = {
+          userId: data.id,
+          roleId: values.roleId
+        }
         this.props.dispatch({
           type: type,
           payload: {
             history,
             data: values,
-            id: id
+            id: id,
+            role
           }
         })
       }
@@ -77,16 +110,66 @@ class UserEdit extends Component {
       callback()
     }
   }
-  checkPhone = (rule, value, callback) => {
-    if (isNaN(value) && value!== undefined) {
-      callback('请输入正确的服务电话')
+  handleConfirmBlur = (e) => {
+    const value = e.target.value
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value })
+  }
+  compareToFirstPassword = (rule, value, callback) => {
+    const form = this.props.form
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两次密码输入不一致')
     } else {
       callback()
     }
   }
+  validateToNextPassword = (rule, value, callback) => {
+    const form = this.props.form
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['rePassword'], { force: true })
+    }
+    callback()
+  }
+  changeHandler = (e) => {
+    // 获取不同角色对应的权限
+    this.props.dispatch({
+      type: 'user/updateData',
+      payload: { activeKey: ""}
+    })
+    this.fetchAssignedPermission(e.target.value)
+  }
+  collapseHandler = (activeKey) => {
+    this.props.dispatch({
+      type: 'user/updateData',
+      payload: { activeKey: activeKey[activeKey.length - 1]}
+    })
+  }
   render() {
-    const { form: { getFieldDecorator }, user: { data }, match: { params: { id } }, loading } = this.props
+    const { form: { getFieldDecorator }, user: { data, roleData, permissionData, activeKey }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
+    const breadItems = [
+      {
+        title: '苏打生活'
+      },
+      {
+        title: '账号管理'
+      },
+      {
+        title: '员工账号',
+        url: '/admin/settings/user'
+      },
+      {
+        title: isEdit ? '编辑账号': '新增账号'
+      }
+    ]
+    const loop = data => data.map((item) => {
+      return (
+        <Panel header={item.name} key={item.id}>
+          <div style={{paddingLeft: '30px'}}>
+            { item.permission.map((value, index) =><Tag style={{ margin: '3px 8px'}} key={index}>{value.name}</Tag>) }
+          </div>
+        </Panel>
+      )
+    })
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -104,19 +187,6 @@ class UserEdit extends Component {
               <Input disabled={isEdit}/>
             )}
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='用户名称'
-          >
-            {getFieldDecorator('name', {
-              rules: [{
-                required: true, message: '请输入用户名称',
-              }],
-              initialValue: data.name
-            })(
-              <Input />
-            )}
-          </FormItem>
           { !isEdit ? (
             <FormItem
               {...formItemLayout}
@@ -127,34 +197,41 @@ class UserEdit extends Component {
                   required: true, message: '请输入密码',
                 },{
                   min: 6, message: '密码最少6位'
+                },{
+                  validator: this.validateToNextPassword,
                 }]
               })(
                 <Input />
               )}
             </FormItem>
           ) : null }
+          { !isEdit ? (
+            <FormItem
+              {...formItemLayout}
+              label='确认密码'
+            >
+              {getFieldDecorator('rePassword', {
+                rules: [{
+                  required: true, message: '请输入确认密码',
+                },{
+                  min: 6, message: '密码最少6位'
+                }, {
+                  validator: this.compareToFirstPassword,
+                }]
+              })(
+                <Input  onBlur={this.handleConfirmBlur}/>
+              )}
+            </FormItem>
+          ) : null }
           <FormItem
             {...formItemLayout}
-            label='联系人'
+            label='员工姓名'
           >
-            {getFieldDecorator('contact', {
+            {getFieldDecorator('name', {
               rules: [{
-                required: true, message: '请输入联系人',
+                required: true, message: '请输入员工姓名',
               }],
-              initialValue: data.contact
-            })(
-              <Input />
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='地址'
-          >
-            {getFieldDecorator('address', {
-              rules: [{
-                required: true, message: '请输入地址',
-              }],
-              initialValue: data.address
+              initialValue: data.name
             })(
               <Input />
             )}
@@ -178,17 +255,40 @@ class UserEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='服务电话'
+            label='角色'
           >
-            {getFieldDecorator('telephone', {
+            {getFieldDecorator('roleId', {
               rules: [{
-                required: true, message: '请输入服务电话',
+                required: true, message: '请选择角色',
               }],
-              initialValue: data.telephone
+              initialValue: data.role &&  data.role[0] && data.role[0].id
             })(
-              <Input />
+
+              <Radio.Group onChange={this.changeHandler} style={{background: '#ffffff', width: '100%'}}>
+                  {
+                    roleData.map((item, index) => {
+                      return(
+                        <Radio value={item.id} style={{ minWidth: '30%', marginRight: '10px'}} key={index}>
+                          {item.name}
+                        </Radio>
+                      )
+                    })
+                  }
+              </Radio.Group>
             )}
           </FormItem>
+          {
+            permissionData.length != 0
+            ? <FormItem
+                {...formItemLayout}
+                label='操作权限'
+              >
+                <Collapse bordered={false} activeKey={activeKey} onChange={this.collapseHandler}>
+                  { loop(permissionData) }
+                </Collapse>
+              </FormItem>
+            : null
+          }
           <FormItem style={{textAlign: 'center'}}>
             <Button
               style={{margin: '20px 50px 0 0'}}
@@ -212,6 +312,7 @@ function mapStateToProps(state,props) {
   return {
     user: state.user,
     loading: state.loading.global,
+    common: state.common,
     ...props
   }
 }

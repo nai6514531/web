@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
+import { Link } from 'react-router-dom'
 import { Button, Modal, Form, Input, Checkbox, Col, Row, Popconfirm } from 'antd'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import DataTable from '../../../components/data-table/'
 
 const FormItem = Form.Item
+
+// unuseless page for business`s roles
 
 const formItemLayoutWithCheckbox = {
   labelCol: { span: 14 },
@@ -89,71 +92,19 @@ class RoleModal extends Component {
     )
   }
 }
-class PermissionModal extends Component {
-  constructor(props) {
-    super(props)
-    this.checkList = this.props.role.currentPermisson
-  }
-  hide = () => {
-    this.props.dispatch({
-      type: 'role/hideModal'
-    })
-  }
-  onChange = (values) => {
-    this.checkList = values
-  }
-  handleSubmit = (e) => {
-    this.props.dispatch({
-      type: 'role/updatePermissions',
-      payload: {
-        id: this.props.role.currentId,
-        data: this.checkList
-      }
-    })
-  }
-  render() {
-    const { form: { getFieldDecorator }, role: { permissonData: { objects }, currentPermisson, permissionVisible, key } } = this.props
-    return(
-      <Modal
-        title='配置权限'
-        visible={permissionVisible}
-        onCancel={this.hide}
-        onOk={this.handleSubmit}
-        key={key}
-       >
-        <Row>
-          <Checkbox.Group onChange={this.onChange} defaultValue={currentPermisson}>
-          {
-            objects.map((item, index) => {
-              return(
-                <Col span={8} key={index}>
-                    <Checkbox value={item.id} >
-                      {item.name}
-                    </Checkbox>
-                </Col>
-              )
-            })
-          }
-          </Checkbox.Group>
-        </Row>
-      </Modal>
-    )
-  }
-}
-//表单分离
+
 
 RoleModal = Form.create()(RoleModal)
-PermissionModal = Form.create()(PermissionModal)
 
 class Role extends Component {
   constructor(props) {
     super(props)
     this.columns = [
-      {
-        title: '角色编号',
-        dataIndex: 'id',
-        key: 'id',
-      },
+      // {
+      //   title: '角色编号',
+      //   dataIndex: 'id',
+      //   key: 'id',
+      // },
       {
         title: '角色名称',
         dataIndex: 'name',
@@ -167,9 +118,12 @@ class Role extends Component {
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record) }>编辑 |</a>
               <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-                <a href='javascript:void(0)'>{'\u00A0'}删除 |</a>
+                <a href='javascript:void(0)'>{'\u00A0'}删除 | {'\u00A0'}</a>
               </Popconfirm>
-              <a href='javascript:void(0)' onClick={ this.showPermission.bind(this,record.id) }>{'\u00A0'}配置权限</a>
+              <Link
+                to={`/admin/settings/role/${record.id}/assign-permission?name=${record.name}`}>
+                配置权限
+              </Link>
             </span>
           )
         }
@@ -178,15 +132,7 @@ class Role extends Component {
   }
   componentDidMount() {
     this.props.dispatch({
-      type: 'role/list'
-    })
-  }
-  showPermission = (id) => {
-    this.props.dispatch({
-      type: 'role/permissions',
-      payload: {
-        id: id
-      }
+      type: 'role/list',
     })
   }
   show = (record) => {
@@ -206,7 +152,7 @@ class Role extends Component {
     })
   }
   render() {
-    const { role: { data, permissionVisible }, loading  } = this.props
+    const { role: { data }, loading  } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -224,7 +170,6 @@ class Role extends Component {
           pagination={false}
         />
         <RoleModal {...this.props} />
-        { permissionVisible ? <PermissionModal {...this.props} /> : null }
       </div>
     )
   }
