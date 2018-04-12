@@ -83,7 +83,7 @@ class User extends Component {
       //   render: (text, record, index) => {
       //     return (
       //       <span>
-      //         <Link to={`/admin/settings/admin-user/${record.id}`}>编辑</Link> |
+      //         <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
       //         <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
       //           <a href='javascript:void(0)'>{'\u00A0'}删除</a>
       //         </Popconfirm>
@@ -174,7 +174,7 @@ class User extends Component {
           搜索
         </Button>
         {/* <Link
-          to={`/admin/settings/admin-user/new`}>
+          to={`/admin/settings/user/new`}>
           <Button
             type='primary'
             className={styles.button}>

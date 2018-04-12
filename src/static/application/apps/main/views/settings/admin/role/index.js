@@ -73,7 +73,7 @@ class RoleModal extends Component {
         afterClose={this.reset}
        >
         {
-          record.parentId !== 0 ?
+          !record.name ?
           <Form>
             <FormItem
               {...formItemLayout}
@@ -141,7 +141,7 @@ class Role extends Component {
                 <a href='javascript:void(0)'>{'\u00A0'}删除 | {'\u00A0'}</a>
               </Popconfirm>
               <Link
-                to={`/admin/settings/admin-role/${record.id}/assign-permission?name=${record.name}`}>
+                to={`/admin/settings/role/${record.id}/assign-permission?name=${record.name}`}>
                 配置权限
               </Link>
             </span>

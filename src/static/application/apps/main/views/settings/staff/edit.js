@@ -62,7 +62,7 @@ class UserEdit extends Component {
     const roleId = roleList[0] && roleList[0].id
     let parentId = 2
     if(roleId === 1) {
-      parentId = 0
+      parentId = 1
     }
     this.props.dispatch({
       type: 'user/roles',
@@ -155,7 +155,7 @@ class UserEdit extends Component {
       },
       {
         title: '员工账号',
-        url: '/admin/settings/user'
+        url: '/admin/settings/staff'
       },
       {
         title: isEdit ? '编辑账号': '新增账号'

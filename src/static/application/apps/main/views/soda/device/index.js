@@ -42,7 +42,7 @@ class Device extends Component {
         title: '模块号',
         width: 100,
         render: (record) => {
-          
+
           const { keys, serials } = this.search
           return  <Link to={`/soda/device/${record.serial}?serials=${serials || ''}&keys=${keys || ''}`}>{record.serial}</Link>
         }
