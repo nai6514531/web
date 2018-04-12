@@ -88,7 +88,7 @@ class BatchTable extends Component {
           let value = op(mode).get('value')
           value = value === 0 || value ? conversionUnit(value) : '-'
           let duration = op(mode).get('duration')
-          duration = duration === 0 || duration ? duration / 1000 : '-'
+          duration = duration === 0 || duration ? (duration / 60).toFixed() : '-'
 
           return <div>
             <span className={cx({ [styles.hightlight]: nameHighlight || isHightlight })}>{name}/</span>
