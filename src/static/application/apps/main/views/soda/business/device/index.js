@@ -158,7 +158,7 @@ class App extends Component {
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>
-                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元`, `${mode.duration/1000}分钟`].join(' / ')}
+                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元`, `${(mode.duration / 60).toFixed()}分钟`].join(' / ')}
               </p>
             })}
           </div>)

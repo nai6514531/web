@@ -160,15 +160,14 @@ class Detial extends Component {
     })
   }
   handleClickCounter() {
-    let { id } = this.props.match.params
     let { smsLoading } = this.state
-    let { detail: { mobile } } = this.props
+    let { detail: { id } } = this.props
     if (smsLoading) {
       return
     }
     CommonService.sms({
       motivation: 'RESET_USER',
-      mobile: mobile
+      userId: id
     }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })
       if (res.status !== 'OK') {

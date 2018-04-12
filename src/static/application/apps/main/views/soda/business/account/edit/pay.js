@@ -397,13 +397,13 @@ class Pay extends Component {
   }
   handleClickCounter() {
     let { smsLoading } = this.state
-    let { detail: { cashAccount } } = this.props
+    let { detail: { id } } = this.props
     if (smsLoading) {
       return
     }
     CommonService.sms({
       motivation: 'RESET_USER',
-      mobile: op(cashAccount).get('user.mobile')
+      userId: id
     }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })
       if (res.status !== 'OK') {

@@ -65,7 +65,7 @@ class App extends Component {
         dataIndex: 'school.id',
         render: (id, record) => {
           let { school: { province, city } } = record
-          return `${province.name || ''}${city.name || ''}`
+          return _.without([`${province.name}`, `${city.name || ''}`], '').join('') || '-'
         }
       }, {
         title: '所属大学',
@@ -78,7 +78,7 @@ class App extends Component {
         title: '服务地点',
         dataIndex: 'school.address',
         render: (address) => {
-          return `${address}`
+          return `${address || '-'}`
         }
       }, {
         title: '操作',

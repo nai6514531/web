@@ -30,7 +30,7 @@ class Modes extends Component {
         dataIndex: 'duration',
         key: 'duration',
         render: (duration) => {
-          return <span>{duration/1000}</span>
+          return <span>{(duration / 60).toFixed()}</span>
         }
       }
     ]

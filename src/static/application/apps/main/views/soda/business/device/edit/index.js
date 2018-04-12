@@ -240,7 +240,7 @@ class Edit extends Component {
               name: pulse.name,
             },
             name: value[`${activeFeatureType}-${pulseId}_NAME`],
-            duration: +(+value[`${activeFeatureType}-${pulseId}_DURATION`] * 1000).toFixed(),
+            duration: +(+value[`${activeFeatureType}-${pulseId}_DURATION`] * 60).toFixed(),
             value: +(+value[`${activeFeatureType}-${pulseId}_VALUE`] * 100).toFixed()
           }
           // 模式新增下

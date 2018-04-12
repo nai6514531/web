@@ -299,7 +299,7 @@ class BatchMode extends Component {
             return {
               name: activeName ? value[`name-${index}`] : pulse.name,
               value: activePrice ? +(+value[`price-${index}`] * 100).toFixed() : 0,
-              duration: activeDuration ? +(+value[`duration-${index}`] * 1000).toFixed() : 0,
+              duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() : 0,
               pulse: {
                 id: pulse.id,
                 name: pulse.name
@@ -366,7 +366,7 @@ class BatchMode extends Component {
                 isChangeFeatureType || _.isEmpty(mode) ? pulse.name : mode.name,
               value: activePrice ? +value[`price-${index}`] * 100 : 
               isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.value,
-              duration: activeDuration ? +value[`duration-${index}`] * 1000 : 
+              duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
               isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.duration,
             }
           })
@@ -411,26 +411,6 @@ class BatchMode extends Component {
   }
   changeSchool(value) {
     this.setState({ activeSchoolId: value })
-  }
-  checkDuration(rule, value, callback) {
-    let { form: { validateFields } } = this.props
-    let { active: { price: activePrice, duration: activeDuration } } = this.state
-
-    if (activeDuration && value) {
-      validateFields([(rule.field).replace('price', 'duration')], { force: true });
-    }
-    callback();
-  }
-  checkValue(rule, duration, callback) {
-    let { form: { getFieldValue } } = this.props
-    let { active: { price: activePrice, duration: activeDuration } } = this.state
-    let value = getFieldValue((rule.field).replace('duration', 'price'))
-
-    if (activePrice && +duration === 0 && +value > 0) {
-      callback('服务时间不能为0')
-    } else {
-      callback()
-    }
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
@@ -568,7 +548,6 @@ class BatchMode extends Component {
                       rules: [
                         { required: true, message: '必填' },
                         { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确价格'},
-                        { validator: this.checkDuration.bind(this) },
                       ],
                       initialValue: "0"
                     })(
@@ -594,7 +573,6 @@ class BatchMode extends Component {
                       rules: [
                         { required: true, message: '必填' },
                         { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确时间'},
-                        { validator: this.checkValue.bind(this) }
                       ],
                       initialValue: "0"
                     })(
