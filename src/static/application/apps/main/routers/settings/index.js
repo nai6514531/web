@@ -14,14 +14,14 @@ import adminAssignPermissionModel from 'bundle-loader?lazy!../../models/settings
 
 //普通用户
 
-import User from 'bundle-loader?lazy!../../views/settings/user'
-import UserEdit from 'bundle-loader?lazy!../../views/settings/user/edit'
+import Staff from 'bundle-loader?lazy!../../views/settings/staff'
+import StaffEdit from 'bundle-loader?lazy!../../views/settings/staff/edit'
 import userModel from 'bundle-loader?lazy!../../models/settings/user.js'
 
-import Role from 'bundle-loader?lazy!../../views/settings/role'
-import roleModel from 'bundle-loader?lazy!../../models/settings/role.js'
-import AssignPermission from 'bundle-loader?lazy!../../views/settings/role/assign-permission.js'
-import assignPermissionModel from 'bundle-loader?lazy!../../models/settings/assign-permission.js'
+// import Role from 'bundle-loader?lazy!../../views/settings/role'
+// import roleModel from 'bundle-loader?lazy!../../models/settings/role.js'
+// import AssignPermission from 'bundle-loader?lazy!../../views/settings/role/assign-permission.js'
+// import assignPermissionModel from 'bundle-loader?lazy!../../models/settings/assign-permission.js'
 
 import Menu from 'bundle-loader?lazy!../../views/settings/menu'
 import menuModel from 'bundle-loader?lazy!../../models/settings/menu.js'
@@ -52,15 +52,13 @@ export default function (app) {
       <Route exact path='/admin' render={() => <div />} />
       {/* 管理员 */}
       <Route exact path='/admin' render={() => <div />} />
-      <Route exact path='/admin/settings/admin-user' component={getComponent(AdminUser,app,adminUserModel)} />
-      <Route exact path='/admin/settings/admin-user/:id' component={getComponent(AdminUserEdit,app,adminUserModel)} />
-      <Route exact path='/admin/settings/admin-role' component={getComponent(AdminRole,app,adminRoleModel)} />
-      <Route exact path='/admin/settings/admin-role/:id/assign-permission' component={getComponent(AdminAssignPermission,app,adminAssignPermissionModel)} />
-      {/* 普通用户 */}
-      <Route exact path='/admin/settings/user' component={getComponent(User,app,userModel)} />
-      <Route exact path='/admin/settings/user/:id' component={getComponent(UserEdit,app,userModel)} />
-      <Route exact path='/admin/settings/role' component={getComponent(Role,app,roleModel)} />
-      <Route exact path='/admin/settings/role/:id/assign-permission' component={getComponent(AssignPermission,app,assignPermissionModel)} />
+      <Route exact path='/admin/settings/user' component={getComponent(AdminUser,app,adminUserModel)} />
+      <Route exact path='/admin/settings/user/:id' component={getComponent(AdminUserEdit,app,adminUserModel)} />
+      <Route exact path='/admin/settings/role' component={getComponent(AdminRole,app,adminRoleModel)} />
+      <Route exact path='/admin/settings/role/:id/assign-permission' component={getComponent(AdminAssignPermission,app,adminAssignPermissionModel)} />
+      {/* 员工 */}
+      <Route exact path='/admin/settings/staff' component={getComponent(Staff,app,userModel)} />
+      <Route exact path='/admin/settings/staff/:id' component={getComponent(StaffEdit,app,userModel)} />
 
       <Route exact path='/admin/settings/menu' component={getComponent(Menu,app,menuModel)} />
       <Route exact path='/admin/settings/permission-group' component={getComponent(Group,app,groupModel)} />

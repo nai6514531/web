@@ -7,6 +7,8 @@ import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import styles from '../../../../assets/css/search-bar.pcss'
+import { groupBy } from 'lodash'
+import dict from '../../../../utils/dict'
 import './index.css'
 
 const FormItem = Form.Item
@@ -30,7 +32,7 @@ class App extends Component {
       },
       {
         title: '角色',
-        url: '/admin/settings/admin-role'
+        url: '/admin/settings/role'
       }
       ,
       {
@@ -50,15 +52,36 @@ class App extends Component {
               <span></span>
             )
           }
+          const data = groupBy(record.permission,'type')
+
+          const element = data[dict.permission.type.element]
+          const menu = data[dict.permission.type.menu]
+          const api = data[dict.permission.type.api]
           return (
             <span>
                {
                 <Checkbox.Group style={{ width: '100%' }} onChange={this.checkboxChangeHandler.bind(this, record.id)} value={record.checkedList}>
                   <Row>
                     {
-                      record.permission.map( value =>
+                      element && element.map( value =>
                       <Col span={12} key={record.id * value.id}>
-                        <Checkbox disabled={record.disabled} value={value.id}>{value.name}</Checkbox>
+                        <Checkbox disabled={record.disabled} value={value.id}><Tag style={{ margin: '3px' }} color={'#f50'}>{value.name}</Tag></Checkbox>
+                      </Col> )
+                    }
+                  </Row>
+                  <Row>
+                    {
+                      menu && menu.map( value =>
+                      <Col span={12} key={record.id * value.id}>
+                        <Checkbox disabled={record.disabled} value={value.id}><Tag style={{ margin: '3px' }} color={'#87d068'}>{value.name}</Tag></Checkbox>
+                      </Col> )
+                    }
+                  </Row>
+                  <Row>
+                    {
+                      api && api.map( value =>
+                      <Col span={12} key={record.id * value.id}>
+                        <Checkbox disabled={record.disabled} value={value.id}><Tag style={{ margin: '3px' }} color={'#2db7f5'}>{value.name}</Tag></Checkbox>
                       </Col> )
                     }
                   </Row>
@@ -182,6 +205,11 @@ class App extends Component {
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
+        <div style={{ marginBottom: '20px' }}>
+          <div className='box element'></div> 元素
+          <span className='box menu'></span> 菜单
+          <span className='box api'></span> 接口
+        </div>
         <Table
           columns={this.columns}
           dataSource={menuPermissionData}

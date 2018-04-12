@@ -14,7 +14,7 @@ const breadItems = [
   },
   {
     title: '用户',
-    url: '/admin/settings/admin-user'
+    url: '/admin/settings/user'
   },
   {
     title: '编辑用户'

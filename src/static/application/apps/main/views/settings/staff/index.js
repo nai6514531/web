@@ -73,7 +73,7 @@ class User extends Component {
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
-              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
+              <Link to={`/admin/settings/staff/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
               {
                 record.status === 0
                 ? <Popconfirm title='确定要拉黑该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 1) } >
@@ -117,7 +117,7 @@ class User extends Component {
     const roleId = roleList[0] && roleList[0].id
     let parentId = 2
     if(roleId === 1) {
-      parentId = 0
+      parentId = 1
     }
     this.props.dispatch({
       type: 'user/roles',
@@ -223,7 +223,7 @@ class User extends Component {
           搜索
         </Button>
         <Link
-          to={`/admin/settings/user/new`}>
+          to={`/admin/settings/staff/new`}>
           <Button
             type='primary'
             className={styles.button}>
