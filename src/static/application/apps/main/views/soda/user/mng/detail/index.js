@@ -55,13 +55,13 @@ class OperatorDetail extends Component {
     const data = this.props.mngUserDetail.data
     const id = this.props.match.params.id
     confirm({
-      content: `账号为${data.account}的密码将重置为${values.password},是否确认修改？`,
+      content: `账号为${data.account}的密码将重置为${values.newPassword},是否确认修改？`,
       onOk() {
         self.props.dispatch({
           type: 'mngUserDetail/updatePassword',
           payload: {
             data: {
-              password: md5(values.password),
+              newPassword: md5(values.newPassword),
               id
             }
           }
@@ -194,7 +194,7 @@ class OperatorDetail extends Component {
               {...formItemLayout}
               label='密码'
             >
-              {getFieldDecorator('password', {
+              {getFieldDecorator('newPassword', {
                 rules: [{
                   required: true, message: '密码不可为空',
                 },{

@@ -59,7 +59,9 @@ export default {
       const result = yield call(userService.detail, payload.id)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: result.data } })
-        yield put({ type: 'getAssignedPermission', payload: { data: { roleId: result.data.role[0].id } } })
+        if(result.data.role.id !== undefined) {
+          yield put({ type: 'getAssignedPermission', payload: { data: { roleId: result.data.role.id } } })
+        }
       } else {
         message.error(result.message)
       }
@@ -131,7 +133,7 @@ export default {
       }
     },
     *roles({ payload }, { call, put }) {
-      const result = yield call(roleService.list, payload.data)
+      const result = yield call(roleService.list)
       if(result.status == 'OK') {
         yield put({
           type: 'updateData',

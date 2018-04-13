@@ -3,6 +3,9 @@ const roleService = {
   list: (options) => {
     return request.get(`/mng/roles`,{ params: options })
   },
+  all: (options) => {
+    return request.get(`/mng/admin/roles`,{ params: options })
+  },
   update: (data, id) => {
     return request.put(`/mng/roles/${id}`, data)
   },

@@ -69,7 +69,8 @@ class OperationDetail extends Component {
         },
         {
           title: '设备查询',
-          url: `/soda/device?serials=${serials}&keys=${keys}`
+          url: `/soda/device?serials=${serials}&keys=${keys}&offset=0&limit=10`
+
         },
         {
           title: '设备操作详情'

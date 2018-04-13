@@ -102,7 +102,6 @@ class DayDetailConsume extends Component {
           ...url,
           startAt: this.day,
           endAt: this.day,
-          ownerId: this.props.common.userInfo.user.mainId,
           status: '7'
         }
       }
