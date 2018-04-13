@@ -94,7 +94,6 @@ class DeviceSearchByDay extends Component {
           ...url,
           startAt: `${this.month}-01`,
           endAt: `${this.month}-${daysInMonth}`,
-          ownerId: this.props.common.userInfo.user.mainId,
           deviceSerial: this.deviceSerial,
           status: '7',
           period: 'date'

@@ -45,10 +45,10 @@ class Group extends Component {
             )
           }
           const data = groupBy(record.permission,'type')
-
           const element = data[dict.permission.type.element]
           const menu = data[dict.permission.type.menu]
           const api = data[dict.permission.type.api]
+
           return (
             <span>
               <div>
@@ -101,12 +101,6 @@ class Group extends Component {
     this.props.dispatch({
       type: 'group/syncPermission'
     })
-  }
-  getTagColor = () => {
-    // 随机标签颜色
-    const colorList = ['#108ee9']
-    const randomNum = Math.floor(Math.random()*(colorList.length))
-    return colorList[randomNum]
   }
   render() {
     const { form: { getFieldDecorator }, group: { menuPermissionData }, loading  } = this.props

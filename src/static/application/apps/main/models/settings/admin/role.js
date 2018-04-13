@@ -38,7 +38,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const result = yield call(roleService.list)
+      const result = yield call(roleService.all)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { data: arrayToTree(result.data.objects) } })
       } else {

@@ -89,8 +89,7 @@ class DayConsume extends Component {
         data: {
           ...url,
           startAt: `${this.month}-01`,
-          endAt: `${this.month}-${daysInMonth}`,
-          userId: this.props.common.userInfo.user.mainId
+          endAt: `${this.month}-${daysInMonth}`
         }
       }
     })
