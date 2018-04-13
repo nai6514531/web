@@ -54,7 +54,7 @@ class User extends Component {
         title: '角色',
         render: (text, record, index) => {
          return (
-          record.role[0] && record.role[0].name //只支持单角色
+          record.role && record.role.name //只支持单角色
          )
        }
       },
@@ -112,20 +112,8 @@ class User extends Component {
     })
   }
   fetchRole = (params) => {
-    // 获取运营商子角色
-    const { common : { userInfo: { roleList } } } = this.props
-    const roleId = roleList[0] && roleList[0].id
-    let parentId = 2
-    if(roleId === 1) {
-      parentId = 1
-    }
     this.props.dispatch({
-      type: 'user/roles',
-      payload: {
-        data: {
-          parentId
-        }
-      }
+      type: 'user/roles'
     })
   }
   changeStatus = (id, status) => {

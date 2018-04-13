@@ -60,7 +60,7 @@ class User extends Component {
         title: '角色',
        render: (text, record, index) => {
          return (
-          record.role[0] && record.role[0].name //只支持单角色
+          record.role && record.role.name //只支持单角色
          )
        }
       },

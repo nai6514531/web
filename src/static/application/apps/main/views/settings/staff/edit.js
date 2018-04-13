@@ -57,20 +57,8 @@ class UserEdit extends Component {
     })
   }
   fetchRole = (params) => {
-    // useID参数要变成roleId 为2
-    const { common : { userInfo: { roleList } } } = this.props
-    const roleId = roleList[0] && roleList[0].id
-    let parentId = 2
-    if(roleId === 1) {
-      parentId = 1
-    }
     this.props.dispatch({
-      type: 'user/roles',
-      payload: {
-        data: {
-          parentId
-        }
-      }
+      type: 'user/roles'
     })
   }
   handleSubmit = (e) => {
@@ -261,7 +249,7 @@ class UserEdit extends Component {
               rules: [{
                 required: true, message: '请选择角色',
               }],
-              initialValue: data.role &&  data.role[0] && data.role[0].id
+              initialValue: data.role && data.role.id
             })(
 
               <Radio.Group onChange={this.changeHandler} style={{background: '#ffffff', width: '100%'}}>

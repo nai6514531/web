@@ -37,7 +37,7 @@ class OperationDetail extends Component {
             let description = ''
             switch (operatorType.value) {
                 case 1:
-                    description = <span>设备被{operatorText}删除，返回测试员账号</span>
+                    description = <span>设备被{operatorText}删除，返回{userText}账号</span>
                     break;
                 case 2:
                 description = <span>设备信息被{operatorText}更新</span>
@@ -69,7 +69,8 @@ class OperationDetail extends Component {
         },
         {
           title: '设备查询',
-          url: `/soda/device?serials=${serials}&keys=${keys}`
+          url: `/soda/device?serials=${serials}&keys=${keys}&offset=0&limit=10`
+
         },
         {
           title: '设备操作详情'

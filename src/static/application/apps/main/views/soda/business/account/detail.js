@@ -6,7 +6,7 @@ import moment from 'moment'
 import op from 'object-path'
 import cx from 'classnames'
 import { Link } from 'react-router-dom'
-import { Table, Button, message, Row, Col } from 'antd'
+import { Table, Button, message, Row, Col, Card } from 'antd'
 
 import { InputClear } from '../../../../components/form/input'
 import UserService from '../../../../services/soda-manager/user'
@@ -102,45 +102,46 @@ class App extends Component {
     user = op({ ...user, cashAccount})
     return (<div className={styles.detail}>
       <Breadcrumb items={breadItems} />
-      <Row className={styles.item}>
-        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}><h2>基本信息</h2></Col>
-        <form>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>运营商名称:</label><span>{user.get('name') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}>
-            <label>登录账号:</label>
-            <span>{user.get('account') || ''}</span>
+      <Card className={styles.card} type="inner" title='基本信息'>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>运营商名称:</label><span>{user.get('name') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 16 }}><label>登录账号:</label><span>{user.get('account') || ''}</span>
             <a style={{ marginLeft: 15 }} onClick={() => { history.push(`/admin/settings/change-password`) }}>修改密码</a>
           </Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>联系人:</label><span>{user.get('contact') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>手机号:</label><span>{user.get('mobile') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>服务电话:</label><span>{user.get('telephone') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>地址:</label><span>{user.get('address') || ''}</span></Col>
-        </form>
-      </Row>
-      <Row className={styles.item}>
-        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}><h2>收款信息</h2></Col>
-        <form>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>是自动结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 20, offset: 2 }}><label>姓名|账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join(' | ')}</span></Col>
-        </form>
-      </Row>
-      <Row className={styles.item}>
-        <Col xs={{ span: 24 }} sm={{ span: 20, offset: 1 }}>
-          <Button
-            type='primary'
-            style={{ marginRight: 10 }}
-            onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}`) }}>
-            修改信息
-          </Button>
-          {isPermissionRecharge ? <Button
-            type='primary'
-            style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
-            onClick={() => { this.props.history.push('/soda/business/recharges-chipcard') }}>
-            IC卡金额转移
-          </Button> : null }
-        </Col>
-      </Row>
+        </Row>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>联系人:</label><span>{user.get('contact') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>手机号:</label><span>{user.get('mobile') || ''}</span></Col>
+        </Row>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>服务电话:</label><span>{user.get('telephone') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>地址:</label><span>{user.get('address') || ''}</span></Col>
+        </Row>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 20 }}>
+            <Button
+              type='primary'
+              style={{ marginRight: 10, marginTop: 10 }}
+              onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}`) }}>
+              修改信息
+            </Button>
+            {isPermissionRecharge ? <Button
+              type='primary'
+              style={{ backgroundColor: "#ED9D51", borderColor: "#ED9D51" }}
+              onClick={() => { this.props.history.push('/soda/business/recharges-chipcard') }}>
+              IC卡金额转移
+            </Button> : null }
+          </Col>
+        </Row>
+      </Card>
+      <Card className={styles.card} title='收款信息' type="inner">
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>是自动结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>姓名 | 账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join(' | ') || '-'}</span></Col>
+        </Row>
+      </Card>
+
     </div>)
   }
 }

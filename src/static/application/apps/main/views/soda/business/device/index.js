@@ -203,11 +203,11 @@ class App extends Component {
     let pagination = _.pick(query, 'limit', 'offset')
     let isMineDevice = query.isAssigned !== 'true' || true
     let tapActive =  query.isAssigned === 'true' ? DEVICE_IS_ASSIGNED : DEVICE_IS_MINE
-    this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search } })
+    this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search }, pagination })
     if (tapActive === DEVICE_IS_MINE) {
       this.getDeviceServiceAddress()
     } else {
-      this.list({ search, tapActive: tapActive })
+      this.list({ search, tapActive, pagination })
     }
     this.getDeviceType()
   }
