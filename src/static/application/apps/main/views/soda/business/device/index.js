@@ -313,7 +313,7 @@ class App extends Component {
   getUserList(ids) {
     let { users } = this.state
 
-    ids = _.chain(ids || []).difference(_.pluck(users, 'id')).union().without('').value()
+    ids = _.chain(ids || []).difference(_.pluck(users, 'id')).union().without('', 0).value()
     if (_.isEmpty(ids)) {
       return
     }
@@ -389,8 +389,8 @@ class App extends Component {
       return
     }
     let isInvalid = false
-    _.chain(serials.split(',')).map((serial) => String(serial)).groupBy((serial) => serial.length ).keys().each((value) => {
-      if (+value < 5) {
+    _.chain(serials.split(',')).map((serial) => String(serial)).groupBy((serial) => serial.length).keys().each((value) => {
+      if (+value < 6) {
         isInvalid = true
       }
     })
