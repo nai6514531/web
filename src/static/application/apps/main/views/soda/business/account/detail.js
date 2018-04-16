@@ -104,18 +104,18 @@ class App extends Component {
       <Breadcrumb items={breadItems} />
       <Card className={styles.card} type="inner" title='基本信息'>
         <Row>
-          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>运营商名称:</label><span>{user.get('name') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 16 }}><label>登录账号:</label><span>{user.get('account') || ''}</span>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>运营商名称:</label><span>{user.get('name') || '-'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 16 }}><label>登录账号:</label><span>{user.get('account') || '-'}</span>
             <a style={{ marginLeft: 15 }} onClick={() => { history.push(`/admin/settings/change-password`) }}>修改密码</a>
           </Col>
         </Row>
         <Row>
-          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>联系人:</label><span>{user.get('contact') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>手机号:</label><span>{user.get('mobile') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>联系人:</label><span>{user.get('contact') || '-'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>手机号:</label><span>{user.get('mobile') || '-'}</span></Col>
         </Row>
         <Row>
-          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>服务电话:</label><span>{user.get('telephone') || ''}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>地址:</label><span>{user.get('address') || ''}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>服务电话:</label><span>{user.get('telephone') || '-'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>地址:</label><span>{user.get('address') || '-'}</span></Col>
         </Row>
         <Row>
           <Col xs={{ span: 24 }} sm={{ span: 20 }}>

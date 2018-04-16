@@ -101,12 +101,12 @@ class DeviceDetail extends Component {
                     <span className={styles.title}>价格:</span>
                     {(modes || []).map((mode) => {
                       return [`${mode.name}`, `${conversionUnit(mode.value)}元`, `${(mode.duration / 60).toFixed()}分钟`].join(' ')
-                    }).join('/')}
+                    }).join(' / ')}
                   </div>
                   <div><span className={styles.title}>类型:</span>{op(feature).get('name') || '-'}</div>
                   <div>
                     <span className={styles.title}>服务地点:</span>
-                    { _.isEmpty(op(data).get('serviceAddress')) ? null :
+                    { _.isEmpty(op(data).get('serviceAddress')) ? '-' :
                       _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
                     }
                   </div>

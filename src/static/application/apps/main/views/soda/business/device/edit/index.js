@@ -257,7 +257,7 @@ class Edit extends Component {
       if (isAdd) {
         let isInvalid = false
         _.chain(serials.split('\n')).map((serial) => String(serial)).groupBy((serial) => serial.length ).keys().each((value) => {
-          if (+value < 5) {
+          if (+value < 6) {
             isInvalid = true
           }
         })
@@ -304,7 +304,6 @@ class Edit extends Component {
   changeSchool(value) {
     let { form: { setFieldsValue } } = this.props
     setFieldsValue({ addressId: "" })
-    console.log('changeSchool', value)
     this.setState({ activeSchoolId: value })
   }
   changeAddress(value) {
