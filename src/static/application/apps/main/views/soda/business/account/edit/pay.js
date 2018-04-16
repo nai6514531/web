@@ -21,6 +21,7 @@ import BusinessService from '../../../../../services/soda-manager/business'
 import Throttle from '../../../../../components/throttle'
 
 import CASH_ACCOUNT from '../../../../../constant/cash-account'
+import { MOTIVATION } from '../../../../../constant/sms'
 
 import styles from '../index.pcss'
 const DEFAULT_URL = isProduction ? 'http://m.sodalife.xyz' : 'http://m.sodalife.club'
@@ -403,7 +404,7 @@ class Pay extends Component {
     }
     this.setState({ smsLoading: true })
     CommonService.sms({
-      motivation: 'RESET_USER',
+      motivation: MOTIVATION.RESET_USER,
       userId: op(cashAccount).get('userId')
     }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })

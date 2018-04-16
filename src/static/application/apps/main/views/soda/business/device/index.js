@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import _ from 'underscore'
+import Promise from 'bluebird'
 import moment from 'moment'
 import km from 'keymirror'
 import op from 'object-path'
@@ -27,6 +28,7 @@ import DEVICE from '../../../../constant/device'
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
+const SERIAL_MIN_LENGTH = 6
 
 const breadItems = [
   {
@@ -201,14 +203,10 @@ class App extends Component {
     query = querystring.parse(query)
     let search = _.pick(query, 'keys', 'serials', 'serviceAddressIds', 'deviceType', 'schoolId')
     let pagination = _.pick(query, 'limit', 'offset')
-    let isMineDevice = query.isAssigned !== 'true' || true
+    this.isMineDevice = query.isAssigned !== 'true' || true
     let tapActive =  query.isAssigned === 'true' ? DEVICE_IS_ASSIGNED : DEVICE_IS_MINE
-    this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search }, pagination })
-    if (tapActive === DEVICE_IS_MINE) {
-      this.getDeviceServiceAddress()
-    } else {
-      this.list({ search, tapActive, pagination })
-    }
+    this.getDeviceServiceAddress()
+    this.list({ search, tapActive, pagination })
     this.getDeviceType()
   }
   list({...options}) {
@@ -220,11 +218,11 @@ class App extends Component {
     schools = _.findWhere(schools, { id: schoolId === '' ? '' : +schoolId }) || {}
     let activeAddressesMapIds = _.pluck(schools.objects || [], 'id')
     serviceAddressIds = _.isEmpty(serviceAddressIds) ? activeAddressesMapIds.join(',') : serviceAddressIds
-   
+
     if (loading) {
       return
     }
-    this.setState({ loading: true, selectedRowKeys: [] })
+    this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search }, pagination: { ...this.state.pagination, ...pagination }, loading: true, selectedRowKeys: [] })
 
     DeviceService.list({
       serviceAddressIds: serviceAddressIds,
@@ -293,9 +291,6 @@ class App extends Component {
         schools: _.isEmpty(addresses) ? schools : [...schools, addresses],
         serviceAddresses: [ ...serviceAddresses, ...objects ]
       })
-      if (tapActive === DEVICE_IS_MINE) {
-        this.list()
-      }
     })
   }
   // 获取设备类型
@@ -389,8 +384,8 @@ class App extends Component {
       return
     }
     let isInvalid = false
-    _.chain(serials.split(',')).map((serial) => String(serial)).groupBy((serial) => serial.length).keys().each((value) => {
-      if (+value < 6) {
+    _.chain(serials.split(',')).map((serial) => String(serial)).groupBy((serial) => serial.length).keys().each((length) => {
+      if (+length < SERIAL_MIN_LENGTH) {
         isInvalid = true
       }
     })

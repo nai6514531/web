@@ -41,7 +41,6 @@ const userService = {
     return request.get(`/mng/users-devices`, {
       params: options
     })
-  }
-
+  },
 }
 export default userService
