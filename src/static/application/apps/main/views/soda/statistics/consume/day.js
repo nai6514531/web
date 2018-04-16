@@ -67,7 +67,7 @@ class DayConsume extends Component {
         key: 'totalMode4'
       },
       {
-        title: '金额',
+        title: '消费金额',
         dataIndex: 'totalAmount',
         key: 'totalAmount',
         render: (text, record) => {
@@ -76,6 +76,16 @@ class DayConsume extends Component {
           )
         }
       },
+      {
+        title: '退款金额',
+        dataIndex: 'totalRefund',
+        key: 'totalRefund',
+        render: (text, record) => {
+          return (
+            `${(record.totalRefund/100).toFixed(2)}元`
+          )
+        }
+      }
     ]
   }
   componentDidMount() {

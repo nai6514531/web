@@ -397,13 +397,14 @@ class Pay extends Component {
   }
   handleClickCounter() {
     let { smsLoading } = this.state
-    let { detail: { id } } = this.props
+    let { detail: { cashAccount } } = this.props
     if (smsLoading) {
       return
     }
+    this.setState({ smsLoading: true })
     CommonService.sms({
       motivation: 'RESET_USER',
-      userId: id
+      userId: op(cashAccount).get('userId')
     }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })
       if (res.status !== 'OK') {
@@ -419,7 +420,6 @@ class Pay extends Component {
         startedAt: +new Date(),
         smsLoading: false
       })
-      // this.setState({ smsLoading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -477,7 +477,6 @@ class Pay extends Component {
               </Throttle>
             </Col>
           </Row>
-          
         </FormItem>
         <FormItem
           {...formItemLayout}
