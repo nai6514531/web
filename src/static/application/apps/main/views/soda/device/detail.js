@@ -80,7 +80,7 @@ class DeviceDetail extends Component {
   render() {
     const { sodaDeviceDetail: { data, token }, deviceTypes, modes, loading } = this.props
     const feature = _.find(deviceTypes || [], { type : op(data).get('feature.type') }) || {}
-    
+
     return(
       <div>
         <Breadcrumb items={this.breadItems} />
@@ -113,8 +113,8 @@ class DeviceDetail extends Component {
                   <div><span className={styles.title}>状态:</span>{op(data).get('status.description') || '-' }</div>
                   <div>
                     <span className={styles.title}>重置密码:</span>
-                    {data.resettable === 1 ? '支持': '不支持' }
-                    {data.resettable === 1 ?  <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>重置</Button> : null }
+                    {op(data).get('limit.password.isResettable') ? '支持': '不支持' }
+                    {op(data).get('limit.password.isResettable') ? <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>重置</Button> : null }
                   </div>
                   {
                     token ? <div><span className={styles.title}>密码:</span>{token || '-'}</div> : null
