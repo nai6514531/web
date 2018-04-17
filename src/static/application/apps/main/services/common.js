@@ -26,6 +26,9 @@ const commonService = {
   },
   timestamp: () => {
     return request.get(`/timestamp`)
-  }
+  },
+  accountVerification: (options) => {
+    return request.get(`/accout-verification`, { params: options })
+  },
 }
 export default commonService

@@ -21,6 +21,8 @@ import Breadcrumb from '../../../../../components/layout/breadcrumb'
 
 import styles from '../index.pcss'
 
+const SERIAL_MIN_LENGTH = 6
+
 const editBreadItems = [
   {
     title: '苏打生活'
@@ -256,8 +258,8 @@ class Edit extends Component {
 
       if (isAdd) {
         let isInvalid = false
-        _.chain(serials.split('\n')).map((serial) => String(serial)).groupBy((serial) => serial.length ).keys().each((value) => {
-          if (+value < 6) {
+        _.chain(serials.split('\n')).map((serial) => String(serial)).groupBy((serial) => serial.length ).keys().each((length) => {
+          if (+length < SERIAL_MIN_LENGTH) {
             isInvalid = true
           }
         })

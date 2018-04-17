@@ -1,9 +1,14 @@
 import React, { Component } from 'react'
-import { connect } from 'dva'
 import { Link } from 'react-router-dom'
 import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
-import { storage } from '../../utils/storage.js'
+import { connect } from 'dva'
 import md5 from 'md5'
+
+import { storage } from '../../utils/storage.js'
+
+import Throttle from '../../components/throttle'
+import { MOTIVATION } from '../../constant/sms'
+
 import styles from './index.pcss'
 
 const FormItem = Form.Item
@@ -21,21 +26,43 @@ class Login extends Component {
   }
 
   handleOk = () => {
-    const { form:{ validateFieldsAndScroll }, dipatch, history , login: { captcha } } = this.props
+    const { form:{ validateFieldsAndScroll, resetFields }, dipatch, history , login: { captcha } } = this.props
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
         return
       }
-      values.initPassword = values.password
-      values.password = md5(values.password)
-      values.captcha = {
-        code: values.code,
-        key: captcha && captcha.split("//")[1].match(/\/(.*)/)[0]
-      }
       this.props.dispatch({
         type: 'login/login',
-        payload: { data: values, history }
+        payload: { 
+          data: {
+            account: values.account,
+            password: md5(values.password),
+            smsCode: values.smsCode,
+            checked: values.checked,
+            captcha: {
+              code: values.code,
+              key: captcha && captcha.split("//")[1].match(/\/(.*)/)[0]
+            }
+          }, 
+          history 
+        }
       })
+    })
+  }
+
+  checkAccount = (e) => {
+    const { dispatch } = this.props
+    const { value } = e.target
+    if (value.length <= 0) {
+      return
+    }
+    dispatch({
+      type: 'login/checkAccount',
+      payload: { 
+        data: {
+          account: value,
+        } 
+      }
     })
   }
 
@@ -44,9 +71,30 @@ class Login extends Component {
     dispatch({type: 'login/captcha'})
   }
 
+  handleClickCounter = () => {
+    const { form:{ getFieldValue }, dispatch, login: { userId, smsLoading } } = this.props
+
+    if (smsLoading) {
+      return
+    }
+    dispatch({
+      type: 'login/smsCode',
+      payload: {
+        data: {
+          motivation: MOTIVATION.LOGIN,
+          account: getFieldValue('account'),
+        }
+      }
+    })
+  }
+
   render() {
-    const { loading, dipatch, form: { getFieldDecorator }, login: { captcha, accountHelp, passwordHelp, captchaHelp } } = this.props
+    const { 
+      loading, dipatch, form: { getFieldDecorator }, 
+      login: { captcha, accountHelp, passwordHelp, captchaHelp, smsCodeHelp, smsLoading, startedAt, showSmsCode } 
+    } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
+
     return (
       <div className={styles.wrapper}>
         <div className={styles.form}>
@@ -68,10 +116,38 @@ class Login extends Component {
                 <Input
                   size='large'
                   placeholder='请输入登录账号'
+                  onBlur={this.checkAccount}
                   onPressEnter={this.handleOk}
                 />
               )}
             </FormItem>
+            { 
+              showSmsCode ?  <FormItem
+                {...smsCodeHelp}
+              > 
+                <Row>
+                  <Col span={14}>
+                    {getFieldDecorator('smsCode', {
+                      rules: [
+                        { required: true, message: '必填' },
+                      ],
+                      initialValue: '',
+                    })(
+                      <Input placeholder="请输入验证码" />
+                    )}
+                  </Col>
+                  <Col span={10}>
+                    <Throttle
+                      startedAt={startedAt}
+                      waitText={({ countdown }) => `重获验证码 (${countdown})`}
+                      onClick={this.handleClickCounter}
+                      disabled={smsLoading}>
+                      <Button className={styles.smsCodeBtn}>发送验证码</Button>
+                    </Throttle>
+                  </Col>
+                </Row>
+              </FormItem> : null
+            }
             <FormItem
               {...passwordHelp}>
               {getFieldDecorator('password', {
@@ -93,6 +169,7 @@ class Login extends Component {
             <FormItem
               {...captchaHelp}>
               {getFieldDecorator('code', {
+                initialValue: '',
                 rules: [
                   {
                     required: true, message: '请输入图形验证码',
@@ -100,13 +177,13 @@ class Login extends Component {
                 ],
               })(
               <Row>
-                <Col span={17}>
+                <Col span={14}>
                   <Input
                     size='large'
                     placeholder='请输入图形验证码'
                     onPressEnter={this.handleOk}/>
                 </Col>
-                <Col span={7}>
+                <Col span={10}>
                   <img
                     className={styles.captcha}
                     src={captcha}

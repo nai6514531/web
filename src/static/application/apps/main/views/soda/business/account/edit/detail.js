@@ -15,6 +15,8 @@ const confirm = Modal.confirm
 import UserService from '../../../../../services/soda-manager/user'
 import CommonService from '../../../../../services/common'
 import Throttle from '../../../../../components/throttle'
+import { MOTIVATION } from '../../../../../constant/sms'
+
 import styles from '../index.pcss'
 
 const formItemLayout = {
@@ -166,7 +168,7 @@ class Detial extends Component {
       return
     }
     CommonService.sms({
-      motivation: 'RESET_USER',
+      motivation: MOTIVATION.RESET_USER,
       userId: id
     }).then((res) => {
       this.props.form.setFieldsValue({ smsCode: '' })
