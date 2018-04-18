@@ -27,9 +27,9 @@ const deviceService = {
   reset: (options) => {
     return request.put(`/mng/devices/actions/reset`, options)
   },
-  resetToken: (serial) => {
-    let url = `/mng/devices/${serial}/actions/reset-token`
-    return request.patch(url)
+  resetToken: (options) => {
+    let url = `/mng/devices/actions/reset-token`
+    return request.patch(url,options)
   },
   // tiaozeng
   lock: (options) => {

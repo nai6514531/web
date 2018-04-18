@@ -34,23 +34,25 @@ export default {
       if (status == 'OK') {
         const { data: { objects: users } }= yield call(userService.adminUserlist, { ids: [detail.user.id, detail.assignedUser.id].join(',')})
         const { data: serviceAddress } = yield call(deviceAddressService.detail, detail.serviceAddress.id)
-        yield put({ 
+        yield put({
           type: 'updateData',
-          payload: { 
-            data: { 
+          payload: {
+            data: {
               ...detail,
               user: _.find(users, { id: detail.user.id }) || {},
               assignedUser: _.find(users, { id: detail.assignedUser.id }) || {},
               serviceAddress: serviceAddress || {}
             }
-          } 
+          }
         })
       } else {
         message.error(result.message)
       }
     },
     *resetToken({ payload: { data } }, { call, put }) {
-      const result = yield call(deviceService.resetToken, data.serial)
+      const result = yield call(deviceService.resetToken,{
+        serial:data.serial
+      })
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { token: result.data } })
         message.success('重置成功')
