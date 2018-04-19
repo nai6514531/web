@@ -55,7 +55,6 @@ const deviceService = {
   deviceType: () => {
     return request.get(`/mng/devices-type`)
   },
-
   deviceModeList: (options) => {
     return request.get(`/mng/devices-modes`, { params: options })
   }

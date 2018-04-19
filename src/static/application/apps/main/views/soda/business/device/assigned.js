@@ -87,7 +87,11 @@ class Assigned extends Component {
     let { current } = this.state
     this.setState({ loading: true })
 
-    UserService.adminUserlist({ account: account }).then((res) => {
+    UserService.adminUserlist({ 
+      fullAccount: account, 
+      limit: 1,
+      offset: 0,
+    }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }

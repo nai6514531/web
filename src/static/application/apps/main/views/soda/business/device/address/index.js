@@ -72,7 +72,7 @@ class App extends Component {
         dataIndex: 'school.name',
         render: (name, record) => {
           let { school: { id } } = record
-          return id === 0 ? '其他' : `${name}`
+          return id === 0 ? '其他' : `${name || '-'}`
         }
       }, {
         title: '服务地点',
