@@ -313,7 +313,9 @@ class App extends Component {
       return
     }
     UserService.adminUserlist({
-      ids: ids.join(',')
+      ids: ids.join(','),
+      limit: ids.length,
+      offset: 0,
     }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)

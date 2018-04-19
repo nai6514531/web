@@ -226,7 +226,6 @@ class Edit extends Component {
       }
       let serials = (value.serials || '').replace(/(^\s+)|(\s+$)/g, '')
       let options = {
-        serials: serials.split(),
         serviceAddress: {
           id: parseInt(value.addressId, 10) || 0
         },
@@ -266,9 +265,9 @@ class Edit extends Component {
         if (isInvalid) {
           return message.error('请输入正确的设备编号')
         }
-        return this.addDevice({...options, serials: serials.split('\n') })
+        return this.addDevice({ ...options, serials: serials.split('\n') })
       }
-      this.updateDevice(options)
+      this.updateDevice({ ...options, serial: serials })
     })
   }
   addDevice(options) {
@@ -288,7 +287,7 @@ class Edit extends Component {
   updateDevice(options) {
     this.setState({ loading: true })
 
-    DeviceService.update(options).then((res) => {
+    DeviceService.update(Array(options)).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }

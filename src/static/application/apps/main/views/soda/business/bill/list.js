@@ -34,7 +34,7 @@ class App extends Component {
       {
         title: '账单天数',
         dataIndex: 'count',
-        width: 50,
+        width: 70,
         render: (count, record) => {
           return <Link to={`/soda/business/bill/${record.id}`}>{count}</Link>
         }
