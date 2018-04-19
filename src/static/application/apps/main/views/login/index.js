@@ -33,18 +33,19 @@ class Login extends Component {
       }
       this.props.dispatch({
         type: 'login/login',
-        payload: { 
+        payload: {
           data: {
             account: values.account,
             password: md5(values.password),
+            initPassword: values.password,
             smsCode: values.smsCode,
             checked: values.checked,
             captcha: {
               code: values.code,
               key: captcha && captcha.split("//")[1].match(/\/(.*)/)[0]
             }
-          }, 
-          history 
+          },
+          history
         }
       })
     })
@@ -58,10 +59,10 @@ class Login extends Component {
     }
     dispatch({
       type: 'login/checkAccount',
-      payload: { 
+      payload: {
         data: {
           account: value,
-        } 
+        }
       }
     })
   }
@@ -89,9 +90,9 @@ class Login extends Component {
   }
 
   render() {
-    const { 
-      loading, dipatch, form: { getFieldDecorator }, 
-      login: { captcha, accountHelp, passwordHelp, captchaHelp, smsCodeHelp, smsLoading, startedAt, showSmsCode } 
+    const {
+      loading, dipatch, form: { getFieldDecorator },
+      login: { captcha, accountHelp, passwordHelp, captchaHelp, smsCodeHelp, smsLoading, startedAt, showSmsCode }
     } = this.props
     const loginInfo = storage.val('login') === null ? {} : storage.val('login')
 
@@ -121,10 +122,10 @@ class Login extends Component {
                 />
               )}
             </FormItem>
-            { 
+            {
               showSmsCode ?  <FormItem
                 {...smsCodeHelp}
-              > 
+              >
                 <Row>
                   <Col span={14}>
                     {getFieldDecorator('smsCode', {
