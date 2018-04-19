@@ -90,7 +90,7 @@ class User extends Component {
     ]
   }
   componentDidMount() {
-    const url = transformUrl(location.search)
+    const url = this.search
     if( !url.roleId ) {
       delete url.roleId
     }

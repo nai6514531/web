@@ -104,7 +104,10 @@ class BatchMode extends Component {
     
     DeviceService.list({ 
       serials: serials, 
-      isAssigned: isAssigned ? 1 : 0
+      isAssigned: isAssigned ? 1 : 0,
+      offset: 0,
+      limit: serials.split(',').length,
+      isEqual: true
     }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -267,9 +270,7 @@ class BatchMode extends Component {
     let serials = this.serials.split(',')
 
     validateFields((errors, value) => {
-      let options = {
-        serials: serials
-      }
+      let options = {}
       if (errors || loading) {
         return
       }
@@ -291,25 +292,38 @@ class BatchMode extends Component {
           }
         }
       }
-
-      if (activeFeature || activeName || activePrice || activeDuration) {
-        options = {
-          ...options,
-          modes: (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-            return {
-              name: activeName ? value[`name-${index}`] : pulse.name,
-              value: activePrice ? +(+value[`price-${index}`] * 100).toFixed() : 0,
-              duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() : 0,
-              pulse: {
-                id: pulse.id,
-                name: pulse.name
+      
+      let devices = (this.devices || []).map((device) => {
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
+        if (activeFeature || activeName || activePrice || activeDuration) {
+          return {
+            ..._.pick(device, 'serial'),
+            ...options,
+            modes: (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
+              let mode = _.isEmpty(modesArray[pulse.id]) ? {} : modesArray[pulse.id][0]
+              return {
+                pulse: {
+                  id: pulse.id,
+                  name: pulse.name
+                },
+                name: activeName ? value[`name-${index}`] : 
+                  isChangeFeatureType || _.isEmpty(mode) ? pulse.name : mode.name,
+                value: activePrice ? +value[`price-${index}`] * 100 : 
+                isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.value,
+                duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
+                isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.duration,
               }
-            }
-          })
+            })
+          }
+        } else {
+          return {
+            ..._.pick(device, 'serial'),
+            ...options,
+          }
         }
-      }
-
-      this.updateDevice(options)
+        
+      })
+      this.updateDevice(devices)
     })
   }
   toPreview() {
@@ -351,12 +365,12 @@ class BatchMode extends Component {
       }
 
       let devices = (this.devices || []).map((device) => {
-        let modesArray = _.groupBy(device.modes, 'pulse.id')
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
         return {
           ...device,
           ...options,
           modes: (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-            let mode = modesArray[pulse.id] || {}
+            let mode = _.isEmpty(modesArray[pulse.id]) ? {} : modesArray[pulse.id][0]
             return {
               pulse: {
                 id: pulse.id,

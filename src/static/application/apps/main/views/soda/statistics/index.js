@@ -123,7 +123,7 @@ class MonthStatistics extends Component {
       type: 'businessStatistics/list',
       payload: {
         data: {
-          limit: -1
+          limit: 100   //按月份统计无分页需求
         }
       }
     })
@@ -167,13 +167,13 @@ class DeviceStatistics extends Component {
       {
         title: '月份',
         render: (text, record, index) => {
-          if(record.time && record.device) {
+          if(record.time && record.device && record.device.serialNumber) {
             return (
               <Link to={`/soda/statistics/device/${record.time}/${record.device.serialNumber}`}>{record.time}</Link>
             )
           }
           return (
-            '-'
+            <span>{record.time || '-'}</span>
           )
         },
       },

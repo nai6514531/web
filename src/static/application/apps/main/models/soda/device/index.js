@@ -38,7 +38,7 @@ export default {
         let userIds = _.chain(result.data.objects).map((device) => device.user.id).union().value()
         let addressIds = _.chain(result.data.objects).map((device) => device.serviceAddress.id).union().value()
         if (!_.isEmpty(userIds)) {
-          users = yield call(userService.adminUserlist, { ids: userIds.join(',')})
+          users = yield call(userService.adminUserlist, { ids: userIds.join(','), limit: userIds.length, offset: 0 })
         }
         if (!_.isEmpty(addressIds)) {
           addresses = yield call(deviceAddressService.list, { ids: addressIds.join(',')})
