@@ -88,7 +88,7 @@ class Assigned extends Component {
     this.setState({ loading: true })
 
     UserService.adminUserlist({ 
-      account: account, 
+      fullAccount: account, 
       limit: 1,
       offset: 0,
     }).then((res) => {
