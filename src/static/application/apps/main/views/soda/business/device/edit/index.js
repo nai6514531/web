@@ -18,6 +18,7 @@ import DeviceAddressService from '../../../../../services/soda-manager/device-se
 
 import Mode from './mode'
 import Breadcrumb from '../../../../../components/layout/breadcrumb'
+import DEVICE from '../../../../../constant/device'
 
 import styles from '../index.pcss'
 
@@ -347,7 +348,7 @@ class Edit extends Component {
     let { form: { getFieldDecorator } } = this.props
     let { 
       loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeAddressId, activeSchoolId, schools,
-      device: { id, serial } 
+      device: { id, serial, feature: { type } } 
     } = this.state
     let isAdd = this.isAdd
     // 当前选择学校下的服务地点
@@ -355,6 +356,7 @@ class Edit extends Component {
     activeSchoolId = activeSchoolId === '' ? op(activeAddress).get('school.id') : activeSchoolId
     let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
     let activeModes = this.initialActiveModes()
+    let qrcode = type === DEVICE.FEATURE_IS_DRINKING ? `https://mnzn.net/sod.ac/d/${serial}` : `https://mnzn.net/?no=${serial}`
 
     return (<div>
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
@@ -486,7 +488,7 @@ class Edit extends Component {
         visible={activeModal === 'QRCode'}
         onCancel={() => { this.setState({ activeModal: '' })}}
         footer={null}>
-        <QRCode value={serial} />
+        <QRCode value={qrcode} />
       </Modal>
     </div>)
   }
