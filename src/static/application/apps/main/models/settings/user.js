@@ -4,7 +4,7 @@ import roleService from '../../services/soda-manager/role.js'
 import commonService from '../../services/common.js'
 import permissionService from '../../services/soda-manager/permission.js'
 import { storage, session } from '../../utils/storage.js'
-import { cloneDeep, groupBy, uniqBy, sortBy } from 'lodash'
+import { cloneDeep, groupBy, uniqBy, sortBy, remove } from 'lodash'
 import { arrayToTree } from '../../utils/'
 
 const model = {
@@ -135,9 +135,13 @@ export default {
     *roles({ payload }, { call, put }) {
       const result = yield call(roleService.list)
       if(result.status == 'OK') {
+        const roleData = remove(result.data.objects, function(obj) {
+          // 过滤运营商角色
+          return obj.id !== 2
+        })
         yield put({
           type: 'updateData',
-          payload: { roleData: result.data.objects}
+          payload: { roleData }
         })
       } else {
         result.message && message.error(result.message)

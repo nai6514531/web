@@ -183,12 +183,18 @@ class Role extends Component {
           >
           添加角色
         </Button>
-        <DataTable
-          dataSource={data || []}
-          columns={this.columns}
-          loading={loading}
-          pagination={false}
-        />
+        {
+          data && data.length
+          ? <DataTable
+              defaultExpandAllRows={true}
+              dataSource={data || []}
+              columns={this.columns}
+              loading={loading}
+              pagination={false}
+            />
+          : null
+        }
+
         <RoleModal {...this.props} />
       </div>
     )

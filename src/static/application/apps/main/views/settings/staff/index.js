@@ -117,11 +117,10 @@ class User extends Component {
     })
   }
   changeStatus = (id, status) => {
-    const url = transformUrl(location.search)
     this.props.dispatch({
       type: 'user/changeStatus',
       payload: {
-        data: url,
+        data: this.search,
         id: id,
         status
       }
@@ -161,7 +160,8 @@ class User extends Component {
     this.fetch(this.search)
   }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   render() {
     const { form: { getFieldDecorator }, common: { search }, user: { data: { objects, pagination }, key, visible, roleData }, loading  } = this.props

@@ -61,10 +61,11 @@ class DataTable extends Component {
     }
   }
   render() {
-    const { getBodyWrapper, rowClassName, columns, rowKey, dataSource, loading, scroll, common: { clickedIndex } } = this.props
+    const { getBodyWrapper, rowClassName, columns, rowKey, dataSource, loading, scroll, defaultExpandAllRows, common: { clickedIndex } } = this.props
     const pagination = this.props.pagination ? { ...this.state.pagination, ...this.props.pagination } : false
     return(
       <Table
+        defaultExpandAllRows={defaultExpandAllRows}
         scroll={scroll}
         columns={columns}
         dataSource={dataSource}
