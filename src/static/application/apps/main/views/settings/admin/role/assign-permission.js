@@ -93,6 +93,7 @@ class App extends Component {
       },
       {
         title: '操作',
+        width: 250,
         render: (text, record, index) => {
           const { loading } = this.props
           return (
