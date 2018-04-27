@@ -21,7 +21,6 @@ import DeviceAddressService from '../../../../services/soda-manager/device-servi
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 import { InputScan, InputClear } from '../../../../components/form/input'
 import { Element } from '../../../../components/element'
-import Modes from './modes'
 import Assigned from './assigned'
 import DEVICE from '../../../../constant/device'
 
@@ -160,7 +159,7 @@ class App extends Component {
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>
-                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元`, `${(mode.duration / 60).toFixed()}分钟`].join(' / ')}
+                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元`].join(' / ')}
               </p>
             })}
           </div>)
@@ -580,14 +579,14 @@ class App extends Component {
         }
         { tapActive === DEVICE_IS_MINE ? <Select
             showSearch
-            style={{ width: 180, marginRight: 10, marginBottom: 10 }}
-            placeholder="请选择学校"
+            style={{ width: 240, marginRight: 10, marginBottom: 10 }}
+            placeholder='请选择学校(非学校服务选"其他")'
             optionFilterProp="children"
             onChange={this.changeSchool.bind(this)}
             value={schoolId === '' ? '' : +schoolId}
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            <Option value="">请选择学校</Option>
+            <Option value="">请选择学校(非学校服务选"其他")</Option>
             {(schools || []).map((school) => {
               return <Option key={school.id} value={school.id}>{school.name}</Option>
             })}
@@ -608,7 +607,7 @@ class App extends Component {
         }
          <Select
           showSearch
-          style={{ width: 180, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
           placeholder="请选择设备类型"
           optionFilterProp="children"
           onChange={this.changeType.bind(this)}

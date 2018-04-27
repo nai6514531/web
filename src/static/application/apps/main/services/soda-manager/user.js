@@ -36,11 +36,6 @@ const userService = {
   },
   updateCashAccount: (options) => {
     return request.put(`/mng/user-cash-accounts/${options.id}`, options)
-  },
-  getDetailWithDevice: (options) => {
-    return request.get(`/mng/users-devices`, {
-      params: options
-    })
-  },
+  }
 }
 export default userService

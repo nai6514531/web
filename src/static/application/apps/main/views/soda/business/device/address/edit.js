@@ -421,9 +421,9 @@ class Edit extends Component {
               <Select
                 showSearch
                 optionFilterProp="children"
-                placeholder="请选择学校"
+                placeholder='请选择学校(非学校服务选"其他")'
                 notFoundContent="搜索无结果">
-                  <Option value="">请选择学校</Option>
+                  <Option value="">请选择学校(非学校服务选"其他")</Option>
                   { 
                     (schools.objects || []).map((school) => {
                       return <Option key={school.id} value={school.id}>{school.name}</Option>

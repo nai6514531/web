@@ -268,14 +268,14 @@ class App extends Component {
       <div>
         <Select
           showSearch
-          style={{ width: 180, marginRight: 10 }}
-          placeholder="请选择学校"
+          style={{ width: 240, marginRight: 10 }}
+          placeholder='请选择学校(非学校服务选"其他")'
           optionFilterProp="children"
           onChange={this.changeSchool.bind(this)}
           value={schoolId === '' ? '' : +schoolId}
           filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
-          <Option value="">请选择学校</Option>
+          <Option value="">请选择学校(非学校服务选"其他")</Option>
           {(schools || []).map((school) => {
             return <Option key={school.id} value={school.id}>{school.name}</Option>
           })}

@@ -1,37 +1,33 @@
-.detail {
-	max-width: 600px;
-	h2 {
-		margin-bottom: 10px;
-		opacity: 0.9;
-		i {
-			margin-right: 5px;
-		}
-		button {
-		  vertical-align: text-bottom;
-    	margin-left: 10px;
-		}
-	}
-	.info {
-		.apply {
-			font-size: 16px;
-			color: rgba(0, 0, 0, 0.65);
-		}
-		span {
-			font-size: 12px;
-			color: rgba(0, 0, 0, 0.45);
-			margin-right: 10px;
-		}
-		p {
-			font-size: 18px;
-			color: rgba(0, 0, 0, 0.65);
-			margin-bottom: 10px;
-		}
-	}
+.card {
+  margin-bottom: 20px;
+  label {
+    width: 120px;
+    display: inline-block;
+  }
+  :global(.ant-card-head) {
+    line-height: 38px;
+    height: 38px;
+    min-height: 38px!important;
+    padding-left: 15px;
+  }
+  :global(.ant-card-head-title) {
+    padding: 0;
+  }
+  :global(.ant-card-body) {
+    padding: 20px 32px
+  }
+  :global(.ant-row) {
+    line-height: 2.4
+  }
+  .name {
+    font-style: normal;
+    margin-right: 12px;
+  }
 }
 .form {
-	padding: 20px 0 0;
-	.tip {
-		color: #ec5204;
+  padding: 20px 0 0;
+  .tip {
+    color: #ec5204;
     line-height: 20px;
-	}
+  }
 }

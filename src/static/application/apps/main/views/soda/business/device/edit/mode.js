@@ -40,7 +40,7 @@ class Mode extends Component {
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
-    let { mode: { id, name, duration, value, pulse: { id: pulseId }, status }, index } = this.props
+    let { mode: { id, name, duration, value, pulse: { id: pulseId }, status }, activeFeatureType, featureType, index } = this.props
     let label = "服务程序" + (index)
 
     return (<Row className={styles.editMode}>
@@ -71,9 +71,17 @@ class Mode extends Component {
               {getFieldDecorator(`${id}_VALUE`, {
                 rules: [
                   { required: true, message: '必填' },
-                  { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确价格'},
+                  { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]{1,2})?$/, message: '请输入正确价格'},
+                  (rule, value, callback, source, options) => {
+                    if (value > 20) {
+                      callback('价格最大不能超过20元')
+                      return false
+                    }
+                    callback()
+                    return true
+                  }
                 ],
-                initialValue: value ? conversionUnit(value) : "0",
+                initialValue: activeFeatureType === featureType ? conversionUnit(value) : conversionUnit(index * 100),
               })(
                 <Input 
                 prefix={<Icon type="pay-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -82,14 +90,15 @@ class Mode extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xs={24} sm={6}>
+          { 
+            true ? null : <Col xs={24} sm={6}>
             <FormItem 
             className={styles.formItem}
             style= {{ marginRight: 5 }}>
               {getFieldDecorator(`${id}_DURATION`, {
                 rules: [
                   { required: true, message: '必填' },
-                  { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确时间'},
+                  { type: 'string', pattern: /^(0|[1-9][0-9]*)$/, message: '请输入正确时间'},
                 ],
                 initialValue: duration ? String((duration / 60).toFixed()) : "0",
               })(
@@ -100,6 +109,7 @@ class Mode extends Component {
               )}
             </FormItem>
           </Col>
+        }
         </Row>
       </Col>
      </Row>)

@@ -90,10 +90,14 @@ class BatchTable extends Component {
           let duration = op(mode).get('duration')
           duration = duration === 0 || duration ? (duration / 60).toFixed() : '-'
 
+          // return <div>
+          //   <span className={cx({ [styles.hightlight]: nameHighlight || isHightlight })}>{name}/</span>
+          //   <span className={cx({ [styles.hightlight]: priceHighlight || isHightlight })}>{value}元/</span>
+          //   <span className={cx({ [styles.hightlight]: durationHighlight || isHightlight })}>{duration}分钟</span>
+          // </div>
           return <div>
             <span className={cx({ [styles.hightlight]: nameHighlight || isHightlight })}>{name}/</span>
-            <span className={cx({ [styles.hightlight]: priceHighlight || isHightlight })}>{value}元/</span>
-            <span className={cx({ [styles.hightlight]: durationHighlight || isHightlight })}>{duration}分钟</span>
+            <span className={cx({ [styles.hightlight]: priceHighlight || isHightlight })}>{value}元</span>
           </div>
         }
       }
