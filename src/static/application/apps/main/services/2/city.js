@@ -8,7 +8,7 @@ const cityService = {
     return request.get('/2/cities/summary')
   },
   topicList: (data) => {
-    let url = `/2/topics?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&schoolName=${data.schoolName || ''}&channelId=${ data.channelId || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&cityId=${data.cityId || ''}`
+    let url = `/2/topics?offset=${data.offset || 0 }&limit=${data.limit || 10 }&name=${data.name || ''}&schoolName=${data.schoolName || ''}&channelId=${ data.channelId || ''}&status=${ data.status || ''}&keywords=${data.keywords || ''}&cityId=${data.cityId || ''}&startAt=${data.startAt || '' }&endAt=${data.endAt || '' }`
     return request.get(url)
   },
   topicDetail: (id) => {

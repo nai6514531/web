@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal } from 'antd'
+import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, Radio } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../constant/api'
 import { storage } from '../../../../utils/storage.js'
@@ -10,6 +10,7 @@ import { trim } from 'lodash'
 import moment from 'moment'
 
 const RangePicker = DatePicker.RangePicker
+const RadioGroup = Radio.Group
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -266,18 +267,34 @@ class ChannelEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='类型'
+            label="所属业务"
           >
             {getFieldDecorator('type', {
               rules: [{
-                required: true, message: '请选择类型!',
+                required: true, message: '请选择所属业务!',
               }],
               initialValue: detail.type !== undefined ? detail.type + '' : detail.type
             })(
-              <Select placeholder='请选择类型'>
-                  <Option value={'0'}>闲置</Option>
-                  <Option value={'1'}>每日话题</Option>
-              </Select>
+              <RadioGroup>
+                <Radio value="0">帖子</Radio>
+                <Radio value="1">每日话题</Radio>
+              </RadioGroup>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label='用户可发'
+          >
+            {getFieldDecorator('isOfficial', {
+              rules: [{
+                required: true, message: '请选择用户可发!',
+              }],
+              initialValue: detail.isOfficial !== undefined ? detail.isOfficial + '' : '0'
+            })(
+              <RadioGroup>
+                <Radio value="0">可发</Radio>
+                <Radio value="1">不可发</Radio>
+              </RadioGroup>
             )}
           </FormItem>
           <FormItem

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Message, Form, Input, Button, Upload, Icon, Modal, Radio, AutoComplete, Select, InputNumber } from 'antd'
+import { Spin, Message, Form, Input, Button, Upload, Icon, Modal, Radio, AutoComplete, Select, InputNumber, Row, Col } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../constant/api'
 import { storage } from '../../../../utils/storage.js'
@@ -13,7 +13,7 @@ import moment from 'moment'
 const { TextArea } = Input
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
-const Option = AutoComplete.Option
+const Option = Select.Option
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const imageServer = `${API_SERVER}/upload/topic`
@@ -106,6 +106,16 @@ class CommentEdit extends Component {
         data: id
       }
     })
+    this.props.dispatch({
+      type: 'commentEdit/userList',
+      payload: {
+        data: {
+          pagination: false,
+          isOfficial: 1,
+          setFieldsValue: this.props.form.setFieldsValue
+        }
+      }
+    })
   }
   cancelHandler = () => {
     this.props.history.goBack()
@@ -130,45 +140,15 @@ class CommentEdit extends Component {
       }
     })
   }
-  handleSelect = () => {
+  getRandomUser  = () => {
     this.props.dispatch({
-      type: 'commentEdit/updateData',
+      type: 'commentEdit/getRandomUser',
       payload: {
-        disabled: false
+        data: {
+          setFieldsValue: this.props.form.setFieldsValue
+        }
       }
     })
-  }
-  handleSearch = _.debounce((filterKey) => {
-    if(filterKey) {
-      this.props.dispatch({
-        type: 'commentEdit/userList',
-        payload: {
-          data: {
-            name: filterKey,
-            pagination: false,
-            isOfficial: 1
-          }
-        }
-      })
-    }
-  },1000)
-  debounceSearch =(filterKey)=> {
-    if(filterKey) {
-      this.props.dispatch({
-        type: 'commentEdit/updateData',
-        payload: {
-          disabled: true
-        }
-      })
-    }  else {
-      this.props.dispatch({
-        type: 'commentEdit/updateData',
-        payload: {
-          disabled: false
-        }
-      })
-    }
-     this.handleSearch(filterKey)
   }
   render() {
     const { commentEdit: { toUser, userData, disabled }, form: { getFieldDecorator, getFieldProps }, loading } = this.props
@@ -207,23 +187,29 @@ class CommentEdit extends Component {
             {...formItemLayout}
             label="发布人"
           >
-            {getFieldDecorator('userId', {
-              rules: [{
-                required: true, message: '请选择发布人',
-              }]
-            })(
-              <AutoComplete
-                placeholder='发布人'
-                allowClear
-                onSelect={this.handleSelect}
-                onSearch={this.debounceSearch}>
-                {
-                  userData.map((value) => {
-                    return <Option value={value.id + ''} key={value.id}>{value.name}</Option>;
-                  })
-                }
-              </AutoComplete>
-            )}
+            <Row>
+              <Col span={20}>
+                {getFieldDecorator('userId', {
+                  rules: [{
+                    required: true, message: '请选择发布人',
+                  }]
+                })(
+                  <Select
+                    placeholder='发布人'
+                    disabled
+                    >
+                    {
+                      userData.map((value) => {
+                        return <Option value={value.id + ''} key={value.id}>{value.name}</Option>;
+                      })
+                    }
+                  </Select>
+                )}
+              </Col>
+              <Col span={4} style={{textAlign: 'right'}}>
+                <Button onClick={this.getRandomUser}>刷新</Button>
+              </Col>
+            </Row>
           </FormItem>
           {/* <FormItem
             {...formItemLayout}

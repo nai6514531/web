@@ -44,6 +44,10 @@ import ConsumeSearchDayDetail from 'bundle-loader?lazy!../../views/soda/statisti
 import ConsumeSearchDayDevice from 'bundle-loader?lazy!../../views/soda/statistics/consume/device-detail.js'
 import DeviceSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/device/day.js'
 
+import OperationStatisticsByDay from 'bundle-loader?lazy!../../views/soda/statistics/operation/day.js'
+import OperationStatisticsByMonth from 'bundle-loader?lazy!../../views/soda/statistics/operation/month.js'
+import OperationStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/operation.js'
+
 import bill from 'bundle-loader?lazy!../../views/soda/business/bill'
 import billDetailList from 'bundle-loader?lazy!../../views/soda/business/bill/detail'
 import dailyBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill'
@@ -98,6 +102,9 @@ export default function (app) {
       <Route exact path='/soda/statistics/consume/:month/:day' component={getComponent(ConsumeSearchDayDetail,app,BusinessStatisticsModel)} />
       <Route exact path='/soda/statistics/consume/:month/:day/:deviceSerial' component={getComponent(ConsumeSearchDayDevice,app,BusinessStatisticsModel)} />
       <Route exact path='/soda/statistics/device/:month/:deviceSerial' component={getComponent(DeviceSearchByDay,app,BusinessStatisticsModel)} />
+
+      <Route exact path='/soda/operation-statistics' component={getComponent(OperationStatisticsByMonth,app,OperationStatisticsModel)} />
+      <Route exact path='/soda/operation-statistics/:month' component={getComponent(OperationStatisticsByDay,app,OperationStatisticsModel)} />
 
       <Route exact path='/soda/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
       <Route exact path='/soda/business/account/add' component={getComponent(accountEdit,　app)} />

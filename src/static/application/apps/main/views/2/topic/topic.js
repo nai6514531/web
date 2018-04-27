@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import { trim } from 'lodash'
-import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
+import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col, DatePicker } from 'antd'
 import { connect } from 'dva'
 
 import DataTable from '../../../components/data-table/'
@@ -13,6 +13,9 @@ import { InputClear } from '../../../components/form/input'
 
 import styles from '../../../assets/css/search-bar.pcss'
 import dict from '../../../utils/dict.js'
+
+const dateFormat = 'YYYY-MM-DD HH:mm:ss'
+const RangePicker = DatePicker.RangePicker
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -159,7 +162,7 @@ class Topic extends Component {
               {edit}
               {comment}
               {like}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a>
+              {/* <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a> */}
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
@@ -305,6 +308,17 @@ class Topic extends Component {
     this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
+  timeChange = (value, dateString) => {
+    let [ startAt, endAt ] = dateString
+    if(startAt && endAt) {
+      startAt = moment(startAt).format()
+      endAt = moment(endAt).format()
+      this.search = { ...this.search, startAt, endAt }
+    } else {
+      delete this.search.startAt
+      delete this.search.endAt
+    }
+  }
   change = (url) => {
    this.fetch(url)
   }
@@ -320,6 +334,8 @@ class Topic extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
+    const startAt = this.search.startAt ? moment(this.search.startAt, dateFormat) : null
+    const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
     let breadItems
     if(this.search.from === 'city') {
       breadItems = [
@@ -384,6 +400,16 @@ class Topic extends Component {
             defaultValue={this.search.schoolName}
             />
         </span>
+        <RangePicker
+          className={styles['date-picker-wrap']}
+          showTime
+          defaultValue={[startAt,endAt]}
+          format={dateFormat}
+          onChange={this.timeChange}
+          showTime={{
+            hideDisabledOptions: true,
+            defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+          }} />
         <Select
           value={ search.channelId }
           allowClear
