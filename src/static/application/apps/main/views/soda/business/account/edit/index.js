@@ -166,7 +166,9 @@ class App extends Component {
         activeKey={activeKey}
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="基本信息" key="default">
-          { activeKey === 'default' ? <Detail {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} /> : null }
+          { activeKey === 'default' ? <Detail 
+          {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} changeTab={this.changeTab.bind(this)} /> 
+          : null }
         </TabPane>
         <TabPane tab="收款信息" key="cash" disabled={isAdd ? true : false} >
           { activeKey === 'cash' ? <Pay {...this.props}

@@ -242,7 +242,7 @@ class Edit extends Component {
               name: pulse.name,
             },
             name: value[`${activeFeatureType}-${pulseId}_NAME`],
-            duration: +(+value[`${activeFeatureType}-${pulseId}_DURATION`] * 60).toFixed(),
+            duration: +(+value[`${activeFeatureType}-${pulseId}_DURATION`] * 60).toFixed() || 0,
             value: +(+value[`${activeFeatureType}-${pulseId}_VALUE`] * 100).toFixed()
           }
           // 模式新增下
@@ -401,12 +401,12 @@ class Edit extends Component {
             })(
               <Select
                 showSearch
-                placeholder="请选择学校"
+                placeholder='请选择学校(非学校服务选"其他")'
                 optionFilterProp="children"
                 onChange={this.changeSchool.bind(this)}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
               >
-                <Option value="">请选择学校</Option>
+                <Option value="">请选择学校(非学校服务选"其他")</Option>
                 {(schools || []).map((school) => {
                   return <Option key={school.id} value={school.id}>{school.name}</Option>
                 })}
@@ -469,7 +469,9 @@ class Edit extends Component {
           </FormItem>
           { 
             !_.isEmpty(activeModes) ? (activeModes || []).map((mode, index) => {
-              return <Mode 
+              return <Mode
+              activeFeatureType={activeFeatureType}
+              featureType={type}
               mode={mode} 
               index={index+1}
               key={mode.id}

@@ -140,6 +140,16 @@ class App extends Component {
           <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
           <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>姓名 | 账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join(' | ') || '-'}</span></Col>
         </Row>
+         <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 20 }}>
+            <Button
+              type='primary'
+              style={{ marginRight: 10, marginTop: 10 }}
+              onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}?type=cash`) }}>
+              修改收款信息
+            </Button>
+          </Col>
+        </Row>
       </Card>
 
     </div>)

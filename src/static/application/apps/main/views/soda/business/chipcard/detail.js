@@ -1,5 +1,5 @@
 import React, { Component }from 'react'
-import { Button, Modal, Spin, Icon, Row, Col, Form, message } from 'antd'
+import { Button, Modal, Spin, Icon, Row, Col, Form, message, Card } from 'antd'
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
 
@@ -147,49 +147,40 @@ class Detail extends Component {
 
     return (<section>
       <Breadcrumb items={breadItems} />
-      <div className={styles.detail}>
-        <Spin spinning={loading}>
-          <Row>
-            <h2><Icon type="mobile" />学生登录手机号 <span>{mobile}</span></h2>
-          </Row>
-          <Row>
-            <h2>
-              <Icon type="credit-card" />
-              IC卡
-              <Button type='primary' ghost size="small" icon='edit' onClick={() => { this.setState({ visible: true }) }}>修改适用商家</Button>
-            </h2>
-          </Row>
-          <Row className={styles.info}>
-            <Col xs={{ span: 23, offset: 1 }} sm={{ span: 7, offset: 1}} >
-              <span>充值金额</span>
-              <p>{conversionUnit(recharge) + '元'}</p>
-            </Col>
-            <Col xs={{ span: 23, offset: 1 }} sm={{ span: 7 }} className={styles.name}>
-              <span>已消费金额</span>
-              <p>{conversionUnit(recharge - value) + '元'}</p>
-            </Col>
-            <Col xs={{ span: 23, offset: 1 }} sm={{ span: 7 }}>
-              <span>当前余额</span>
-              <p>{conversionUnit(value) + '元'}</p>
-            </Col>
-          </Row>
-          <Row className={styles.info}>
-            <Col offset={1}>
-              <span>适用商家</span>
-            </Col>
-          </Row>
-          <Row className={styles.info}>
-            {
-              applySign.map((value, index) => {
-                if (index === 0) {
-                  return <Col xs={{ span: 23, offset: 1 }} sm={{ span: 11, offset: 1 }} key={index} className={styles.apply}>{`${index + 1}. ${value}`}</Col>
-                }
-                return <Col xs={{ span: 23, offset: 1 }} sm={{ span: 11 }} key={index} className={styles.apply}>{`${index + 1}. ${value}`}</Col>
-              })
-            }
-          </Row>
-        </Spin>
-      </div>
+      <Card className={styles.card} type="inner" title='学生信息'>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>登录手机号:</label><span>{mobile || '-'}</span></Col>
+        </Row>
+      </Card>
+      <Card className={styles.card} type="inner" title='IC卡信息'>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>充值金额:</label><span>{conversionUnit(recharge) + '元'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>已消费金额:</label><span>{conversionUnit(recharge - value) + '元'}</span></Col>
+          <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>当前余额:</label><span>{conversionUnit(value) + '元'}</span></Col>
+        </Row>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 24 }}>
+            <label>适用商家:</label>
+            <span>
+              {
+                applySign.map((value, index) => {
+                  return <i key={index} className={styles.name}>{`${index + 1}. ${value}`}</i>
+                })
+              }
+            </span>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={{ span: 24 }} sm={{ span: 20 }}>
+            <Button
+              type='primary'
+              style={{ marginRight: 10, marginTop: 10 }}
+              onClick={() => { this.setState({ visible: true }) }}>
+              修改适用商家
+            </Button>
+          </Col>
+        </Row>
+      </Card>
       {
         visible ?
         <Modal

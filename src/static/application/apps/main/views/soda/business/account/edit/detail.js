@@ -124,11 +124,11 @@ class Detial extends Component {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
-      let data = res.data
+      let { data: { id } } = res
       this.setState({
         loading: false
       })
-      this.props.history.push(`/soda/business/account/sub`)
+      this.props.history.push(`/soda/business/account/edit/${id}?type=cash&isSub=true`)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -151,10 +151,11 @@ class Detial extends Component {
       if (redirectUrl) {
         return this.props.history.push(redirectUrl)
       }
+      this.props.changeTab("cash")
       if (isSub) {
-        return this.props.history.push(`/soda/business/account/sub`)
+        return this.props.history.push(`/soda/business/account/edit/${id}?type=cash&isSub=true`)
       }
-      this.props.history.push(`/soda/business/account`)
+      this.props.history.push(`/soda/business/account/edit/${id}?type=cash`)
     }).catch((err) => {
       this.setState({ loading: false })
       this.props.form.setFieldsValue({ smsCode: '' })
@@ -300,7 +301,7 @@ class Detial extends Component {
       { !isAdd && type === 0 ? <FormItem
           {...formItemLayout}
           label="验证码"
-          extra={mobile + '手机号验证'}
+          extra={mobile ? '验证手机号:' + mobile + '  如需修改请联系客服' : '验证手机号为空,请联系客服'}
         > 
           <Row gutter={8}>
             <Col span={12}>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row } from 'antd'
+import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row, Select } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
@@ -10,6 +10,7 @@ import { transformUrl, toQueryString } from '../../../../utils/'
 import styles from '../../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
+const Option = Select.Option
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: { span: 14 },
@@ -95,7 +96,18 @@ class User extends Component {
     ]
   }
   componentDidMount() {
+    const url = this.search
+    if( !url.roleId ) {
+      delete url.roleId
+    }
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: url
+      }
+    })
     this.fetch(this.search)
+    this.fetchRole()
   }
   fetch = (params) => {
     this.props.dispatch({
@@ -103,6 +115,11 @@ class User extends Component {
       payload: {
         data: params
       }
+    })
+  }
+  fetchRole = (params) => {
+    this.props.dispatch({
+      type: 'adminUser/roles'
     })
   }
   delete = (id) => {
@@ -137,11 +154,25 @@ class User extends Component {
     this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
+  selectHandler =  (type, value) => {
+    this.props.dispatch({
+      type: 'common/updateSearch',
+      payload: {
+        search: {
+          [type]: value
+        }
+      }
+    })
+    if(!value) {
+      value = ''
+    }
+    this.search = { ...this.search, [type]: value }
+  }
   change = (url) => {
    this.fetch(url)
   }
   render() {
-    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, key, visible }, loading  } = this.props
+    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, key, visible, roleData }, loading, common: { search } } = this.props
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -166,6 +197,20 @@ class User extends Component {
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
          />
+        <Select
+          value={ search.roleId }
+          allowClear
+          className={styles.input}
+          placeholder='请选择角色搜索'
+          onChange={this.selectHandler.bind('this','roleId')}>
+            {
+              roleData.map(value => {
+                return (
+                  <Option value={value.id + ''} key={value.id}>{value.name}</Option>
+                )
+              })
+            }
+        </Select>
         <Button
           type='primary'
           onClick={this.searchClick}
@@ -195,12 +240,14 @@ class User extends Component {
   }
   componentWillUnmount() {
     this.props.dispatch({ type: 'adminUser/clear'})
+    this.props.dispatch({ type: 'common/resetSearch' })
   }
 }
 function mapStateToProps(state,props) {
   return {
     user: state.adminUser,
     loading: state.loading.global,
+    common: state.common,
     ...props
   }
 }

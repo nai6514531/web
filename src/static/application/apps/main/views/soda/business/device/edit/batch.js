@@ -13,6 +13,7 @@ import BatchTable from './batch-table'
 
 import DeviceService from '../../../../../services/soda-manager/device'
 import DeviceAddressService from '../../../../../services/soda-manager/device-service-address'
+import { conversionUnit } from '../../../../../utils/functions'
 
 import styles from '../index.pcss'
 
@@ -447,7 +448,7 @@ class BatchMode extends Component {
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'feature')}>关联设备类型</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'name')}>服务名称</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'price')}>价格</Checkbox>
-        <Checkbox onChange={this.toggleCheckbox.bind(this, 'duration')}>服务时间</Checkbox>
+        { true ? null : <Checkbox onChange={this.toggleCheckbox.bind(this, 'duration')}>服务时间</Checkbox> }
       </div>
       <Form className={styles.form}>
         {
@@ -464,12 +465,12 @@ class BatchMode extends Component {
                 })(
                   <Select
                     showSearch
-                    placeholder="请选择学校"
+                    placeholder='请选择学校(非学校服务选"其他")'
                     optionFilterProp="children"
                     onChange={this.changeSchool.bind(this)}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    <Option value="">请选择学校</Option>
+                    <Option value="">请选择学校(非学校服务选"其他")</Option>
                     {(schools || []).map((school) => {
                       return <Option key={school.id} value={school.id}>{school.name}</Option>
                     })}
@@ -561,9 +562,17 @@ class BatchMode extends Component {
                     {getFieldDecorator(`price-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
-                        { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确价格'},
+                        { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]{1,2})?$/, message: '请输入正确价格'},
+                        (rule, value, callback, source, options) => {
+                         if (value > 20) {
+                            callback('价格最大不能超过20元')
+                            return false
+                          }
+                          callback()
+                          return true
+                        }
                       ],
-                      initialValue: "0"
+                      initialValue: conversionUnit((index + 1) * 100)
                     })(
                       <Input
                       style={{ width: '80%' }}
@@ -586,7 +595,7 @@ class BatchMode extends Component {
                     {getFieldDecorator(`duration-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
-                        { type: 'string', pattern: /^(0|[1-9][0-9]*)(\.[0-9]*)?$/, message: '请输入正确时间'},
+                        { type: 'string', pattern: /^(0|[1-9][0-9]*)$/, message: '请输入正确时间'},
                       ],
                       initialValue: "0"
                     })(

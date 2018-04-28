@@ -89,6 +89,17 @@ export default {
         message.error(result.message)
       }
     },
+    *roles({ payload }, { call, put }) {
+      const result = yield call(roleService.all)
+      if(result.status == 'OK') {
+        yield put({
+          type: 'updateData',
+          payload: { roleData: result.data.objects }
+        })
+      } else {
+        result.message && message.error(result.message)
+      }
+    },
     *reset({ payload }, { call, put }) {
       const result = yield call(commonService.reset, payload.data)
       if(result.status == 'OK') {
