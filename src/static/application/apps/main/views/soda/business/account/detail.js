@@ -100,6 +100,7 @@ class App extends Component {
     let { history } = this.props
     let { user, cashAccount, isPermissionRecharge, loading } = this.state
     user = op({ ...user, cashAccount})
+    let cashTypeIsWechat = user.get('cashAccount.type.value') === CASH_ACCOUNT.TYPE_IS_WECHAT
     return (<div className={styles.detail}>
       <Breadcrumb items={breadItems} />
       <Card className={styles.card} type="inner" title='基本信息'>
@@ -138,7 +139,11 @@ class App extends Component {
         <Row>
           <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>是自动结算:</label><span>{user.get('cashAccount.mode.value') === 0 ? '是' : '否'}</span></Col>
           <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>收款方式:</label><span>{CASH_ACCOUNT.TYPE[user.get('cashAccount.type.value')] || '-'}</span></Col>
-          <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>姓名 | 账号:</label><span>{_.without([user.get('cashAccount.account'), user.get('cashAccount.realName')], '').join(' | ') || '-'}</span></Col>
+          { 
+            cashTypeIsWechat ?  
+            <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>姓名 | 昵称:</label><span>{_.without([user.get('cashAccount.realName'), user.get('nickName')], '').join(' | ') || '-'}</span></Col>  :
+            <Col xs={{ span: 24 }} sm={{ span: 24 }}><label>姓名 | 账号:</label><span>{_.without([user.get('cashAccount.realName'), user.get('cashAccount.account')], '').join(' | ') || '-'}</span></Col>
+          }
         </Row>
          <Row>
           <Col xs={{ span: 24 }} sm={{ span: 20 }}>

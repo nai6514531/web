@@ -10,6 +10,8 @@ const confirm = Modal.confirm
 
 import { InputClear } from '../../../../components/form/input'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
+import { Element } from '../../../../components/element'
+
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
 import history from '../../../../utils/history'
 import { conversionUnit } from '../../../../utils/functions'
@@ -30,6 +32,7 @@ const breadItems = [
   }
 ]
 
+@Element()
 class App extends Component {
   constructor(props) {
     super(props)
@@ -298,13 +301,14 @@ class App extends Component {
           onChange={this.onEndChange.bind(this)}
           onOpenChange={this.handleEndOpenChange.bind(this)}
         />
-        <InputClear
+        { 
+          this.props.isVisible("DAILY_BILL:INPUT:SEARCH_KEYS") ? <InputClear
           value={keys}
           style={{ width: 190, marginRight: 10, marginBottom: 10 }}
-          placeholder='输入运营商名称或者银行名称或户名'
+          placeholder='输入运营商名称或银行名称'
           onChange={this.changeKeys.bind(this)}
-          onPressEnter={this.search.bind(this)}
-        />
+          onPressEnter={this.search.bind(this)} /> : null
+        }
         <Button type='primary' style={{ marginBottom: 10 }} loading={searchLoading} icon='search' onClick={this.search.bind(this)}>筛选</Button>
       </div>
       <Table

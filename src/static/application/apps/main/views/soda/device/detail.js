@@ -107,7 +107,7 @@ class DeviceDetail extends Component {
                   <div>
                     <span className={styles.title}>服务地点:</span>
                     { _.isEmpty(op(data).get('serviceAddress')) ? '-' :
-                      _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
+                      _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
                     }
                   </div>
                   <div><span className={styles.title}>状态:</span>{op(data).get('status.description') || '-' }</div>
@@ -148,7 +148,7 @@ class DeviceDetail extends Component {
                   <div><span className={styles.title}>商家名称:</span>{op(data).get('assignedUser.name') || '-'}</div>
                   <div><span className={styles.title}>商家ID:</span>{op(data).get('assignedUser.id') || '-'}</div>
                   <div><span className={styles.title}>登录账号:</span>{op(data).get('assignedUser.account') || '-'}</div>
-                  <div><span className={styles.title}>注册时间:</span>{op(data).get('assignedUser.createdAt') ? moment(op(data).get('user.createdAt')).format('YYYY-MM-DD HH:mm:ss') : '-'}</div>
+                  <div><span className={styles.title}>注册时间:</span>{moment(op(data).get('assignedUser.createdAt')).format('YYYY-MM-DD HH:mm:ss')}</div>
                   <div><span className={styles.title}>联系人:</span>{op(data).get('assignedUser.contact') || '-'}</div>
                   <div><span className={styles.title}>手机号:</span>{op(data).get('assignedUser.mobile') || '-'}</div>
                   <div><span className={styles.title}>服务电话:</span>{op(data).get('assignedUser.telephone') || '-'}</div>

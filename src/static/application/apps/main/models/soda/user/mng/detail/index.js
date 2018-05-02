@@ -43,7 +43,7 @@ export default {
         if( result.data.type === 1 ) {
           mainId = result.data.parent.id
         }
-        const deviceInfo = yield call(deviceService.adminlist, { userIds: mainId })
+        const deviceInfo = yield call(deviceService.adminlist, { userIds: mainId, offset:0, limit: 1 })
         const accountInfo = yield call(userService.cashAccount, { userId: mainId })
 
         if(deviceInfo.status == 'OK') {

@@ -126,9 +126,9 @@ class App extends Component {
         }
       }, {
         title: '返厂设备',
-        colSpan: isVisible('BUSINESS:DEVICE:SHOW_RESTROFITY') ? 1 : 0,
+        colSpan: isVisible('DEVICE:TEXT:SHOW_RESTROFITY') ? 1 : 0,
         render: (record) => {
-          if (isVisible('BUSINESS:DEVICE:SHOW_RESTROFITY')) {
+          if (isVisible('DEVICE:TEXT:SHOW_RESTROFITY')) {
             let { assignedUser: { id }, limit: { isRetrofited } } = record
             let { users } = this.state
             let user = _.findWhere(users, { id: id })
@@ -177,7 +177,7 @@ class App extends Component {
               <div className={styles.divider}></div><a href="#">查看价格</a>
             </Popover>
             { 
-              isVisible("BUSINESS:DEVICE:CANCEL") && isMineDevice ? <Popconfirm title="确认删除吗?" onConfirm={this.delete.bind(this, id)}>
+              isVisible("DEVICE:BUTTON:CANCEL") && isMineDevice ? <Popconfirm title="确认删除吗?" onConfirm={this.delete.bind(this, id)}>
                 <div className={styles.divider}></div><a href="#">删除</a>
               </Popconfirm> : null
             }
@@ -575,6 +575,7 @@ class App extends Component {
             placeholder="请输入运营商名称/账号" 
             value={keys}
             onChange={this.changeInput.bind(this, 'keys')}
+            onPressEnter={this.search.bind(this)}
           />  : null
         }
         { tapActive === DEVICE_IS_MINE ? <Select
@@ -641,7 +642,7 @@ class App extends Component {
           onClick={this.batchLock.bind(this)}>批量锁定</Button> : null
         }
         { 
-          tapActive === DEVICE_IS_MINE && isVisible('BUSINESS:DEVICE:ADD')? <Button 
+          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD')? <Button 
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push(`/soda/business/device/add?isAssigned=false`) }}>添加新设备</Button> : null

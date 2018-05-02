@@ -148,6 +148,7 @@ class Element extends Component {
             <FormItem
               {...formItemLayout}
               label='元素值'
+              extra='格式: ${view}:${element}:${operation}'
             >
               {getFieldDecorator('reference', {
                 rules: [{

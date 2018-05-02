@@ -1,4 +1,5 @@
 import React, {  Component }from 'react'
+import { connect } from 'dva'
 import _ from 'underscore'
 import moment from 'moment'
 import op from 'object-path'
@@ -256,7 +257,7 @@ class App extends Component {
             <Row>
               <Col span={24}>
                 <Button type='primary'
-                  onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.id}?type=cash&redirectUrl=${encodeURIComponent(`/soda/business/bill`)}`) }}>
+                  onClick={() => { this.props.history.push(`/soda/business/account/edit/${this.props.user.id}?type=cash&redirectUrl=${encodeURIComponent(`/soda/business/bill`)}`) }}>
                   修改收款方式
                 </Button>
               </Col>
@@ -288,4 +289,10 @@ class App extends Component {
   }
 }
 
-export default App
+function mapStateToProps(state,props) {
+  return {
+    user: state.common.userInfo.user,
+    ...props
+  }
+}
+export default connect(mapStateToProps)(App)
