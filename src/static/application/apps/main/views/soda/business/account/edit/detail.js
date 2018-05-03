@@ -301,7 +301,7 @@ class Detial extends Component {
       { !isAdd && type === 0 ? <FormItem
           {...formItemLayout}
           label="验证码"
-          extra={mobile ? '验证手机号:' + mobile + '  如需修改请联系客服' : '验证手机号为空,请联系客服'}
+          extra={mobile ? '验证手机号:' + mobile + '  如该号码已无法接收短信，请联系客服' : '验证手机号为空,请联系客服'}
         > 
           <Row gutter={8}>
             <Col span={12}>

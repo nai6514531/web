@@ -95,6 +95,9 @@ class App extends Component {
       }, {
         title: '编号',
         dataIndex: 'serial',
+        render: (serial) => {
+          return <Link to={`/soda/business/device/${serial}` + this.props.location.search}>{serial}</Link>
+        }
       }, {
         title: '服务地点',
         dataIndex: 'serviceAddress',
