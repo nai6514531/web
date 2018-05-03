@@ -419,8 +419,8 @@ class BatchMode extends Component {
     setTimeout(() => {
       (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
         activeName ? resetFields([`name-${index}`]) : null
-        activePrice? resetFields([`price-${index}`]) : null
-        activeDuration? resetFields([`duration-${index}`]) : null
+        activePrice ? resetFields([`price-${index}`]) : null
+        activeDuration ? resetFields([`duration-${index}`]) : null
       })
     }, 0)
   }
@@ -613,7 +613,7 @@ class BatchMode extends Component {
         <FormItem {...tailFormItemLayout}>
           <Button style={{ marginRight: 10 }} type="ghost" onClick={this.toPreview.bind(this)}>预览</Button>
           { 
-            activeAddress || activeFeatureType || activePrice || activeName ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null 
+            activeAddress || activeFeature || activePrice || activeName || activeDuration ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null 
           }
         </FormItem> 
       </Form> 

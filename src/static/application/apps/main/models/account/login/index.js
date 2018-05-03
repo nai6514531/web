@@ -1,8 +1,9 @@
-import commonService from '../../services/common.js'
+import commonService from '../../../services/common.js'
 import { message } from 'antd'
-import { storage } from '../../utils/storage.js'
-import { API_SERVER } from '../../constant/api'
-import USER from '../../constant/user'
+import _ from 'underscore'
+import { storage } from '../../../utils/storage.js'
+import { API_SERVER } from '../../../constant/api'
+import USER from '../../../constant/user'
 
 export default {
   namespace: 'login',
@@ -51,7 +52,7 @@ export default {
       }
     },
     *checkAccount ({ payload: { data} }, { put, call }) {
-      const result = yield call(commonService.accountVerification, data)
+      const result = yield call(commonService.verfiyAccount, data)
       if( result.status === 'OK' ) {
         const { data: isShowSmsCode } = result
         if (isShowSmsCode) {
@@ -75,8 +76,7 @@ export default {
       payload,
     }, { put, call }) {
       let [ accountHelp, passwordHelp, captchaHelp, smsCodeHelp ] = [ null, null, null ]
-      const originData = _.cloneDeep(payload.data)
-      const data = yield call(commonService.login, originData)
+      const data = yield call(commonService.login, _.omit(payload.data, 'initPassword', 'checked'))
       if(data.status == 'OK') {
         //登录成功后存储账户密码token等
         if(payload.data.checked) {
@@ -111,7 +111,7 @@ export default {
             help: data.message,
             className:'has-error'
           }
-        }  else {
+        } else {
           message.error(data.message)
         }
         const help = { accountHelp, passwordHelp, captchaHelp, smsCodeHelp }

@@ -4,7 +4,7 @@ import _ from 'underscore'
 import moment from 'moment'
 import op from 'object-path'
 import cx from 'classnames'
-import md5 from 'md5';
+import md5 from 'md5'
 import querystring from 'querystring'
 import { Table, Button, message, Form, Tabs, Modal, Input, Spin, Row, Col } from 'antd'
 const FormItem = Form.Item
@@ -125,6 +125,7 @@ class Detial extends Component {
         throw new Error(res.message)
       }
       let { data: { id } } = res
+
       this.setState({
         loading: false
       })
@@ -152,10 +153,7 @@ class Detial extends Component {
         return this.props.history.push(redirectUrl)
       }
       this.props.changeTab("cash")
-      if (isSub) {
-        return this.props.history.push(`/soda/business/account/edit/${id}?type=cash&isSub=true`)
-      }
-      this.props.history.push(`/soda/business/account/edit/${id}?type=cash`)
+      this.props.updateUser({ detail: data })
     }).catch((err) => {
       this.setState({ loading: false })
       this.props.form.setFieldsValue({ smsCode: '' })

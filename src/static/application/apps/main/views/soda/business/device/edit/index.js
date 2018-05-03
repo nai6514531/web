@@ -23,6 +23,8 @@ import DEVICE from '../../../../../constant/device'
 import styles from '../index.pcss'
 
 const SERIAL_MIN_LENGTH = 6
+const DRINKING_URL = 'https://mnzn.net/sod.ac/d/SERIAL'
+const DEFAULT_URL = 'https://mnzn.net/?no=SERIAL'
 
 const editBreadItems = [
   {
@@ -356,7 +358,7 @@ class Edit extends Component {
     activeSchoolId = activeSchoolId === '' ? op(activeAddress).get('school.id') : activeSchoolId
     let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
     let activeModes = this.initialActiveModes()
-    let qrcode = type === DEVICE.FEATURE_IS_DRINKING ? `https://mnzn.net/sod.ac/d/${serial}` : `https://mnzn.net/?no=${serial}`
+    let url = type === DEVICE.FEATURE_IS_DRINKING ? DRINKING_URL : DEFAULT_URL
 
     return (<div>
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
@@ -490,7 +492,7 @@ class Edit extends Component {
         visible={activeModal === 'QRCode'}
         onCancel={() => { this.setState({ activeModal: '' })}}
         footer={null}>
-        <QRCode value={qrcode} />
+        <QRCode value={url.replace('SERIAL', serial)} />
       </Modal>
     </div>)
   }

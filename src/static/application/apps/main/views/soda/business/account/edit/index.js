@@ -1,6 +1,7 @@
 import React, { Component }from 'react'
 import Promise from 'bluebird'
 import querystring from 'querystring'
+import op from 'object-path'
 import { Tabs, Modal, message } from 'antd'
 const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
@@ -156,10 +157,19 @@ class App extends Component {
   changeTab(key) {
     this.setState({ activeKey: key　})
   }
+  updateUser(user) {
+    let { cashAccount } = this.state
+    this.setState({
+      ...this.state,
+      ...user,
+      cashAccount: op(cashAccount).get('user.id') === user.detail.id ? { ...cashAccount, user: user.detail } : cashAccount
+    })
+  }
   render() {
     let { isAdd, isSub } = this.account
     let { detail, cashAccount, activeKey, redirectUrl, loading } = this.state
     detail = { ...detail, cashAccount }
+
     return <div>
       <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} />
       <Tabs
@@ -167,7 +177,7 @@ class App extends Component {
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="基本信息" key="default">
           { activeKey === 'default' ? <Detail 
-          {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} changeTab={this.changeTab.bind(this)} /> 
+          {...this.props} loading={loading} detail={detail} isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} changeTab={this.changeTab.bind(this)} updateUser={this.updateUser.bind(this)} /> 
           : null }
         </TabPane>
         <TabPane tab="收款信息" key="cash" disabled={isAdd ? true : false} >
