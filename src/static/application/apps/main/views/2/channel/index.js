@@ -6,7 +6,8 @@ import { Button, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../utils/'
-
+import dict from '../dict.js'
+import moment from 'moment'
 
 const confirm = Modal.confirm
 const breadItems = [
@@ -30,7 +31,21 @@ class Channel extends Component {
       {
         title: '频道状态',
         render: (text, record) => {
-          return record.status === 0 ? '正常' : '已下架'
+          return record.status === 0 ? '线上' : '已下架'
+        }
+      },
+      {
+        title: '所属业务',
+        render: (text, record) => {
+          return dict.app[record.type]
+        }
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (text, record) => {
+          return`${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       {
@@ -44,7 +59,7 @@ class Channel extends Component {
             <span>
               <Link to={`/2/channel/detail/${record.id}`}>详情 | </Link>
               <Link to={`/2/channel/${record.id}`}>编辑  | </Link>
-              <Link to={`/2/topic?channelId=${record.id}&from=channel`}>商品管理  | </Link>
+              <Link to={`/2/topic?channelId=${record.id}&from=channel`}>帖子管理  | </Link>
               {operate}
             </span>
           )

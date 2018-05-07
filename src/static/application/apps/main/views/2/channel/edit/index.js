@@ -2,15 +2,17 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, Radio } from 'antd'
+import { Spin, Message, Form, Input, Button, Select, DatePicker, Col, Upload, Icon, Modal, Radio, Checkbox } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../constant/api'
 import { storage } from '../../../../utils/storage.js'
 import { trim } from 'lodash'
 import moment from 'moment'
+import dict from '../../dict.js'
 
 const RangePicker = DatePicker.RangePicker
 const RadioGroup = Radio.Group
+const CheckboxGroup = Checkbox.Group
 const { Option } = Select
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -47,14 +49,11 @@ class ChannelEdit extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if(!err) {
         const { match: { params: { id } }, history, channelEdit: { fileList } } = this.props
-        values.type = Number(values.type)
         let type = 'channelEdit/add'
         if(id !== 'new') {
           type = 'channelEdit/update'
         }
-        if(values.displayParams) {
-          values.displayParams = values.displayParams.replace(/，/g,',')
-        }
+        values.sortTypes = values.sortTypes.join(",")
         if(fileList[0] && fileList[0].image) {
           values.imageUrl = fileList[0].image
         } else {
@@ -215,6 +214,7 @@ class ChannelEdit extends Component {
         title: isEdit ? '编辑' : '新增频道'
       }
     ]
+
     const { startedAt, endedAt } = detail
     return(
       <Spin spinning={loading}>
@@ -222,17 +222,17 @@ class ChannelEdit extends Component {
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}
-            label='主标题'
+            label='标题'
           >
             {getFieldDecorator('title', {
               rules: [{
-                required: true, message: '请输入6字以内的主标题',
+                required: true, message: '请输入10字以内的主标题',
               },{
-                max: 6, message: '长度最多6个字符'
+                max: 10, message: '长度最多10个字符'
               }],
               initialValue: detail.title
             })(
-              <Input placeholder='请输入6字以内'/>
+              <Input placeholder='请输入10字以内'/>
             )}
           </FormItem>
           <FormItem
@@ -241,13 +241,13 @@ class ChannelEdit extends Component {
           >
             {getFieldDecorator('subtitle', {
               rules: [{
-                required: true, message: '请输入10字以内的副标题',
+                required: true, message: '请输入20字以内的副标题',
               },{
-                max: 10, message: '长度最多10个字符'
+                max: 20, message: '长度最多20个字符'
               }],
               initialValue: detail.subtitle
             })(
-              <Input placeholder='请输入10字以内'/>
+              <Input placeholder='请输入20字以内'/>
             )}
           </FormItem>
           <FormItem
@@ -256,13 +256,13 @@ class ChannelEdit extends Component {
           >
             {getFieldDecorator('description', {
               rules: [{
-                required: true, message: '请输入20字以内的描述',
+                required: true, message: '请输入50字以内的描述',
               },{
-                max: 20, message: '长度最多20个字符'
+                max: 50, message: '长度最多50个字符'
               }],
               initialValue: detail.description
             })(
-              <Input placeholder='请输入20字以内'/>
+              <Input placeholder='请输入50字以内'/>
             )}
           </FormItem>
           <FormItem
@@ -273,11 +273,14 @@ class ChannelEdit extends Component {
               rules: [{
                 required: true, message: '请选择所属业务!',
               }],
-              initialValue: detail.type !== undefined ? detail.type + '' : detail.type
+              initialValue: detail.type
             })(
               <RadioGroup>
-                <Radio value="0">帖子</Radio>
-                <Radio value="1">每日话题</Radio>
+                {
+                Object.keys(dict.app).map((key) => {
+                  return <Radio key={key} value={Number(key)}>{dict.app[key]}</Radio>;
+                })
+              }
               </RadioGroup>
             )}
           </FormItem>
@@ -289,21 +292,61 @@ class ChannelEdit extends Component {
               rules: [{
                 required: true, message: '请选择用户可发!',
               }],
-              initialValue: detail.isOfficial !== undefined ? detail.isOfficial + '' : '0'
+              initialValue: detail.isOfficial !== undefined ? detail.isOfficial : 0
             })(
               <RadioGroup>
-                <Radio value="0">可发</Radio>
-                <Radio value="1">不可发</Radio>
+                <Radio value={0}>可发</Radio>
+                <Radio value={1}>不可发</Radio>
               </RadioGroup>
             )}
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label='上传图片'
+            label="默认帖子类型"
+          >
+            {getFieldDecorator('topicTypeSuggestion', {
+              rules: [{
+                required: true, message: '请选择默认帖子类型!',
+              }],
+              initialValue: detail.topicTypeSuggestion
+            })(
+              <RadioGroup>
+              {
+                Object.keys(dict.topicTypes).map((key) => {
+                  return <Radio key={key} value={Number(key)}>{dict.topicTypes[key]}</Radio>;
+                })
+              }
+              </RadioGroup>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="排序维度"
+          >
+            {getFieldDecorator('sortTypes', {
+              rules: [{
+                required: true, message: '请选择排序维度!',
+              }],
+              initialValue: detail.sortTypes !== undefined ? detail.sortTypes.split(",").map(val => Number(val)) : [0, 5]
+            })(
+              <CheckboxGroup>
+              {
+                Object.keys(dict.sortTypes).map((key) => {
+                  return <Checkbox key={key} value={Number(key)}>{dict.sortTypes[key]}</Checkbox>;
+                })
+              }
+              </CheckboxGroup>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label='配图'
             required
             {...help}
           >
              <Upload
+               className="avatar-uploader"
+               style={{width: '300px', height: '100%'}}
                action={imageServer}
                listType='picture-card'
                fileList={fileList}
