@@ -23,21 +23,21 @@ class Channel extends Component {
   constructor(props) {
     super(props)
     this.columns = [
-      { title: '排序', dataIndex: 'order', key: 'order' },
+      { title: '序号', dataIndex: 'order', key: 'order' },
       { title: '频道名称', dataIndex: 'title',key: 'title' },
       // { title: '已上架商品数', dataIndex: 'onSaleCount',key: 'onSaleCount' },
       // { title: '处于交易中的商品数', dataIndex: 'tradingCount', key: 'tradingCount' },
       // { title: '待确认上架商品数', dataIndex: 'b',key: 'b' },
       {
-        title: '频道状态',
-        render: (text, record) => {
-          return record.status === 0 ? '线上' : '已下架'
-        }
-      },
-      {
         title: '所属业务',
         render: (text, record) => {
           return dict.app[record.type]
+        }
+      },
+      {
+        title: '频道状态',
+        render: (text, record) => {
+          return record.status === 0 ? '线上' : '已下架'
         }
       },
       {

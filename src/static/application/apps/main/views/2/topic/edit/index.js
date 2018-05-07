@@ -374,8 +374,8 @@ class TopicEdit extends Component {
               <RadioGroup
                 onChange={this.radioHandler}>
               {
-                Object.keys(dict.topicTypes).map((key) => {
-                  return <Radio key={key} value={Number(key)}>{dict.topicTypes[key]}</Radio>;
+                dict.topicTypes.map(({ id, desc }) => {
+                  return <Radio key={id} value={Number(id)}>{desc}</Radio>;
                 })
               }
               </RadioGroup>
@@ -463,7 +463,7 @@ class TopicEdit extends Component {
             label="互动维度"
           >
             {getFieldDecorator('dimensions', {
-              initialValue: detail.dimensions !== undefined ? detail.dimensions : []
+              initialValue: detail.dimensions !== undefined ? detail.dimensions : ['likeDisabled','commentDisabled','messageDisabled']
             })(
               <CheckboxGroup>
                 <Checkbox key={0} value={'likeDisabled'}>点赞</Checkbox>

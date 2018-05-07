@@ -273,7 +273,7 @@ class ChannelEdit extends Component {
               rules: [{
                 required: true, message: '请选择所属业务!',
               }],
-              initialValue: detail.type
+              initialValue: detail.type !== undefined ? detail.type : 0
             })(
               <RadioGroup>
                 {
@@ -312,8 +312,8 @@ class ChannelEdit extends Component {
             })(
               <RadioGroup>
               {
-                Object.keys(dict.topicTypes).map((key) => {
-                  return <Radio key={key} value={Number(key)}>{dict.topicTypes[key]}</Radio>;
+                dict.topicTypes.map(({ id, desc }) => {
+                  return <Radio key={id} value={Number(id)}>{desc}</Radio>;
                 })
               }
               </RadioGroup>

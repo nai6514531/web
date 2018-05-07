@@ -68,7 +68,7 @@ class ChannelDetail extends Component {
               <div><span className={styles.title}>总点赞数：</span>{isFinite(detail.likes) ? detail.likes : '-'}</div>
               <div><span className={styles.title}>总留言数：</span>{isFinite(detail.comments) ? detail.comments : '-'}</div>
               <div><span className={styles.title}>总私聊数：</span>{isFinite(detail.consultation) ? detail.consultation : '-'}</div>
-              <div><span className={styles.title}>总打分数量：</span>{isFinite(detail.grades) ? detail.grades : '-'}</div>
+              <div><span className={styles.title}>总打分数：</span>{isFinite(detail.grades) ? detail.grades : '-'}</div>
             </div>
           </div>
         </Card>

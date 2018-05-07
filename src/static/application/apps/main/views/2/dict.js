@@ -32,12 +32,24 @@ export default {
     5: '附近',
     2: '高颜值'
   },
-  topicTypes: {
-    0: '闲置二手街',
-    1: '每日话题',
-    2: '图文',
-    3: '评分'
-  },
+  topicTypes:[
+    {
+      id: 2,
+      desc: '图文'
+    },
+    {
+      id: 3,
+      desc: '打分'
+    },
+    {
+      id: 0,
+      desc: '价格'
+    },
+    {
+      id: 1,
+      desc: '每日话题'
+    }
+  ],
   defaultDimensions: {
     likeDisabled: 1,
     commentDisabled: 1,

@@ -38,13 +38,6 @@ class Topic extends Component {
     this.search = transformUrl(location.search)
     let { from, cityId, channelId } = this.search
     this.state = { from }
-    if(from === 'city') {
-      this.createUrl = `/2/topic/new?from=${from}&cityId=${cityId}`
-    } else if(from === 'channel') {
-      this.createUrl = `/2/topic/new?from=${from}&channelId=${channelId}`
-    } else {
-      this.createUrl = `/2/topic/new`
-    }
     this.columns = [
       {
         title: '序号',
@@ -350,6 +343,7 @@ class Topic extends Component {
     const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
     let breadItems
     let { from } = this.state
+    let { cityId, channelId } = this.search
     if(from === 'city') {
       breadItems = [
         {
@@ -443,9 +437,10 @@ class Topic extends Component {
             </Button>
             <Button
               type='primary'
-              onClick={this.createTopic}
               className={styles.button}>
+              <Link to={`/2/topic/new?from=${from}&cityId=${cityId || ''}&channelId=${channelId || ''}`}>
                 新建帖子
+              </Link>
             </Button>
           </span>
           : null
