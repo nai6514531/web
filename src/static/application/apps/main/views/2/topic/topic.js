@@ -128,7 +128,7 @@ class Topic extends Component {
         title: '手机号',
         dataIndex: 'user.mobile',
         key: 'user.mobile',
-        width: 150
+        width: 120
       },
       {
         title: '帖子状态',
