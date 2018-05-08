@@ -109,6 +109,12 @@ class Topic extends Component {
         width: 90
       },
       {
+        title: '打分次数',
+        dataIndex: 'grades',
+        key: 'grades',
+        width: 90
+      },
+      {
         title: '所属频道',
         render: (text, record, index) => {
           let channelTitle = record.channels.reduce((pre, current, currentIndex) => {
@@ -117,12 +123,6 @@ class Topic extends Component {
           }, '')
           return channelTitle || '-'
         }
-      },
-      {
-        title: '打分次数',
-        dataIndex: 'grades',
-        key: 'grades',
-        width: 90
       },
       {
         title: '手机号',

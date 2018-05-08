@@ -351,6 +351,7 @@ class TopicEdit extends Component {
               })(
                 <Select
                   mode="multiple"
+                  autoFocus={true}
                   placeholder='请选择发布频道'>
                   {
                     channelData.map((value) => {
@@ -369,7 +370,7 @@ class TopicEdit extends Component {
               rules: [{
                 required: true, message: '请选择帖子类型!',
               }],
-              initialValue: detail.type
+              initialValue: detail.type !== undefined ? detail.type : 2
             })(
               <RadioGroup
                 onChange={this.radioHandler}>
@@ -396,6 +397,23 @@ class TopicEdit extends Component {
               <TextArea placeholder='请输入100字以内'/>
             )}
           </FormItem>
+          {
+            showPrice ? (
+              <FormItem
+                {...formItemLayout}
+                label='价格'
+              >
+                {getFieldDecorator('value', {
+                  rules: [{
+                    required: true, message: '请输入价格',
+                  }],
+                  initialValue: detail.value ? detail.value / 100 : 0
+                })(
+                  <InputNumber placeholder='请输入价格' precision={2}/>
+                )}
+              </FormItem>
+            ) : null
+          }
           <FormItem
             {...formItemLayout}
             label='配图'
@@ -418,23 +436,6 @@ class TopicEdit extends Component {
                <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
           </FormItem>
-          {
-            showPrice ? (
-              <FormItem
-                {...formItemLayout}
-                label='价格'
-              >
-                {getFieldDecorator('value', {
-                  rules: [{
-                    required: true, message: '请输入价格',
-                  }],
-                  initialValue: detail.value ? detail.value / 100 : 0
-                })(
-                  <InputNumber placeholder='请输入价格' precision={2}/>
-                )}
-              </FormItem>
-            ) : null
-          }
           <FormItem
             {...formItemLayout}
             label="发布人"
