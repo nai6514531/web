@@ -273,7 +273,7 @@ class ChannelEdit extends Component {
               rules: [{
                 required: true, message: '请选择所属业务!',
               }],
-              initialValue: detail.type
+              initialValue: detail.type !== undefined ? detail.type : 0
             })(
               <RadioGroup>
                 {
