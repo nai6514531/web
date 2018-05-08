@@ -2,6 +2,7 @@ import { message } from 'antd'
 import cityService from '../../../services/2/city.js'
 import channelService from '../../../services/2/channel.js'
 import { cloneDeep } from 'lodash'
+import emoji from 'node-emoji'
 
 const model = {
   data: {
@@ -46,6 +47,7 @@ export default {
       const result = yield call(cityService.topicList, payload.data)
       if(result.status == 'OK') {
         result.data.objects.map(value => {
+          value.content = emoji.emojify(value.content)
           let { content, images } = value
           let image = JSON.parse(images || '{}')[0]
           value.url = image ? image.url : ''

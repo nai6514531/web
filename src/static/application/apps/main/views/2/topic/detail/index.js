@@ -7,6 +7,7 @@ import moment from 'moment'
 import dict from '../../../../utils/dict.js'
 import styles from '../../../../assets/css/page-detail.pcss'
 import { transformUrl, toQueryString } from '../../../../utils/'
+import emoji from 'node-emoji'
 
 class TopicDetail extends Component {
   constructor(props) {
@@ -138,7 +139,7 @@ class TopicDetail extends Component {
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
               <div><span className={styles.title}>标题：</span>{data.title || '-' }</div>
-              <div><span className={styles.title}>描述：</span>{data.content || '-' }</div>
+              <div><span className={styles.title}>描述：</span>{data.content && emoji.emojify(data.content) || '-' }</div>
               <div><span className={styles.title}>价格：</span>{(data.value / 100).toFixed(2)}</div>
               <div><span className={styles.title}>所在城市：</span>{data.cityName || '-' }</div>
               <div><span className={styles.title}>所在学校：</span>{data.schoolName || '-' }</div>

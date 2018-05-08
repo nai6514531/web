@@ -9,6 +9,7 @@ import { storage } from '../../../../utils/storage.js'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import { trim, debounce } from 'lodash'
 import moment from 'moment'
+import emoji from 'node-emoji'
 
 const { TextArea } = Input
 const RadioButton = Radio.Button
@@ -128,6 +129,7 @@ class CommentEdit extends Component {
         let type = 'commentEdit/add'
         values.userId = Number(values.userId)
         // values.status = Number(values.status)
+        values.content = emoji.unemojify(values.content)
         values.topicId = Number(id)
         this.props.dispatch({
           type: type,

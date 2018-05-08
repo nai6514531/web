@@ -5,6 +5,7 @@ import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } fro
 import { connect } from 'dva'
 import moment from 'moment'
 import { trim } from 'lodash'
+import emoji from 'node-emoji'
 
 import DataTable from '../../../components/data-table/'
 import Breadcrumb from '../../../components/layout/breadcrumb/'
@@ -105,7 +106,10 @@ class Comment extends Component {
         title: '留言内容',
         dataIndex: 'content',
         key: 'content',
-        width: 200
+        width: 200,
+        render: (text, record) => {
+          return emoji.emojify(record.content)
+        }
       },
       {
         title: '用户昵称',

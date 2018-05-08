@@ -51,6 +51,9 @@ module.exports = function (options) {
       }, {
         test: /\.(png|jpg|jpeg|gif|woff)$/,
         loader: "file?name=asset/[hash].[ext]",
+      },{
+        test: /\.json$/,
+        loader: 'json-loader'
       }]
     },
     resolve: {

@@ -54,6 +54,7 @@
     "keymirror": "^0.1.1",
     "load-script": "^1.0.0",
     "md5": "^2.2.1",
+    "node-emoji": "^1.8.1",
     "normalize.css": "^6.0.0",
     "nprogress": "^0.2.0",
     "object-path": "^0.11.4",

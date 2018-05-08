@@ -116,6 +116,7 @@ class Topic extends Component {
       },
       {
         title: '所属频道',
+        width: 90,
         render: (text, record, index) => {
           let channelTitle = record.channels.reduce((pre, current, currentIndex) => {
             let comma = currentIndex !== record.channels.length - 1 ? '、 ' : ''
@@ -128,6 +129,7 @@ class Topic extends Component {
         title: '手机号',
         dataIndex: 'user.mobile',
         key: 'user.mobile',
+        width: 150
       },
       {
         title: '帖子状态',
@@ -185,7 +187,6 @@ class Topic extends Component {
   }
   componentDidMount() {
     const url = transformUrl(location.search)
-
     if( !url.status ) {
       delete url.status
     }

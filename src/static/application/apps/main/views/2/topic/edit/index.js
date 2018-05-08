@@ -10,6 +10,7 @@ import { transformUrl, toQueryString } from '../../../../utils/'
 import { trim, debounce, merge } from 'lodash'
 import dict from '../../dict.js'
 import moment from 'moment'
+import emoji from 'node-emoji'
 
 const { TextArea } = Input
 const RadioGroup = Radio.Group
@@ -79,6 +80,7 @@ class TopicEdit extends Component {
         if(values.value) {
           values.value = Number(values.value) * 100
         }
+        values.content = emoji.unemojify(values.content)
         values.userId = Number(values.userId)
         values.channelIds = values.channelIds.join(",")
         this.props.dispatch({
@@ -392,7 +394,7 @@ class TopicEdit extends Component {
               },{
                 max: 100, message: '长度最多100个字符'
               }],
-              initialValue: detail.content
+              initialValue: detail.content && emoji.emojify(detail.content)
             })(
               <TextArea placeholder='请输入100字以内'/>
             )}
