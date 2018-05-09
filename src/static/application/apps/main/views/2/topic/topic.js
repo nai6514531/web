@@ -49,6 +49,7 @@ class Topic extends Component {
         title: '创建时间',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
+        width: 110,
         render: (text, record) => {
           return`${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
         }
@@ -73,6 +74,7 @@ class Topic extends Component {
       },
       {
         title: '配图',
+        width: 90,
         render: (text, record, index) => {
           if(record.url) {
             return (
@@ -140,6 +142,7 @@ class Topic extends Component {
       {
         title: '操作',
         key: 'operation',
+        width: 150,
         render: (text, record, index) => {
           let detail, edit, comment, like
           let {  cityId, channelId } = this.search
