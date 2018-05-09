@@ -32,6 +32,23 @@ export default {
     *detail({ payload: { data } }, { call, put }) {
       const { status, data: detail } = yield call(deviceService.detail, data.serial)
       if (status == 'OK') {
+        const { data: serviceAddress } = yield call(deviceAddressService.detail, detail.serviceAddress.id)
+        yield put({
+          type: 'updateData',
+          payload: {
+            data: {
+              ...detail,
+              serviceAddress: serviceAddress || {}
+            }
+          }
+        })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *detailWithUser({ payload: { data } }, { call, put }) {
+      const { status, data: detail } = yield call(deviceService.detail, data.serial)
+      if (status == 'OK') {
         const { data: { objects: users } }= yield call(userService.adminUserlist, { ids: [detail.user.id, detail.assignedUser.id].join(','), limit: 2, offset: 0 })
         const { data: serviceAddress } = yield call(deviceAddressService.detail, detail.serviceAddress.id)
         yield put({
@@ -50,7 +67,7 @@ export default {
       }
     },
     *resetToken({ payload: { data } }, { call, put }) {
-      const result = yield call(deviceService.resetToken,{
+      const result = yield call(deviceService.resetToken, {
         serial:data.serial
       })
       if(result.status == 'OK') {

@@ -119,6 +119,7 @@ export default function (app) {
       <Route path='/soda/business/device/edit/:serial' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/add' component={getComponent(deviceEdit,　app)} />
       <Route path='/soda/business/device/edit' component={getComponent(deviceBatchEdit,　app)} />
+      <Route path='/soda/business/device/:serial' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
       <Route path='/soda/business/device' component={getComponent(device,　app)} />
 
       <Route exact path='/soda/settlement/report' component={getComponent(settlementReport,　app)} />

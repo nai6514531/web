@@ -454,7 +454,7 @@ class Pay extends Component {
         <FormItem
           {...formItemLayout}
           label="验证码"
-          extra={op(cashAccount).get('user.mobile') ? '验证手机号:' + op(cashAccount).get('user.mobile') + '  如需修改请联系客服' : '验证手机号为空,请联系客服'}
+          extra={op(cashAccount).get('user.mobile') ? '验证手机号:' + op(cashAccount).get('user.mobile') + '  如该号码已无法接收短信，请联系客服' : '验证手机号为空,请联系客服'}
         > 
           <Row gutter={8}>
             <Col span={12}>
