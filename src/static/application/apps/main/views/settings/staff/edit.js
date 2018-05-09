@@ -71,20 +71,14 @@ class UserEdit extends Component {
           type = 'user/update'
         } else {
           values.password = md5(values.password)
+          values.rePassword = md5(values.rePassword )
         }
-        const role = {
-          userId: data.id,
-          roleId: values.roleId
-        }
-        delete values.roleId
-        delete values.rePassword
         this.props.dispatch({
           type: type,
           payload: {
             history,
             data: values,
-            id: id,
-            role
+            id: id
           }
         })
       }

@@ -70,19 +70,8 @@ export default {
       const { history, data, id } = payload
       const result = yield call(userService.update, data, id)
       if(result.status == 'OK') {
-        const { roleId, userId } = payload.role
-        yield put({
-          type: 'updateRoles',
-          payload: {
-            data: {
-              userId: userId,
-              roleIds: [roleId]
-            },
-            history
-          }
-        })
-        // message.success('更新用户信息成功')
-        // yield put({ type: 'common/info' })
+        message.success('操作成功')
+        history.goBack()
       } else {
         message.error(result.message)
       }
@@ -91,18 +80,8 @@ export default {
       const { history } = payload
       const result = yield call(userService.addStaffs, payload.data)
       if(result.status == 'OK') {
-        const { roleId } = payload.role
-        yield put({
-          type: 'updateRoles',
-          payload: {
-            data: {
-              userId:  result.data.id,
-              roleIds: [roleId]
-            },
-            history
-          }
-        })
-        // message.success('添加成功')
+        message.success('操作成功')
+        history.goBack()
       } else {
         message.error(result.message)
       }
