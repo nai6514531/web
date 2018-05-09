@@ -88,6 +88,10 @@ class TopicDetail extends Component {
   }
   render() {
     const { topicDetail: { data, visible, previewImage }, loading  } = this.props
+    let channelTitle = data.channels.reduce((pre, current, currentIndex) => {
+      let comma = currentIndex !== data.channels.length - 1 ? '、 ' : ''
+      return `${pre}${current.title}${comma}`
+    }, '')
     return(
       <Spin
         tip='加载中...'
@@ -143,7 +147,7 @@ class TopicDetail extends Component {
               <div><span className={styles.title}>价格：</span>{(data.value / 100).toFixed(2)}</div>
               <div><span className={styles.title}>所在城市：</span>{data.cityName || '-' }</div>
               <div><span className={styles.title}>所在学校：</span>{data.schoolName || '-' }</div>
-              <div><span className={styles.title}>所属频道：</span>{data.channelTitle || '-' }</div>
+              <div><span className={styles.title}>所属频道：</span>{channelTitle || '-' }</div>
               <div><span className={styles.title}>发布时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm')}</div>
               <div><span className={styles.title}>图片：</span></div>
               <p>

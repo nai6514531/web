@@ -5,7 +5,8 @@ import { cloneDeep } from 'lodash'
 
 const model = {
   data: {
-    user: {}
+    user: {},
+    channels: []
   },
   visible: false,
   previewImage: '',
