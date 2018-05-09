@@ -63,9 +63,7 @@ class Topic extends Component {
           return (
             <Popover
               content={
-                <Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
-                </Row>
+                <Row style={{padding: 10}}>{record.content}</Row>
               }>
                 {record.partContent}
             </Popover>
