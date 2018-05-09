@@ -76,6 +76,8 @@ class UserEdit extends Component {
           userId: data.id,
           roleId: values.roleId
         }
+        delete values.roleId
+        delete values.rePassword
         this.props.dispatch({
           type: type,
           payload: {
