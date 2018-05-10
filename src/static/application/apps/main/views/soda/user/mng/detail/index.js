@@ -62,6 +62,7 @@ class OperatorDetail extends Component {
           payload: {
             data: {
               newPassword: md5(values.newPassword),
+              rePassword: md5(values.newPassword),
               id
             }
           }
@@ -123,9 +124,7 @@ class OperatorDetail extends Component {
                   <div>
                     <span className={styles.title}>用户角色:</span>
                     {
-                      !data.role.length ? '-' : data.role.map( (value, index) => {
-                        return `${value.name}${data.role.length !== index + 1 ? ',' : ''}`
-                      })
+                      data.role.name || '-'
                     }
                   </div>
                   <div>

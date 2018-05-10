@@ -68,8 +68,8 @@ export default {
         message.error(result.message)
       }
     },
-    *updatePassword({ payload: { data: { id, newPassword } }}, { call, put }) {
-      const result = yield call(userService.updatePassword, id, { newPassword })
+    *updatePassword({ payload: { data: { id, newPassword, rePassword } }}, { call, put }) {
+      const result = yield call(userService.updatePassword, id, { newPassword, rePassword })
       if(result.status == 'OK') {
         message.success('密码修改成功')
         yield put({ type: 'hideModal' })
