@@ -6,6 +6,7 @@ import { Row, Col, Spin, Card, Modal } from 'antd'
 import styles from '../../../../assets/css/page-detail.pcss'
 import moment from 'moment'
 import { transformUrl, toQueryString } from '../../../../utils/'
+import dict from '../../dict.js'
 
 const breadItems = [
   {
@@ -57,17 +58,17 @@ class ChannelDetail extends Component {
         <Breadcrumb items={breadItems} />
         <Card className={styles.card}>
           <div className={styles.header}>
-              <h1>频道商品情况:</h1>
+              <h1>频道帖子情况:</h1>
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>总商品数：</span>{detail.total}</div>
-              <div><span className={styles.title}>在售商品数：</span>{detail.onSaleCount}</div>
-              {/*<div><span className={styles.title}>待确认商品数：</span>{detail.checkingCount}</div>*/}
-              {/* <div><span className={styles.title}>已上架商品数：</span>{detail.onSaleCount}</div> */}
-              <div><span className={styles.title}>处于交易中商品数：</span>{detail.tradingCount}</div>
-              <div><span className={styles.title}>交易成功商品数：</span>{detail.soldCount}</div>
-              <div><span className={styles.title}>询问人数：</span>{detail.consultation}</div>
+              <div><span className={styles.title}>总帖数：</span>{isFinite(detail.totalTopics) ? detail.totalTopics : '-'}</div>
+              <div><span className={styles.title}>在线帖数：</span>{isFinite(detail.onlineTopics) ? detail.onlineTopics : '-'}</div>
+              <div><span className={styles.title}>C端下架数：</span>{isFinite(detail.recallTopics) ? detail.recallTopics : '-'}</div>
+              <div><span className={styles.title}>总点赞数：</span>{isFinite(detail.likes) ? detail.likes : '-'}</div>
+              <div><span className={styles.title}>总留言数：</span>{isFinite(detail.comments) ? detail.comments : '-'}</div>
+              <div><span className={styles.title}>总私聊数：</span>{isFinite(detail.consultation) ? detail.consultation : '-'}</div>
+              <div><span className={styles.title}>总打分数：</span>{isFinite(detail.grades) ? detail.grades : '-'}</div>
             </div>
           </div>
         </Card>
@@ -77,11 +78,11 @@ class ChannelDetail extends Component {
           </div>
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
-              <div><span className={styles.title}>标题：</span>{detail.title}</div>
-              <div><span className={styles.title}>副标题：</span>{detail.subtitle}</div>
-              <div><span className={styles.title}>描述：</span>{detail.description}</div>
+              <div><span className={styles.title}>所属业务：</span>{dict.app[detail.type] || '-'}</div>
+              <div><span className={styles.title}>标题：</span>{detail.title || '-'}</div>
+              <div><span className={styles.title}>副标题：</span>{detail.subtitle || '-'}</div>
+              <div><span className={styles.title}>描述：</span>{detail.description || '-'}</div>
               <div><span className={styles.title}>创建时间：</span>{moment(detail.createdAt).format('YYYY-MM-DD HH:mm')}</div>
-              <div><span className={styles.title}>当前所处位置：</span>{detail.order}</div>
               <div><span className={styles.title}>状态：</span>{detail.status === 0 ? '正常' : '已下架'}</div>
               <div><span className={styles.title}>背景图：</span></div>
               <p>

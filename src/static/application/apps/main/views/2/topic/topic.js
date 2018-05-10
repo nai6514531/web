@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import { trim } from 'lodash'
-import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
+import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col, DatePicker } from 'antd'
 import { connect } from 'dva'
 
 import DataTable from '../../../components/data-table/'
@@ -12,7 +12,10 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import { InputClear } from '../../../components/form/input'
 
 import styles from '../../../assets/css/search-bar.pcss'
-import dict from '../../../utils/dict.js'
+import dict from '../dict.js'
+
+const dateFormat = 'YYYY-MM-DD HH:mm:ss'
+const RangePicker = DatePicker.RangePicker
 
 const FormItem = Form.Item
 const formItemLayout = {
@@ -34,40 +37,33 @@ class Topic extends Component {
     super(props)
     this.search = transformUrl(location.search)
     let { from, cityId, channelId } = this.search
-    if(from === 'city') {
-      this.createUrl = `/2/topic/new?from=${from}&cityId=${cityId}`
-    } else if(from === 'channel') {
-      this.createUrl = `/2/topic/new?from=${from}&channelId=${channelId}`
-    } else {
-      this.createUrl = `/2/topic/new`
-    }
+    this.state = { from }
     this.columns = [
       {
         title: '序号',
         dataIndex: 'id',
         key: 'id',
+        width: 70
       },
       {
-        title: '更新时间',
+        title: '创建时间',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
+        width: 110,
         render: (text, record) => {
-          return`${moment(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}`
+          return`${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
         }
       },
       {
         title: '帖子内容',
         dataIndex: 'partContent',
         key: 'partContent',
-        width: 200,
+        width: 150,
         render: (text, record, index) => {
           return (
             <Popover
               content={
-                <Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>标题:</span>{record.title}</Row>
-                  <Row style={{padding: 10}}><span style={{marginRight: 20}}>描述:</span>{record.content}</Row>
-                </Row>
+                <Row style={{padding: 10}}>{record.content}</Row>
               }>
                 {record.partContent}
             </Popover>
@@ -76,6 +72,7 @@ class Topic extends Component {
       },
       {
         title: '配图',
+        width: 90,
         render: (text, record, index) => {
           if(record.url) {
             return (
@@ -102,29 +99,40 @@ class Topic extends Component {
         title: '点赞数',
         dataIndex: 'likes',
         key: 'likes',
+        width: 90
       },
       {
         title: '留言数',
         dataIndex: 'comments',
         key: 'comments',
+        width: 90
+      },
+      {
+        title: '打分次数',
+        dataIndex: 'grades',
+        key: 'grades',
+        width: 90
       },
       {
         title: '所属频道',
-        dataIndex: 'channelTitle',
-        key: 'channelTitle',
+        width: 90,
+        render: (text, record, index) => {
+          let channelTitle = record.channels.reduce((pre, current, currentIndex) => {
+            let comma = currentIndex !== record.channels.length - 1 ? '、 ' : ''
+            return `${pre}${current.title}${comma}`
+          }, '')
+          return channelTitle || '-'
+        }
       },
-      // {
-      //   title: '浏览量',
-      //   dataIndex: 'uniqueVisitor',
-      //   key: 'uniqueVisitor',
-      // },
-      // {
-      //   title: '所属学校',
-      //   dataIndex: 'schoolName',
-      //   key: 'schoolName',
-      // },
+      {
+        title: '手机号',
+        dataIndex: 'user.mobile',
+        key: 'user.mobile',
+        width: 120
+      },
       {
         title: '帖子状态',
+        width: 90,
         render: (text, record) => {
           return dict.topicStatus[record.status]
         }
@@ -132,10 +140,11 @@ class Topic extends Component {
       {
         title: '操作',
         key: 'operation',
+        width: 150,
         render: (text, record, index) => {
           let detail, edit, comment, like
-          let { from, cityId, channelId } = this.search
-
+          let {  cityId, channelId } = this.search
+          let { from } = this.state
           if(from === 'city') {
             detail = <Link to={`/2/topic/detail/${record.id}?from=${from}&cityId=${cityId}`}>详情{'\u00A0'}|{'\u00A0'}</Link>
             edit = <Link to={`/2/topic/${record.id}?from=${from}&cityId=${cityId}`}>编辑{'\u00A0'}|{'\u00A0'}</Link>
@@ -159,7 +168,7 @@ class Topic extends Component {
               {edit}
               {comment}
               {like}
-              <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a>
+              {/* <a href='javascript:void(0)' onClick={ this.show.bind(this, record) }>移动帖子{'\u00A0'}|</a> */}
               {
                 (() => {
                   if(record.status === 0 || record.status === 1 || record.status === 2) {
@@ -178,9 +187,6 @@ class Topic extends Component {
   }
   componentDidMount() {
     const url = transformUrl(location.search)
-    if( !url.channelId ) {
-      delete url.channelId
-    }
     if( !url.status ) {
       delete url.status
     }
@@ -190,15 +196,18 @@ class Topic extends Component {
         search: url
       }
     })
-    this.props.dispatch({
-      type: 'topic/channelList',
-      payload: {
-        data: {
-          pagination: false
-        }
-      }
-    })
     this.fetch(url)
+
+    this.unlisten = this.props.history.listen((value) => {
+      // hard code
+      this.search = transformUrl(value.search)
+      if(this.state.from !== this.search.from) {
+        this.fetch(this.search)
+      }
+      this.setState({
+        from: this.search.from
+      })
+    })
   }
   fetch = (url) => {
     this.props.dispatch({
@@ -305,6 +314,17 @@ class Topic extends Component {
     this.props.history.push(`${location.pathname}?${queryString}`)
     this.fetch(this.search)
   }
+  timeChange = (value, dateString) => {
+    let [ startAt, endAt ] = dateString
+    if(startAt && endAt) {
+      startAt = moment(startAt).format(dateFormat)
+      endAt = moment(endAt).format(dateFormat)
+      this.search = { ...this.search, startAt, endAt }
+    } else {
+      delete this.search.startAt
+      delete this.search.endAt
+    }
+  }
   change = (url) => {
    this.fetch(url)
   }
@@ -320,8 +340,12 @@ class Topic extends Component {
   }
   render() {
     const { form: { getFieldDecorator }, common: { search }, topic: { data: { objects, pagination }, record, key, visible, previewVisible, previewImage, channel }, loading  } = this.props
+    const startAt = this.search.startAt ? moment(this.search.startAt, dateFormat) : null
+    const endAt = this.search.endAt ? moment(this.search.endAt, dateFormat) : null
     let breadItems
-    if(this.search.from === 'city') {
+    let { from } = this.state
+    let { cityId, channelId } = this.search
+    if(from === 'city') {
       breadItems = [
         {
           title: '闲置系统'
@@ -334,7 +358,7 @@ class Topic extends Component {
           title: '帖子管理'
         }
       ]
-    } else if(this.search.from === 'channel') {
+    } else if(from === 'channel') {
       breadItems = [
         {
           title: '闲置系统'
@@ -360,65 +384,68 @@ class Topic extends Component {
     return(
       <div>
         <Breadcrumb items={breadItems} />
-        <span className={styles.input}>
-          <InputClear
-            placeholder='帖子发布人'
-            onChange={this.changeHandler.bind(this, 'name')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.name}
-          />
-        </span>
-        <span className={styles.input}>
-          <InputClear
-            placeholder='帖子关键字'
-            onChange={this.changeHandler.bind(this, 'keywords')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.keywords}
-            />
-        </span>
-        <span className={styles.input}>
-          <InputClear
-            placeholder='帖子学校'
-            onChange={this.changeHandler.bind(this, 'schoolName')}
-            onPressEnter={this.searchClick}
-            defaultValue={this.search.schoolName}
-            />
-        </span>
-        <Select
-          value={ search.channelId }
-          allowClear
-          className={styles.input}
-          placeholder='帖子频道'
-          onChange={this.selectHandler.bind('this','channelId')}>
-            {
-              channel.map(value => {
-                return (
-                  <Option value={value.id + ''} key={value.id}>{value.title}</Option>
-                )
-              })
-            }
-        </Select>
-        <Select
-          value={search.status}
-          allowClear
-          className={styles.input}
-          placeholder='帖子状态'
-          onChange={this.selectHandler.bind('this','status')}>
-            { this.renderStatus(dict.topicStatus) }
-        </Select>
-        <Button
-          type='primary'
-          onClick={this.searchClick}
-          className={styles.button}
-          >
-          筛选
-        </Button>
-        <Button
-          type='primary'
-          onClick={this.createTopic}
-          className={styles.button}>
-            新建帖子
-        </Button>
+        {
+          from !== 'channel' ?
+          <span>
+            <span className={styles.input}>
+              <InputClear
+                placeholder='帖子发布人'
+                onChange={this.changeHandler.bind(this, 'name')}
+                onPressEnter={this.searchClick}
+                defaultValue={this.search.name}
+              />
+            </span>
+            <span className={styles.input}>
+              <InputClear
+                placeholder='帖子关键字'
+                onChange={this.changeHandler.bind(this, 'keywords')}
+                onPressEnter={this.searchClick}
+                defaultValue={this.search.keywords}
+                />
+            </span>
+            <span className={styles.input}>
+              <InputClear
+                placeholder='帖子学校'
+                onChange={this.changeHandler.bind(this, 'schoolName')}
+                onPressEnter={this.searchClick}
+                defaultValue={this.search.schoolName}
+                />
+            </span>
+            <RangePicker
+              className={styles['date-picker-wrap']}
+              showTime
+              defaultValue={[startAt,endAt]}
+              format={dateFormat}
+              onChange={this.timeChange}
+              showTime={{
+                hideDisabledOptions: true,
+                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+              }} />
+            <Select
+              value={search.status}
+              allowClear
+              className={styles.input}
+              placeholder='帖子状态'
+              onChange={this.selectHandler.bind('this','status')}>
+                { this.renderStatus(dict.topicStatus) }
+            </Select>
+            <Button
+              type='primary'
+              onClick={this.searchClick}
+              className={styles.button}
+              >
+              筛选
+            </Button>
+            <Button
+              type='primary'
+              className={styles.button}>
+              <Link to={`/2/topic/new?from=${from}&cityId=${cityId || ''}&channelId=${channelId || ''}`}>
+                新建帖子
+              </Link>
+            </Button>
+          </span>
+          : null
+        }
         <DataTable
           scroll={{ x: 1000 }}
           dataSource={objects || []}
@@ -479,6 +506,7 @@ class Topic extends Component {
     )
   }
   componentWillUnmount() {
+    this.unlisten()
     this.props.dispatch({ type: 'topic/clear'})
     this.props.dispatch({ type: 'common/resetSearch' })
   }

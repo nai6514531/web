@@ -9,7 +9,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import { map } from 'lodash'
 import styles from '../../../assets/css/search-bar.pcss'
 import moment from 'moment'
-import dict from '../../../utils/dict'
+import dict from '../dict'
 
 const Search = Input.Search
 const FormItem = Form.Item
@@ -77,13 +77,13 @@ class TwoUser extends Component {
         dataIndex: 'type',
         key: 'type',
         render: (text, record) => {
-          return dict.two.userType[record.isOfficial]
+          return dict.userType[record.isOfficial]
         }
       },
       {
         title: '状态',
         render: (text, record) => {
-          return dict.two.userStatus[record.status]
+          return dict.userStatus[record.status]
         }
       },{
         title: '手机号',
@@ -231,7 +231,7 @@ class TwoUser extends Component {
           placeholder='类型'
           onChange={this.selectHandler.bind('this','isOfficial')}>
           {
-            map(dict.two.userType, (val, key) => {
+            map(dict.userType, (val, key) => {
               return (
                 <Option value={key} key={key}>{val}</Option>
               )
@@ -245,7 +245,7 @@ class TwoUser extends Component {
           placeholder='状态'
           onChange={this.selectHandler.bind('this','status')}>
             {
-              map(dict.two.userStatus, (val, key) => {
+              map(dict.userStatus, (val, key) => {
                 return (
                   <Option value={key} key={key}>{val}</Option>
                 )

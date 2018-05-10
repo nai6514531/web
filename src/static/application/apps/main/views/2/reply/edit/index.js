@@ -9,6 +9,7 @@ import { storage } from '../../../../utils/storage.js'
 import { transformUrl, toQueryString } from '../../../../utils/'
 import { trim, debounce } from 'lodash'
 import moment from 'moment'
+import emoji from 'node-emoji'
 
 const { TextArea } = Input
 const RadioButton = Radio.Button
@@ -130,6 +131,7 @@ class ReplyEdit extends Component {
       if(!err) {
         values.userId = Number(values.userId)
         // values.status = Number(values.status)
+        values.content = emoji.unemojify(values.content)
         values.commentId = Number(commentId)
         this.props.dispatch({
           type: 'replyEdit/add',
@@ -207,7 +209,7 @@ class ReplyEdit extends Component {
           >
             {getFieldDecorator('content', {
               rules: [{
-                required: true, message: '请输入50字以内的留言内容',
+                required: true, message: '请输入50字以内的回复内容',
               },{
                 max: 50, message: '长度最多50个字符'
               }]

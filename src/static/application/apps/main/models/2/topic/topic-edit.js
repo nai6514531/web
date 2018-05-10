@@ -10,7 +10,6 @@ const model = {
   fileList: [],
   key: 0,
   disabled: false,
-  showTitile: false,
   showPrice: false,
   detail: {},
   userData: [],
@@ -73,31 +72,6 @@ export default {
     *channelList({ payload }, { call, put, select }) {
       const result = yield call(channelService.list, payload.data)
       if(result.status == 'OK') {
-        if(payload.data.from === 'detail') {
-          let type
-          const detail = yield select(state => state.topicEdit.detail)
-          const channelId  = detail.channelId
-          if(channelId != 0) {
-            type = result.data.objects.filter(obj => obj.id == channelId)[0].type
-          }
-          if(channelId == 0 || type == 0) {
-            yield put({
-              type: 'updateData',
-              payload: {
-                showTitile: true,
-                showPrice: true
-              }
-            })
-          } else {
-            yield put({
-              type: 'updateData',
-              payload: {
-                showTitile: false,
-                showPrice: false
-              }
-            })
-          }
-        }
         yield put({ type: 'updateData', payload: { channelData: result.data.objects } })
       } else {
         message.error(result.message)
@@ -107,11 +81,31 @@ export default {
       const result = yield call(cityService.topicDetail, id)
       if(result.status == 'OK') {
         const { status, images } = result.data
-        if(status === 0 || status === 1 || status === 2) {
-          result.data.status = 0
+        if (result.data.type === 0) {
+          yield put({
+            type: 'updateData',
+            payload: {
+              showPrice: true
+            }
+          })
+        } else {
+          yield put({
+            type: 'updateData',
+            payload: {
+              showPrice: false
+            }
+          })
         }
-        if(status === 3 || status === 4) {
-          result.data.status = 3
+        // 初始化互动维度数据
+        result.data.dimensions = []
+        for(let key in result.data) {
+          let value = result.data[key]
+          if(key == 'channels') {
+            result.data.channelIds = value.map(val => val.id)
+          }
+          if(key == 'likeDisabled' || key == 'commentDisabled' || key == 'messageDisabled') {
+            !value && result.data.dimensions.push(key)
+          }
         }
         const fileList = JSON.parse(result.data.images || '[]').map((value, index) => {
           const image = value.url.split('/')
@@ -139,8 +133,7 @@ export default {
           type: 'channelList',
           payload: {
             data: {
-              pagination: false,
-              from: 'detail'
+              pagination: false
             }
           }
         })

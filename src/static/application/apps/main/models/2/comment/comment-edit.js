@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash'
 const model = {
   toUser: '无',
   disabled: false,
-  userData: [],
+  userData: []
 }
 
 export default {
@@ -44,9 +44,18 @@ export default {
       const result = yield call(userService.list, payload.data)
       if(result.status == 'OK') {
         yield put({ type: 'updateData', payload: { userData: result.data.objects } })
+        yield put({ type: 'getRandomUser',payload: { data: { setFieldsValue : payload.data.setFieldsValue }}})
       } else {
         message.error(result.message)
       }
+    },
+    *getRandomUser({ payload: { data: { setFieldsValue } } }, { call, put, select }) {
+      const userData = yield select(state => state.commentEdit.userData)
+      const num = parseInt(Math.random() * userData.length, 10)
+      const selectedUser = userData[num]
+      setFieldsValue({
+        userId: selectedUser.id + '',
+      })
     }
   }
 }

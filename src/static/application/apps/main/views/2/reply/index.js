@@ -6,12 +6,13 @@ import { trim } from 'lodash'
 import { Select, Button, Popconfirm, Input, Modal, Form, Popover, Row, Col } from 'antd'
 import { connect } from 'dva'
 
+import emoji from 'node-emoji'
 import DataTable from '../../../components/data-table'
 import Breadcrumb from '../../../components/layout/breadcrumb'
 import { InputClear } from '../../../components/form/input'
 
 import { transformUrl, toQueryString } from '../../../utils/'
-import dict from '../../../utils/dict.js'
+import dict from '../dict.js'
 
 import styles from '../../../assets/css/search-bar.pcss'
 
@@ -118,7 +119,10 @@ class Reply extends Component {
         title: '回复内容',
         dataIndex: 'content',
         key: 'content',
-        width: 200
+        width: 200,
+        render: (text, record) => {
+          return emoji.emojify(record.content)
+        }
       },
       {
         title: '用户昵称',
@@ -135,7 +139,7 @@ class Reply extends Component {
         dataIndex: 'status',
         key: 'status',
         render: (text, record) => {
-          return dict.two.replyStatus[record.status]
+          return dict.replyStatus[record.status]
         }
       },
       {

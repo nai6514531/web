@@ -45,7 +45,7 @@ class City extends Component {
         key: 'userCount',
       },
       {
-        title: '发布商品数量',
+        title: '发布帖子数量',
         dataIndex: 'topicCount',
         key: 'topicCount',
       },
@@ -55,7 +55,7 @@ class City extends Component {
         render: (text, record, index) => {
           return (
             <span>
-              <Link to={`/2/topic?cityId=${record.cityId}&from=city`}>商品管理</Link>
+              <Link to={`/2/topic?cityId=${record.cityId}&from=city`}>帖子管理</Link>
             </span>
           )
         }
@@ -182,7 +182,7 @@ class City extends Component {
           筛选
         </Button>
         {
-          summary ? <div className={styles.summary}>{`共计有${summary.cityCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件商品`}</div> : ''
+          summary ? <div className={styles.summary}>{`共计有${summary.cityCount}个城市有用户在使用，激活用户总数量为${summary.usersCount}，共发布了${summary.topicsCount}件帖子`}</div> : ''
         }
         <DataTable
           scroll={{ x: 700 }}

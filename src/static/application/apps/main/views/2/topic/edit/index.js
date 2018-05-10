@@ -2,16 +2,19 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import { Spin, Message, Form, Input, Button, Upload, Icon, Modal, Radio, AutoComplete, Select, InputNumber } from 'antd'
+import { Spin, Message, Form, Input, Button, Upload, Icon, Modal, Radio, AutoComplete, Select, InputNumber, Checkbox } from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { API_SERVER } from '../../../../constant/api'
 import { storage } from '../../../../utils/storage.js'
 import { transformUrl, toQueryString } from '../../../../utils/'
-import { trim, debounce } from 'lodash'
+import { trim, debounce, merge } from 'lodash'
+import dict from '../../dict.js'
 import moment from 'moment'
+import emoji from 'node-emoji'
 
 const { TextArea } = Input
 const RadioGroup = Radio.Group
+const CheckboxGroup = Checkbox.Group
 const Option = AutoComplete.Option
 const FormItem = Form.Item
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -55,6 +58,11 @@ class TopicEdit extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
+      let dimensions = values.dimensions.map(key => {
+        values[key] = 0
+      })
+      values = Object.assign({}, dict.defaultDimensions, values)
+      delete values.dimensions
       const { match: { params: { id } }, history, topicEdit: { fileList } } = this.props
       if(!err) {
         let type = 'topicEdit/add'
@@ -72,8 +80,9 @@ class TopicEdit extends Component {
         if(values.value) {
           values.value = Number(values.value) * 100
         }
+        values.content = emoji.unemojify(values.content)
         values.userId = Number(values.userId)
-        values.channelId = Number(values.channelId)
+        values.channelIds = values.channelIds.join(",")
         this.props.dispatch({
           type: type,
           payload: {
@@ -219,16 +228,11 @@ class TopicEdit extends Component {
       }
     })
   }
-  handleChannelSelect = (value) => {
-    let type
-    if(value != 0) {
-      type = this.props.topicEdit.channelData.filter(obj => obj.id == value)[0].type
-    }
-    if(value == 0 || type == 0) {
+  radioHandler = (e) => {
+    if (e.target.value === 0) {
       this.props.dispatch({
         type: 'topicEdit/updateData',
         payload: {
-          showTitile: true,
           showPrice: true
         }
       })
@@ -236,7 +240,6 @@ class TopicEdit extends Component {
       this.props.dispatch({
         type: 'topicEdit/updateData',
         payload: {
-          showTitile: false,
           showPrice: false
         }
       })
@@ -275,7 +278,7 @@ class TopicEdit extends Component {
      this.handleSearch(filterKey)
   }
   render() {
-    const { topicEdit: { detail, help, visible, previewImage, fileList, userData, channelData, disabled, showTitile, showPrice  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { topicEdit: { detail, help, visible, previewImage, fileList, userData, channelData, disabled, showPrice  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const { startedAt, endedAt } = detail
     const uploadButton = (
@@ -342,43 +345,45 @@ class TopicEdit extends Component {
               {...formItemLayout}
               label='发布频道'
             >
-              {getFieldDecorator('channelId', {
+              {getFieldDecorator('channelIds', {
                 rules: [{
                   required: true, message: '请选择发布频道!',
                 }],
-                initialValue: detail.channelId !== undefined ? detail.channelId + '' : detail.channelId
+                initialValue: detail.channelIds
               })(
                 <Select
-                placeholder='请选择发布频道'
-                onSelect={this.handleChannelSelect}>
+                  mode="multiple"
+                  autoFocus={true}
+                  placeholder='请选择发布频道'>
                   {
                     channelData.map((value) => {
-                      return <Select.Option value={value.id + ''} key={value.id}>{value.title}</Select.Option>
+                      return <Select.Option value={value.id} key={value.id}>{value.title}</Select.Option>
                     })
                   }
                   <Select.Option value={'0'} key={'0'}>无频道</Select.Option>
                 </Select>
               )}
           </FormItem>
-          {
-            showTitile ? (
-              <FormItem
-                {...formItemLayout}
-                label='标题'
-              >
-                {getFieldDecorator('title', {
-                  rules: [{
-                    required: true, message: '请输入20字以内的标题',
-                  },{
-                    max: 20, message: '长度最多20个字符'
-                  }],
-                  initialValue: detail.title
-                })(
-                  <TextArea placeholder='请输入20字以内'/>
-                )}
-              </FormItem>
-            ) : null
-          }
+          <FormItem
+            {...formItemLayout}
+            label="帖子类型"
+          >
+            {getFieldDecorator('type', {
+              rules: [{
+                required: true, message: '请选择帖子类型!',
+              }],
+              initialValue: detail.type !== undefined ? detail.type : 2
+            })(
+              <RadioGroup
+                onChange={this.radioHandler}>
+              {
+                dict.topicTypes.map(({ id, desc }) => {
+                  return <Radio key={id} value={Number(id)}>{desc}</Radio>;
+                })
+              }
+              </RadioGroup>
+            )}
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label='内容'
@@ -389,11 +394,28 @@ class TopicEdit extends Component {
               },{
                 max: 100, message: '长度最多100个字符'
               }],
-              initialValue: detail.content
+              initialValue: detail.content && emoji.emojify(detail.content)
             })(
               <TextArea placeholder='请输入100字以内'/>
             )}
           </FormItem>
+          {
+            showPrice ? (
+              <FormItem
+                {...formItemLayout}
+                label='价格'
+              >
+                {getFieldDecorator('value', {
+                  rules: [{
+                    required: true, message: '请输入价格',
+                  }],
+                  initialValue: detail.value ? detail.value / 100 : 0
+                })(
+                  <InputNumber placeholder='请输入价格' precision={2}/>
+                )}
+              </FormItem>
+            ) : null
+          }
           <FormItem
             {...formItemLayout}
             label='配图'
@@ -416,23 +438,6 @@ class TopicEdit extends Component {
                <img alt='图片加载失败' style={{ padding: 15, width: '100%' }} src={previewImage} />
              </Modal>
           </FormItem>
-          {
-            showPrice ? (
-              <FormItem
-                {...formItemLayout}
-                label='价格'
-              >
-                {getFieldDecorator('value', {
-                  rules: [{
-                    required: true, message: '请输入价格',
-                  }],
-                  initialValue: detail.value ? detail.value / 100 : 0
-                })(
-                  <InputNumber placeholder='请输入价格'/>
-                )}
-              </FormItem>
-            ) : null
-          }
           <FormItem
             {...formItemLayout}
             label="发布人"
@@ -458,18 +463,16 @@ class TopicEdit extends Component {
           </FormItem>
           <FormItem
             {...formItemLayout}
-            label="帖子状态"
+            label="互动维度"
           >
-            {getFieldDecorator('status', {
-              rules: [{
-                required: true, message: '请选择帖子状态',
-              }],
-              initialValue: !isNaN(detail.status) ? detail.status : 3
+            {getFieldDecorator('dimensions', {
+              initialValue: detail.dimensions !== undefined ? detail.dimensions : ['likeDisabled','commentDisabled','messageDisabled']
             })(
-              <RadioGroup>
-                <Radio value={0}>线上</Radio>
-                <Radio value={3}>线下</Radio>
-              </RadioGroup>
+              <CheckboxGroup>
+                <Checkbox key={0} value={'likeDisabled'}>点赞</Checkbox>
+                <Checkbox key={1} value={'commentDisabled'}>留言</Checkbox>
+                <Checkbox key={2} value={'messageDisabled'}>私聊</Checkbox>
+              </CheckboxGroup>
             )}
           </FormItem>
           <FormItem style={{textAlign: 'center'}}>
