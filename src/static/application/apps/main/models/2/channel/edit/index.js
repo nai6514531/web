@@ -11,7 +11,8 @@ const model = {
   help: {
     validateStatus: '',
     help: '请上传1M以内,750*300的图片'
-  }
+  },
+  showInput: true
 }
 
 export default {
@@ -58,6 +59,21 @@ export default {
     *detail({ payload: { id } }, { call, put }) {
       const result = yield call(channelService.detail, id)
       if(result.status == 'OK') {
+        if (result.data.type === 0) {
+          yield put({
+            type: 'updateData',
+            payload: {
+              showInput: true
+            }
+          })
+        } else {
+          yield put({
+            type: 'updateData',
+            payload: {
+              showInput: false
+            }
+          })
+        }
         const image = result.data.imageUrl.split('/')
         yield put({
           type: 'updateData',

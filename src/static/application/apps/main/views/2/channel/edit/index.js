@@ -53,7 +53,7 @@ class ChannelEdit extends Component {
         if(id !== 'new') {
           type = 'channelEdit/update'
         }
-        values.sortTypes = values.sortTypes.join(",")
+        values.sortTypes &&  (values.sortTypes = values.sortTypes.join(","))
         if(fileList[0] && fileList[0].image) {
           values.imageUrl = fileList[0].image
         } else {
@@ -193,8 +193,25 @@ class ChannelEdit extends Component {
       }
     })
   }
+  radioHandler = (e) => {
+    if (e.target.value === 0) {
+      this.props.dispatch({
+        type: 'channelEdit/updateData',
+        payload: {
+          showInput: true
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'channelEdit/updateData',
+        payload: {
+          showInput: false
+        }
+      })
+    }
+  }
   render() {
-    const { channelEdit: { detail, help, visible, previewImage, fileList  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
+    const { channelEdit: { detail, help, visible, previewImage, fileList, showInput  }, form: { getFieldDecorator, getFieldProps }, match: { params: { id } }, loading } = this.props
     const isEdit = this.props.match.params.id !== 'new'
     const uploadButton = (
       <div>
@@ -275,7 +292,7 @@ class ChannelEdit extends Component {
               }],
               initialValue: detail.type !== undefined ? detail.type : 0
             })(
-              <RadioGroup>
+              <RadioGroup onChange={this.radioHandler}>
                 {
                 Object.keys(dict.app).map((key) => {
                   return <Radio key={key} value={Number(key)}>{dict.app[key]}</Radio>;
@@ -284,60 +301,66 @@ class ChannelEdit extends Component {
               </RadioGroup>
             )}
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label='用户可发'
-          >
-            {getFieldDecorator('isOfficial', {
-              rules: [{
-                required: true, message: '请选择用户可发!',
-              }],
-              initialValue: detail.isOfficial !== undefined ? detail.isOfficial : 0
-            })(
-              <RadioGroup>
-                <Radio value={0}>可发</Radio>
-                <Radio value={1}>不可发</Radio>
-              </RadioGroup>
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="默认帖子类型"
-          >
-            {getFieldDecorator('topicTypeSuggestion', {
-              rules: [{
-                required: true, message: '请选择默认帖子类型!',
-              }],
-              initialValue: detail.topicTypeSuggestion
-            })(
-              <RadioGroup>
-              {
-                dict.topicTypes.map(({ id, desc }) => {
-                  return <Radio key={id} value={Number(id)}>{desc}</Radio>;
-                })
-              }
-              </RadioGroup>
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="排序维度"
-          >
-            {getFieldDecorator('sortTypes', {
-              rules: [{
-                required: true, message: '请选择排序维度!',
-              }],
-              initialValue: detail.sortTypes !== undefined ? detail.sortTypes.split(",").map(val => Number(val)) : [0, 5]
-            })(
-              <CheckboxGroup>
-              {
-                Object.keys(dict.sortTypes).map((key) => {
-                  return <Checkbox key={key} value={Number(key)}>{dict.sortTypes[key]}</Checkbox>;
-                })
-              }
-              </CheckboxGroup>
-            )}
-          </FormItem>
+          {
+            showInput ? (
+              <div>
+                <FormItem
+                  {...formItemLayout}
+                  label='用户可发'
+                >
+                  {getFieldDecorator('isOfficial', {
+                    rules: [{
+                      required: true, message: '请选择用户可发!',
+                    }],
+                    initialValue: detail.isOfficial !== undefined ? detail.isOfficial : 0
+                  })(
+                    <RadioGroup>
+                      <Radio value={0}>可发</Radio>
+                      <Radio value={1}>不可发</Radio>
+                    </RadioGroup>
+                  )}
+                </FormItem>
+                <FormItem
+                  {...formItemLayout}
+                  label="默认帖子类型"
+                >
+                  {getFieldDecorator('topicTypeSuggestion', {
+                    rules: [{
+                      required: true, message: '请选择默认帖子类型!',
+                    }],
+                    initialValue: detail.topicTypeSuggestion  !== undefined ? detail.topicTypeSuggestion : 0
+                  })(
+                    <RadioGroup>
+                    {
+                      dict.topicTypes.map(({ id, desc }) => {
+                        return <Radio key={id} value={Number(id)}>{desc}</Radio>;
+                      })
+                    }
+                    </RadioGroup>
+                  )}
+                </FormItem>
+                <FormItem
+                  {...formItemLayout}
+                  label="排序维度"
+                >
+                  {getFieldDecorator('sortTypes', {
+                    rules: [{
+                      required: true, message: '请选择排序维度!',
+                    }],
+                    initialValue: detail.sortTypes !== undefined ? detail.sortTypes.split(",").map(val => Number(val)) : [0, 5]
+                  })(
+                    <CheckboxGroup>
+                    {
+                      Object.keys(dict.sortTypes).map((key) => {
+                        return <Checkbox key={key} value={Number(key)}>{dict.sortTypes[key]}</Checkbox>;
+                      })
+                    }
+                    </CheckboxGroup>
+                  )}
+                </FormItem>
+              </div>
+            ) : null
+          }
           <FormItem
             {...formItemLayout}
             label='配图'
