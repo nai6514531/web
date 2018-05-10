@@ -436,13 +436,13 @@ class Topic extends Component {
               >
               筛选
             </Button>
-            <Button
-              type='primary'
-              className={styles.button}>
-              <Link to={`/2/topic/new?from=${from}&cityId=${cityId || ''}&channelId=${channelId || ''}`}>
-                新建帖子
-              </Link>
-            </Button>
+            <Link to={`/2/topic/new?from=${from}&cityId=${cityId || ''}&channelId=${channelId || ''}`}>
+              <Button
+                type='primary'
+                className={styles.button}>
+                  新建帖子
+              </Button>
+            </Link>
           </span>
           : null
         }
