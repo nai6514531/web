@@ -29,7 +29,7 @@ class Operator extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
-    this.search = search
+    this.search = {limit: 10, offset: 0, ...search }
     this.columns = [
       { title: '用户ID', dataIndex: 'id', key: 'id' },
       { title: '登录账号', dataIndex: 'account',key: 'account' },
@@ -37,9 +37,7 @@ class Operator extends Component {
         title: '角色',
         render: (record) => {
           return (
-            !record.role.length ? '-' : record.role.map( (value, index) => {
-              return `${value.name}${record.role.length !== index + 1 ? ',' : ''}`
-            })
+            record.role.name || '-'
           )
         }
       },
