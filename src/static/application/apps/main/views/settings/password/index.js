@@ -42,6 +42,7 @@ class ResetPassword extends Component {
             data: {
               oldPassword: md5(values.oldPassword),
               newPassword: md5(values.newPassword),
+              rePassword: md5(values.rePassword),
               id: this.props.common.userInfo.user.id
             }
           }

@@ -73,6 +73,8 @@ class UserEdit extends Component {
           values.password = md5(values.password)
           values.rePassword = md5(values.rePassword )
         }
+        values.roleIds = [values.roleId]
+        delete values.roleId
         this.props.dispatch({
           type: type,
           payload: {

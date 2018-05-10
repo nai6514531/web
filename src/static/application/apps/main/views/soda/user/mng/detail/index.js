@@ -62,7 +62,7 @@ class OperatorDetail extends Component {
           payload: {
             data: {
               newPassword: md5(values.newPassword),
-              oldPassword: md5(values.newPassword),
+              rePassword: md5(values.newPassword),
               id
             }
           }
