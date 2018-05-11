@@ -352,7 +352,7 @@ class ChannelEdit extends Component {
                     <CheckboxGroup>
                     {
                       Object.keys(dict.sortTypes).map((key) => {
-                        return <Checkbox key={key} value={Number(key)}>{dict.sortTypes[key]}</Checkbox>;
+                        return <Checkbox key={key} value={Number(key)} disabled={key == 0}>{dict.sortTypes[key]}</Checkbox>;
                       })
                     }
                     </CheckboxGroup>
