@@ -34,6 +34,7 @@ export default {
       const result = yield call(sodaService.userDetail, data)
       const ticket = yield call(sodaService.ticketsList,{ customerMobile:data, limit: 1 })
       const chipcards = yield call(sodaService.chipcards, data)
+      const bonus = yield call(sodaService.bonus, data)
 
       if(result.status == 'OK') {
         result.data.account.map(value => {
@@ -67,6 +68,15 @@ export default {
       } else {
         if(chipcards.status !== NOT_FOUND_ENTITY) {
           message.error(chipcards.message)
+        }
+      }
+
+      if(bonus.status == 'OK') {
+        result.data.bonusCount = bonus.data.value
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        if(bonus.status !== NOT_FOUND_ENTITY) {
+          message.error(bonus.message)
         }
       }
     },

@@ -33,6 +33,12 @@ const sodaService = {
     const { mobile, url: { offset, limit, startAt, endAt, action } } =  data
     return request.get(`/soda/chipcard-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}`)
   },
+  bonus: (mobile) => {
+    return request.get(`/soda/bonus/${mobile}`)
+  },
+  // resetBonus: (mobile) => {
+  //   return request.get(`/soda/bonus/${mobile}/reset`)
+  // },
   userDetail: (mobile) => {
     return request.get(`/soda/users/${mobile}`)
   },

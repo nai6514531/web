@@ -99,6 +99,14 @@ class Customer extends Component {
       }
     })
   }
+  // resetBonus(mobile){
+  //   this.props.dispatch({
+  //     type: 'sodaUser/resetBonus',
+  //     payload: {
+  //       data: mobile
+  //     }
+  //   })
+  // }
   showConfirm = (values) => {
     const self = this
     const data = this.props.sodaUser.data
@@ -183,7 +191,7 @@ class Customer extends Component {
               </div>
               <div className={styles['sub-card']}>
                 <div className={styles['card-item']}>
-                  <div>
+                <div>
                     <span className={styles.title}>账户余额:</span>
                     <span className={styles.description}>{ (data.wallet && data.wallet.value >= 0) ? (data.wallet.value / 100).toFixed(2) : '-'}</span>
                     <Link to={`/soda/user/${data.mobile}/bill`}>明细</Link>
@@ -193,7 +201,12 @@ class Customer extends Component {
                       </Popconfirm>
                     </span>
                   </div>
-                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span><Link to={`/soda/user/${data.mobile}/chipcard`}>明细</Link></div>
+                  <div><span className={styles.title}>IC卡余额:</span><span className={styles.description}>{ (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}</span>
+                  <Link to={`/soda/user/${data.mobile}/chipcard`}>明细</Link></div>
+                  <div>
+                    <span className={styles.title}>鼓励金余额:</span>
+                    <span className={styles.description}>{ (data.bonusCount && data.bonusCount >= 0) ? (data.bonusCount / 100).toFixed(2) : '-'}</span>
+                  </div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>
                 </div>
