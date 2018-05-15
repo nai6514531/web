@@ -333,7 +333,10 @@ class ChannelEdit extends Component {
                     <RadioGroup>
                     {
                       dict.topicTypes.map(({ id, desc }) => {
-                        return <Radio key={id} value={Number(id)}>{desc}</Radio>;
+                        // 去除每日话题
+                        if(id !== 1) {
+                          return <Radio key={id} value={Number(id)}>{desc}</Radio>;
+                        }
                       })
                     }
                     </RadioGroup>
@@ -352,7 +355,7 @@ class ChannelEdit extends Component {
                     <CheckboxGroup>
                     {
                       Object.keys(dict.sortTypes).map((key) => {
-                        return <Checkbox key={key} value={Number(key)}>{dict.sortTypes[key]}</Checkbox>;
+                        return <Checkbox key={key} value={Number(key)} disabled={key == 0}>{dict.sortTypes[key]}</Checkbox>;
                       })
                     }
                     </CheckboxGroup>

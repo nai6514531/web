@@ -307,7 +307,7 @@ class UserEdit extends Component {
               rules: [{
                 required: true, message: '请选择用户类型',
               }],
-              initialValue: detail.isOfficial || 1
+              initialValue: detail.isOfficial !== undefined ? detail.isOfficial : 1
             })(
               <RadioGroup>
                 <Radio value={0}>普通用户</Radio>
