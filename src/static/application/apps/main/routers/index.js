@@ -13,8 +13,10 @@ import platform from './platform/'
 import game from './game/'
 import soda from './soda/'
 
-import Login from 'bundle-loader?lazy!../views/login'
-import loginModel from 'bundle-loader?lazy!../models/login/'
+import Login from 'bundle-loader?lazy!../views/account/login'
+import ResetPassword from 'bundle-loader?lazy!../views/account/reset-password'
+import LoginModel from 'bundle-loader?lazy!../models/account/login/'
+import ResetPasswordModel from 'bundle-loader?lazy!../models/account/reset-password'
 import NotFound from 'bundle-loader?lazy!../views/not-found'
 
 function RouterConfig({ history, app }) {
@@ -22,7 +24,8 @@ function RouterConfig({ history, app }) {
     <LocaleProvider locale={zhCN}>
       <Router history={history}>
         <Switch>
-          <Route exact path='/' component={getComponent(Login,app,loginModel)}/>
+          <Route exact path='/' component={getComponent(Login,app,LoginModel)}/>
+          <Route exact path='/reset-password' component={getComponent(ResetPassword,app,ResetPasswordModel)}/>
           <Layout>
               { settings(app) }
               { idle(app) }

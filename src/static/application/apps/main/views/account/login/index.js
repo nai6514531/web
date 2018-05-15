@@ -4,10 +4,10 @@ import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
 import { connect } from 'dva'
 import md5 from 'md5'
 
-import { storage } from '../../utils/storage.js'
+import { storage } from '../../../utils/storage.js'
 
-import Throttle from '../../components/throttle'
-import { MOTIVATION } from '../../constant/sms'
+import Throttle from '../../../components/throttle'
+import { MOTIVATION } from '../../../constant/sms'
 
 import styles from './index.pcss'
 
@@ -100,7 +100,7 @@ class Login extends Component {
       <div className={styles.wrapper}>
         <div className={styles.form}>
           <div className={styles.logo}>
-            <img alt={'图片加载失败'} src={require('../../assets/favicon.png')} />
+            <img alt={'图片加载失败'} src={require('../../../assets/favicon.png')} />
             <span>苏打管理系统</span>
           </div>
           <form>
@@ -199,6 +199,7 @@ class Login extends Component {
               <Button type='primary' size='large' onClick={this.handleOk} loading={loading}>
                 登录
               </Button>
+              <a className={styles.reset} href="#" onClick={() => { this.props.history.push("/reset-password") }}>忘记密码?</a>
             </Row>
             <FormItem>
               <Col span={18}>
