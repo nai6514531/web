@@ -178,13 +178,13 @@ class Login extends Component {
                 ],
               })(
               <Row>
-                <Col span={14}>
+                <Col span={17}>
                   <Input
                     size='large'
                     placeholder='请输入图形验证码'
                     onPressEnter={this.handleOk}/>
                 </Col>
-                <Col span={10}>
+                <Col span={7}>
                   <img
                     className={styles.captcha}
                     src={captcha}
@@ -214,7 +214,7 @@ class Login extends Component {
           </form>
         </div>
         <div className={styles.text}>
-          <p>Copyright © 2017 苏打生活. All Rights Reserved</p>
+          <p>Copyright © 2018 苏打生活. All Rights Reserved</p>
           <p>客服电话:400-8678-884 粤ICP备<a href='http://www.miitbeian.gov.cn/state/outPortal/loginPortal.action;jsessionid=nU8rLzUPO4kyMeVHmviUQBcwFVqPJxbScSgxQYI55eT5XpjyRUHw!1069245859'>16090794号</a></p>
           <p>深圳市华策网络科技有限公司</p>
         </div>

@@ -13,7 +13,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmConsumeDetail',
+  namespace: 'consumeDetail',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {

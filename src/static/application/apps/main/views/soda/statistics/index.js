@@ -178,7 +178,7 @@ class DeviceStatistics extends Component {
         },
       },
       {
-        title: '编号/楼道信息',
+        title: '编号/服务地点',
         render: (text, record, index) => {
           if(record.device) {
             return (

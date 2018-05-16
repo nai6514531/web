@@ -14,7 +14,7 @@ const model = {
 }
 
 export default {
-  namespace: 'crmConsume',
+  namespace: 'consume',
   state: cloneDeep(model),
   reducers: {
     updateData(state, { payload }) {
@@ -61,7 +61,7 @@ export default {
       }
     },
     *export({ payload: { data } }, { call, put }) {
-      const result = yield call(sodaService.crmExport, data)
+      const result = yield call(sodaService.export, data)
       if(result.status == 'OK') {
         yield put({ type: 'showModal' })
         yield put({ type: 'updateData', payload: { exportUrl: result.data.url } })
@@ -70,7 +70,7 @@ export default {
       }
     },
     *refund({ payload: { id, data } }, { call, put }) {
-      const result = yield call(sodaService.crmRefund, id)
+      const result = yield call(sodaService.refund, id)
       if(result.status == 'OK') {
         message.success('退款成功')
         yield put({

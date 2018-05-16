@@ -8,10 +8,6 @@ import ConsumeModel from 'bundle-loader?lazy!../../models/soda/ticket/consume/'
 import ConsumeDetail from 'bundle-loader?lazy!../../views/soda/ticket/consume/detail/'
 import ConsumeDetailModel from 'bundle-loader?lazy!../../models/soda/ticket/consume/detail.js'
 
-
-import BizConsumeSearch from 'bundle-loader?lazy!../../views/soda/ticket/business-consume/'
-import BizConsumeSearchModel from 'bundle-loader?lazy!../../models/soda/ticket/business-consume/'
-
 import Sms from 'bundle-loader?lazy!../../views/soda/sms/'
 import SmsModel from 'bundle-loader?lazy!../../models/soda/sms/'
 
@@ -80,7 +76,6 @@ export default function (app) {
       <Route exact path='/soda/statistics/consume/:month/:day/:deviceSerial' component={getComponent(ConsumeSearchDayDevice,app,BusinessStatisticsModel)} />
       <Route exact path='/soda/statistics/device/:month/:deviceSerial' component={getComponent(DeviceSearchByDay,app,BusinessStatisticsModel)} />
 
-      <Route exact path='/soda/business/consume' component={getComponent(BizConsumeSearch,app,BizConsumeSearchModel)} />
       <Route exact path='/soda/consume' component={getComponent(Consume,app,ConsumeModel)} />
       <Route exact path='/soda/consume/:id' component={getComponent(ConsumeDetail,app,ConsumeDetailModel)} />
 

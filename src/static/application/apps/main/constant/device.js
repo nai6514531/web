@@ -26,7 +26,18 @@ module.exports = _.extend({
   },
 
   // 设备类型
-  // 饮水机
-  FEATURE_IS_DRINKING: 4
+  // 洗衣
+  FEATURE_IS_LAUNDRY: 1,
+  // 充电
+  FEATURE_IS_CHARGING: 2,
+  // 饮水
+  FEATURE_IS_DRINKING_WATER: 3,
+
+  FEATURE: {
+    1: '洗衣',
+    2: '充电',
+    3: '饮水',
+  }
+
   
 }, km({}))

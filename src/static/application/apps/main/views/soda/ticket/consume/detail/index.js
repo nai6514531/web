@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { connect } from 'dva'
 import { Row, Col, Spin, Card } from 'antd'
 import moment from 'moment'
+import op from 'object-path'
 
 import styles from '../../../../../assets/css/page-detail.pcss'
 import Breadcrumb from '../../../../../components/layout/breadcrumb/'
@@ -30,14 +31,14 @@ class CrmConsumeDetail extends Component {
   componentDidMount() {
     const id = this.props.match.params.id
     this.props.dispatch({
-      type: 'crmConsumeDetail/detail',
+      type: 'consumeDetail/detail',
       payload: {
         id: this.ticketId
       }
     })
   }
   render() {
-    const { crmConsumeDetail: { data, parent }, loading  } = this.props
+    const { consumeDetail: { data, parent }, loading  } = this.props
     return(
       <Spin
         tip='加载中...'
@@ -50,14 +51,13 @@ class CrmConsumeDetail extends Component {
           <div className={styles['sub-card']}>
             <div className={styles['card-item']}>
               <div><span className={styles.title}>订单号：</span>{data.ticketId}</div>
-              <div><span className={styles.title}>模块编号：</span>{data.deviceSerial}</div>
-              <div><span className={styles.title}>楼道信息：</span>{data.device.address}</div>
+              <div><span className={styles.title}>模块编号：</span>{data.serial}</div>
               <div><span className={styles.title}>消费手机号：</span>{data.mobile}</div>
               <div><span className={styles.title}>消费密码：</span>{data.token}</div>
-              <div><span className={styles.title}>消费金额：</span>{conversionUnit(data.value)}</div>
+              <div><span className={styles.title}>消费金额：</span>{conversionUnit(data.value) + '元'}</div>
               <div><span className={styles.title}>支付方式：</span>{data.payment.name}</div>
               <div><span className={styles.title}>下单时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm:ss')}</div>
-              <div><span className={styles.title}>类型：</span>{data.device[dict.device[data.deviceMode]]}</div>
+              <div><span className={styles.title}>类型：</span>{op(data).get('snapshot.modes.0.name')}</div>
             </div>
           </div>
         </Card>
@@ -91,12 +91,12 @@ class CrmConsumeDetail extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'crmConsumeDetail/clear'})
+    this.props.dispatch({ type: 'consumeDetail/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    crmConsumeDetail: state.crmConsumeDetail,
+    consumeDetail: state.consumeDetail,
     loading: state.loading.global,
     ...props
   }
