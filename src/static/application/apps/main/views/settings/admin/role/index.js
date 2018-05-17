@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { connect } from 'dva'
 import { Link } from 'react-router-dom'
-import { Button, Modal, Form, Input, Checkbox, Col, Row, Popconfirm } from 'antd'
+import { Button, Modal, Form, Input, Checkbox, Col, Row, Popconfirm, Cascader} from 'antd'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import DataTable from '../../../../components/data-table/'
 import './index.css'
@@ -47,6 +47,8 @@ class RoleModal extends Component {
         if(id) {
           type = 'adminRole/update'
         }
+        values.parentId = values.cascader[values.cascader.length - 1]
+        delete values.cascader
         this.props.dispatch({
           type: type,
           payload: {
@@ -62,7 +64,7 @@ class RoleModal extends Component {
     resetFields(Object.keys(getFieldsValue()))
   }
   render() {
-    const { form: { getFieldDecorator }, role: { key, visible, record } } = this.props
+    const { form: { getFieldDecorator }, role: { key, visible, record, data } } = this.props
     const title = record.id ? '编辑角色' : '添加角色'
     return(
       <Modal
@@ -72,26 +74,20 @@ class RoleModal extends Component {
         onOk={this.handleChange}
         afterClose={this.reset}
        >
-        {
-          !record.name ?
-          <Form>
-            <FormItem
-              {...formItemLayout}
-              label='父节点'
-            >
-              {getFieldDecorator('parent', {
-                rules: [{
-                  required: true, message: '请输入父节点!',
-                }],
-                initialValue: '运营商'
-              })(
-                <Input disabled/>
-              )}
-            </FormItem>
-          </Form>
-          : null
-        }
         <Form>
+          <FormItem
+            {...formItemLayout}
+            label='父节点'
+          >
+            {getFieldDecorator('cascader', {
+              initialValue: record.cascader,
+              rules: [{
+                required: true, message: '请选择父节点',
+              }],
+            })(
+              <Cascader options={data} changeOnSelect placeholder='请选择'/>
+            )}
+          </FormItem>
           <FormItem
             {...formItemLayout}
             label='角色名称'
