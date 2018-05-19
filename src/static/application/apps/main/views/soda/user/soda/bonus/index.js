@@ -8,7 +8,6 @@ import DatePicker from '../../../../../components/date-picker/';
 import Breadcrumb from '../../../../../components/layout/breadcrumb/';
 import { toQueryString, transformUrl } from '../../../../../utils/';
 
-
 const Option = Select.Option
 
 const dict = {

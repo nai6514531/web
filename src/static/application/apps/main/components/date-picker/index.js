@@ -1,10 +1,8 @@
-import React, { Component } from 'react'
-import {
-  DatePicker
-} from 'antd'
-import moment from 'moment'
-import zhCN from 'antd/lib/date-picker/locale/zh_CN'
-import styles from '../../assets/css/search-bar.pcss'
+import { DatePicker } from 'antd';
+import zhCN from 'antd/lib/date-picker/locale/zh_CN';
+import moment from 'moment';
+import React, { Component } from 'react';
+import styles from '../../assets/css/search-bar.pcss';
 
 class CustomDatePicker extends Component {
   constructor(props) {
@@ -106,7 +104,7 @@ class CustomDatePicker extends Component {
           className={styles['date-picker']}
           locale={zhCN}
         />
-        <span>-</span>
+        <span> - </span>
         <DatePicker
           disabledDate={this.disabledEndDate}
           placeholder="结束日期"
