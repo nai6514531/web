@@ -99,14 +99,6 @@ class Customer extends Component {
       }
     })
   }
-  // resetBonus(mobile){
-  //   this.props.dispatch({
-  //     type: 'sodaUser/resetBonus',
-  //     payload: {
-  //       data: mobile
-  //     }
-  //   })
-  // }
   showConfirm = (values) => {
     const self = this
     const data = this.props.sodaUser.data
@@ -206,6 +198,7 @@ class Customer extends Component {
                   <div>
                     <span className={styles.title}>鼓励金余额:</span>
                     <span className={styles.description}>{ (data.bonusCount && data.bonusCount >= 0) ? (data.bonusCount / 100).toFixed(2) : '-'}</span>
+                    <Link to={`/soda/user/${data.mobile}/bonus`}>明细</Link>
                   </div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>

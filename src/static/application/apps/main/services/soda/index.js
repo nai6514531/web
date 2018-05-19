@@ -36,9 +36,10 @@ const sodaService = {
   bonus: (mobile) => {
     return request.get(`/soda/bonus/${mobile}`)
   },
-  // resetBonus: (mobile) => {
-  //   return request.get(`/soda/bonus/${mobile}/reset`)
-  // },
+  bonusBillsList: (data) => {
+    const { mobile, url: { offset, limit, startAt, endAt, action, type } } = data
+    return request.get(`/soda/bonus-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}`)
+  },
   userDetail: (mobile) => {
     return request.get(`/soda/users/${mobile}`)
   },

@@ -30,6 +30,7 @@ import BillDetailModel from 'bundle-loader?lazy!../../models/soda/user/soda/bill
 import Chipcard from 'bundle-loader?lazy!../../views/soda/user/soda/chipcard/'
 import ChipcardModel from 'bundle-loader?lazy!../../models/soda/user/soda/chipcard.js'
 
+import Bonus from 'bundle-loader?lazy!../../views/soda/user/soda/bonus/'
 import BonusModel from 'bundle-loader?lazy!../../models/soda/user/soda/bonus.js'
 
 import MngUser from 'bundle-loader?lazy!../../views/soda/user/mng/'
@@ -98,7 +99,7 @@ export default function (app) {
 
       <Route exact path='/soda/user/:id/bill' component={getComponent(BillDetail,app,BillDetailModel)} />
       <Route exact path='/soda/user/:id/chipcard' component={getComponent(Chipcard,app,ChipcardModel)} />
-      <Route exact path='/soda/user/:id/bonus' component={getComponent(app,BonusModel)} />
+      <Route exact path='/soda/user/:id/bonus' component={getComponent(Bonus,app,BonusModel)} />
 
       <Route exact path='/soda/statistics' component={getComponent(BusinessStatistics,app,BusinessStatisticsModel)} />
       <Route exact path='/soda/statistics/consume/:month' component={getComponent(ConsumeSearchByDay,app,BusinessStatisticsModel)} />
