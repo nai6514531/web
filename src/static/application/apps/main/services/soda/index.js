@@ -1,4 +1,4 @@
-import request from '../../utils/request'
+import request from '../../utils/request';
 const sodaService = {
   crmRefund: (id) => {
     return request.post(`/soda/tickets/${id}/crm/refund`)
@@ -38,7 +38,7 @@ const sodaService = {
   },
   bonusBillsList: (data) => {
     const { mobile, url: { offset, limit, startAt, endAt, action, type } } = data
-    return request.get(`/soda/bonus-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}`)
+    return request.get(`/soda/bonus-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}&type=${type || ''}`)
   },
   userDetail: (mobile) => {
     return request.get(`/soda/users/${mobile}`)

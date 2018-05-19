@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
-import { Link } from 'react-router-dom'
-import { connect } from 'dva'
-import { Button, Popconfirm, Select } from 'antd'
-import DataTable from '../../../../../components/data-table/'
-import Breadcrumb from '../../../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../../../utils/'
-import styles from '../../../../../assets/css/search-bar.pcss'
-import DatePicker from '../../../../../components/date-picker/'
-import moment from 'moment'
+import { Button, Select } from 'antd';
+import { connect } from 'dva';
+import moment from 'moment';
+import React, { Component } from 'react';
+import styles from '../../../../../assets/css/search-bar.pcss';
+import DataTable from '../../../../../components/data-table/';
+import DatePicker from '../../../../../components/date-picker/';
+import Breadcrumb from '../../../../../components/layout/breadcrumb/';
+import { toQueryString, transformUrl } from '../../../../../utils/';
+
 
 const Option = Select.Option
 
@@ -103,23 +102,14 @@ class Bonus extends Component {
     })
     this.fetch(url)
   }
-  selectHandler =  (_type, value) => {
-    console.info(_type,value);
+  selectHandler = (key, value) => {
     if(value) {
-      //this.search = { ...this.search, [_type]: value }
+      this.search = { ...this.search, [key]: value }
     } else {
-      delete this.search[_type]
+      delete this.search[key]
     }
-    // this.props.dispatch({
-    //   type: 'common/updateSearch',
-    //   payload: {
-    //     search: {
-    //       [_type]: value
-    //     }
-    //   }
-    // })
-    if(_type === 'action') {
-      // delete this.search.type
+    if(key === 'action') {
+      delete this.search.type
       this.props.dispatch({
         type: 'sodaBonus/updateAppData',
         payload: {
@@ -130,17 +120,17 @@ class Bonus extends Component {
         type: 'common/updateSearch',
         payload: {
           search: {
-            "action": value
+            action: value,
+            type: null
           }
         }
       })
-    }
-    if(_type==="type"){
+    } else if(key === 'type'){
       this.props.dispatch({
         type: 'common/updateSearch',
         payload: {
           search: {
-            "type": value
+            type: value
           }
         }
       })
@@ -185,7 +175,7 @@ class Bonus extends Component {
           placeholder='收入/支出'
           className={styles.input}
           allowClear
-          defaultValue={ this.search.action }
+          value={ this.search.action }
           onChange={this.selectHandler.bind(this, 'action')}>
             <Option value={'1'}>收入</Option>
             <Option value={'2'}>支出</Option>
