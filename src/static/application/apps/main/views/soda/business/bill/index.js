@@ -257,7 +257,7 @@ class App extends Component {
             <Row>
               <Col span={24}>
                 <Button type='primary'
-                  onClick={() => { this.props.history.push(`/soda/business/account/edit/${this.props.user.id}?type=cash&redirectUrl=${encodeURIComponent(`/soda/business/bill`)}`) }}>
+                  onClick={() => { this.props.history.push(`/soda/account/edit/${this.props.user.id}?type=cash&redirectUrl=${encodeURIComponent(`/soda/business/bill`)}`) }}>
                   修改收款方式
                 </Button>
               </Col>

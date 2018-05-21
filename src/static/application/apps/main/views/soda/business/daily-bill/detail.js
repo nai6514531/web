@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import querystring from 'querystring'
 import moment from 'moment'
+import op from 'object-path'
 import { Button, Table, Icon, Popconfirm, message } from 'antd'
 
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
@@ -17,11 +18,8 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '每日账单',
-    url: '/soda/business/daily-bill'
+    url: '/PATHNAME/business/daily-bill'
   },
   {
     title: '明细'
@@ -30,15 +28,12 @@ const breadItems = [
 
 const billBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '结算查询',
-    url: '/soda/business/bill'
+    url: '/PATHNAME/business/bill'
   },
   {
     title: '账单明细',
-    url: `/soda/business/bill/BILL_ID`
+    url: `/PATHNAME/business/bill/BILL_ID`
   },
   {
     title: '明细'
@@ -180,11 +175,12 @@ class App extends Component{
   changeHistory (options) {
     const { id } = this.props.match.params
     const query = querystring.stringify(_.pick({ ...this.state.pagination, ...options }, 'offset', 'limit'))
+    let pathname = op(location).get('pathname').split('/')[1]
     if (this.isBillsView) {
-    this.props.history.push(`/soda/business/daily-bill/${id}?${query}&billId=${this.billId}`)
+    this.props.history.push(`/${pathname}/business/daily-bill/${id}?${query}&billId=${this.billId}`)
       return
     }
-    this.props.history.push(`/soda/business/daily-bill/${id}?${query}`)
+    this.props.history.push(`/${pathname}/business/daily-bill/${id}?${query}`)
   }
   pagination () {
     let self = this

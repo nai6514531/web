@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Form, Modal, Input, Row, Col, Radio, Popover, Button } from 'antd'
-import { transformUrl, toQueryString } from '../../../utils/'
+import { transformUrl, toQueryString } from '../../../../utils'
 import { difference } from 'lodash'
 import md5 from 'md5'
 

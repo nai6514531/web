@@ -38,7 +38,7 @@ export default {
           payload: {
             data: {
               ...detail,
-              serviceAddress: serviceAddress || {}
+              serviceAddress: serviceAddress || {},
             }
           }
         })

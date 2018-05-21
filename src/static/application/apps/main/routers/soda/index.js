@@ -50,28 +50,35 @@ import OperationStatisticsByDay from 'bundle-loader?lazy!../../views/soda/statis
 import OperationStatisticsByMonth from 'bundle-loader?lazy!../../views/soda/statistics/operation/month.js'
 import OperationStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/operation.js'
 
-import bill from 'bundle-loader?lazy!../../views/soda/business/bill'
-import billDetailList from 'bundle-loader?lazy!../../views/soda/business/bill/detail'
-import dailyBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill'
-import dailyDetailBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill/detail'
-import account from 'bundle-loader?lazy!../../views/soda/business/account'
-import accountDetail from 'bundle-loader?lazy!../../views/soda/business/account/detail'
-import accountEdit from 'bundle-loader?lazy!../../views/soda/business/account/edit'
+import Bill from 'bundle-loader?lazy!../../views/soda/business/bill'
+import BillDetailList from 'bundle-loader?lazy!../../views/soda/business/bill/detail'
+import DailyBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill'
+import DailyDetailBill from 'bundle-loader?lazy!../../views/soda/business/daily-bill/detail'
 
-import chipcardDetail from 'bundle-loader?lazy!../../views/soda/business/chipcard/detail'
-import chipcardRechargeList from 'bundle-loader?lazy!../../views/soda/business/chipcard'
+import Account from 'bundle-loader?lazy!../../views/soda/account'
+import AccountDetail from 'bundle-loader?lazy!../../views/soda/account/detail'
+import AccountEdit from 'bundle-loader?lazy!../../views/soda/account/edit'
 
-import device from 'bundle-loader?lazy!../../views/soda/business/device'
-import deviceEdit from 'bundle-loader?lazy!../../views/soda/business/device/edit'
-import deviceBatchEdit from 'bundle-loader?lazy!../../views/soda/business/device/edit/batch'
+import Staff from 'bundle-loader?lazy!../../views/soda/account/staff'
+import StaffEdit from 'bundle-loader?lazy!../../views/soda/account/staff/edit'
+import UserModel from 'bundle-loader?lazy!../../models/settings/user.js'
 
-import deviceAddress from 'bundle-loader?lazy!../../views/soda/business/device/address'
-import deviceAddressEdit from 'bundle-loader?lazy!../../views/soda/business/device/address/edit'
+import ChipcardDetail from 'bundle-loader?lazy!../../views/soda/business/chipcard/detail'
+import ChipcardRechargeList from 'bundle-loader?lazy!../../views/soda/business/chipcard'
 
-import settlementPay from 'bundle-loader?lazy!../../views/soda/settlement/bill'
-import settlementReport from 'bundle-loader?lazy!../../views/soda/settlement/report'
-import billsDetail from 'bundle-loader?lazy!../../views/soda/settlement/bill/daily'
-import dailyBillsDetail from 'bundle-loader?lazy!../../views/soda/settlement/bill/detail'
+import BusinessDevice from 'bundle-loader?lazy!../../views/soda/business/device'
+import BusinessDeviceDrinking from 'bundle-loader?lazy!../../views/soda/business/device/drinking'
+import BusinessDeviceLog from 'bundle-loader?lazy!../../views/soda/business/device/drinking/log'
+import DeviceEdit from 'bundle-loader?lazy!../../views/soda/business/device/edit'
+import DeviceBatchEdit from 'bundle-loader?lazy!../../views/soda/business/device/edit/batch'
+
+import DeviceAddress from 'bundle-loader?lazy!../../views/soda/business/device/address'
+import DeviceAddressEdit from 'bundle-loader?lazy!../../views/soda/business/device/address/edit'
+
+import SettlementPay from 'bundle-loader?lazy!../../views/soda/settlement/bill'
+import SettlementReport from 'bundle-loader?lazy!../../views/soda/settlement/report'
+import BillsDetail from 'bundle-loader?lazy!../../views/soda/settlement/bill/daily'
+import DailyBillsDetail from 'bundle-loader?lazy!../../views/soda/settlement/bill/detail'
 
 export default function (app) {
   return (
@@ -110,34 +117,66 @@ export default function (app) {
       <Route exact path='/soda/operation-statistics' component={getComponent(OperationStatisticsByMonth,app,OperationStatisticsModel)} />
       <Route exact path='/soda/operation-statistics/:month' component={getComponent(OperationStatisticsByDay,app,OperationStatisticsModel)} />
 
-      <Route exact path='/soda/business/account/edit/:id' component={getComponent(accountEdit,　app)} />
-      <Route exact path='/soda/business/account/add' component={getComponent(accountEdit,　app)} />
-      <Route exact path='/soda/business/account/sub' component={getComponent(account,　app)} />
-      <Route exact path='/soda/business/account' component={getComponent(accountDetail,　app)} />
-      <Route exact path='/soda/business/bill/:id' component={getComponent(billDetailList,　app)} />
-      <Route exact path='/soda/business/bill' component={getComponent(bill,　app)} />
-      <Route exact path='/soda/business/bill/detail' component={getComponent(billDetailList,　app)} />
-      <Route exact path='/soda/business/daily-bill/:id' component={getComponent(dailyDetailBill,　app)} />
-      <Route exact path='/soda/business/daily-bill' component={getComponent(dailyBill,　app)} />
+      <Route exact path='/soda/account/edit/:id' component={getComponent(AccountEdit,　app)} />
+      <Route exact path='/soda/account/add' component={getComponent(AccountEdit,　app)} />
+      <Route exact path='/soda/account/sub' component={getComponent(Account,　app)} />
+      <Route exact path='/soda/account' component={getComponent(AccountDetail,　app)} />
+      <Route exact path='/soda/account/staff' component={getComponent(Staff,app,UserModel)} />
+      <Route exact path='/soda/account/staff/:id' component={getComponent(StaffEdit,app,UserModel)} />
 
-      <Route path='/soda/business/chipcard/:id' component={getComponent(chipcardDetail,　app)} />
-      <Route path='/soda/business/recharges-chipcard' component={getComponent(chipcardRechargeList,　app)} />
+      <Route exact path='/soda/business/bill/:id' component={getComponent(BillDetailList,　app)} />
+      <Route exact path='/soda/business/bill' component={getComponent(Bill,　app)} />
+      <Route exact path='/soda/business/bill/detail' component={getComponent(BillDetailList,　app)} />
+      <Route exact path='/soda/business/daily-bill/:id' component={getComponent(DailyDetailBill,　app)} />
+      <Route exact path='/soda/business/daily-bill' component={getComponent(DailyBill,　app)} />
 
-      <Route path='/soda/business/device/address/edit/:id' component={getComponent(deviceAddressEdit,　app)} />
-      <Route path='/soda/business/device/address/add' component={getComponent(deviceAddressEdit,　app)} />
-      <Route path='/soda/business/device/address' component={getComponent(deviceAddress,　app)} />
+      <Route path='/soda/business/chipcard/:id' component={getComponent(ChipcardDetail,　app)} />
+      <Route path='/soda/business/recharges-chipcard' component={getComponent(ChipcardRechargeList,　app)} />
 
-      <Route path='/soda/business/device/edit/:serial' component={getComponent(deviceEdit,　app)} />
-      <Route path='/soda/business/device/add' component={getComponent(deviceEdit,　app)} />
-      <Route path='/soda/business/device/edit' component={getComponent(deviceBatchEdit,　app)} />
+      <Route path='/soda/business/device/address/edit/:id' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda/business/device/address/add' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda/business/device/address' component={getComponent(DeviceAddress,　app)} />
+
+      <Route path='/soda/business/device/edit/:serial' component={getComponent(DeviceEdit,　app)} />
+      <Route path='/soda/business/device/add' component={getComponent(DeviceEdit,　app)} />
+      <Route path='/soda/business/device/edit' component={getComponent(DeviceBatchEdit,　app)} />
       <Route path='/soda/business/device/:serial' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
-      <Route path='/soda/business/device' component={getComponent(device,　app)} />
+      <Route path='/soda/business/device' component={getComponent(BusinessDevice,　app)} />
 
-      <Route exact path='/soda/settlement/report' component={getComponent(settlementReport,　app)} />
-      <Route exact path='/soda/settlement/alipay' component={getComponent(settlementPay,　app)} />
-      <Route exact path='/soda/settlement/wechat' component={getComponent(settlementPay,　app)} />
-      <Route exact path='/soda/settlement/bills/:id' component={getComponent(billsDetail,　app)} />
-      <Route exact path='/soda/settlement/daily-bills/:id' component={getComponent(dailyBillsDetail,　app)} />
+      <Route exact path='/soda/settlement/report' component={getComponent(SettlementReport,　app)} />
+      <Route exact path='/soda/settlement/alipay' component={getComponent(SettlementPay,　app)} />
+      <Route exact path='/soda/settlement/wechat' component={getComponent(SettlementPay,　app)} />
+      <Route exact path='/soda/settlement/bills/:id' component={getComponent(BillsDetail,　app)} />
+      <Route exact path='/soda/settlement/daily-bills/:id' component={getComponent(DailyBillsDetail,　app)} />
+
+      <Route exact path='/soda-drinking/account/edit/:id' component={getComponent(AccountEdit,　app)} />
+      <Route exact path='/soda-drinking/account/add' component={getComponent(AccountEdit,　app)} />
+      <Route exact path='/soda-drinking/account/sub' component={getComponent(Account,　app)} />
+      <Route exact path='/soda-drinking/account' component={getComponent(AccountDetail,　app)} />
+      <Route exact path='/soda-drinking/account/staff' component={getComponent(Staff,app,UserModel)} />
+      <Route exact path='/soda-drinking/account/staff/:id' component={getComponent(StaffEdit,app,UserModel)} />
+
+      <Route path='/soda-drinking/device/address/edit/:id' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda-drinking/device/address/add' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda-drinking/device/address' component={getComponent(DeviceAddress,　app)} />
+
+      <Route path='/soda-drinking/business/device/address/edit/:id' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda-drinking/business/device/address/add' component={getComponent(DeviceAddressEdit,　app)} />
+      <Route path='/soda-drinking/business/device/address' component={getComponent(DeviceAddress,　app)} />
+
+      <Route path='/soda-drinking/business/device/edit/:serial' component={getComponent(DeviceEdit,　app)} />
+      <Route path='/soda-drinking/business/device/add' component={getComponent(DeviceEdit,　app)} />
+      <Route path='/soda-drinking/business/device/edit' component={getComponent(DeviceBatchEdit,　app)} />
+      <Route path='/soda-drinking/business/device/:serial' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
+      <Route path='/soda-drinking/business/device' component={getComponent(BusinessDeviceDrinking,　app)} />
+      <Route path='/soda-drinking/business/device-config' component={getComponent(BusinessDeviceLog,　app)} />
+
+      <Route exact path='/soda-drinking/business/daily-bill/:id' component={getComponent(DailyDetailBill,　app)} />
+      <Route exact path='/soda-drinking/business/daily-bill' component={getComponent(DailyBill,　app)} />
+
+       <Route exact path='/soda-drinking/consume' component={getComponent(Consume,app,ConsumeModel)} />
+      <Route exact path='/soda-drinking/consume/:id' component={getComponent(ConsumeDetail,app,ConsumeDetailModel)} />
+
     </Switch>
   )
 }

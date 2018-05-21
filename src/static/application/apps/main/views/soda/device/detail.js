@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import op from 'object-path'
 import _ from 'lodash'
+import cx from 'classnames'
 import { connect } from 'dva'
 import { Button, Row, Col, Card, message, Spin, Modal } from 'antd'
 import DataTable from '../../../components/data-table/'
@@ -11,6 +12,7 @@ import { transformUrl, toQueryString } from '../../../utils/'
 import moment from 'moment'
 import dict from '../../../utils/dict.js'
 import { conversionUnit } from '../../../utils/functions'
+import DEVICE from '../../../constant/device'
 
 import styles from './index.pcss'
 import pageStyles from '../../../assets/css/page-detail.pcss'
@@ -25,11 +27,8 @@ class DeviceDetail extends Component {
     this.search = search
     this.breadItems = [
       {
-        title: '苏打生活'
-      },
-      {
         title: '设备查询',
-        url: `/soda/device?serials=${serials}&keys=${keys}&offset=0&limit=10`
+        url: `/PATHNAME/device?serials=${serials}&keys=${keys}&offset=0&limit=10`
       },
       {
         title: '设备详情'
@@ -37,11 +36,8 @@ class DeviceDetail extends Component {
     ],
     this.businessBreadItems = [
       {
-        title: '苏打生活'
-      },
-      {
         title: '设备管理',
-        url: `/soda/business/device${location.search}`
+        url: `/PATHNAME/business/device${location.search}`
       },
       {
         title: '设备详情'
@@ -110,7 +106,10 @@ class DeviceDetail extends Component {
   }
   render() {
     const { sodaDeviceDetail: { data, token }, deviceTypes, modes, loading } = this.props
-    const feature = _.find(deviceTypes || [], { type : op(data).get('feature.type') }) || {}
+    const featureId = op(data).get('feature.id')
+    const feature = _.find(deviceTypes || [], { id : featureId }) || {}
+    const reference = _.find(feature.references || [], { id : op(data).get('feature.reference.id') }) || {}
+    const suffix = featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? '元/L' : '元'
 
     return(
       <div>
@@ -131,22 +130,30 @@ class DeviceDetail extends Component {
                   <div>
                     <span className={pageStyles.title}>价格:</span>
                     {(modes || []).map((mode) => {
-                      return [`${mode.name}`, `${conversionUnit(mode.value)}元`].join(' ')
+                      return [`${mode.name}`, `${conversionUnit(mode.value)}${suffix}`].join(' ')
                     }).join(' / ')}
                   </div>
-                  <div><span className={pageStyles.title}>类型:</span>{op(feature).get('name') || '-'}</div>
+                  <div><span className={pageStyles.title}>设备关联:</span>{op(reference).get('name') || '-'}</div>
                   <div>
                     <span className={pageStyles.title}>服务地点:</span>
                     { _.isEmpty(op(data).get('serviceAddress')) ? '-' :
                       _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
                     }
                   </div>
-                  <div><span className={pageStyles.title}>状态:</span>{op(data).get('status.description') || '-' }</div>
-                  <div>
-                    <span className={pageStyles.title}>重置验证码:</span>
-                    {op(data).get('limit.password.isResettable') ? '支持': '不支持' }
-                    {op(data).get('limit.password.isResettable') ? <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>获取</Button> : null }
-                  </div>
+                  <div><span className={pageStyles.title}>运行状态:</span><span className={styles.title}>{op(data).get('status.description') || '-' }</span></div>
+                  { 
+                    featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
+                    <span className={pageStyles.title}>制热状态:</span>
+                    <span className={styles.title}>{op(data).get('config.status') ? '已开启' : '已关闭' }</span>
+                    </div> : null
+                  }
+                  { 
+                    featureId !== DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
+                      <span className={pageStyles.title}>重置验证码:</span>
+                      {op(data).get('limit.password.isResettable') ? '支持': '不支持' }
+                      {op(data).get('limit.password.isResettable') ? <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>获取</Button> : null }
+                    </div> : null
+                  }
                   {
                     token ? <div><span className={pageStyles.title}>验证码:</span>{token || '-'}</div> : null
                   }

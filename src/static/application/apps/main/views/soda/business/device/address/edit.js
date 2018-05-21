@@ -20,11 +20,8 @@ import styles from '../index.pcss'
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '地点管理',
-    url:'/soda/business/device/address'
+    url:'/PATHNAME/business/device/address'
   },
   {
     title: '新增地点'
@@ -33,15 +30,12 @@ const breadItems = [
 
 const editBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备管理',
-    url: '/soda/business/device'
+    url: '/PATHNAME/business/device'
   },
   {
     title: '地点管理',
-    url:'/soda/business/device/address?fromDevice=true'
+    url:'/PATHNAME/business/device/address?fromDevice=true'
   },
   {
     title: '修改地点'
@@ -50,15 +44,12 @@ const editBreadItems = [
 
 const addBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备管理',
-    url: '/soda/business/device'
+    url: '/PATHNAME/business/device'
   },
   {
     title: '地点管理',
-    url:'/soda/business/device/address?fromDevice=true'
+    url:'/PATHNAME/business/device/address?fromDevice=true'
   },
   {
     title: '新增地点'
@@ -348,7 +339,7 @@ class Edit extends Component {
     });
   }
   render() {
-    let { form: { getFieldDecorator } } = this.props
+    let { form: { getFieldDecorator }, location } = this.props
     let { 
       loading, provinces, cities, schools, activeProviceId, activeCityId, activeAddress,
       detail: { school: { city: { id: cityId }, province: { id: provinceId }, id: schoolId, address } } 
@@ -358,7 +349,7 @@ class Edit extends Component {
     schools = _.findWhere(schools, { cityId: activeCityId }) || {}
     
     return (<div>
-      <Breadcrumb items={!this.isFromDeviceView ? breadItems : isAdd ? addBreadItems : editBreadItems} />
+      <Breadcrumb items={!this.isFromDeviceView ? breadItems : isAdd ? addBreadItems : editBreadItems} location={location} />
       <Spin spinning={loading}>
         <Form>
           <FormItem

@@ -9,6 +9,7 @@ const { confirm } = Modal
 
 import { conversionUnit } from '../../../../../utils/functions'
 import DeviceService from '../../../../../services/soda-manager/device'
+import DEVICE from '../../../../../constant/device'
 
 import styles from '../index.pcss'
 
@@ -40,7 +41,7 @@ class Mode extends Component {
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
-    let { mode: { id, name, duration, value, pulse: { id: pulseId }, status }, activeFeatureType, featureType, index } = this.props
+    let { mode: { id, name, duration, value, status }, activeReferenceId, featureId, referenceId, index } = this.props
     let label = "服务程序" + (index)
 
     return (<Row className={styles.editMode}>
@@ -81,11 +82,11 @@ class Mode extends Component {
                     return true
                   }
                 ],
-                initialValue: activeFeatureType === featureType ? conversionUnit(value) : conversionUnit(index * 100),
+                initialValue: activeReferenceId === referenceId ? conversionUnit(value) : conversionUnit(index * 100),
               })(
                 <Input 
                 prefix={<Icon type="pay-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                addonAfter='元'
+                addonAfter={featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? '元/L' : '元'}
                 placeholder="价格(元)"  />
               )}
             </FormItem>

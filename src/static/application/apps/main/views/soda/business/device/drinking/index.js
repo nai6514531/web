@@ -13,26 +13,34 @@ const { confirm } = Modal
 const { Item: FormItem, create: createForm } = Form
 const { Option } = Select
 
-import { conversionUnit } from '../../../../utils/functions'
-import UserService from '../../../../services/soda-manager/user'
-import DeviceService from '../../../../services/soda-manager/device'
-import DeviceAddressService from '../../../../services/soda-manager/device-service-address'
+import { conversionUnit } from '../../../../../utils/functions'
+import DeviceService from '../../../../../services/soda-manager/device'
+import DeviceAddressService from '../../../../../services/soda-manager/device-service-address'
 
-import Breadcrumb from '../../../../components/layout/breadcrumb'
-import { InputScan, InputClear } from '../../../../components/form/input'
-import { Element } from '../../../../components/element'
-import Assigned from './assigned'
-import DEVICE from '../../../../constant/device'
+import Breadcrumb from '../../../../../components/layout/breadcrumb'
+import { InputScan, InputClear } from '../../../../../components/form/input'
 
-import styles from './index.pcss'
+import DEVICE from '../../../../../constant/device'
+
+import styles from '../index.pcss'
 
 const PAEG_SIZE = 10
 const SERIAL_MIN_LENGTH = 6
 
-const breadItems = [
-  {
-    title: '苏打生活'
+const STATUS = [{
+    'id': 0,
+    'name': '空闲',
   },
+  {
+    'id': 9,
+    'name': '已锁定',
+  },
+  {
+    'id': 1,
+    'name': '使用中',
+  },
+]
+const breadItems = [
   {
     title: '设备管理'
   }
@@ -49,10 +57,6 @@ const formItemLayout = {
   },
 }
 
-const DEVICE_IS_MINE = "DEVICE_IS_MINE"
-const DEVICE_IS_ASSIGNED = "DEVICE_IS_ASSIGNED"
-
-@Element()
 class App extends Component {
   constructor(props) {
     super(props)
@@ -60,10 +64,9 @@ class App extends Component {
     this.state = {
       devices: [],
       selectedRowKeys: [],
-      tapActive: DEVICE_IS_MINE,
       modalActive: '',
       search: {
-        keys: '',
+        status: '',
         serials: '',
         schoolId: '',
         serviceAddressIds: '',
@@ -73,7 +76,6 @@ class App extends Component {
       serviceAddresses: [],
       deviceTypes: [],
       schools: [],
-      users: [],
       pagination: {
         total: 0,
         limit: PAEG_SIZE,
@@ -84,19 +86,10 @@ class App extends Component {
     }
     this.columns = [
       {
-        title: '运营商名称',
-        dataIndex: 'user',
-        label: 'user',
-        render: (user) => {
-          let { users } = this.state
-          user = _.findWhere(users, { id: user.id })
-          return _.isEmpty(user) ? '-' : `${user.name}-${user.mobile}`
-        }
-      }, {
         title: '编号',
         dataIndex: 'serial',
         render: (serial) => {
-          return <Link to={`/soda/business/device/${serial}` + this.props.location.search}>{serial}</Link>
+          return <Link to={`/soda-drinking/business/device/${serial}` + this.props.location.search}>{serial}</Link>
         }
       }, {
         title: '服务地点',
@@ -110,10 +103,13 @@ class App extends Component {
         title: '状态',
         dataIndex: 'status',
         render: (status) => {
-          return op(status).get('description') || '-'
+          let { value } = status
+          return <span className={cx({ [`${styles.hightlight}`]: !!~[...DEVICE.STATUS_IS_FREE].indexOf(value) })}>
+            {op(status).get('description') || '-'}
+          </span>
         }
       }, {
-        title: '关联设备',
+        title: '设备关联',
         dataIndex: 'feature',
         render: (feature) => {
           let { deviceTypes } = this.state
@@ -122,48 +118,16 @@ class App extends Component {
           return op(reference).get('name') || '-'
         }
       }, {
-        title: '更新时间',
-        dataIndex: 'updatedAt',
-        label: 'updatedAt',
-        render: (date) => {
-          return moment(date).format('YYYY-MM-DD HH:mm:ss')
-        }
-      }, {
-        title: '返厂设备',
-        colSpan: isVisible('DEVICE:TEXT:SHOW_RESTROFITY') ? 1 : 0,
-        render: (record) => {
-          if (isVisible('DEVICE:TEXT:SHOW_RESTROFITY')) {
-            let { assignedUser: { id }, limit: { isRetrofited } } = record
-            let { users } = this.state
-            let user = _.findWhere(users, { id: id })
-            
-            let suffix = isRetrofited ? _.isEmpty(user) ? '是' 
-              :`${'是 ('+ user.name + '|' + user.mobile + ')'}` : '否'
-            
-            return {
-              children: <span className={cx({ [styles.hightlight]: isRetrofited })}>{suffix}</span>
-            }
-          }
-          return {
-            props: {
-              colSpan: 0
-            }
-          }
-        }
-      }, {
         title: '操作',
         render: (text, record) => {
-          let { serial, status, id } = record
-          let { modes, tapActive, actionLoading } = this.state
-          let isMineDevice = tapActive === DEVICE_IS_MINE
-          let isLock = !!~[...DEVICE.STATUS_IS_LOCK].indexOf(status.value)
-          let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(status.value)  
+          let { serial, id } = record
+          let { modes, actionLoading } = this.state
 
           modes = _.filter(modes || [], (mode) => mode.serial === serial ) || []
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>
-                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元`].join(' / ')}
+                {[`${mode.name || '-'}`, `${conversionUnit(mode.value)}元/L`].join(' / ')}
               </p>
             })}
           </div>)
@@ -174,28 +138,13 @@ class App extends Component {
           </Spin>)
           content = actionLoading ? loading : _.isEmpty(modes) ? '该设备无服务信息' : content
           return <span>
-            <Link to={`/soda/business/device/edit/${serial}?isAssigned=${!isMineDevice}`}>修改</Link>
+            <Link to={`/soda-drinking/business/device/edit/${serial}`}>修改</Link>
             <Popover placement="topLeft" 
               onVisibleChange={this.getDeviceModes.bind(this, serial)}
               content={content}>
               <div className={styles.divider}></div><a href="#">查看价格</a>
             </Popover>
-            { 
-              isVisible("DEVICE:BUTTON:CANCEL") && isMineDevice ? <Popconfirm title="确认删除吗?" onConfirm={this.delete.bind(this, id)}>
-                <div className={styles.divider}></div><a href="#">删除</a>
-              </Popconfirm> : null
-            }
-            { 
-              isLock ? <Popconfirm title="确认取消锁定吗?" onConfirm={this.unLock.bind(this, serial)}>
-                <div className={styles.divider}></div><a href="#">取消锁定</a>
-              </Popconfirm> : 
-              isUsing ? <Popconfirm title="确认取消占用?" onConfirm={this.unLock.bind(this, serial)}>
-                <div className={styles.divider}></div><a href="#">取消占用</a>
-              </Popconfirm> : 
-              <Popconfirm title="确认锁定吗?" onConfirm={this.lock.bind(this, Array(serial))}>
-                <div className={styles.divider}></div><a href="#">锁定</a>
-              </Popconfirm>
-            }
+            
           </span>
         }
       }
@@ -204,17 +153,14 @@ class App extends Component {
   componentWillMount() {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
-    let search = _.pick(query, 'keys', 'serials', 'serviceAddressIds', 'referenceId', 'schoolId')
+    let search = _.pick(query, 'status', 'serials', 'serviceAddressIds', 'referenceId', 'schoolId')
     let pagination = _.pick(query, 'limit', 'offset')
-    this.isMineDevice = query.isAssigned !== 'true' || true
-    let tapActive =  query.isAssigned === 'true' ? DEVICE_IS_ASSIGNED : DEVICE_IS_MINE
     this.getDeviceServiceAddress()
-    this.list({ search, tapActive, pagination })
+    this.list({ search, pagination })
     this.getDeviceType()
   }
   list({...options}) {
-    let { loading, serviceAddresses, schools, tapActive } = this.state
-    tapActive = _.isUndefined(options.tapActive) ? tapActive : options.tapActive
+    let { loading, serviceAddresses, schools } = this.state
     let search = _.extend(this.state.search, options.search || {})
     let pagination = _.extend(this.state.pagination, options.pagination || {})
     let { schoolId, serviceAddressIds } = search
@@ -225,13 +171,13 @@ class App extends Component {
     if (loading) {
       return
     }
-    this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search }, pagination: { ...this.state.pagination, ...pagination }, loading: true, selectedRowKeys: [] })
+    this.setState({ search: { ...this.state.search, ...search }, pagination: { ...this.state.pagination, ...pagination }, loading: true, selectedRowKeys: [] })
 
     DeviceService.list({
+      deviceTypes: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER,
       serviceAddressIds: serviceAddressIds,
-      ..._.pick(search, 'keys', 'serials', 'referenceId'), 
-      ..._.pick(pagination, 'limit', 'offset'), 
-      isAssigned: tapActive === DEVICE_IS_MINE ? 0 : 1
+      ..._.pick(search, 'keys', 'serials', 'referenceId', 'status'), 
+      ..._.pick(pagination, 'limit', 'offset'),
     }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -245,15 +191,6 @@ class App extends Component {
         },
         loading: false
       })
-      let ids = _.map(data.objects, (device) => device.assignedUser.id)
-      if (tapActive === DEVICE_IS_ASSIGNED) {
-        ids = _.map(data.objects, (device) => device.user.id)
-        let addressIds = _.chain(data.objects).map((device) => device.serviceAddress.id).union().difference(_.pluck(serviceAddresses, 'id')).value()
-        if (!_.isEmpty(addressIds)) {
-          this.getDeviceServiceAddress(addressIds)
-        }
-      }
-      this.getUserList(ids)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -261,7 +198,7 @@ class App extends Component {
   }
   // 获取设备服务地点
   getDeviceServiceAddress(ids) {
-    let { serviceAddresses, tapActive } = this.state
+    let { serviceAddresses } = this.state
     DeviceAddressService.list({
       ids: ids ? ids.join(',') : ''
     }).then((res) => {
@@ -298,37 +235,13 @@ class App extends Component {
   }
   // 获取设备类型
   getDeviceType() {
-    DeviceService.deviceType().then((res) => {
+    DeviceService.deviceType({ deviceTypes: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
       let { data } = res
       this.setState({ deviceTypes: data })
     }).catch((err) => {
-      message.error(err.message || '服务器异常，刷新重试')
-    })
-  }
-  getUserList(ids) {
-    let { users } = this.state
-
-    ids = _.chain(ids || []).difference(_.pluck(users, 'id')).union().without('', 0).value()
-    if (_.isEmpty(ids)) {
-      return
-    }
-    UserService.adminUserlist({
-      ids: ids.join(','),
-      limit: ids.length,
-      offset: 0,
-    }).then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      let { objects } = res.data
-      this.setState({
-        users: _.uniq([ ...users, ...objects ], (user) => user.id )
-      })
-      return objects
-    }).catch((err) => {   
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -354,24 +267,6 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
-  delete(id) {
-    let { loading, actionLoading } = this.state
-
-    if (loading || actionLoading) {
-      return
-    }
-    this.setState({ actionLoading: true })
-    DeviceService.deleteDevice(id).then((res) => {
-      if (res.status !== 'OK') {
-        throw new Error(res.message)
-      }
-      this.setState({ actionLoading: false })
-      this.list()
-    }).catch((err) => {
-      this.setState({ actionLoading: false })      
-      message.error(err.message || '服务器异常，刷新重试')
-    })
-  }
   search() {
     let { loading, search: { serials } } = this.state
     if (loading) {
@@ -394,10 +289,11 @@ class App extends Component {
     this.setState({ selectedRowKeys: selectedRowKeys })
   }
   changeHistory(options) {
-    let query = _.pick({...this.state.search, ...this.state.pagination, ...options}, 'serviceAddressIds', 'serials', 'keys', 'limit', 'offset', 'referenceId', 'schoolId')
-    query = { ...query , isAssigned: options.tapActive ? options.tapActive === DEVICE_IS_ASSIGNED : this.state.tapActive === DEVICE_IS_ASSIGNED }
+    let { location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
+    let query = _.pick({...this.state.search, ...this.state.pagination, ...options}, 'serviceAddressIds', 'serials', 'status', 'limit', 'offset', 'referenceId', 'schoolId')
 
-    this.props.history.push(`/soda/business/device?${querystring.stringify(query)}`)
+    this.props.history.push(`/${pathname}/business/device?${querystring.stringify(query)}`)
   }
   changeInput(key, e) {
     let val = e.target.value || ''
@@ -416,12 +312,23 @@ class App extends Component {
     let { search } = this.state
     this.setState({ search: { ...search, referenceId: value } })
   }
-  batchLock() {
+  changeStatus(value) {
+    let { search } = this.state
+    this.setState({ search: { ...search, status: value } })
+  }
+  confirmOperation(operation) {
     let { selectedRowKeys } = this.state
+    let suffix = operation === 'SETON' ? '开机' : 
+      operation === 'SETOFF' ? '关机' :  
+      operation === 'SETONHOT' ? '开启制热' :  
+      operation === 'SETOFFHOT' ? '关闭制热' :  ''
     confirm({
-      title: <span>有<span className={styles.hightlight}>{selectedRowKeys.length}</span>个设备将被锁定，是否继续操作?</span>,
+      title: <span>有<span className={styles.hightlight}>{selectedRowKeys.length}</span>个设备将被{suffix}，是否继续操作?</span>,
       onOk: () => {
-        this.lock(selectedRowKeys)
+        let suffix = operation === this.setOn() ? '' : 
+          operation === this.setOn() ? '' :  
+          operation === this.setOn() ? '' :  
+          operation === this.setOn() ? '' :  ''
       }
     })
   }
@@ -445,6 +352,29 @@ class App extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  setOn() {
+    let { selectedRowKeys } = this.state
+    let { loading, actionLoading } = this.state
+    if (loading || actionLoading) {
+      return
+    }
+
+    this.setState({ actionLoading: true})
+    DeviceService.lock({
+      serials: selectedRowKeys
+    }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.list()
+      this.setState({ actionLoading: false })      
+    }).catch((err) => {
+      this.setState({ actionLoading: false })      
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
+  setOff(serialsArray) {}
+  lock(serialsArray) {}
   unLock(serial) {
     let { loading, actionLoading } = this.state
     if (loading || actionLoading) {
@@ -452,7 +382,7 @@ class App extends Component {
     }
 
     this.setState({ actionLoading: true})
-    DeviceService.unlock({
+    DeviceService.setOn({
       serials: Array(serial)
     }).then((res) => {
       if (res.status !== 'OK') {
@@ -466,8 +396,7 @@ class App extends Component {
     })
   }
   edit(value) {
-    let { tapActive, selectedRowKeys, devices } = this.state
-    let isAssigned = tapActive !== DEVICE_IS_MINE
+    let { selectedRowKeys, devices } = this.state
     let serials = selectedRowKeys.join(',')
     if (value === 'ALL') {
       let keys = _.chain(devices).filter((device) => {
@@ -478,35 +407,7 @@ class App extends Component {
           title: `关联设备类型相同才可批量修改，请检查`
         })
       }
-      this.props.history.push(`/soda/business/device/edit?isAssigned=${isAssigned}&serials=${serials}`) 
-    }
-  }
-  changeTab (key) {
-    let options = { 
-      tapActive: key,
-      search: { 
-        keys: '',
-        serials: '',
-        schoolId: '',
-        serviceAddressIds: '',
-        referenceId: 0
-      },
-      pagination: {
-        total: 0,
-        limit: PAEG_SIZE,
-        offset: 0
-      }
-    }
-    this.setState(options)
-    this.getDeviceServiceAddress()
-    this.list(options)
-    this.changeHistory({ tapActive: key })
-  }
-  // 设备分配 MODAL
-  toggleAssiginedVisible(value) {
-    this.setState({ modalActive: '' })
-    if (value === 'SUCCESS') {
-      this.list()
+      this.props.history.push(`/soda-drinking/business/device/edit?serials=${serials}`) 
     }
   }
   pagination() {
@@ -536,24 +437,15 @@ class App extends Component {
     }
   }
   render() {
-    let { devices, users, schools, loading, selectedRowKeys, tapActive, modalActive, deviceTypes, search: { keys, serials, schoolId, serviceAddressIds, referenceId } } = this.state
-    let { isVisible } = this.props
+    let { devices, users, schools, loading, selectedRowKeys, deviceTypes, search: { status, serials, schoolId, serviceAddressIds, referenceId } } = this.state
     let selectedCount = selectedRowKeys.length
     let hasSelected = selectedCount > 0
 
-    // 当前商家设备列表（非分配列表），不展示更新时间和商家信息
-    let columns = tapActive === DEVICE_IS_MINE ? _.reject(this.columns, (item) => { return !!~['updatedAt', 'user'].indexOf(item.label)}) : this.columns
     // 当前选择学校下的服务地点
     let activeSchoolsMap = _.findWhere(schools || [], { id: schoolId === '' ? '' : +schoolId }) || {}
 
     return (<div>
       <Breadcrumb items={breadItems} location={this.props.location} />
-      <Tabs 
-        activeKey={String(tapActive)}
-        onChange={this.changeTab.bind(this)}>
-        <TabPane tab="我的设备" key={DEVICE_IS_MINE}></TabPane>
-        <TabPane tab="已分配设备" key={DEVICE_IS_ASSIGNED}></TabPane>
-      </Tabs>
       <Row>
         <InputScan
           placeholder="请输入设备编号"
@@ -562,31 +454,21 @@ class App extends Component {
           onChange={this.changeInput.bind(this, 'serials')}
           onPressEnter={this.search.bind(this)}
         />
-        { 
-          tapActive === DEVICE_IS_ASSIGNED ? <InputClear
-            style={{ width: 180 , marginRight: 10, marginBottom: 10 }}
-            placeholder="请输入运营商名称/账号" 
-            value={keys}
-            onChange={this.changeInput.bind(this, 'keys')}
-            onPressEnter={this.search.bind(this)}
-          />  : null
-        }
-        { tapActive === DEVICE_IS_MINE ? <Select
-            showSearch
-            style={{ width: 240, marginRight: 10, marginBottom: 10 }}
-            placeholder='请选择学校(非学校服务选"其他")'
-            optionFilterProp="children"
-            onChange={this.changeSchool.bind(this)}
-            value={schoolId === '' ? '' : +schoolId}
-            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          >
-            <Option value="">请选择学校(非学校服务选"其他")</Option>
-            {(schools || []).map((school) => {
-              return <Option key={school.id} value={school.id}>{school.name}</Option>
-            })}
-          </Select> : null
-        }
-        { tapActive === DEVICE_IS_MINE ? <Select
+        <Select
+          showSearch
+          style={{ width: 240, marginRight: 10, marginBottom: 10 }}
+          placeholder='请选择学校(非学校服务选"其他")'
+          optionFilterProp="children"
+          onChange={this.changeSchool.bind(this)}
+          value={schoolId === '' ? '' : +schoolId}
+          filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+        >
+          <Option value="">请选择学校(非学校服务选"其他")</Option>
+          {(schools || []).map((school) => {
+            return <Option key={school.id} value={school.id}>{school.name}</Option>
+          })}
+        </Select> 
+        <Select
             mode="multiple"
             value={!!serviceAddressIds ? serviceAddressIds.split(',') : []}
             placeholder='请输入服务地点'
@@ -597,57 +479,81 @@ class App extends Component {
             {(activeSchoolsMap.objects || []).map((item) => {
               return <Option key={item.id} value={String(item.id)}>{item.school.address}</Option>
             })}
-          </Select> : null 
-        }
-         <Select
+        </Select>
+        <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择设备类型"
+          placeholder="请选择设备关联"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={+referenceId === 0 ? '' : +referenceId}
         >
-          <Option value="">请选择设备类型</Option>
+          <Option value="">请选择设备关联</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>
             })
           })}
         </Select>
+        <Select
+          showSearch
+          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
+          placeholder="运行状态"
+          optionFilterProp="children"
+          onChange={this.changeStatus.bind(this)}
+          value={+status === 0 ? '' : +status}
+        >
+          <Option value="">请选择运行状态</Option>
+          {(STATUS || []).map((status) => {
+            return <Option key={status.id} value={status.id}>{status.name}</Option>
+          })}
+        </Select>
         <Button type='primary' onClick={this.search.bind(this)}>筛选</Button>
       </Row>
-      <Row>
-        { 
-          tapActive === DEVICE_IS_MINE ? <Button 
-          type='primary'
-          disabled={!hasSelected}
-          style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.setState({ modalActive: 'ASSIGNED'}) }}>批量分配</Button>: null
-        }
+      { 
+        false ? <Row>
         <Button 
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={this.edit.bind(this, 'ALL')}>批量修改</Button>
-        { 
-          tapActive === DEVICE_IS_MINE ? <Button 
+          onClick={this.confirmOperation.bind(this, 'SETON')}>
+          批量开机
+        </Button>
+        <Button 
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={this.batchLock.bind(this)}>批量锁定</Button> : null
-        }
-        { 
-          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD')? <Button 
-          type='primary'　
+          onClick={this.confirmOperation.bind(this, 'SETOFF')}>
+          批量关机
+        </Button>
+        <Button 
+          type='primary'
+          disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push(`/soda/business/device/add?isAssigned=false`) }}>添加新设备</Button> : null
-        }
-        {
-          tapActive === DEVICE_IS_MINE ? <Button 
+          onClick={this.confirmOperation.bind(this, 'SETONHOT')}>
+          批量开启制热
+        </Button>
+        <Button 
+          type='primary'
+          disabled={!hasSelected}
+          style={{ marginRight: 10, marginBottom: 10 }}
+          onClick={this.confirmOperation.bind(this, 'SETOFFHOT')}>
+          批量关闭制热
+        </Button>
+        <Button 
           type='primary'
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push('/soda/business/device/address?fromDevice=true')}}>地点管理</Button> : null
-        }
+          onClick={() => { this.props.history.push('/soda-drinking/business/device/address?fromDevice=true')}}>地点管理
+        </Button>
+        
+      </Row> : null
+      }
+      <Row>
+        <Button 
+          type='primary'
+          style={{ marginRight: 10, marginBottom: 10 }}
+          onClick={() => { this.props.history.push('/soda-drinking/business/device/address?fromDevice=true')}}>地点管理
+        </Button>
       </Row>
       { 
         hasSelected ? <Row>
@@ -658,21 +564,16 @@ class App extends Component {
       }
       <Table
         className={styles.table}
+        columns={this.columns}
         rowSelection={this.rowSelection()}
         scroll={{ x: 980 }}
         style={{ marginTop: 16 }}
-        columns={columns}
         rowKey={record => record.serial}
         dataSource={devices}
         pagination={this.pagination()}
         onChange={this.handleTableChange.bind(this)}
         loading={loading}
       />
-      { 
-        modalActive === 'ASSIGNED' ? <Assigned 
-        toggleVisible={this.toggleAssiginedVisible.bind(this)}
-        serials={selectedRowKeys} /> : null
-      }
     </div>)
   }
 }

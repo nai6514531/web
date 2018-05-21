@@ -2,6 +2,7 @@ import React, { Component }from 'react'
 import _ from 'underscore'
 import moment from 'moment'
 import querystring from 'querystring'
+import op from 'object-path'
 import { Link } from 'react-router-dom'
 
 import { Affix, Button, Table, Icon, Popconfirm, Select, DatePicker, message, Modal } from 'antd'
@@ -25,9 +26,6 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '每日账单'
   }
 ]
@@ -36,7 +34,7 @@ const breadItems = [
 class App extends Component {
   constructor(props) {
     super(props)
-
+    let { isVisible } = this.props
     this.state = {
       bills: [],
       loading: false,
@@ -104,37 +102,49 @@ class App extends Component {
         dataIndex: 'count'
       }, {
         title: '状态',
+        colSpan: isVisible('DAILY_BILL:TEXT:SHOW_STATUS') ? 1 : 0,
         dataIndex: 'status',
         render: (status, record) => {
-          let label
-          switch (status) {
-            case BILL.SETTLEMENT_STATUS_IS_DEFAULT:
-              label = <span>未申请结算</span>
-              break;
-            case BILL.SETTLEMENT_STATUS_IS_WAITING:
-              label = <span><i className={styles.waiting}></i>等待结算</span>
-              break;
-            case BILL.SETTLEMENT_STATUS_IS_SUCCESS:
-              label = <span><i className={styles.success}></i>结算成功</span>
-              break;
-            case BILL.SETTLEMENT_STATUS_IS_PAYING:
-              label = <span><i className={styles.paying}></i>结算中</span>
-              break;
-            case BILL.SETTLEMENT_STATUS_IS_FAIL:
-              label = <span><i className={styles.fail}></i>结算失败</span>
-              break;
-            default:
-              label = <span>-</span>
-              break;
+          if (isVisible('DAILY_BILL:TEXT:SHOW_STATUS')) {
+            let label
+            switch (status) {
+              case BILL.SETTLEMENT_STATUS_IS_DEFAULT:
+                label = <span>未申请结算</span>
+                break;
+              case BILL.SETTLEMENT_STATUS_IS_WAITING:
+                label = <span><i className={styles.waiting}></i>等待结算</span>
+                break;
+              case BILL.SETTLEMENT_STATUS_IS_SUCCESS:
+                label = <span><i className={styles.success}></i>结算成功</span>
+                break;
+              case BILL.SETTLEMENT_STATUS_IS_PAYING:
+                label = <span><i className={styles.paying}></i>结算中</span>
+                break;
+              case BILL.SETTLEMENT_STATUS_IS_FAIL:
+                label = <span><i className={styles.fail}></i>结算失败</span>
+                break;
+              default:
+                label = <span>-</span>
+                break;
+            }
+            return {
+              children: <p className={styles.status}>{label}</p>
+            }
+          } else {
+            return {
+              props: {
+                colSpan: 0
+              }
+            }
           }
-          return <p className={styles.status}>{label}</p>
         }
       }, {
         title: '操作',
         dataIndex: 'id',
         key: 'method',
         render: (id, record) => {
-          return <Link to={`/soda/business/daily-bill/${record.id}`}>明细</Link>
+          let pathname = op(location).get('pathname').split('/')[1]
+          return <Link to={`/${pathname}/business/daily-bill/${record.id}`}>明细</Link>
         }
       }
     ]
@@ -226,7 +236,8 @@ class App extends Component {
   }
   changeHistory ({...options}) {
     let query = _.pick({ ...this.state.search, ...this.state.pagination, ...options }, 'offset', 'limit', 'status', 'endAt', 'startAt', 'keys', 'type')
-    this.props.history.push(`/soda/business/daily-bill?${querystring.stringify(query)}`)
+    let pathname = op(location).get('pathname').split('/')[1]
+    this.props.history.push(`/${pathname}/business/daily-bill?${querystring.stringify(query)}`)
   }
   pagination () {
     let self = this
@@ -270,17 +281,19 @@ class App extends Component {
           <Option value='2'>微信</Option>
           <Option value='3'>银行</Option>
         </Select>
-        <Select
-          value={status}
-          style={{ width: 150, marginRight: 10, marginBottom: 10 }}
-          onChange={(value) => { this.setState({ search: { ...this.state.search, status: value } }) }}>
-          <Option value=''>请选择结算状态</Option>
-          <Option value='0'>未申请结算</Option>
-          <Option value='1'>等待结算</Option>
-          <Option value='2'>结算成功</Option>
-          <Option value='3'>结算中</Option>
-          <Option value='4'>结算失败</Option>
-        </Select>
+        {
+          this.props.isVisible("DAILY_BILL:SELECT:STATUS") ? <Select
+            value={status}
+            style={{ width: 150, marginRight: 10, marginBottom: 10 }}
+            onChange={(value) => { this.setState({ search: { ...this.state.search, status: value } }) }}>
+            <Option value=''>请选择结算状态</Option>
+            <Option value='0'>未申请结算</Option>
+            <Option value='1'>等待结算</Option>
+            <Option value='2'>结算成功</Option>
+            <Option value='3'>结算中</Option>
+            <Option value='4'>结算失败</Option>
+          </Select> : null
+        }
         <DatePicker
           placeholder='开始日期'
           format="YYYY-MM-DD"

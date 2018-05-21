@@ -9,21 +9,18 @@ import querystring from 'querystring'
 import { Link } from 'react-router-dom'
 import { Table, Button, message } from 'antd'
 
-import { InputClear } from '../../../../components/form/input'
-import UserService from '../../../../services/soda-manager/user'
-import ChipcardService from '../../../../services/soda-manager/chipcard'
-import history from '../../../../utils/history'
+import { InputClear } from '../../../components/form/input'
+import UserService from '../../../services/soda-manager/user'
+import ChipcardService from '../../../services/soda-manager/chipcard'
+import history from '../../../utils/history'
 
-import Breadcrumb from '../../../../components/layout/breadcrumb'
+import Breadcrumb from '../../../components/layout/breadcrumb'
 
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
 
 const breadItems = [
-  {
-    title: '苏打生活',
-  },
   {
     title: '账号管理',
   },
@@ -67,7 +64,8 @@ class App extends Component {
       {
         title: '操作',
         render: (text, record) => {
-          return <Link to={`/soda/business/account/edit/${record.id}?isSub=true`}>修改</Link>
+          let { location: { pathname } } = this.props
+          return <Link to={`${pathname.replace('/sub', '')}/edit/${record.id}?isSub=true`}>修改</Link>
         }
       }
     ]
@@ -106,8 +104,9 @@ class App extends Component {
     })
   }
   changeHistory (options) {
+    let { location: { pathname } } = this.props
     let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'name', 'contact', 'limit', 'offset')
-    this.props.history.push(`/soda/business/account/sub?${querystring.stringify(query)}`)
+    this.props.history.push(`/${pathname}?${querystring.stringify(query)}`)
   }
   search() {
     let pagination = { offset: 0 }
@@ -146,14 +145,16 @@ class App extends Component {
   }
   render() {
     let { list, loading, search: { name, contact } } = this.state
+    let { location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
 
     return (<div>
-      <Breadcrumb items={breadItems} />
+      <Breadcrumb items={breadItems} location={this.props.location} />
       <div>
         <Button
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => {  this.props.history.push(`/soda/business/account/add`) }}>
+          onClick={() => {  this.props.history.push(`/${pathname}/account/add`) }}>
           添加新运营商
         </Button>
         <InputClear

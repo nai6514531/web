@@ -20,7 +20,7 @@ const breadItems = [
   },
   {
     title: '个人信息',
-    url: '/soda/business/account'
+    url: '/soda/account'
   },
   {
     title: 'IC卡金额转移',

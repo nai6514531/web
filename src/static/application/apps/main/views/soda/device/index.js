@@ -24,9 +24,6 @@ const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备查询'
   }
 ]
@@ -248,7 +245,7 @@ class Device extends Component {
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={breadItems} location={this.props.location} />
         <Button
           type='primary'
           className={styles.button}

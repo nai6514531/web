@@ -12,10 +12,10 @@ const createForm = Form.create
 const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
 
-import UserService from '../../../../../services/soda-manager/user'
-import CommonService from '../../../../../services/common'
-import Throttle from '../../../../../components/throttle'
-import { MOTIVATION } from '../../../../../constant/sms'
+import UserService from '../../../../services/soda-manager/user'
+import CommonService from '../../../../services/common'
+import Throttle from '../../../../components/throttle'
+import { MOTIVATION } from '../../../../constant/sms'
 
 import styles from '../index.pcss'
 
@@ -129,7 +129,7 @@ class Detial extends Component {
       this.setState({
         loading: false
       })
-      this.props.history.push(`/soda/business/account/edit/${id}?type=cash&isSub=true`)
+      this.props.history.push(`/soda/account/edit/${id}?type=cash&isSub=true`)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')

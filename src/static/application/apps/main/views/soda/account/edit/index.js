@@ -6,12 +6,12 @@ import { Tabs, Modal, message } from 'antd'
 const TabPane = Tabs.TabPane
 const confirm = Modal.confirm
 
-import UserService from '../../../../../services/soda-manager/user'
+import UserService from '../../../../services/soda-manager/user'
 
-import Breadcrumb from '../../../../../components/layout/breadcrumb'
+import Breadcrumb from '../../../../components/layout/breadcrumb'
 import Detail from './detail'
 import Pay from './pay'
-import CASH_ACCOUNT from '../../../../../constant/cash-account'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
 
 import styles from '../index.pcss'
 
@@ -19,14 +19,11 @@ const id = querystring.parse(window.location.search.slice(1)).parentId
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '账号管理',
   },
   {
     title: '个人信息',
-    url: '/soda/business/account'
+    url: '/PATHNAME/account'
   },
   {
     title: '修改'
@@ -35,14 +32,11 @@ const breadItems = [
 
 const subEditBreadItems = [
   {
-    title: '苏打生活',
-  },
-  {
     title: '账号管理',
   },
   {
     title: '下级运营商',
-    url: `/soda/business/account/sub`
+    url: `/PATHNAME/account/sub`
   },
   {
     title: '修改'
@@ -51,14 +45,11 @@ const subEditBreadItems = [
 
 const subAddBreadItems = [
   {
-    title: '苏打生活',
-  },
-  {
     title: '账号管理',
   },
   {
     title: '下级运营商',
-    url: `/soda/business/account/sub`
+    url: `/PATHNAME/account/sub`
   },
   {
     title: '新增运营商'
@@ -67,11 +58,8 @@ const subAddBreadItems = [
 
 const settlementBreadItems = [
   {
-    title: '苏打生活',
-  },
-  {
     title: '结算查询',
-    url: '/soda/business/bill'
+    url: '/PATHNAME/business/bill'
   },
   {
     title: '修改',
@@ -88,7 +76,7 @@ class Bread extends Component {
     isSub ? subEditBreadItems : 
     !!redirectUrl ? settlementBreadItems : breadItems
 
-    return <Breadcrumb items={items} />
+    return <Breadcrumb items={items} location={this.props.location} />
   }
 }
 
@@ -171,7 +159,7 @@ class App extends Component {
     detail = { ...detail, cashAccount }
 
     return <div>
-      <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} />
+      <Bread isAdd={isAdd} isSub={isSub} redirectUrl={redirectUrl} location={this.props.location}/>
       <Tabs
         activeKey={activeKey}
         onChange={this.changeTab.bind(this)}>

@@ -14,14 +14,14 @@ const createForm = Form.create
 const RadioGroup = Radio.Group
 const confirm = Modal.confirm
 
-import { isProduction } from '../../../../../utils/debug'
-import UserService from '../../../../../services/soda-manager/user'
-import CommonService from '../../../../../services/common'
-import BusinessService from '../../../../../services/soda-manager/business'
-import Throttle from '../../../../../components/throttle'
+import { isProduction } from '../../../../utils/debug'
+import UserService from '../../../../services/soda-manager/user'
+import CommonService from '../../../../services/common'
+import BusinessService from '../../../../services/soda-manager/business'
+import Throttle from '../../../../components/throttle'
 
-import CASH_ACCOUNT from '../../../../../constant/cash-account'
-import { MOTIVATION } from '../../../../../constant/sms'
+import CASH_ACCOUNT from '../../../../constant/cash-account'
+import { MOTIVATION } from '../../../../constant/sms'
 
 import styles from '../index.pcss'
 const DEFAULT_URL = isProduction ? 'http://m.sodalife.xyz' : 'http://m.sodalife.club'
@@ -324,9 +324,9 @@ class Pay extends Component {
         return this.props.history.push(redirectUrl)
       }
       if (isSub) {
-        return this.props.history.push(`/soda/business/account/sub`)
+        return this.props.history.push(`/soda/account/sub`)
       }
-      return this.props.history.push(`/soda/business/account`)
+      return this.props.history.push(`/soda/account`)
     }).catch((err) => {
       this.setState({ loading: false })
       this.props.form.setFieldsValue({ smsCode: '' })

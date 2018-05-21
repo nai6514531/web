@@ -13,15 +13,13 @@ import Breadcrumb from '../../../../components/layout/breadcrumb'
 import { Element } from '../../../../components/element'
 import { transformUrl, toQueryString } from '../../../../utils'
 import TICKET from '../../../../constant/ticket'
+import DEVICE from '../../../../constant/device'
 import USER from '../../../../constant/user'
 import DatePicker from '../../../../components/date-picker'
 
 import styles from '../../../../assets/css/search-bar.pcss'
 
 const breadItems = [
-  {
-    title: '苏打生活'
-  },
   {
     title: '消费查询'
   }
@@ -89,8 +87,17 @@ class Consume extends Component {
       {
         title: '类型',
         width: 50,
+        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0,
         render: (text, record) => {
-          return op(record).get('snapshot.modes.0.name')
+          let names = (op(record).get('snapshot.modes') || []).map((mode) => {
+            return mode.name
+          })
+          return {
+            children: <span>{names.join('/')}</span>,
+            props: {
+              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0
+            }
+          }
         }
       },
       {
@@ -123,16 +130,17 @@ class Consume extends Component {
         width: 100,
         render: (text, record, index) => {
           let suffix
-          let { user } = this.props
+          let { user, location: { pathname } } = this.props
           let { status: { value }, paymentId, ticketId, createdAt, timestamp } = record
           let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
           let isICCard = paymentId === TICKET.PAYMENT_TYPE_IS_IC
           let showDetail = isVisible('TICKET_CONSUME:BUTTON:DETAIL')
+          pathname = pathname.split('/')[1]
 
           if (value === TICKET.CONSUME_STATUS_IS_REFUND) {
             suffix = <span style={{color: '#666'}}>已退款</span>
           }
-          if (value === TICKET.CONSUME_STATUS_IS_DEFAULT && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
+          if (!!~[TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_DELIVERED].indexOf(value) && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
             if (!isBusiness || moment(createdAt).isSame(timestamp, 'day') && isBusiness) {
               suffix = <span>
                 <Popconfirm title='确认退款吗?' onConfirm={this.refund.bind(this, ticketId)} >
@@ -143,7 +151,7 @@ class Consume extends Component {
           }
           return(
             <span>
-              { showDetail ? <Link to={`/soda/consume/${record.ticketId}`}>详情</Link> : null }
+              { showDetail ? <Link to={`/${pathname}/consume/${record.ticketId}`}>详情</Link> : null }
               { showDetail ? (!isICCard && !!suffix ? ' | ' : null) : null}
               { !showDetail && (isICCard || !suffix) ? '-' : null }
               { !isICCard ? suffix : null }
@@ -193,13 +201,21 @@ class Consume extends Component {
     this.fetch(this.search)
   }
   fetch = (url) => {
-    let { user } = this.props
+    let { user, location: { pathname } } = this.props
+    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT] : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT]
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
+      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
+
     this.props.dispatch({
       type: 'consume/list',
       payload: {
-        data: { ...url, status: status.join(',')}
+        data: { 
+          ...url, 
+          status: (status || []).join(','),
+          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        }
       }
     })
   }
@@ -209,9 +225,13 @@ class Consume extends Component {
   }
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
-    let { user } = this.props
+    let { user, location: { pathname } } = this.props
+    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT] : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT]
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
+      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
+
     if(!startAt || !endAt) {
       message.info('请选择日期')
       return
@@ -223,7 +243,11 @@ class Consume extends Component {
     this.props.dispatch({
       type: 'consume/export',
       payload: {
-        data: { ...this.search, status: status.join(',')}
+        data: { 
+          ...this.search, 
+          status: (status || []).join(','),
+          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        }
       }
     })
   }
@@ -233,17 +257,23 @@ class Consume extends Component {
     })
   }
   refund = (id) => {
+    let { location: { pathname } } = this.props
+
     this.props.dispatch({
       type: 'consume/refund',
       payload: {
         id: id,
-        data: { ...this.search }
+        type: !!~pathname.indexOf('soda-drinking') ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        data: { 
+          ...this.search,
+        }
       }
     })
   }
   render() {
     const { consume: { date, data: { objects, pagination }, key, visible, exportUrl }, loading, isVisible } = this.props
     pagination && (pagination.showSizeChanger = true)
+
     return(
       <div>
         <Breadcrumb items={breadItems} />

@@ -3,11 +3,11 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row, Select } from 'antd'
 import { connect } from 'dva'
-import DataTable from '../../../components/data-table/'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../utils/'
+import DataTable from '../../../../components/data-table/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import { transformUrl, toQueryString } from '../../../../utils/'
 import PasswordModal from './passwordModal.js'
-import styles from '../../../assets/css/search-bar.pcss'
+import styles from '../../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
 const FormItem = Form.Item
@@ -17,9 +17,6 @@ const formItemLayout = {
   wrapperCol: { span: 10 },
 }
 const breadItems = [
-  {
-    title: '苏打生活'
-  },
   {
     title: '账号管理'
   },
@@ -70,10 +67,11 @@ class User extends Component {
         title: '操作',
         key: 'operation',
         render: (text, record, index) => {
+          let { pathname } = this.props.location
           return (
             <span>
               <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
-              <Link to={`/admin/settings/staff/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
+              <Link to={`${pathname}/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
               {
                 record.status === 0
                 ? <Popconfirm title='确定要拉黑该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 1) } >
@@ -164,10 +162,12 @@ class User extends Component {
     this.fetch(url)
   }
   render() {
-    const { form: { getFieldDecorator }, common: { search }, user: { data: { objects, pagination }, key, visible, roleData }, loading  } = this.props
+    let { form: { getFieldDecorator }, common: { search }, user: { data: { objects, pagination }, key, visible, roleData }, loading, location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
+
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={breadItems} location={this.props.location} />
         <Input
           placeholder='请输入员工姓名搜索'
           className={styles.input}
@@ -211,7 +211,7 @@ class User extends Component {
           搜索
         </Button>
         <Link
-          to={`/admin/settings/staff/new`}>
+          to={`/${pathname}/account/staff/new`}>
           <Button
             type='primary'
             className={styles.button}>
