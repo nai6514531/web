@@ -1,6 +1,6 @@
-import { message } from 'antd'
-import sodaService from '../../../../services/soda/index.js'
-import { cloneDeep } from 'lodash'
+import { message } from 'antd';
+import { cloneDeep } from 'lodash';
+import sodaService from '../../../../services/soda/index.js';
 
 const dict = {
   1: [
