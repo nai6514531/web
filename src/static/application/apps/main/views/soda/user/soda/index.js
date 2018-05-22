@@ -1,21 +1,19 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
-import { Link } from 'react-router-dom'
-import { connect } from 'dva'
-import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popconfirm } from 'antd'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
-import { transformUrl, toQueryString } from '../../../../utils/'
-import styles from './index.pcss'
-import searchStyles from '../../../../assets/css/search-bar.pcss'
-import { trim } from 'lodash'
-import md5 from 'md5'
-import moment from 'moment'
+import { Form, Button, Avatar, Row, Col, Card, message, Modal, Spin, Input, Popconfirm } from 'antd';
+import { transformUrl, toQueryString } from '../../../../utils/';
+import { InputClear } from '../../../../components/form/input';
+import { Link } from 'react-router-dom';
+import { render } from 'react-dom';
+import { connect } from 'dva';
+import { trim } from 'lodash';
+import React, { Component } from 'react';
+import Breadcrumb from '../../../../components/layout/breadcrumb/';
+import searchStyles from '../../../../assets/css/search-bar.pcss';
+import styles from './index.pcss';
+import moment from 'moment';
+import md5 from 'md5';
+import walletService from '../../../../services/soda/wallet';
 
-import { InputClear } from '../../../../components/form/input'
-
-import walletService from '../../../../services/soda/wallet'
 const confirm = Modal.confirm
-
 const breadItems = [
   {
     title: '苏打生活'
@@ -94,6 +92,14 @@ class Customer extends Component {
   resetValue(mobile){
     this.props.dispatch({
       type: 'sodaUser/resetValue',
+      payload: {
+        data: mobile
+      }
+    })
+  }
+  resetBonus(mobile){
+    this.props.dispatch({
+      type: 'sodaUser/resetBonus',
       payload: {
         data: mobile
       }
@@ -197,8 +203,13 @@ class Customer extends Component {
                   <Link to={`/soda/user/${data.mobile}/chipcard`}>明细</Link></div>
                   <div>
                     <span className={styles.title}>鼓励金余额:</span>
-                    <span className={styles.description}>{ (data.bonusCount && data.bonusCount >= 0) ? (data.bonusCount / 100).toFixed(2) : '-'}</span>
+                    <span className={styles.description}>{ (data.bonusCount / 100).toFixed(2) }</span>
                     <Link to={`/soda/user/${data.mobile}/bonus`}>明细</Link>
+                    <span className={styles.resetValue}>
+                    <Popconfirm title={`确认将用户 ${data.mobile} 鼓励金清零吗?`} onConfirm={ this.resetBonus.bind(this, data.mobile) } >
+                      <Button type='danger' size='small'>清零</Button>
+                    </Popconfirm>
+                  </span>
                   </div>
                   <div><span className={styles.title}>常用服务地点:</span>{data.recentAddress || '-'}</div>
                   <div><span className={styles.title}>最近订单:</span><span className={styles.description}>{data.lastTicketResume || '-'}</span></div>

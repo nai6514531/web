@@ -49,5 +49,8 @@ const sodaService = {
   resetWallet: (mobile) => {
     return request.put(`/soda/wallets/${mobile}/reset`)
   },
+  resetBonus: (mobile) => {
+    return request.put(`/soda/bonus/${mobile}/reset`)
+  },
 }
 export default sodaService

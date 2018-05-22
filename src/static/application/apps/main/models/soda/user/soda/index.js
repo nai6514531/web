@@ -102,6 +102,20 @@ export default {
       } else {
         message.error(result.message)
       }
+    },
+    *resetBonus({ payload }, { call, put }) {
+      const result = yield call(sodaService.resetBonus, payload.data )
+      if(result.status == 'OK') {
+        message.success('鼓励金清零成功')
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.data
+          }
+        })
+      } else {
+        message.error(result.message)
+      }
     }
   }
 }
