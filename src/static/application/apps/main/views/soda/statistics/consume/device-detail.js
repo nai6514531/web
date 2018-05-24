@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
+import op from 'object-path'
 import { Button, Row, message } from 'antd'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
@@ -51,16 +52,9 @@ class DayDeviceConsume extends Component {
         key: 'key'
       },
       {
-        title: '编号/楼道信息',
+        title: '编号/服务地点',
         render: (text, record, index) => {
-          if(record.totalMode1 || record.totalMode2 || record.totalMode3 || record.totalMode4) {
-            return (
-             <span><Link to={`${record.deviceSerial}`}>{record.deviceSerial || '-'}</Link>/{record.device.address || '-'}</span>
-            )
-          }
-          return (
-            `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
-          )
+          return `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
         },
       },
       {
@@ -81,9 +75,7 @@ class DayDeviceConsume extends Component {
       {
         title: '洗衣类型',
         render: (text, record) => {
-          return (
-            record.device[dict[record.deviceMode]]
-          )
+          return op(record).get('snapshot.modes.0.name')
         }
       },
       {

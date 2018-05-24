@@ -1,7 +1,11 @@
 import { message } from 'antd'
+import { cloneDeep } from 'lodash'
+import op from 'object-path'
+
 import sodaService from '../../../../services/soda/index.js'
 import dict from '../../../../utils/dict.js'
-import { cloneDeep } from 'lodash'
+import DEVICE from '../../../../constant/device'
+
 
 const model = {
   data: null,
@@ -54,7 +58,7 @@ export default {
         if(object) {
           const deviceInfo = object.device
           result.data.recentAddress = deviceInfo.address
-          result.data.lastTicketResume = `${dict.app[object.feature] || '-'}-${deviceInfo[dict.device[object.deviceMode]] || '-'}${deviceInfo.serialNumber || '-'}-${(object.value / 100).toFixed(2)}元（密码:${object.token || '-'}）`
+          result.data.lastTicketResume = `${DEVICE.FEATURE[object.feature] + '业务'}-${op(object).get('snapshot.modes.0.name') || '-'}-${object.serial || '-'}-${(object.value / 100).toFixed(2)}元（密码:${object.token || '-'}）`
           yield put({ type: 'updateData', payload: { data: result.data } })
         }
       } else {

@@ -128,6 +128,7 @@ class Customer extends Component {
   }
   render() {
     const { sodaUser: { data, key, visible }, loading, form: { getFieldDecorator } } = this.props
+
     return(
       <div>
         <Breadcrumb items={breadItems} />

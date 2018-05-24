@@ -98,6 +98,7 @@ class Edit extends Component {
           type: 0
         }
       },
+      token: '',
       deviceTypes: [],
       schools: [],
       serviceAddresses: [],
@@ -301,6 +302,33 @@ class Edit extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  resetTokenConfirm() {
+    confirm({
+      title: '重置验证码',
+      content: `获取重置验证码后，如未将此验证码输入设备验证，将造成设备无法使用。是否确认获取？`,
+      iconType: 'exclamation-circle',
+      className: `${styles.confirmModal}`,
+      onOk: () => {
+        this.resetToken()
+      }
+    })
+  }
+  resetToken() {
+    let { device: { serial }, loading } = this.state
+    if (loading) {
+      return
+    }
+    this.setState({ loading: true })
+    DeviceService.resetToken({ serial: serial }).then((res) => {
+      if (res.status !== 'OK') {
+        throw new Error(res.message)
+      }
+      this.setState({ loading: false, token: res.data })
+    }).catch((err) => {
+      this.setState({ loading: false })
+      message.error(err.message || '服务器异常，刷新重试')
+    })
+  }
   changeFeatureType(e) {
     let type = e.target.value
     this.setState({ activeFeatureType: type })
@@ -349,8 +377,8 @@ class Edit extends Component {
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { 
-      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeAddressId, activeSchoolId, schools,
-      device: { id, serial, feature: { type } } 
+      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeAddressId, activeSchoolId, schools, token,
+      device: { id, serial, feature: { type }, limit } 
     } = this.state
     let isAdd = this.isAdd
     // 当前选择学校下的服务地点
@@ -479,6 +507,27 @@ class Edit extends Component {
               key={mode.id}
               form={this.props.form} />
             }) : null
+          }
+          {
+            !isAdd ? <FormItem
+              {...formItemLayout}
+              label="重置验证码">
+              { 
+                op(limit).get('password.isResettable') ? 
+                <div>
+                  <span>支持</span>
+                  <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetTokenConfirm.bind(this)}>获取</Button>
+                </div> : 
+                <span>不支持</span>
+              }
+            </FormItem> : null
+          }
+          { 
+            token ?  <FormItem
+              {...formItemLayout}
+              label="验证码">
+              <span>{token}</span>
+            </FormItem> : null
           }
           <FormItem {...tailFormItemLayout}>
             <Button style={{ marginRight: 10 }} type="ghost" onClick={this.cancel.bind(this)}>取消</Button>

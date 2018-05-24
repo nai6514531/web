@@ -168,7 +168,7 @@ class Verify extends Component {
               rules: [
                 { 
                   required: true, 
-                  message: '必填',
+                  message: '请输入短信验证码',
                 },
               ],
               initialValue: '',

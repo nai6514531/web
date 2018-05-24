@@ -98,7 +98,7 @@ class App extends Component {
         dataIndex: 'id'
       },
       {
-        title: '设备编号/楼道信息',
+        title: '设备编号/服务地点',
         dataIndex: 'device',
         render: (device) => {
           return `${device.serial || '-' } / ${device.address || '-'}`

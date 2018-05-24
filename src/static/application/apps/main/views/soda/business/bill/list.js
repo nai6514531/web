@@ -275,7 +275,7 @@ class App extends Component {
         <DatePicker
           placeholder="开始日期"
           format="YYYY-MM-DD"
-          style={{ width: 120, marginRight: 5, marginBottom: 10 }}
+          style={{ width: 120, marginRight: 5, marginBottom: 10, verticalAlign: 'bottom' }}
           value={!!startAt ? moment(startAt) : null}
           disabledDate={this.disabledStartDate.bind(this)}
           onChange={this.onStartChange.bind(this)}
@@ -285,7 +285,7 @@ class App extends Component {
         <DatePicker
           placeholder="结束日期"
           format="YYYY-MM-DD"
-          style={{ width: 120, marginLeft: 5, marginRight: 10, marginBottom: 10 }}
+          style={{ width: 120, marginLeft: 5, marginRight: 10, marginBottom: 10, verticalAlign: 'bottom' }}
           value={!!endAt ? moment(endAt) : null}
           open={endOpen}
           disabledDate={this.disabledEndDate.bind(this)}

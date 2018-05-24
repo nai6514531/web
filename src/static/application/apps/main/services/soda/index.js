@@ -1,18 +1,10 @@
 import request from '../../utils/request'
 const sodaService = {
-  crmRefund: (id) => {
-    return request.post(`/soda/tickets/${id}/crm/refund`)
+  refund: (id) => {
+    return request.post(`/soda/tickets/${id}/refund`)
   },
-  crmExport: (data) => {
-    let url = `/soda/consumptions/excel/crm/export?&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&userId=${data.userId || ''}`
-    return request.get(url)
-  },
-  bizRefund: (id) => {
-    return request.post(`/soda/tickets/${id}/biz/refund`)
-  },
-  bizexport: (data) => {
-    let url = `/soda/consumptions/excel/biz/export?&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&status=${data.status || ''}`
-    return request.get(url)
+  export: (data) => {
+    return request.get(`/soda/consumptions/excel/export`, {params: data})
   },
   ticketsList: (data) => {
     let url = `/soda/tickets?offset=${data.offset || 0 }&limit=${data.limit || 10 }&startAt=${data.startAt || ''}&endAt=${data.endAt || ''}&keywords=${data.keywords || ''}&deviceSerial=${data.deviceSerial || ''}&customerMobile=${data.customerMobile || ''}&ownerId=${data.userId || ''}&status=${data.status || ''}`

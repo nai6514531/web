@@ -43,7 +43,7 @@ class DeviceSearchByDay extends Component {
         },
       },
       {
-        title: '编号/楼道信息',
+        title: '编号/服务地点',
         render: (text, record, index) => {
           return (
             `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`

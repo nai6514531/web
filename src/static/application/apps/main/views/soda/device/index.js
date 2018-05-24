@@ -48,11 +48,19 @@ class Device extends Component {
         }
       },
       {
-        title: '运营商名称',
+        title: '运营商名称/账号',
         width: 150,
         render: (record) => {
           let { user } = record
-          return _.isEmpty(user) ? '-' : `${user.name}-${user.mobile}`
+          return _.isEmpty(user) ? '-' : `${user.name}-${user.account}`
+        }
+      },
+      {
+        title: '服务电话',
+        width: 150,
+        render: (record) => {
+          let { user } = record
+          return _.isEmpty(user) ? '-' : `${user.mobile}`
         }
       },
       {
