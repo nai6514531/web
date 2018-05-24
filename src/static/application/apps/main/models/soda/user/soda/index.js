@@ -38,6 +38,7 @@ export default {
       const result = yield call(sodaService.userDetail, data)
       const ticket = yield call(sodaService.ticketsList,{ customerMobile:data, limit: 1 })
       const chipcards = yield call(sodaService.chipcards, data)
+      const bonus = yield call(sodaService.bonus, data)
 
       if(result.status == 'OK') {
         result.data.account.map(value => {
@@ -73,6 +74,15 @@ export default {
           message.error(chipcards.message)
         }
       }
+
+      if(bonus.status == 'OK') {
+        result.data.bonusCount = bonus.data.value
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else {
+        if(bonus.status !== NOT_FOUND_ENTITY) {
+          message.error(bonus.message)
+        }
+      }
     },
     *updatePassword({ payload: { data: { mobile, password } }}, { call, put }) {
       const result = yield call(sodaService.updatePassword, mobile, { password })
@@ -87,6 +97,20 @@ export default {
       const result = yield call(sodaService.resetWallet, payload.data )
       if(result.status == 'OK') {
         message.success('钱包清零成功')
+        yield put({
+          type: 'list',
+          payload: {
+            data: payload.data
+          }
+        })
+      } else {
+        message.error(result.message)
+      }
+    },
+    *resetBonus({ payload }, { call, put }) {
+      const result = yield call(sodaService.resetBonus, payload.data )
+      if(result.status == 'OK') {
+        message.success('鼓励金清零成功')
         yield put({
           type: 'list',
           payload: {

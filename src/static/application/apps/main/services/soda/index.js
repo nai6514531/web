@@ -1,4 +1,4 @@
-import request from '../../utils/request'
+import request from '../../utils/request';
 const sodaService = {
   refund: (id) => {
     return request.post(`/soda/tickets/${id}/refund`)
@@ -25,6 +25,13 @@ const sodaService = {
     const { mobile, url: { offset, limit, startAt, endAt, action } } =  data
     return request.get(`/soda/chipcard-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}`)
   },
+  bonus: (mobile) => {
+    return request.get(`/soda/bonus/${mobile}`)
+  },
+  bonusBillsList: (data) => {
+    const { mobile, url: { offset, limit, startAt, endAt, action, type } } = data
+    return request.get(`/soda/bonus-bills?mobile=${mobile}&limit=${limit || 10 }&offset=${offset || 0}&startAt=${startAt || ''}&endAt=${endAt || ''}&action=${action || ''}&type=${type || ''}`)
+  },
   userDetail: (mobile) => {
     return request.get(`/soda/users/${mobile}`)
   },
@@ -33,6 +40,9 @@ const sodaService = {
   },
   resetWallet: (mobile) => {
     return request.put(`/soda/wallets/${mobile}/reset`)
+  },
+  resetBonus: (mobile) => {
+    return request.put(`/soda/bonus/${mobile}/reset`)
   },
 }
 export default sodaService
