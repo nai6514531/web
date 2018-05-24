@@ -14,7 +14,22 @@ const model = {
   currentId: '',
   record: {}
 }
-
+const genCascader = function(data) {
+  function findParentId(pId) {
+    let result = []
+    data.forEach(d1 => {
+      if(d1.id === pId){
+        result.push(pId)
+        result = result.concat(findParentId(d1.parentId))
+      }
+    })
+    return result.reverse()
+  }
+  data.forEach(d1 => {
+    d1.cascader = findParentId(d1.parentId)
+  })
+  return data
+}
 export default {
   namespace: 'adminRole',
   state: cloneDeep(model),
@@ -40,7 +55,7 @@ export default {
     *list({ payload }, { call, put }) {
       const result = yield call(roleService.all)
       if(result.status == 'OK') {
-        yield put({ type: 'updateData', payload: { data: arrayToTree(result.data.objects) } })
+        yield put({ type: 'updateData', payload: { data: arrayToTree(genCascader(result.data.objects)) } })
       } else {
         result.message && message.error(result.message)
       }
