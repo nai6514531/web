@@ -201,14 +201,17 @@ class Customer extends Component {
                     </span>
                   </div>
                   <div>
-                    <span className={styles.title}>IC卡余额:</span><span className={styles.description}>
+                    <span className={styles.title}>IC卡余额:</span>
+                    <span className={styles.description}>
                       { (data.chipcardCount && data.chipcardCount >= 0) ? (data.chipcardCount / 100).toFixed(2) : '-'}
                     </span>
                     <Link to={`/soda/user/${data.mobile}/chipcard`}>明细</Link>
                   </div>
                   <div>
                     <span className={styles.title}>鼓励金余额:</span>
-                    <span className={styles.description}>{ (data.bonusCount / 100).toFixed(2) }</span>
+                    <span className={styles.description}>
+                    { (data.bonusCount && data.bonusCount >= 0) ? (data.bonusCount / 100).toFixed(2) : '0'}
+                    </span>
                     <Link to={`/soda/user/${data.mobile}/bonus`}>明细</Link>
                     <span className={styles.resetValue}>
                     <Popconfirm title={`确认将用户 ${data.mobile} 鼓励金清零吗?`} onConfirm={ this.resetBonus.bind(this, data.mobile) } >

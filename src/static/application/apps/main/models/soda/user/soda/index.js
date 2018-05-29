@@ -65,6 +65,13 @@ export default {
       } else {
         message.error(ticket.message)
       }
+      
+      if(bonus.status == 'OK') {
+        result.data.bonusCount = bonus.data.value
+        yield put({ type: 'updateData', payload: { data: result.data } })
+      } else if (bonus.status !== 'NOT_FOUND_ENTITY') {
+        message.error(bonus.message)
+      }
 
       if(chipcards.status == 'OK') {
         result.data.chipcardCount = chipcards.data.value
@@ -72,15 +79,6 @@ export default {
       } else {
         if(chipcards.status !== NOT_FOUND_ENTITY) {
           message.error(chipcards.message)
-        }
-      }
-
-      if(bonus.status == 'OK') {
-        result.data.bonusCount = bonus.data.value
-        yield put({ type: 'updateData', payload: { data: result.data } })
-      } else {
-        if(bonus.status !== NOT_FOUND_ENTITY) {
-          message.error(bonus.message)
         }
       }
     },

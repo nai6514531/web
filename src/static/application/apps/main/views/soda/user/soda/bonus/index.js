@@ -38,6 +38,11 @@ class Bonus extends Component {
     ]
     this.columns = [
       {
+        title: '订单号',
+        dataIndex: 'billId',
+        key: 'billId'
+      },
+      {
         title: '收入/支出',
         dataIndex: 'action',
         key: 'action',
@@ -77,10 +82,9 @@ class Bonus extends Component {
         dataIndex: 'time',
         key: 'time',
         render: (text, record) => {
-          return`${moment(record.time).format('YYYY-MM-DD HH:mm:ss')}`
+          return `${moment(record.time).format('YYYY-MM-DD HH:mm:ss')}`
         }
-      },
-      { title: '订单号', dataIndex: 'billId',key: 'billId' },
+      }
     ]
   }
   componentDidMount() {
