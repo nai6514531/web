@@ -24,7 +24,7 @@ class WalletLog extends Component {
         title: '用户查询'
       },
       {
-        title: '提现记录'
+        title: '提现查询'
       }
     ]
     this.columns = [
