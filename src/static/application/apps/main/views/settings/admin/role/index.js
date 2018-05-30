@@ -101,6 +101,19 @@ class RoleModal extends Component {
               <Input />
             )}
           </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label='角色标识'
+          >
+            {getFieldDecorator('roleKey', {
+              rules: [{
+                required: true, message: '请输入角色标识!',
+              }],
+              initialValue: record.roleKey
+            })(
+              <Input />
+            )}
+          </FormItem>
         </Form>
       </Modal>
     )
@@ -123,6 +136,13 @@ class Role extends Component {
         title: '角色名称',
         dataIndex: 'name',
         key: 'name',
+        className: 'td-left',
+        width: 300
+      },
+      {
+        title: '角色标识',
+        dataIndex: 'roleKey',
+        key: 'roleKey',
         className: 'td-left',
         width: 300
       },

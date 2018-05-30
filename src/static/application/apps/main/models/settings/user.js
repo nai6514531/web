@@ -116,7 +116,8 @@ export default {
       if(result.status == 'OK') {
         const roleData = remove(result.data.objects, function(obj) {
           // 过滤运营商角色
-          return obj.id !== 2
+          const { roleKey } = obj
+          return roleKey !== 'MERCHANT' && roleKey !== 'DRINKING_MERCHANT' && roleKey !== 'DRINKING&WASH_MERCHANT'
         })
         yield put({
           type: 'updateData',
