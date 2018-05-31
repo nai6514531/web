@@ -20,7 +20,7 @@ class BatchTable extends Component {
           return `${id}`
         }
       }, {
-        title: '编号',
+        title: '设备编号',
         dataIndex: 'serial',
         render: (serial, record) => {
           return `${serial}`
@@ -106,8 +106,7 @@ class BatchTable extends Component {
   render() {
     let { devices } = this.props
     let columns = this.initialColumns()
-    console.log('devices----', devices)
-
+    
     return (<Table
       bordered
       scroll={{ x: 980 }}

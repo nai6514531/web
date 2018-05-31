@@ -82,7 +82,7 @@ export default {
         message.success('退款成功')
         yield put({
           type: 'list',
-          payload: { data }
+          payload: { data: { ...data, type: type } }
         })
       } else {
         message.error(result.message)

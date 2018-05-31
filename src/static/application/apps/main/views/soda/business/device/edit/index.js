@@ -522,7 +522,7 @@ class Edit extends Component {
           }
           <FormItem
             {...formItemLayout}
-            label="设备关联">
+            label="关联设备类型">
             {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },

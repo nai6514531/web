@@ -86,10 +86,27 @@ class App extends Component {
     }
     this.columns = [
       {
-        title: '编号',
+        title: '设备编号',
         dataIndex: 'serial',
         render: (serial) => {
           return <Link to={`/soda-drinking/business/device/${serial}` + this.props.location.search}>{serial}</Link>
+        }
+      }, {
+        title: '关联设备类型',
+        dataIndex: 'feature',
+        render: (feature) => {
+          let { deviceTypes } = this.state
+          deviceTypes = _.findWhere(deviceTypes || [], { id : op(feature).get('id') }) || {}
+          let reference = _.findWhere(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
+          return op(reference).get('name') || '-'
+        }
+      }, {
+        title: '学校',
+        dataIndex: 'serviceAddress.school',
+        render: (school, record) => {
+          let { serviceAddresses } = this.state
+          let address = _.findWhere(serviceAddresses || [], { id : op(record).get('serviceAddress.id') }) || {}
+          return op(address).get('school.name') || '-'
         }
       }, {
         title: '服务地点',
@@ -100,22 +117,13 @@ class App extends Component {
           return op(address).get('school.address') || '-'
         }
       }, {
-        title: '状态',
+        title: '运行状态',
         dataIndex: 'status',
         render: (status) => {
           let { value } = status
           return <span className={cx({ [`${styles.hightlight}`]: !!~[...DEVICE.STATUS_IS_FREE].indexOf(value) })}>
             {op(status).get('description') || '-'}
           </span>
-        }
-      }, {
-        title: '设备关联',
-        dataIndex: 'feature',
-        render: (feature) => {
-          let { deviceTypes } = this.state
-          deviceTypes = _.findWhere(deviceTypes || [], { id : op(feature).get('id') }) || {}
-          let reference = _.findWhere(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
-          return op(reference).get('name') || '-'
         }
       }, {
         title: '操作',
@@ -483,12 +491,12 @@ class App extends Component {
         <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择设备关联"
+          placeholder="请选择关联设备类型"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={+referenceId === 0 ? '' : +referenceId}
         >
-          <Option value="">请选择设备关联</Option>
+          <Option value="">请选择关联设备类型</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>

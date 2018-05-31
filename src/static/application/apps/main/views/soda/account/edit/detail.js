@@ -184,7 +184,7 @@ class Detial extends Component {
         startedAt: +new Date(),
         smsLoading: false
       })
-      // this.setState({ smsLoading: false })
+      this.setState({ smsLoading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }

@@ -126,14 +126,14 @@ class DeviceDetail extends Component {
               </div>
               <div className={pageStyles['sub-card']}>
                 <div className={pageStyles['card-item']}>
-                  <div><span className={pageStyles.title}>模块号:</span>{data.serial || '-'}</div>
+                  <div><span className={pageStyles.title}>设备编号:</span>{data.serial || '-'}</div>
+                  <div><span className={pageStyles.title}>关联设备类型:</span>{op(reference).get('name') || '-'}</div>
                   <div>
                     <span className={pageStyles.title}>价格:</span>
                     {(modes || []).map((mode) => {
                       return [`${mode.name}`, `${conversionUnit(mode.value)}${suffix}`].join(' ')
                     }).join(' / ')}
                   </div>
-                  <div><span className={pageStyles.title}>设备关联:</span>{op(reference).get('name') || '-'}</div>
                   <div>
                     <span className={pageStyles.title}>服务地点:</span>
                     { _.isEmpty(op(data).get('serviceAddress')) ? '-' :

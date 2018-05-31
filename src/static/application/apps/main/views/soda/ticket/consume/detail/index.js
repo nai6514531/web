@@ -4,6 +4,7 @@ import { connect } from 'dva'
 import { Row, Col, Spin, Card, Button, Modal } from 'antd'
 import moment from 'moment'
 import op from 'object-path'
+import _ from 'lodash'
 
 import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import dict from '../../../../../utils/dict.js'
@@ -65,8 +66,7 @@ class CrmConsumeDetail extends Component {
   render() {
     const { consumeDetail: { data, parent, authHold }, loading  } = this.props
     let isDrinkingWater = data.feature === DEVICE.FEATURE_IS_DRINKING_WATER
-    console.log(authHold.status)
-    console.log(op(data).get('status.value'))
+
     return(
       <Spin
         tip='加载中...'
@@ -93,11 +93,16 @@ class CrmConsumeDetail extends Component {
                     </div> : op(data).get('status.description') 
                   }
               </div> 
-              <div><span className={pageStyles.title}>模块编号：</span>{data.serial}</div>
+              <div><span className={pageStyles.title}>设备编号：</span>{data.serial}</div>
+              <div><span className={pageStyles.title}>服务地点：</span> 
+                { _.isEmpty(op(data).get('device.serviceAddress')) ? '-' :
+                  _.without([op(data).get('device.serviceAddress.school.province.name'), op(data).get('device.serviceAddress.school.city.name'), op(data).get('device.serviceAddress.school.name'), op(data).get('device.serviceAddress.school.address')], '').join() || '-'
+                }
+              </div>
               <div><span className={pageStyles.title}>消费手机号：</span>{data.mobile}</div>
               { !isDrinkingWater ? <div><span className={pageStyles.title}>消费密码：</span>{data.token}</div> : null }
               <div><span className={pageStyles.title}>消费金额：</span>{conversionUnit(data.value) + '元'}</div>
-              <div><span className={pageStyles.title}>支付方式：</span>{data.payment.name}</div>
+              { !isDrinkingWater ? <div><span className={pageStyles.title}>支付方式：</span>{data.payment.name}</div> : null }
               <div><span className={pageStyles.title}>下单时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm:ss')}</div>
               { 
                 isDrinkingWater ? <div><span className={pageStyles.title}>服务单价</span>

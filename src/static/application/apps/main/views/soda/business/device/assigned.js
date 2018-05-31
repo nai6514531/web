@@ -60,9 +60,12 @@ class Assigned extends Component {
   }
   assigned() {
     let { serials } = this.props
-    let { user, current } = this.state
+    let { user, current, loading } = this.state
+   
+    if (loading) {
+      return
+    }
     this.setState({ loading: true })
-
     DeviceService.assigned({ 
       serials: serials, 
       user: { 
@@ -112,16 +115,22 @@ class Assigned extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
+  toggleVisible(value) {
+    this.props.toggleVisible(value)
+    setTimeout(() => {
+      this.setState({ current: 0 })
+    }, 0)
+  }
   render () {
-    let { form: { getFieldDecorator } } = this.props
+    let { form: { getFieldDecorator }, visible } = this.props
     let { user, current, description, loading } = this.state
     let { serials } = this.props
 
     return (<Modal 
-      visible={true}
+      visible={visible}
       maskClosable={false}
       footer={null}
-      onCancel={this.props.toggleVisible}
+      onCancel={this.toggleVisible.bind(this)}
       className={styles.assigned}>
       <Steps current={current} className={styles.step}>
         {
@@ -159,7 +168,7 @@ class Assigned extends Component {
         }
         {
           current === STEPS.length - 1 ?
-          <Button type="primary" onClick={this.props.toggleVisible("SUCCESS")}>完成</Button> : null
+          <Button type="primary" onClick={this.toggleVisible.bind(this, "SUCCESS")}>完成</Button> : null
         }
         {
           current > 0 && current !== STEPS.length - 1 ?

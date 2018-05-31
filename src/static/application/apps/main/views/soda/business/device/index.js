@@ -93,10 +93,27 @@ class App extends Component {
           return _.isEmpty(user) ? '-' : `${user.name}-${user.mobile}`
         }
       }, {
-        title: '编号',
+        title: '设备编号',
         dataIndex: 'serial',
         render: (serial) => {
           return <Link to={`/soda/business/device/${serial}` + this.props.location.search}>{serial}</Link>
+        }
+      }, {
+        title: '关联设备类型',
+        dataIndex: 'feature',
+        render: (feature) => {
+          let { deviceTypes } = this.state
+          deviceTypes = _.findWhere(deviceTypes || [], { id : op(feature).get('id') }) || {}
+          let reference = _.findWhere(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
+          return op(reference).get('name') || '-'
+        }
+      }, {
+        title: '学校',
+        dataIndex: 'serviceAddress.school',
+        render: (school, record) => {
+          let { serviceAddresses } = this.state
+          let address = _.findWhere(serviceAddresses || [], { id : op(record).get('serviceAddress.id') }) || {}
+          return op(address).get('school.name') || '-'
         }
       }, {
         title: '服务地点',
@@ -111,15 +128,6 @@ class App extends Component {
         dataIndex: 'status',
         render: (status) => {
           return op(status).get('description') || '-'
-        }
-      }, {
-        title: '关联设备',
-        dataIndex: 'feature',
-        render: (feature) => {
-          let { deviceTypes } = this.state
-          deviceTypes = _.findWhere(deviceTypes || [], { id : op(feature).get('id') }) || {}
-          let reference = _.findWhere(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
-          return op(reference).get('name') || '-'
         }
       }, {
         title: '更新时间',
@@ -228,6 +236,7 @@ class App extends Component {
     this.setState({ tapActive: tapActive, search: { ...this.state.search, ...search }, pagination: { ...this.state.pagination, ...pagination }, loading: true, selectedRowKeys: [] })
 
     DeviceService.list({
+      deviceTypes: [DEVICE.FEATURE_TYPE_IS_PASSWORD, DEVICE.FEATURE_TYPE_IS_CHARGING, DEVICE.FEATURE_TYPE_IS_GPRS].join(','),
       serviceAddressIds: serviceAddressIds,
       ..._.pick(search, 'keys', 'serials', 'referenceId'), 
       ..._.pick(pagination, 'limit', 'offset'), 
@@ -298,7 +307,9 @@ class App extends Component {
   }
   // 获取设备类型
   getDeviceType() {
-    DeviceService.deviceType().then((res) => {
+    DeviceService.deviceType({
+      deviceTypes: [DEVICE.FEATURE_TYPE_IS_PASSWORD, DEVICE.FEATURE_TYPE_IS_CHARGING, DEVICE.FEATURE_TYPE_IS_GPRS].join(','),
+    }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -475,7 +486,7 @@ class App extends Component {
       }).groupBy((device) => { return op(device).get('feature.id') }).keys().value()
       if (keys.length > 1) {
         return confirm({
-          title: `关联设备类型相同才可批量修改，请检查`
+          title: `设备类型相同才可批量修改，请检查`
         })
       }
       this.props.history.push(`/soda/business/device/edit?isAssigned=${isAssigned}&serials=${serials}`) 
@@ -602,12 +613,12 @@ class App extends Component {
          <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择设备类型"
+          placeholder="请选择关联设备类型"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={+referenceId === 0 ? '' : +referenceId}
         >
-          <Option value="">请选择设备类型</Option>
+          <Option value="">请选择关联设备类型</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>
@@ -668,11 +679,10 @@ class App extends Component {
         onChange={this.handleTableChange.bind(this)}
         loading={loading}
       />
-      { 
-        modalActive === 'ASSIGNED' ? <Assigned 
+      <Assigned
+        visible={modalActive === 'ASSIGNED'}
         toggleVisible={this.toggleAssiginedVisible.bind(this)}
-        serials={selectedRowKeys} /> : null
-      }
+        serials={selectedRowKeys} />
     </div>)
   }
 }

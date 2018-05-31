@@ -438,7 +438,7 @@ class BatchMode extends Component {
       <div className={styles.top}>
         <p>你将对<span className={styles.hightlight}>{count}</span>个设备进行修改,请选择需要修改的项目:</p>
         { !this.isAssigned ? <Checkbox onChange={this.toggleCheckbox.bind(this, 'address')}>服务地点</Checkbox> : null}
-        <Checkbox onChange={this.toggleCheckbox.bind(this, 'reference')}>关联设备服务</Checkbox>
+        <Checkbox onChange={this.toggleCheckbox.bind(this, 'reference')}>关联设备类型</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'name')}>服务名称</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'price')}>价格</Checkbox>
         { true ? null : <Checkbox onChange={this.toggleCheckbox.bind(this, 'duration')}>服务时间</Checkbox> }
@@ -504,7 +504,7 @@ class BatchMode extends Component {
         {
           activeReference ? <FormItem
             {...formItemLayout}
-            label="设备关联">
+            label="关联设备类型">
             {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },

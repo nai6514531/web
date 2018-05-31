@@ -75,10 +75,10 @@ class App extends Component {
     }
     this.columns = [
       {
-        title: '编号',
-        dataIndex: 'serial',
-        render: (serial) => {
-          return `${serial}`
+        title: '设备编号',
+        dataIndex: 'id',
+        render: (id, record) => {
+          return `${record.serial}`
         }
       }, {
         title: '学校',
@@ -97,7 +97,7 @@ class App extends Component {
           return op(address).get('school.address') || '-'
         }
       }, {
-        title: '设备关联',
+        title: '关联设备类型',
         dataIndex: 'feature',
         render: (feature) => {
           let { deviceTypes } = this.state
@@ -217,7 +217,7 @@ class App extends Component {
     })
   }
   getDeviceConfigDetail() {
-    DeviceService.configDetail({ deviceTypes: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER }).then((res) => {
+    DeviceService.configDetail({ deviceType: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -373,12 +373,12 @@ class App extends Component {
         <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择设备关联"
+          placeholder="请选择关联设备类型"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={+referenceId === 0 ? '' : +referenceId}
         >
-          <Option value="">请选择设备关联</Option>
+          <Option value="">请选择关联设备类型</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>
@@ -412,7 +412,7 @@ class App extends Component {
         columns={this.columns}
         scroll={{ x: 980 }}
         style={{ marginTop: 16 }}
-        rowKey={record => record.serial}
+        rowKey={record => record.id}
         dataSource={devices}
         pagination={this.pagination()}
         onChange={this.handleTableChange.bind(this)}

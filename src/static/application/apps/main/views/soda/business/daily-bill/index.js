@@ -14,7 +14,7 @@ import Breadcrumb from '../../../../components/layout/breadcrumb'
 import { Element } from '../../../../components/element'
 
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
-import history from '../../../../utils/history'
+import DrinkingDailyBillsService from '../../../../services/soda-manager/drinking-daily-bills'
 import { conversionUnit } from '../../../../utils/functions'
 
 import BILL from '../../../../constant/bill'
@@ -158,12 +158,35 @@ class App extends Component {
     this.list({search, pagination})
   }
   list({...options}) {
+    let { location: { pathname } } = this.props
+    let isDringking = !!~pathname.indexOf('soda-drinking')
     let search = options.search || {}
     let pagination = options.pagination || {}
     search = {...this.state.search, ...search}
     pagination = {...this.state.pagination, ...pagination}
     this.setState({ searchLoading: true, loading: true, search, pagination })
 
+    if (isDringking) {
+      DrinkingDailyBillsService.list({...search, ..._.pick(pagination, 'limit', 'offset')}).then((res) => {
+        if (res.status !== 'OK') {
+          throw new Error(res.message)
+        }
+        let data = res.data
+        this.setState({
+          bills: data.objects || [],
+          pagination: {
+            ...pagination,
+            total: data.pagination.total
+          },
+          searchLoading: false,
+          loading: false
+        })
+      }).catch((err) => {
+        this.setState({ bills: [], loading: false, searchLoading: false })
+        message.error(err.message || '服务器异常，刷新重试')
+      })
+      return
+    }
     DailyBillsService.list({...search, ..._.pick(pagination, 'limit', 'offset')}).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)

@@ -5,6 +5,7 @@ import op from 'object-path'
 import { Button, Table, Icon, Popconfirm, message } from 'antd'
 
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
+import DrinkingDailyBillsService from '../../../../services/soda-manager/drinking-daily-bills'
 import history from '../../../../utils/history'
 import { conversionUnit } from '../../../../utils/functions'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
@@ -148,11 +149,34 @@ class App extends Component{
     this.list(pagination)
   }
   list(options) {
+    let { location: { pathname } } = this.props
+    let isDringking = !!~pathname.indexOf('soda-drinking')
     let { id } = this.props.match.params
     let pagination = options.pagination || {}
     pagination = _.pick({...this.state.pagination, ...pagination}, 'limit', 'offset')
     this.setState({ loading: true, pagination })
 
+    if (isDringking) {
+      DrinkingDailyBillsService.getTickets({...pagination, id: id }).then((res) => {
+        if (res.status !== 'OK') {
+          throw new Error(res.message)
+        }
+        const data = res.data
+
+        this.setState({
+          list: data.objects || [],
+          pagination: {
+            ...pagination,
+            total: data.pagination.total
+          },
+          loading: false
+        })
+      }).catch((err) => {
+        this.setState({ loading: false })
+        message.error(err.message || '服务器异常，刷新重试')
+      })
+      return
+    }
     DailyBillsService.getTickets({...pagination, id: id }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)

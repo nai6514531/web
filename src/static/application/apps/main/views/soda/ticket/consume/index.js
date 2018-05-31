@@ -24,6 +24,7 @@ const breadItems = [
     title: '消费查询'
   }
 ]
+const SERIAL_MIN_LENGTH = 6
 const { Option } = Select
 
 @Element()
@@ -33,6 +34,7 @@ class Consume extends Component {
     const search = transformUrl(location.search)
     this.search = search
     let { isVisible } = this.props
+
     this.columns = [
       { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       { 
@@ -64,17 +66,22 @@ class Consume extends Component {
             }
           }
         }
-      },
-      { 
+      }, {
+        title: '学校',
+        dataIndex: 'schoolName',
+        render: (schoolName, record) => {
+          return  `${op(record).get('device.serviceAddress.school.name') || '-'}`
+        }
+      }, { 
         title: '服务地点', 
-        dataIndex: 'device.address', 
+        dataIndex: 'device.serviceAddress', 
         key: 'device.address',
         width: 100,
-        render:(address) => {
-          return  `${address || '-'}`
+        render:(serviceAddress, record) => {
+          return  `${op(record).get('device.serviceAddress.school.address') || '-'}`
         }
       },
-      { title: '模块编号', dataIndex: 'serial',key: 'serial', width: 100 },
+      { title: '设备编号', dataIndex: 'serial',key: 'serial', width: 100 },
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
       { title: '消费密码', dataIndex: 'token',key: 'token', width: 100 },
       {
@@ -82,6 +89,13 @@ class Consume extends Component {
         width: 100,
         render:(text, record) => {
           return  `${(record.value/100).toFixed(2)}元`
+        }
+      },
+      {
+        title: '订单状态',
+        width: 100,
+        render:(text, record) => {
+          return  `${record.status.description}`
         }
       },
       {
@@ -187,9 +201,15 @@ class Consume extends Component {
       message.info('请选择日期')
       return
     }
-    if( !customerMobile && !keywords && !deviceSerial ) {
+    if (!customerMobile && !keywords && !deviceSerial ) {
       message.info('请选择筛选条件')
       return
+    }
+    if (deviceSerial && deviceSerial.length < SERIAL_MIN_LENGTH) {
+      return message.error('请输入正确的设备编号')
+    }
+    if (customerMobile && !/^1\d{10}$/.test(customerMobile)) {
+      return message.error('请输入正确的手机号')
     }
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
@@ -298,7 +318,7 @@ class Consume extends Component {
             defaultValue={this.search.customerMobile}
           />
           <InputScan
-            placeholder='模块编号'
+            placeholder='请输入设备编号'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'deviceSerial')}
             onPressEnter={this.searchClick}
