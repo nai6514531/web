@@ -32,7 +32,7 @@ class OperationStatisticsByMonth extends Component {
         return {
           children: <span>合计</span>,
           props: {
-            colSpan: 9
+            colSpan: 12
           }
         }
       },
@@ -156,6 +156,51 @@ class OperationStatisticsByMonth extends Component {
           }
         }
       },
+    },{
+      title: '钱包余额',
+      dataIndex: 'totalWalletValue',
+      width: '100px',
+      key: 'totalWalletValue',
+      render: (value,record,index) => {
+        if (index > 0) {
+          return <span>{ Math.round(value)/100 + "元" }</span>
+        }
+        return {
+          props: {
+            colSpan: 0
+          }
+        }
+       }
+    },{
+      title: '账单总额',
+      dataIndex: 'totalBill',
+      key: 'totalBill',
+      width: '100px',
+      render: (value,record,index) => {
+        if (index > 0) {
+          return <span>{ Math.round(value)/100 + "元" }</span>
+        }
+        return {
+          props: {
+            colSpan: 0
+          }
+        }
+       }
+    },{
+      title: '未结算账单总额',
+      dataIndex: 'totalUnsettledBill',
+      key: 'totalUnsettledBill',
+      width: '100px',
+      render: (value,record,index) => {
+        if (index > 0) {
+          return <span>{ Math.round(value)/100 + "元" }</span>
+        }
+        return {
+          props: {
+            colSpan: 0
+          }
+        }
+       }
     },{
       title: '充值金额',
       dataIndex: 'totalRecharge',
