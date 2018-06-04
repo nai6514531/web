@@ -3,8 +3,8 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Form, Input, Button, Radio, Collapse, Tag } from 'antd'
-import DataTable from '../../../components/data-table/'
-import Breadcrumb from '../../../components/layout/breadcrumb/'
+import DataTable from '../../../../components/data-table/'
+import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import md5 from 'md5'
 
 const FormItem = Form.Item
@@ -134,14 +134,11 @@ class UserEdit extends Component {
     const isEdit = this.props.match.params.id !== 'new'
     const breadItems = [
       {
-        title: '苏打生活'
-      },
-      {
         title: '账号管理'
       },
       {
         title: '员工账号',
-        url: '/admin/settings/staff'
+        url: `/PATHNAME/account/staff`
       },
       {
         title: isEdit ? '编辑账号': '新增账号'
@@ -158,7 +155,7 @@ class UserEdit extends Component {
     })
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={breadItems} location={this.props.location} />
         <Form onSubmit={this.handleSubmit}>
           <FormItem
             {...formItemLayout}

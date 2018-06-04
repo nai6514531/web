@@ -12,10 +12,6 @@ import adminRoleModel from 'bundle-loader?lazy!../../models/settings/admin/role.
 import AdminAssignPermission from 'bundle-loader?lazy!../../views/settings/admin/role/assign-permission.js'
 import adminAssignPermissionModel from 'bundle-loader?lazy!../../models/settings/admin/assign-permission.js'
 
-//普通用户
-
-import Staff from 'bundle-loader?lazy!../../views/settings/staff'
-import StaffEdit from 'bundle-loader?lazy!../../views/settings/staff/edit'
 import userModel from 'bundle-loader?lazy!../../models/settings/user.js'
 
 // import Role from 'bundle-loader?lazy!../../views/settings/role'
@@ -56,9 +52,6 @@ export default function (app) {
       <Route exact path='/admin/settings/user/:id' component={getComponent(AdminUserEdit,app,adminUserModel)} />
       <Route exact path='/admin/settings/role' component={getComponent(AdminRole,app,adminRoleModel)} />
       <Route exact path='/admin/settings/role/:id/assign-permission' component={getComponent(AdminAssignPermission,app,adminAssignPermissionModel)} />
-      {/* 员工 */}
-      <Route exact path='/admin/settings/staff' component={getComponent(Staff,app,userModel)} />
-      <Route exact path='/admin/settings/staff/:id' component={getComponent(StaffEdit,app,userModel)} />
 
       <Route exact path='/admin/settings/menu' component={getComponent(Menu,app,menuModel)} />
       <Route exact path='/admin/settings/permission-group' component={getComponent(Group,app,groupModel)} />

@@ -26,6 +26,16 @@ module.exports = _.extend({
   },
 
   // 设备类型
+  // 密码模块
+  FEATURE_TYPE_IS_PASSWORD: 1,
+  // 充电桩
+  FEATURE_TYPE_IS_CHARGING: 2,
+  // GPRS模块
+  FEATURE_TYPE_IS_GPRS: 3,
+  // 饮水机通信板
+  FEATURE_TYPE_IS_DRINKING_WATER: 4,
+  
+  // 消费订单
   // 洗衣
   FEATURE_IS_LAUNDRY: 1,
   // 充电

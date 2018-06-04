@@ -60,14 +60,14 @@ class BatchMode extends Component {
     this.state = {
       active: {
         address: false,
-        feature: false,
+        reference: false,
         price: false,
         name: false,
         duration: false,
       },
       preview: {
         address: false,
-        feature: false,
+        reference: false,
         featureType: '',
         price: false,
         name: false,
@@ -76,9 +76,11 @@ class BatchMode extends Component {
       schools: {},
       serviceAddresses: [],
       activeSchoolId: '',
-      activeFeatureType: 0,
+      activeReferenceId: 0,
       deviceTypes: [],
       devices: [],
+      referenceId: 0,
+      featureId: 0,
       count: 0,
       loading: false
     }
@@ -133,13 +135,12 @@ class BatchMode extends Component {
       }
       let { data: { objects } } = res
       devices = (devices || []).map((device) => {
-        let modes = _.filter(objects, (mode) => { return mode.serial === device.serial})
+        let modes = _.filter(objects, (mode) => { return mode.serial === device.serial })
         return { ...device, modes }
       })
       this.setState({
         devices: devices,
-        featureType: op(devices[0]).get('feature.type'),
-        activeFeatureType: op(devices[0]).get('feature.type'),
+        featureId: op(devices[0]).get('feature.id'),
         loading: false
       })
       this.devices = devices || []
@@ -198,9 +199,9 @@ class BatchMode extends Component {
   }
   toggleCheckbox(key, e) {
     let { form: { setFieldsValue, resetFields } } = this.props
-    let { active, featureType, activeFeatureType, deviceTypes } = this.state
+    let { active, featureId, deviceTypes } = this.state
     let { price: activePrice, name: activeName, duration: activeDuration } = active
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {} 
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {} 
     let value = e.target.checked
     this.setState({ active: {
       ...active,
@@ -214,29 +215,17 @@ class BatchMode extends Component {
         setFieldsValue({ schoolId: "", addressId: "" })
       }, 0)
     }
-    if (key === 'feature' && value) {
+    if (key === 'reference' && value) {
       setTimeout(() => {
-        setFieldsValue({ featureType: featureType })
+        setFieldsValue({ referenceId: op(activeFeatureMap).get('references.0.id') })
       }, 0)
     }
-    // 取消设备类型选项，重置表单信息，避免再次渲染初始值为之前选项    
-    if (key === 'feature' && !value) {
-      if (featureType !== activeFeatureType) {
-        setTimeout(() => {
-          (activeFeatureTypeMap.pulse || []).map((pulse, index) => {          
-            activeName ? resetFields([`name-${index}`]) : null
-            activePrice? resetFields([`price-${index}`]) : null
-            activeDuration? resetFields([`duration-${index}`]) : null
-          })
-        }, 0)
-      }
-      this.setState({ activeFeatureType: featureType })
-    }
+   
     // 选择服务名称、价格、时间选项，重置表单信息，避免再次渲染初始值为之前选项
     if (!!~['name', 'price', 'duration'].indexOf(key) && value) {
       // 切换类型 reset表单的内容
       setTimeout(() => {      
-        (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
+        (activeFeatureMap.pulses || []).map((pulse, index) => {
           resetFields([`${key}-${index}`])
         })
       }, 0)
@@ -261,11 +250,10 @@ class BatchMode extends Component {
   }
   toEdit() {
     let { form: { validateFields } } = this.props
-    let { deviceTypes, activeFeatureType, featureType } = this.state
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
-    let isChangeFeatureType = activeFeatureType !== featureType
+    let { deviceTypes, featureId } = this.state
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
     let { 
-      active: { address: activeAddress, feature: activeFeature, price: activePrice, name: activeName, duration: activeDuration }, 
+      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration }, 
       serviceAddresses, loading 
     } = this.state
     let serials = this.serials.split(',')
@@ -285,34 +273,37 @@ class BatchMode extends Component {
           }
         }
       }
-      if (activeFeature) {
+      if (activeReference) {
         options = {
           ...options,
           feature: {
-            type: value.featureType
+            reference: {
+              id: value.referenceId
+            }
           }
         }
       }
       
       let devices = (this.devices || []).map((device) => {
         let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
-        if (activeFeature || activeName || activePrice || activeDuration) {
+        if (activeName || activePrice || activeDuration) {
           return {
             ..._.pick(device, 'serial'),
             ...options,
-            modes: (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-              let mode = _.isEmpty(modesArray[pulse.id]) ? {} : modesArray[pulse.id][0]
+            modes: (activeFeatureMap.pulses || []).map((pulse, index) => {
+              let isEmpty = _.isEmpty(modesArray[pulse.id])
+              let mode = isEmpty ? {} : modesArray[pulse.id][0]
               return {
                 pulse: {
                   id: pulse.id,
                   name: pulse.name
                 },
                 name: activeName ? value[`name-${index}`] : 
-                  isChangeFeatureType || _.isEmpty(mode) ? pulse.name : mode.name,
+                  isEmpty ? pulse.name : mode.name,
                 value: activePrice ? +value[`price-${index}`] * 100 : 
-                isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.value,
+                  isEmpty ? 0 : mode.value,
                 duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
-                isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.duration,
+                  isEmpty ? 0 : mode.duration,
               }
             })
           }
@@ -329,11 +320,10 @@ class BatchMode extends Component {
   }
   toPreview() {
     let { form: { validateFields } } = this.props
-    let { deviceTypes, activeFeatureType, featureType } = this.state
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
-    let isChangeFeatureType = activeFeatureType !== featureType
+    let { deviceTypes, featureId } = this.state
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
     let { 
-      active: { address: activeAddress, feature: activeFeature, price: activePrice, name: activeName, duration: activeDuration }, 
+      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration }, 
       serviceAddresses, loading 
     } = this.state
 
@@ -343,8 +333,8 @@ class BatchMode extends Component {
         return
       }
 
-      if (!activeAddress && !activeFeature && !activeAddress && !activePrice && !activeName && !activeDuration) {
-        return this.setState({ devices: this.devices, preview: { address: false, feature: false, price: false, name: false, featureType: featureType } })
+      if (!activeAddress && !activeReference && !activeAddress && !activePrice && !activeName && !activeDuration) {
+        return this.setState({ devices: this.devices, preview: { address: false, reference: false, price: false, name: false } })
       }
       
       if (activeAddress) {
@@ -355,12 +345,14 @@ class BatchMode extends Component {
          serviceAddress
         }
       }
-      if (activeFeature) {
+      if (activeReference) {
         options = {
           ...options,
           feature: {
-            type: value.featureType,
-            name: activeFeatureTypeMap.name
+            id: featureId,
+             reference: {
+              id: value.referenceId,
+            },
           }
         }
       }
@@ -370,25 +362,26 @@ class BatchMode extends Component {
         return {
           ...device,
           ...options,
-          modes: (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-            let mode = _.isEmpty(modesArray[pulse.id]) ? {} : modesArray[pulse.id][0]
+          modes: (activeFeatureMap.pulses || []).map((pulse, index) => {
+            let isEmpty = _.isEmpty(modesArray[pulse.id])
+            let mode = isEmpty ? {} : modesArray[pulse.id][0]
             return {
               pulse: {
                 id: pulse.id,
                 name: pulse.name
               },
               name: activeName ? value[`name-${index}`] : 
-                isChangeFeatureType || _.isEmpty(mode) ? pulse.name : mode.name,
+                isEmpty ? pulse.name : mode.name,
               value: activePrice ? +value[`price-${index}`] * 100 : 
-              isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.value,
+                isEmpty ? 0 : mode.value,
               duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
-              isChangeFeatureType || _.isEmpty(mode) ? 0 : mode.duration,
+                isEmpty ? 0 : mode.duration,
             }
           })
         }
       })
       this.setState({ 
-        preview: { address: activeAddress, feature: activeFeature, name: activeName, price: activePrice, duration: activeDuration, featureType: activeFeatureType }, 
+        preview: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration }, 
         devices: devices 
       })
     })
@@ -407,35 +400,35 @@ class BatchMode extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
-  changeFeatureType(e) {
-    let { form: { resetFields } } = this.props
-    let { deviceTypes, active: { name: activeName, price: activePrice, duration: activeDuration } } = this.state
-    let type = e.target.value
-    // 切换前选择设备类型下的设备
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: type }) || {}
+  // changeReferenceId(e) {
+  //   let { form: { resetFields } } = this.props
+  //   let { deviceTypes, active: { name: activeName, price: activePrice, duration: activeDuration } } = this.state
+  //   let type = e.target.value
+  //   // 切换前选择设备类型下的设备
+  //   let activeFeatureMap = _.findWhere(deviceTypes, { type: type }) || {}
 
-    this.setState({ activeFeatureType: type })
-    // 切换类型 reset表单的内容
-    setTimeout(() => {
-      (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-        activeName ? resetFields([`name-${index}`]) : null
-        activePrice ? resetFields([`price-${index}`]) : null
-        activeDuration ? resetFields([`duration-${index}`]) : null
-      })
-    }, 0)
-  }
+  //   this.setState({ activeFeatureType: type })
+  //   // 切换类型 reset表单的内容
+  //   setTimeout(() => {
+  //     (activeFeatureMap.pulse || []).map((pulse, index) => {
+  //       activeName ? resetFields([`name-${index}`]) : null
+  //       activePrice ? resetFields([`price-${index}`]) : null
+  //       activeDuration ? resetFields([`duration-${index}`]) : null
+  //     })
+  //   }, 0)
+  // }
   changeSchool(value) {
     this.setState({ activeSchoolId: value })
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { 
-      active: { address: activeAddress, feature: activeFeature, name: activeName, price: activePrice, duration: activeDuration }, 
-      schools, devices, preview, deviceTypes, featureType, activeFeatureType, activeSchoolId, serviceAddresses
+      active: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration }, 
+      schools, devices, preview, deviceTypes, featureId, activeSchoolId, serviceAddresses
     } = this.state
     let count = devices.length
     // 当前选择设备类型下的设备详情
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
     // 当前选择学校下的服务地点
     let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
 
@@ -445,7 +438,7 @@ class BatchMode extends Component {
       <div className={styles.top}>
         <p>你将对<span className={styles.hightlight}>{count}</span>个设备进行修改,请选择需要修改的项目:</p>
         { !this.isAssigned ? <Checkbox onChange={this.toggleCheckbox.bind(this, 'address')}>服务地点</Checkbox> : null}
-        <Checkbox onChange={this.toggleCheckbox.bind(this, 'feature')}>关联设备类型</Checkbox>
+        <Checkbox onChange={this.toggleCheckbox.bind(this, 'reference')}>关联设备类型</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'name')}>服务名称</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'price')}>价格</Checkbox>
         { true ? null : <Checkbox onChange={this.toggleCheckbox.bind(this, 'duration')}>服务时间</Checkbox> }
@@ -509,19 +502,19 @@ class BatchMode extends Component {
           </Row>: null
         }      
         {
-          activeFeature ? <FormItem
+          activeReference ? <FormItem
             {...formItemLayout}
             label="关联设备类型">
-            {getFieldDecorator('featureType', {
+            {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },
               ],
-              initialValue: activeFeatureType
+              initialValue: activeReference
             })(
-              <RadioGroup onChange={this.changeFeatureType.bind(this)} >
+              <RadioGroup >
                 {
-                  (deviceTypes || []).map((item) => {
-                    return <Radio key={item.type} value={item.type}>{item.name}</Radio>
+                  (activeFeatureMap.references || []).map((reference) => {
+                    return <Radio key={reference.id} value={reference.id}>{reference.name}</Radio>
                   })
                 }
               </RadioGroup>
@@ -533,8 +526,8 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>服务名称</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureTypeMap.pulse.length)} xs={24} key={`name-${index}`}><FormItem>
+                {(activeFeatureMap.pulses || []).map((pulse, index) => {
+                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`name-${index}`}><FormItem>
                     {getFieldDecorator(`name-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
@@ -557,8 +550,8 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>价格(无服务填0)</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureTypeMap.pulse.length)} xs={24} key={`price-${index}`}><FormItem>
+                {(activeFeatureMap.pulses || []).map((pulse, index) => {
+                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`price-${index}`}><FormItem>
                     {getFieldDecorator(`price-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
@@ -590,8 +583,8 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>服务时间(分钟)</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureTypeMap.pulse || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureTypeMap.pulse.length)} xs={24} key={`duration-${index}`}><FormItem>
+                {(activeFeatureMap.pulses || []).map((pulse, index) => {
+                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`duration-${index}`}><FormItem>
                     {getFieldDecorator(`duration-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
@@ -613,7 +606,7 @@ class BatchMode extends Component {
         <FormItem {...tailFormItemLayout}>
           <Button style={{ marginRight: 10 }} type="ghost" onClick={this.toPreview.bind(this)}>预览</Button>
           { 
-            activeAddress || activeFeature || activePrice || activeName || activeDuration ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null 
+            activeAddress || activeReference || activePrice || activeName || activeDuration ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null 
           }
         </FormItem> 
       </Form> 
@@ -622,7 +615,7 @@ class BatchMode extends Component {
         devices={devices}
         serviceAddresses={serviceAddresses}
         deviceTypes={deviceTypes}
-        featureType={featureType}
+        featureId={featureId}
         preview={preview} />
     </div>)
   }

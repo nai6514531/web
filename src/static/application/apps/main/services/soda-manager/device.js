@@ -52,8 +52,17 @@ const deviceService = {
   deleteDevice: (id) => {
     return request.delete(`/mng/devices/${id}`)
   },
-  deviceType: () => {
-    return request.get(`/mng/devices-type`)
+  deviceType: (options) => {
+    return request.get(`/mng/devices-types`, { params: options })
+  },
+  configDetail: (options) => {
+    return request.get(`/mng/devices-config/detail`, { params: options })
+  },
+  log: (options) => {
+    return request.get(`/mng/devices-log`, { params: options })
+  },
+  setOn: (options) => {
+    return request.get(`/mng/devices-config/detail`, { params: options })
   },
   deviceModeList: (options) => {
     return request.get(`/mng/devices-modes`, { params: options })

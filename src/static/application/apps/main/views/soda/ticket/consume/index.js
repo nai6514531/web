@@ -13,6 +13,7 @@ import Breadcrumb from '../../../../components/layout/breadcrumb'
 import { Element } from '../../../../components/element'
 import { transformUrl, toQueryString } from '../../../../utils'
 import TICKET from '../../../../constant/ticket'
+import DEVICE from '../../../../constant/device'
 import USER from '../../../../constant/user'
 import DatePicker from '../../../../components/date-picker'
 
@@ -20,12 +21,10 @@ import styles from '../../../../assets/css/search-bar.pcss'
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '消费查询'
   }
 ]
+const SERIAL_MIN_LENGTH = 6
 const { Option } = Select
 
 @Element()
@@ -35,6 +34,7 @@ class Consume extends Component {
     const search = transformUrl(location.search)
     this.search = search
     let { isVisible } = this.props
+
     this.columns = [
       { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       { 
@@ -66,17 +66,22 @@ class Consume extends Component {
             }
           }
         }
-      },
-      { 
+      }, {
+        title: '学校',
+        dataIndex: 'schoolName',
+        render: (schoolName, record) => {
+          return  `${op(record).get('device.serviceAddress.school.name') || '-'}`
+        }
+      }, { 
         title: '服务地点', 
-        dataIndex: 'device.address', 
+        dataIndex: 'device.serviceAddress', 
         key: 'device.address',
         width: 100,
-        render:(address) => {
-          return  `${address || '-'}`
+        render:(serviceAddress, record) => {
+          return  `${op(record).get('device.serviceAddress.school.address') || '-'}`
         }
       },
-      { title: '模块编号', dataIndex: 'serial',key: 'serial', width: 100 },
+      { title: '设备编号', dataIndex: 'serial',key: 'serial', width: 100 },
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
       { title: '消费密码', dataIndex: 'token',key: 'token', width: 100 },
       {
@@ -87,10 +92,26 @@ class Consume extends Component {
         }
       },
       {
+        title: '订单状态',
+        width: 100,
+        render:(text, record) => {
+          return  `${record.status.description}`
+        }
+      },
+      {
         title: '类型',
         width: 50,
+        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0,
         render: (text, record) => {
-          return op(record).get('snapshot.modes.0.name')
+          let names = (op(record).get('snapshot.modes') || []).map((mode) => {
+            return mode.name
+          })
+          return {
+            children: <span>{names.join('/')}</span>,
+            props: {
+              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0
+            }
+          }
         }
       },
       {
@@ -123,16 +144,17 @@ class Consume extends Component {
         width: 100,
         render: (text, record, index) => {
           let suffix
-          let { user } = this.props
+          let { user, location: { pathname } } = this.props
           let { status: { value }, paymentId, ticketId, createdAt, timestamp } = record
           let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
           let isICCard = paymentId === TICKET.PAYMENT_TYPE_IS_IC
           let showDetail = isVisible('TICKET_CONSUME:BUTTON:DETAIL')
+          pathname = pathname.split('/')[1]
 
           if (value === TICKET.CONSUME_STATUS_IS_REFUND) {
             suffix = <span style={{color: '#666'}}>已退款</span>
           }
-          if (value === TICKET.CONSUME_STATUS_IS_DEFAULT && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
+          if (!!~[TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_DELIVERED].indexOf(value) && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
             if (!isBusiness || moment(createdAt).isSame(timestamp, 'day') && isBusiness) {
               suffix = <span>
                 <Popconfirm title='确认退款吗?' onConfirm={this.refund.bind(this, ticketId)} >
@@ -143,7 +165,7 @@ class Consume extends Component {
           }
           return(
             <span>
-              { showDetail ? <Link to={`/soda/consume/${record.ticketId}`}>详情</Link> : null }
+              { showDetail ? <Link to={`/${pathname}/consume/${record.ticketId}`}>详情</Link> : null }
               { showDetail ? (!isICCard && !!suffix ? ' | ' : null) : null}
               { !showDetail && (isICCard || !suffix) ? '-' : null }
               { !isICCard ? suffix : null }
@@ -179,9 +201,15 @@ class Consume extends Component {
       message.info('请选择日期')
       return
     }
-    if( !customerMobile && !keywords && !deviceSerial ) {
+    if (!customerMobile && !keywords && !deviceSerial ) {
       message.info('请选择筛选条件')
       return
+    }
+    if (deviceSerial && deviceSerial.length < SERIAL_MIN_LENGTH) {
+      return message.error('请输入正确的设备编号')
+    }
+    if (customerMobile && !/^1\d{10}$/.test(customerMobile)) {
+      return message.error('请输入正确的手机号')
     }
     this.search.offset = 0
     this.search.limit = transformUrl(location.search).limit || 10
@@ -193,13 +221,21 @@ class Consume extends Component {
     this.fetch(this.search)
   }
   fetch = (url) => {
-    let { user } = this.props
+    let { user, location: { pathname } } = this.props
+    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT] : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT]
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
+      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
+
     this.props.dispatch({
       type: 'consume/list',
       payload: {
-        data: { ...url, status: status.join(',')}
+        data: { 
+          ...url, 
+          status: (status || []).join(','),
+          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        }
       }
     })
   }
@@ -209,9 +245,13 @@ class Consume extends Component {
   }
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
-    let { user } = this.props
+    let { user, location: { pathname } } = this.props
+    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT] : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DEFAULT]
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
+      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
+
     if(!startAt || !endAt) {
       message.info('请选择日期')
       return
@@ -223,7 +263,11 @@ class Consume extends Component {
     this.props.dispatch({
       type: 'consume/export',
       payload: {
-        data: { ...this.search, status: status.join(',')}
+        data: { 
+          ...this.search, 
+          status: (status || []).join(','),
+          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        }
       }
     })
   }
@@ -233,17 +277,23 @@ class Consume extends Component {
     })
   }
   refund = (id) => {
+    let { location: { pathname } } = this.props
+
     this.props.dispatch({
       type: 'consume/refund',
       payload: {
         id: id,
-        data: { ...this.search }
+        type: !!~pathname.indexOf('soda-drinking') ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+        data: { 
+          ...this.search,
+        }
       }
     })
   }
   render() {
     const { consume: { date, data: { objects, pagination }, key, visible, exportUrl }, loading, isVisible } = this.props
     pagination && (pagination.showSizeChanger = true)
+
     return(
       <div>
         <Breadcrumb items={breadItems} />
@@ -268,7 +318,7 @@ class Consume extends Component {
             defaultValue={this.search.customerMobile}
           />
           <InputScan
-            placeholder='模块编号'
+            placeholder='请输入设备编号'
             className={styles.input}
             onChange={this.changeHandler.bind(this, 'deviceSerial')}
             onPressEnter={this.searchClick}

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import querystring from 'querystring'
 import moment from 'moment'
+import op from 'object-path'
 import { Button, Table, Icon, Popconfirm, message } from 'antd'
 
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
+import DrinkingDailyBillsService from '../../../../services/soda-manager/drinking-daily-bills'
 import history from '../../../../utils/history'
 import { conversionUnit } from '../../../../utils/functions'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
@@ -17,11 +19,8 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '每日账单',
-    url: '/soda/business/daily-bill'
+    url: '/PATHNAME/business/daily-bill'
   },
   {
     title: '明细'
@@ -30,15 +29,12 @@ const breadItems = [
 
 const billBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '结算查询',
-    url: '/soda/business/bill'
+    url: '/PATHNAME/business/bill'
   },
   {
     title: '账单明细',
-    url: `/soda/business/bill/BILL_ID`
+    url: `/PATHNAME/business/bill/BILL_ID`
   },
   {
     title: '明细'
@@ -153,11 +149,34 @@ class App extends Component{
     this.list(pagination)
   }
   list(options) {
+    let { location: { pathname } } = this.props
+    let isDringking = !!~pathname.indexOf('soda-drinking')
     let { id } = this.props.match.params
     let pagination = options.pagination || {}
     pagination = _.pick({...this.state.pagination, ...pagination}, 'limit', 'offset')
     this.setState({ loading: true, pagination })
 
+    if (isDringking) {
+      DrinkingDailyBillsService.getTickets({...pagination, id: id }).then((res) => {
+        if (res.status !== 'OK') {
+          throw new Error(res.message)
+        }
+        const data = res.data
+
+        this.setState({
+          list: data.objects || [],
+          pagination: {
+            ...pagination,
+            total: data.pagination.total
+          },
+          loading: false
+        })
+      }).catch((err) => {
+        this.setState({ loading: false })
+        message.error(err.message || '服务器异常，刷新重试')
+      })
+      return
+    }
     DailyBillsService.getTickets({...pagination, id: id }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -180,11 +199,12 @@ class App extends Component{
   changeHistory (options) {
     const { id } = this.props.match.params
     const query = querystring.stringify(_.pick({ ...this.state.pagination, ...options }, 'offset', 'limit'))
+    let pathname = op(location).get('pathname').split('/')[1]
     if (this.isBillsView) {
-    this.props.history.push(`/soda/business/daily-bill/${id}?${query}&billId=${this.billId}`)
+    this.props.history.push(`/${pathname}/business/daily-bill/${id}?${query}&billId=${this.billId}`)
       return
     }
-    this.props.history.push(`/soda/business/daily-bill/${id}?${query}`)
+    this.props.history.push(`/${pathname}/business/daily-bill/${id}?${query}`)
   }
   pagination () {
     let self = this

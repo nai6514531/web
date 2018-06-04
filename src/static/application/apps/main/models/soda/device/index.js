@@ -40,15 +40,10 @@ export default {
         if (!_.isEmpty(userIds)) {
           users = yield call(userService.adminUserlist, { ids: userIds.join(','), limit: userIds.length, offset: 0 })
         }
-        if (!_.isEmpty(addressIds)) {
-          addresses = yield call(deviceAddressService.list, { ids: addressIds.join(',')})
-        } 
-        
         const objects = _.map(result.data.objects || [], (object) => {
           return {
             ...object,
             user: _.find(op(users).get('data.objects'), { id: object.user.id }) || {},
-            serviceAddress: _.find(op(addresses).get('data.objects'), { id: object.serviceAddress.id }) || {},
           }
         })
         yield put({ 

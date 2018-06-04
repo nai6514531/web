@@ -28,11 +28,8 @@ const DEFAULT_URL = 'https://mnzn.net/?no=SERIAL'
 
 const editBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备管理',
-    url: '/soda/business/device'
+    url: '/PATHNAME/business/device'
   },
   {
     title: '修改设备'
@@ -41,11 +38,8 @@ const editBreadItems = [
 
 const addBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备管理',
-    url: '/soda/business/device'
+    url: '/PATHNAME/business/device'
   },
   {
     title: '新增设备'
@@ -95,7 +89,10 @@ class Edit extends Component {
         },
         modes:[],
         feature: {
-          type: 0
+          id: 0,
+          reference: {
+            id: 0
+          }
         }
       },
       token: '',
@@ -106,7 +103,8 @@ class Edit extends Component {
       activeModal: '',
       activeAddressId: 0,
       activeSchoolId: '',
-      activeFeatureType: 0
+      activeFeatureId: 0,
+      activeReferenceId: 0,
     }
     this.isAdd = false
   }
@@ -149,8 +147,9 @@ class Edit extends Component {
       let { data: { objects } } = res
       this.setState({
         device: { ...device,  modes: objects },
-        activeAddressId: device.serviceAddress.id,
-        activeFeatureType: device.feature.type,
+        activeAddressId: op(device).get('serviceAddress.id'),
+        activeFeatureId: op(device).get('feature.id'),
+        activeReferenceId: op(device).get('feature.reference.id'),
         loading: false
       })
     }).catch((err) => {
@@ -203,9 +202,11 @@ class Edit extends Component {
       let { data } = res
       // 当前新增设备视图
       if (this.isAdd) {
+        let deviceFeature = data[0] || {}
         this.setState({
           deviceTypes: data,
-          activeFeatureType: data[0].type
+          activeFeatureId: op(deviceFeature).get('id'),
+          activeReferenceId: op(deviceFeature).get('references.0.id'),
         })
         return
       }
@@ -216,8 +217,8 @@ class Edit extends Component {
   }
   handleSubmit() {
     let { form: { validateFields } } = this.props
-    let { device: { modes }, loading, deviceTypes, activeFeatureType } = this.state
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
+    let { device: { modes }, loading, deviceTypes, activeFeatureId, activeReferenceId } = this.state
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
       return mode.pulse.id
     })
@@ -229,14 +230,18 @@ class Edit extends Component {
         return
       }
       let serials = (value.serials || '').replace(/(^\s+)|(\s+$)/g, '')
+      let feature = {
+        id: value.featureId,
+        reference: {
+          id:  value.referenceId,
+        },
+      }
       let options = {
         serviceAddress: {
           id: parseInt(value.addressId, 10) || 0
         },
-        feature: {
-          type: value.featureType
-        },
-        modes: (activeFeatureTypeMap.pulse || []).map((pulse) => {
+        feature: isAdd ? feature : _.omit(feature, 'id'),
+        modes: (activeFeatureMap.pulses || []).map((pulse) => {
           let { id: pulseId } = pulse
           let isNew = _.isEmpty(modesGroupByPulseId[pulseId])
           let mode = {
@@ -244,9 +249,9 @@ class Edit extends Component {
               id: pulseId,
               name: pulse.name,
             },
-            name: value[`${activeFeatureType}-${pulseId}_NAME`],
-            duration: +(+value[`${activeFeatureType}-${pulseId}_DURATION`] * 60).toFixed() || 0,
-            value: +(+value[`${activeFeatureType}-${pulseId}_VALUE`] * 100).toFixed()
+            name: value[`${activeReferenceId}-${pulseId}_NAME`],
+            duration: +(+value[`${activeReferenceId}-${pulseId}_DURATION`] * 60).toFixed() || 0,
+            value: +(+value[`${activeReferenceId}-${pulseId}_VALUE`] * 100).toFixed()
           }
           // 模式新增下
           if (!isNew) {
@@ -290,7 +295,6 @@ class Edit extends Component {
   }
   updateDevice(options) {
     this.setState({ loading: true })
-
     DeviceService.update(Array(options)).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
@@ -329,9 +333,23 @@ class Edit extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
-  changeFeatureType(e) {
-    let type = e.target.value
-    this.setState({ activeFeatureType: type })
+  changeFeatureId(e) {
+    let { device: { feature : { id: featureId, reference: { id: referenceId } } }, deviceTypes } = this.state
+    let { form : { setFieldsValue } } = this.props
+    let id = e.target.value
+    let activeFeatureMap = _.findWhere(deviceTypes || [], { id: id }) || {}
+    let activeReferenceId = featureId === id && featureId !== 0 ? referenceId : activeFeatureMap.references[0].id
+    this.setState({ 
+      activeFeatureId: id, 
+      activeReferenceId: activeReferenceId
+    })
+    setTimeout(() => {
+      setFieldsValue({ referenceId: activeReferenceId })
+    }, 0)
+  }
+  changeReferenceId(e) {
+    let id = e.target.value
+    this.setState({ activeReferenceId: id })
   }
   changeSchool(value) {
     let { form: { setFieldsValue } } = this.props
@@ -342,18 +360,18 @@ class Edit extends Component {
     this.setState({ activeAddressId: value })
   }
   initialActiveModes() {
-    let { activeFeatureType, deviceTypes, device: { feature: { type }, modes } } = this.state
+    let { activeFeatureId, activeReferenceId, deviceTypes, device: { feature: { id: featureId, reference: { id: referenceId } }, modes } } = this.state
 
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: activeFeatureType }) || {}
+    let activeFeatureMap = _.findWhere(deviceTypes || [], { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
       return mode.pulse.id
     })
 
-    let activeModes = (activeFeatureTypeMap.pulse || []).map((pulse) => {
+    let activeModes = (activeFeatureMap.pulses || []).map((pulse) => {
       let mode = modesGroupByPulseId[pulse.id]
-      let isEmpty = _.isEmpty(mode) || activeFeatureType !== type
+      let isEmpty = _.isEmpty(mode) || activeReferenceId !== referenceId
       return {
-        id: activeFeatureType + '-' + pulse.id,
+        id: activeReferenceId + '-' + pulse.id,
         pulse: {
           id: pulse.id,
           name: pulse.name,
@@ -377,8 +395,8 @@ class Edit extends Component {
   render() {
     let { form: { getFieldDecorator } } = this.props
     let { 
-      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureType, activeAddressId, activeSchoolId, schools, token,
-      device: { id, serial, feature: { type }, limit } 
+      loading, serviceAddresses, activeModal, deviceTypes, activeFeatureId, activeReferenceId, activeAddressId, activeSchoolId, schools, token,
+      device: { id, serial, feature: { id: featureId, reference: { id: referenceId } } }, limit
     } = this.state
     let isAdd = this.isAdd
     // 当前选择学校下的服务地点
@@ -386,7 +404,10 @@ class Edit extends Component {
     activeSchoolId = activeSchoolId === '' ? op(activeAddress).get('school.id') : activeSchoolId
     let activeSchoolsMap = _.findWhere(schools, { id: activeSchoolId }) || {}
     let activeModes = this.initialActiveModes()
-    let url = type === DEVICE.FEATURE_IS_DRINKING ? DRINKING_URL : DEFAULT_URL
+    let activeFeatureMap = _.findWhere(deviceTypes || [], { id: activeFeatureId }) || {}
+    let url = featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? DRINKING_URL : DEFAULT_URL
+    let { location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
 
     return (<div>
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
@@ -474,24 +495,44 @@ class Edit extends Component {
                   <Button 
                     type='primary'
                     className={styles.addressButton}
-                    onClick={() => { this.props.history.push(`/soda/business/device/address?fromDevice=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
+                    onClick={() => { this.props.history.push(`/${pathname}/business/device/address?fromDevice=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
                 </Col> : null
               }
             </Row>
           </FormItem>
+          {
+            this.isAdd ? <FormItem
+              {...formItemLayout}
+              label="设备类型">
+              {getFieldDecorator('featureId', {
+                rules: [
+                  { required: true, message: '必填' },
+                ],
+                initialValue: activeFeatureId
+              })(
+                <RadioGroup onChange={this.changeFeatureId.bind(this)} disabled={this.isAdd ? false: true}>
+                  {
+                    (deviceTypes || []).map((item) => {
+                      return <Radio key={item.id} value={item.id}>{item.name}</Radio>
+                    })
+                  }
+                </RadioGroup>
+              )}
+            </FormItem> : null
+          }
           <FormItem
             {...formItemLayout}
             label="关联设备类型">
-            {getFieldDecorator('featureType', {
+            {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },
               ],
-              initialValue: activeFeatureType
+              initialValue: activeReferenceId
             })(
-              <RadioGroup onChange={this.changeFeatureType.bind(this)} >
+              <RadioGroup onChange={this.changeReferenceId.bind(this)} >
                 {
-                  (deviceTypes || []).map((item) => {
-                    return <Radio key={item.type} value={item.type}>{item.name}</Radio>
+                  (activeFeatureMap.references || []).map((reference) => {
+                    return <Radio key={reference.id} value={reference.id}>{reference.name}</Radio>
                   })
                 }
               </RadioGroup>
@@ -500,8 +541,9 @@ class Edit extends Component {
           { 
             !_.isEmpty(activeModes) ? (activeModes || []).map((mode, index) => {
               return <Mode
-              activeFeatureType={activeFeatureType}
-              featureType={type}
+              activeReferenceId={activeReferenceId}
+              featureId={featureId}
+              referenceId={referenceId}
               mode={mode} 
               index={index+1}
               key={mode.id}
@@ -509,7 +551,7 @@ class Edit extends Component {
             }) : null
           }
           {
-            !isAdd ? <FormItem
+            !isAdd && featureId !== DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <FormItem
               {...formItemLayout}
               label="重置验证码">
               { 

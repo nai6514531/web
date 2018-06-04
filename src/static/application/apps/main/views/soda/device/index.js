@@ -24,9 +24,6 @@ const RangePicker = DatePicker.RangePicker
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备查询'
   }
 ]
@@ -39,7 +36,7 @@ class Device extends Component {
     this.checkList = []
     this.columns = [
       {
-        title: '模块号',
+        title: '设备编号',
         width: 100,
         render: (record) => {
 
@@ -86,8 +83,9 @@ class Device extends Component {
         width: 70,
         render: (feature) => {
           let { sodaDevice: { deviceTypes } } = this.props
-          feature = _.find(deviceTypes || [], { type : op(feature).get('type') }) || {}
-          return op(feature).get('name') || '-'
+          deviceTypes = _.find(deviceTypes || [], { id : op(feature).get('id') }) || {}
+          let reference = _.find(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
+          return op(reference).get('name') || '-'
         }
       },
       {
@@ -248,7 +246,7 @@ class Device extends Component {
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={breadItems} location={this.props.location} />
         <Button
           type='primary'
           className={styles.button}
@@ -264,7 +262,7 @@ class Device extends Component {
           defaultValue={this.search.keys}
           />
         <InputScan
-          placeholder='模块编号'
+          placeholder='设备编号'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'serials')}
           onPressEnter={this.searchClick.bind(this)}

@@ -20,7 +20,7 @@ class BatchTable extends Component {
           return `${id}`
         }
       }, {
-        title: '编号',
+        title: '设备编号',
         dataIndex: 'serial',
         render: (serial, record) => {
           return `${serial}`
@@ -59,23 +59,22 @@ class BatchTable extends Component {
         }
       },
       {
-        title: '关联设备类型',
+        title: '关联设备服务',
         dataIndex: 'feature',
         render: (feature) => {
-          let { preview: { feature: featureTypeHighlight }, deviceTypes } = this.props
-          feature = _.findWhere(deviceTypes, { type : op(feature).get('type') }) || {}
-          return <span className={cx({ [styles.hightlight]: featureTypeHighlight })}>{op(feature).get('name') || '-'}</span>
+          let { preview: { reference: ReferenceHighlight }, deviceTypes } = this.props
+          deviceTypes = _.findWhere(deviceTypes || [], { id : op(feature).get('id') }) || {}
+          let reference = _.findWhere(deviceTypes.references || [], { id : op(feature).get('reference.id') }) || {}
+          return <span className={cx({ [styles.hightlight]: ReferenceHighlight })}>{op(reference).get('name') || '-'}</span>
         }
       }
     ]
   }
   initialColumns() {
-    let { devices, featureType, deviceTypes } = this.props
+    let { devices, featureType, deviceTypes, featureId } = this.props
     let { preview: { feature: isPreviewFeatureType, featureType: activeFeatureType } } = this.props
-    let type = isPreviewFeatureType ? activeFeatureType : featureType
-    let activeFeatureTypeMap = _.findWhere(deviceTypes, { type: type }) || {}
-    let isHightlight = isPreviewFeatureType && featureType !== activeFeatureType
-    let columns = (activeFeatureTypeMap.pulse || []).map((pulse, index) => {
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
+    let columns = (activeFeatureMap.pulses || []).map((pulse, index) => {
       return {
         title: `服务 ${index+1}`,
         render: (record) => {
@@ -96,8 +95,8 @@ class BatchTable extends Component {
           //   <span className={cx({ [styles.hightlight]: durationHighlight || isHightlight })}>{duration}分钟</span>
           // </div>
           return <div>
-            <span className={cx({ [styles.hightlight]: nameHighlight || isHightlight })}>{name}/</span>
-            <span className={cx({ [styles.hightlight]: priceHighlight || isHightlight })}>{value}元</span>
+            <span className={cx({ [styles.hightlight]: nameHighlight })}>{name}/</span>
+            <span className={cx({ [styles.hightlight]: priceHighlight })}>{value}元</span>
           </div>
         }
       }
@@ -107,7 +106,7 @@ class BatchTable extends Component {
   render() {
     let { devices } = this.props
     let columns = this.initialColumns()
-
+    
     return (<Table
       bordered
       scroll={{ x: 980 }}

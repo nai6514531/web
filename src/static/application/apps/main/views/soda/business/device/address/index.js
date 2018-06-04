@@ -17,20 +17,14 @@ const PAEG_SIZE = 10
 
 const breadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '地点管理'
   }
 ]
 
 const deviceBreadItems = [
   {
-    title: '苏打生活'
-  },
-  {
     title: '设备管理',
-    url:'/soda/business/device'
+    url:'/PATHNAME/business/device'
   },
   {
     title: '地点管理'
@@ -83,8 +77,10 @@ class App extends Component {
       }, {
         title: '操作',
         render: (record) => {
+          let { location: { pathname } } = this.props
+          pathname = pathname.split('/')[1]
           return <span>
-            <Link to={`/soda/business/device/address/edit/${record.id}?fromDevice=${this.isFromDeviceView}`}>修改</Link>
+            <Link to={`/${pathname}/business/device/address/edit/${record.id}?fromDevice=${this.isFromDeviceView}`}>修改</Link>
           </span>
         }
       }
@@ -225,8 +221,10 @@ class App extends Component {
   //   })
   // }
   changeHistory(options) {
+    let { location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
     let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'schoolId', 'addressName',  'limit', 'offset')
-    this.props.history.push(`/soda/business/device/address?${querystring.stringify(query)}`)
+    this.props.history.push(`/${pathname}/business/device/address?${querystring.stringify(query)}`)
   }
   search() {
     let pagination = { offset: 0 }
@@ -262,9 +260,11 @@ class App extends Component {
   render() {
     let { list, loading, search: { addressName, schoolId }, schools } = this.state
     let activeSchoolsMap = _.findWhere(schools, { id: schoolId === '' ? '' : +schoolId }) || {}
+    let { location: { pathname } } = this.props
+    pathname = pathname.split('/')[1]
 
     return (<div>
-      <Breadcrumb items={this.isFromDeviceView ? deviceBreadItems : breadItems} />
+      <Breadcrumb items={this.isFromDeviceView ? deviceBreadItems : breadItems} location={this.props.location} />
       <div>
         <Select
           showSearch
@@ -299,7 +299,7 @@ class App extends Component {
         <Button
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push(`/soda/business/device/address/add?fromDevice=${this.isFromDeviceView}`) }}>新增地点</Button>
+          onClick={() => { this.props.history.push(`/${pathname}/business/device/address/add?fromDevice=${this.isFromDeviceView}`) }}>新增地点</Button>
       </div>
       <Table
         scroll={{ x: 980 }}

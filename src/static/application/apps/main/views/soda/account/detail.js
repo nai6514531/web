@@ -8,21 +8,18 @@ import cx from 'classnames'
 import { Link } from 'react-router-dom'
 import { Table, Button, message, Row, Col, Card } from 'antd'
 
-import { InputClear } from '../../../../components/form/input'
-import UserService from '../../../../services/soda-manager/user'
-import ChipcardService from '../../../../services/soda-manager/chipcard'
-import history from '../../../../utils/history'
-import CASH_ACCOUNT from '../../../../constant/cash-account'
-import Breadcrumb from '../../../../components/layout/breadcrumb'
+import { InputClear } from '../../../components/form/input'
+import UserService from '../../../services/soda-manager/user'
+import ChipcardService from '../../../services/soda-manager/chipcard'
+import history from '../../../utils/history'
+import CASH_ACCOUNT from '../../../constant/cash-account'
+import Breadcrumb from '../../../components/layout/breadcrumb'
 
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
 
 const breadItems = [
-  {
-    title: '苏打生活'
-  },
   {
     title: '账号管理'
   },
@@ -93,16 +90,17 @@ class App extends Component {
     })
   }
   toEdit () {
-    let { user: { id }, history } = this.props
-    history.push(`/soda/business/account/edit/${id}`)
+    let { user: { id }, history, location: { pathname } } = this.props
+    history.push(`/${pathname}/edit/${id}`)
   }
   render() {
-    let { history } = this.props
+    let { history, location: { pathname } } = this.props
     let { user, cashAccount, isPermissionRecharge, loading } = this.state
     user = op({ ...user, cashAccount})
     let cashTypeIsWechat = user.get('cashAccount.type.value') === CASH_ACCOUNT.TYPE_IS_WECHAT
+
     return (<div className={styles.detail}>
-      <Breadcrumb items={breadItems} />
+      <Breadcrumb items={breadItems} location={this.props.location} />
       <Card className={styles.card} type="inner" title='基本信息'>
         <Row>
           <Col xs={{ span: 24 }} sm={{ span: 8 }}><label>运营商名称:</label><span>{user.get('name') || '-'}</span></Col>
@@ -123,7 +121,7 @@ class App extends Component {
             <Button
               type='primary'
               style={{ marginRight: 10, marginTop: 10 }}
-              onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}`) }}>
+              onClick={() => { this.props.history.push(`${pathname}/edit/${user.get('id')}`) }}>
               修改信息
             </Button>
             {isPermissionRecharge ? <Button
@@ -150,7 +148,7 @@ class App extends Component {
             <Button
               type='primary'
               style={{ marginRight: 10, marginTop: 10 }}
-              onClick={() => { this.props.history.push(`/soda/business/account/edit/${user.get('id')}?type=cash`) }}>
+              onClick={() => { this.props.history.push(`${pathname}/edit/${user.get('id')}?type=cash`) }}>
               修改收款信息
             </Button>
           </Col>
