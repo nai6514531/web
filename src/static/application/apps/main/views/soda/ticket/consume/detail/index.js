@@ -74,11 +74,12 @@ class CrmConsumeDetail extends Component {
         <Breadcrumb items={this.breadItems} />
         <Card className={pageStyles.card}>
           <div className={pageStyles.header}>
-              <h1>消费信息:</h1>
+              <h1>消费信息</h1>
           </div>
           <div className={pageStyles['sub-card']}>
             <div className={pageStyles['card-item']}>
-              <div><span className={pageStyles.title}>订单号：</span>{data.ticketId}</div>
+              <div><span className={pageStyles.title}>订单编号：</span>{data.ticketId}</div>
+              <div><span className={pageStyles.title}>下单时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm:ss')}</div>
                <div>
                 <span className={pageStyles.title}>订单状态：</span>
                   { 
@@ -96,25 +97,23 @@ class CrmConsumeDetail extends Component {
               <div><span className={pageStyles.title}>设备编号：</span>{data.serial}</div>
               <div><span className={pageStyles.title}>服务地点：</span> 
                 { _.isEmpty(op(data).get('device.serviceAddress')) ? '-' :
-                  _.without([op(data).get('device.serviceAddress.school.province.name'), op(data).get('device.serviceAddress.school.city.name'), op(data).get('device.serviceAddress.school.name'), op(data).get('device.serviceAddress.school.address')], '').join() || '-'
+                  _.without([op(data).get('device.serviceAddress.school.province.name'), op(data).get('device.serviceAddress.school.city.name'), op(data).get('device.serviceAddress.school.name'), op(data).get('device.serviceAddress.school.address')], '').join(' / ') || '-'
                 }
               </div>
               <div><span className={pageStyles.title}>消费手机号：</span>{data.mobile}</div>
               { !isDrinkingWater ? <div><span className={pageStyles.title}>消费密码：</span>{data.token}</div> : null }
-              <div><span className={pageStyles.title}>消费金额：</span>{conversionUnit(data.value) + '元'}</div>
               { !isDrinkingWater ? <div><span className={pageStyles.title}>支付方式：</span>{data.payment.name}</div> : null }
-              <div><span className={pageStyles.title}>下单时间：</span>{moment(data.createdAt).format('YYYY-MM-DD HH:mm:ss')}</div>
               { 
-                isDrinkingWater ? <div><span className={pageStyles.title}>服务单价</span>
+                isDrinkingWater ? <div><span className={pageStyles.title}>服务单价：</span>
                   {
                     (op(data).get('snapshot.modes') || []).map((mode) => {
                     return mode.value + '元/L ' + mode.name
-                  }).join('; ')
+                  }).join('，')
                   }
                 </div> : null 
               }
               { 
-                isDrinkingWater ? <div><span className={pageStyles.title}>本次使用</span>
+                isDrinkingWater ? <div><span className={pageStyles.title}>本次使用：</span>
                   {(op(data).get('snapshot.modes') || []).map((mode) => {
                     if (mode.preset === 'DRINKING_HOT') {
                       return (data.hot.amount / 1000) + 'L ' + conversionUnit(data.hot.value) + '元 ' + mode.name 
@@ -122,20 +121,21 @@ class CrmConsumeDetail extends Component {
                     if (mode.preset === 'DRINKING_COLD') {
                       return (data.cold.amount / 1000) + 'L '+ conversionUnit(data.cold.value) + '元 ' + mode.name 
                     }
-                  }).join('; ')}
+                  }).join('，')}
                 </div> : null 
               }
-              { !isDrinkingWater ? <div><span className={pageStyles.title}>类型：</span>{op(data).get('snapshot.modes.0.name')}</div> : null }
+              { !isDrinkingWater ? <div><span className={pageStyles.title}>服务名：</span>{op(data).get('snapshot.modes.0.name')}</div> : null }
+              <div><span className={pageStyles.title}>消费金额：</span>{conversionUnit(data.value) + '元'}</div>
             </div>
           </div>
         </Card>
         <Card className={pageStyles.card}>
           <div className={pageStyles.header}>
-              <h1>运营商信息:</h1>
+              <h1>运营商信息</h1>
           </div>
           <div className={pageStyles['sub-card']}>
             <div className={pageStyles['card-item']}>
-              <div><span className={pageStyles.title}>名称：</span>{data.owner.name || '-' }</div>
+              <div><span className={pageStyles.title}>名称：:</span>{data.owner.name || '-' }</div>
               <div><span className={pageStyles.title}>服务电话：</span>{data.owner.telephone || '-' }</div>
               <div><span className={pageStyles.title}>手机号：</span>{data.owner.mobile || '-' }</div>
               <div><span className={pageStyles.title}>地址：</span>{data.owner.address || '-' }</div>
@@ -145,7 +145,7 @@ class CrmConsumeDetail extends Component {
         { 
           !isDrinkingWater ? <Card className={pageStyles.card}>
             <div className={pageStyles.header}>
-              <h1>上级运营商信息：</h1>
+              <h1>上级运营商信息</h1>
             </div>
             <div className={pageStyles['sub-card']}>
               <div className={pageStyles['card-item']}>

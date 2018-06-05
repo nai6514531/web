@@ -44,8 +44,8 @@ class App extends Component {
         type: '',
         status: '',
         keys: '',
-        startAt: '',
-        endAt: ''
+        startAt: moment(moment(new Date()).format("YYYY-MM-DD")).subtract(30, 'days').format(),
+        endAt: moment(moment(new Date()).format("YYYY-MM-DD")).format(),
       },
       pagination: {
         total: 0,
@@ -231,7 +231,7 @@ class App extends Component {
     return current && current.valueOf() > Date.now();
   }
   disabledEndDate (current) {
-    const second = 31 * 24 * 60 * 60 * 1000;
+    const second = 30 * 24 * 60 * 60 * 1000;
     const startAt = this.state.search.startAt ? moment(this.state.search.startAt).valueOf() : '';
     if (!startAt) {
       return true;

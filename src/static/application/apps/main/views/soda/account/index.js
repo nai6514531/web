@@ -12,7 +12,6 @@ import { Table, Button, message } from 'antd'
 import { InputClear } from '../../../components/form/input'
 import UserService from '../../../services/soda-manager/user'
 import ChipcardService from '../../../services/soda-manager/chipcard'
-import history from '../../../utils/history'
 
 import Breadcrumb from '../../../components/layout/breadcrumb'
 
@@ -106,7 +105,7 @@ class App extends Component {
   changeHistory (options) {
     let { location: { pathname } } = this.props
     let query = _.pick({...this.state.search, ...this.state.pagination, ...this.state, ...options}, 'name', 'contact', 'limit', 'offset')
-    this.props.history.push(`/${pathname}?${querystring.stringify(query)}`)
+    this.props.history.push(`${pathname}?${querystring.stringify(query)}`)
   }
   search() {
     let pagination = { offset: 0 }

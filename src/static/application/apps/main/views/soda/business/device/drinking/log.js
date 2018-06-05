@@ -51,11 +51,11 @@ class App extends Component {
     this.state = {
       devices: [],
       search: {
-        serials: '',
+        serial: '',
         schoolId: '',
         serviceAddressIds: '',
-        referenceId: 0,
-        startAt: moment(moment(new Date()).format("YYYY-MM-DD")).subtract(7, 'days').format(),
+        referenceId: '',
+        startAt: moment(moment(new Date()).format("YYYY-MM-DD")).subtract(6, 'days').format(),
         endAt: moment(moment(new Date()).format("YYYY-MM-DD")).format(),
       },
       serviceAddresses: [],
@@ -123,23 +123,23 @@ class App extends Component {
   componentWillMount() {
     let query = this.props.location.search ? this.props.location.search.slice(1) : ''
     query = querystring.parse(query)
-    let search = _.pick(query, 'serials', 'serviceAddressIds', 'referenceId', 'schoolId', 'startAt', 'endAt')
+    let search = _.pick(query, 'serial', 'serviceAddressIds', 'referenceId', 'schoolId', 'startAt', 'endAt')
     let pagination = _.pick(query, 'limit', 'offset')
     this.getDeviceServiceAddress()
-    this.list({ search, pagination })
     this.getDeviceType()
-    this.getDeviceConfigDetail()
+    this.list({ search, pagination })
+    // this.getDeviceConfigDetail()
   }
   list({...options}) {
     let { loading, serviceAddresses, schools } = this.state
     let search = _.extend(this.state.search, options.search || {})
     let pagination = _.extend(this.state.pagination, options.pagination || {})
-    let { schoolId, serviceAddressIds } = search
+    let { endAt, startAt, serial, schoolId, serviceAddressIds, referenceId } = search
     schools = _.findWhere(schools, { id: schoolId === '' ? '' : +schoolId }) || {}
     let activeAddressesMapIds = _.pluck(schools.objects || [], 'id')
     serviceAddressIds = _.isEmpty(serviceAddressIds) ? activeAddressesMapIds.join(',') : serviceAddressIds
 
-    if (loading) {
+    if (loading || (!serial && !schoolId && !referenceId) || (!startAt && !endAt)) {
       return
     }
     this.setState({ search: { ...this.state.search, ...search }, pagination: { ...this.state.pagination, ...pagination }, loading: true, selectedRowKeys: [] })
@@ -147,7 +147,7 @@ class App extends Component {
     DeviceService.log({
       deviceTypes: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER,
       serviceAddressIds: serviceAddressIds,
-      ..._.pick(search, 'startAt', 'endAt', 'serials', 'referenceId'), 
+      ..._.pick(search, 'startAt', 'endAt', 'serial', 'referenceId'), 
       ..._.pick(pagination, 'limit', 'offset'),
     }).then((res) => {
       if (res.status !== 'OK') {
@@ -217,7 +217,7 @@ class App extends Component {
     })
   }
   getDeviceConfigDetail() {
-    DeviceService.configDetail({ deviceType: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER }).then((res) => {
+    DeviceService.status({ deviceType: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER }).then((res) => {
       if (res.status !== 'OK') {
         throw new Error(res.message)
       }
@@ -228,19 +228,21 @@ class App extends Component {
     })
   }
   search() {
-    let { loading, search: { serials } } = this.state
+    let { loading, search: { serial, startAt, endAt, schoolId, referenceId } } = this.state
     if (loading) {
       return
     }
-    let isInvalid = false
-    _.chain(serials.split(',')).map((serial) => String(serial)).groupBy((serial) => serial.length).keys().each((length) => {
-      if (+length < SERIAL_MIN_LENGTH) {
-        isInvalid = true
-      }
-    })
-    if (isInvalid && !_.isEmpty(serials)) {
+    if (!serial && !schoolId && !referenceId) {
+      message.info('请选择筛选条件')
+      return
+    }
+    if (!!serial && serial.length < SERIAL_MIN_LENGTH) {
       return message.error('请输入正确的设备编号')
     }
+    if (!startAt && !endAt) {
+      return message.error('请选择日期')
+    }
+
     let pagination = { offset: 0 }
     this.changeHistory(pagination)
     this.list({ pagination })
@@ -248,7 +250,7 @@ class App extends Component {
   changeHistory(options) {
     let { location: { pathname } } = this.props
     pathname = pathname.split('/')[1]
-    let query = _.pick({...this.state.search, ...this.state.pagination, ...options}, 'serviceAddressIds', 'serials', 'startAt', 'endAt', 'limit', 'offset', 'referenceId', 'schoolId')
+    let query = _.pick({...this.state.search, ...this.state.pagination, ...options}, 'serviceAddressIds', 'serial', 'startAt', 'endAt', 'limit', 'offset', 'referenceId', 'schoolId')
 
     this.props.history.push(`/${pathname}/business/device-config?${querystring.stringify(query)}`)
   }
@@ -285,7 +287,7 @@ class App extends Component {
     return current && current.valueOf() > Date.now();
   }
   disabledEndDate (current) {
-    const second = 31 * 24 * 60 * 60 * 1000;
+    const second = 30 * 24 * 60 * 60 * 1000;
     const startAt = this.state.search.startAt ? moment(this.state.search.startAt).valueOf() : '';
     if (!startAt) {
       return true;
@@ -326,22 +328,22 @@ class App extends Component {
     this.list({ pagination: { limit: pageSize, offset: offset } })
   }
   render() {
-    let { devices, users, schools, loading, deviceTypes, configDetail, search: { serials, schoolId, serviceAddressIds, referenceId, startAt, endAt } } = this.state
+    let { devices, users, schools, loading, deviceTypes, configDetail, search: { serial, schoolId, serviceAddressIds, referenceId, startAt, endAt } } = this.state
 
     // 当前选择学校下的服务地点
     let activeSchoolsMap = _.findWhere(schools || [], { id: schoolId === '' ? '' : +schoolId }) || {}
 
     return (<div>
       <Breadcrumb items={breadItems} location={this.props.location} />
-      <Card className={styles.card}>
-        <p>当前在线设备<span>{configDetail.onCount}</span>台, 离线设备<span>{configDetail.offCount}</span>台</p>
-      </Card>
+      { false ? <Card className={styles.card}>
+        <p>当前在线设备<span>{configDetail.status.off}</span>台, 离线设备<span>{configDetail.status.on}</span>台</p>
+      </Card> : null}
       <Row>
         <InputScan
           placeholder="请输入设备编号"
           style={{ width: 180 , marginRight: 10, marginBottom: 10 }}
-          value={serials}
-          onChange={this.changeInput.bind(this, 'serials')}
+          value={serial}
+          onChange={this.changeInput.bind(this, 'serial')}
           onPressEnter={this.search.bind(this)}
         />
         <Select
@@ -376,7 +378,7 @@ class App extends Component {
           placeholder="请选择关联设备类型"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
-          value={+referenceId === 0 ? '' : +referenceId}
+          value={referenceId === '' ? '' : +referenceId}
         >
           <Option value="">请选择关联设备类型</Option>
           {(deviceTypes || []).map((feature) => {
