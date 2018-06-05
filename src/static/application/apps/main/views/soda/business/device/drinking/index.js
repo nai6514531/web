@@ -503,19 +503,21 @@ class App extends Component {
             })
           })}
         </Select>
-        <Select
-          showSearch
-          style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="运行状态"
-          optionFilterProp="children"
-          onChange={this.changeStatus.bind(this)}
-          value={+status === 0 ? '' : +status}
-        >
-          <Option value="">请选择运行状态</Option>
-          {(STATUS || []).map((status) => {
-            return <Option key={status.id} value={status.id}>{status.name}</Option>
-          })}
-        </Select>
+        { 
+          false ? <Select
+            showSearch
+            style={{ width: 160, marginRight: 10, marginBottom: 10 }}
+            placeholder="运行状态"
+            optionFilterProp="children"
+            onChange={this.changeStatus.bind(this)}
+            value={+status === 0 ? '' : +status}
+          >
+            <Option value="">请选择运行状态</Option>
+            {(STATUS || []).map((status) => {
+              return <Option key={status.id} value={status.id}>{status.name}</Option>
+            })}
+          </Select> : null
+        }
         <Button type='primary' onClick={this.search.bind(this)}>筛选</Button>
       </Row>
       { 

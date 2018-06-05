@@ -31,12 +31,17 @@ const { Option } = Select
 class Consume extends Component {
   constructor(props) {
     super(props)
-    const search = transformUrl(location.search)
-    this.search = search
-    let { isVisible } = this.props
+    let { isVisible, location: { pathname }, user } = this.props
+    let search = transformUrl(location.search)
+    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
+    let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
+      [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_DELIVERED])
+    this.search = { ...search, status: (status || []).join(',') }
 
     this.columns = [
-      { title: '订单号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
+      { title: '订单编号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
       { 
         title: '运营商', 
         colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_NAME') ? 1 : 0,
@@ -69,6 +74,7 @@ class Consume extends Component {
       }, {
         title: '学校',
         dataIndex: 'schoolName',
+        width: 100,
         render: (schoolName, record) => {
           return  `${op(record).get('device.serviceAddress.school.name') || '-'}`
         }
@@ -83,7 +89,21 @@ class Consume extends Component {
       },
       { title: '设备编号', dataIndex: 'serial',key: 'serial', width: 100 },
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
-      { title: '消费密码', dataIndex: 'token',key: 'token', width: 100 },
+      { 
+        title: '消费密码', 
+        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 1 : 0,
+        dataIndex: 'token',
+        key: 'token', 
+        width: 100 ,
+        render: (token) => {
+           return {
+            children: `${token}`,
+            props: {
+              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 1 : 0
+            }
+          }
+        }
+      },
       {
         title: '消费金额',
         width: 100,
@@ -99,7 +119,7 @@ class Consume extends Component {
         }
       },
       {
-        title: '类型',
+        title: '服务名',
         width: 50,
         colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0,
         render: (text, record) => {
@@ -221,19 +241,14 @@ class Consume extends Component {
     this.fetch(this.search)
   }
   fetch = (url) => {
-    let { user, location: { pathname } } = this.props
+    let { location: { pathname } } = this.props
     let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
-    let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
-      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
-      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
 
     this.props.dispatch({
       type: 'consume/list',
       payload: {
         data: { 
           ...url, 
-          status: (status || []).join(','),
           type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
         }
       }
@@ -245,12 +260,8 @@ class Consume extends Component {
   }
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
-    let { user, location: { pathname } } = this.props
+    let { location: { pathname } } = this.props
     let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
-    let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
-      [TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
-      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED])
 
     if(!startAt || !endAt) {
       message.info('请选择日期')
@@ -265,7 +276,6 @@ class Consume extends Component {
       payload: {
         data: { 
           ...this.search, 
-          status: (status || []).join(','),
           type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
         }
       }

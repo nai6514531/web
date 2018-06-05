@@ -55,14 +55,11 @@ const deviceService = {
   deviceType: (options) => {
     return request.get(`/mng/devices-types`, { params: options })
   },
-  configDetail: (options) => {
-    return request.get(`/mng/devices-config/detail`, { params: options })
-  },
   log: (options) => {
     return request.get(`/mng/devices-log`, { params: options })
   },
-  setOn: (options) => {
-    return request.get(`/mng/devices-config/detail`, { params: options })
+  status: (options) => {
+    return request.get(`/mng/device/${options.deviceType}/status`)
   },
   deviceModeList: (options) => {
     return request.get(`/mng/devices-modes`, { params: options })

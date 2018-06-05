@@ -53,27 +53,15 @@ class DeviceDetail extends Component {
     this.fetch(url)
   }
   fetch = (url) => {
-    if (this.isFromBusiness) {
-      this.props.dispatch({
-        type: 'sodaDeviceDetail/detail',
-        payload: {
-          data:  {
-            ...url,
-            serial: this.props.match.params.serial
-          }
+    this.props.dispatch({
+      type: 'sodaDeviceDetail/detailWithUser',
+      payload: {
+        data:  {
+          ...url,
+          serial: this.props.match.params.serial
         }
-      })
-    } else {
-      this.props.dispatch({
-        type: 'sodaDeviceDetail/detailWithUser',
-        payload: {
-          data:  {
-            ...url,
-            serial: this.props.match.params.serial
-          }
-        }
-      })
-    }
+      }
+    })
     this.props.dispatch({
       type: 'sodaDeviceDetail/modes',
       payload: {
@@ -109,7 +97,8 @@ class DeviceDetail extends Component {
     const featureId = op(data).get('feature.id')
     const feature = _.find(deviceTypes || [], { id : featureId }) || {}
     const reference = _.find(feature.references || [], { id : op(data).get('feature.reference.id') }) || {}
-    const suffix = featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? '元/L' : '元'
+    let isDrinkingWater = featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER
+    const suffix = isDrinkingWater ? '元/L' : '元'
 
     return(
       <div>
@@ -126,78 +115,78 @@ class DeviceDetail extends Component {
               </div>
               <div className={pageStyles['sub-card']}>
                 <div className={pageStyles['card-item']}>
-                  <div><span className={pageStyles.title}>设备编号:</span>{data.serial || '-'}</div>
-                  <div><span className={pageStyles.title}>关联设备类型:</span>{op(reference).get('name') || '-'}</div>
+                  <div><span className={pageStyles.title}>设备编号：</span>{data.serial || '-'}</div>
+                  <div><span className={pageStyles.title}>关联设备类型：</span>{op(reference).get('name') || '-'}</div>
                   <div>
-                    <span className={pageStyles.title}>价格:</span>
+                    <span className={pageStyles.title}>服务单价：</span>
                     {(modes || []).map((mode) => {
-                      return [`${mode.name}`, `${conversionUnit(mode.value)}${suffix}`].join(' ')
-                    }).join(' / ')}
+                      return [`${conversionUnit(mode.value)}${suffix}`, `${mode.name}`].join(' ')
+                    }).join('，')}
                   </div>
                   <div>
-                    <span className={pageStyles.title}>服务地点:</span>
+                    <span className={pageStyles.title}>服务地点：</span>
                     { _.isEmpty(op(data).get('serviceAddress')) ? '-' :
-                      _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.name'), op(data).get('serviceAddress.school.address')], '').join() || '-'
+                      _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.name'), op(data).get('serviceAddress.school.address')], '').join(' / ') || '-'
                     }
                   </div>
-                  <div><span className={pageStyles.title}>运行状态:</span><span className={styles.title}>{op(data).get('status.description') || '-' }</span></div>
+                  <div><span className={pageStyles.title}>运行状态：</span><span className={styles.title}>{op(data).get('status.description') || '-' }</span></div>
                   { 
-                    featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
-                    <span className={pageStyles.title}>制热状态:</span>
+                    featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER && false ? <div>
+                    <span className={pageStyles.title}>制热状态：</span>
                     <span className={styles.title}>{op(data).get('config.status') ? '已开启' : '已关闭' }</span>
                     </div> : null
                   }
                   { 
                     featureId !== DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
-                      <span className={pageStyles.title}>重置验证码:</span>
+                      <span className={pageStyles.title}>重置验证码：</span>
                       {op(data).get('limit.password.isResettable') ? '支持': '不支持' }
                       {op(data).get('limit.password.isResettable') ? <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetToken}>获取</Button> : null }
                     </div> : null
                   }
                   {
-                    token ? <div><span className={pageStyles.title}>验证码:</span>{token || '-'}</div> : null
+                    token ? <div><span className={pageStyles.title}>验证码：</span>{token || '-'}</div> : null
                   }
                 </div>
               </div>
             </Card>
-            { !this.isFromBusiness ? <div>
-                <Card className={pageStyles.card}>
-                  <div className={pageStyles.header}>
-                      <h1>商家详情</h1>
+            { 
+              !this.isFromBusiness || isDrinkingWater ? <Card className={pageStyles.card}>
+                <div className={pageStyles.header}>
+                    <h1>运营商详情</h1>
+                </div>
+                <div className={pageStyles['sub-card']}>
+                  <div className={pageStyles['card-item']}>
+                    <div><span className={pageStyles.title}>商家名称：</span>{op(data).get('user.name') || '-'}</div>
+                    <div><span className={pageStyles.title}>商家ID：</span>{op(data).get('user.id') || '-'}</div>
+                    <div><span className={pageStyles.title}>登录账号：</span>{op(data).get('user.account') || '-'}</div>
+                    <div><span className={pageStyles.title}>注册时间：</span>{op(data).get('user.createdAt') ? moment(op(data).get('user.createdAt')).format('YYYY-MM-DD HH:mm:ss') : '-'}</div>
+                    <div><span className={pageStyles.title}>联系人：</span>{op(data).get('user.contact') || '-'}</div>
+                    <div><span className={pageStyles.title}>手机号：</span>{op(data).get('user.mobile') || '-'}</div>
+                    <div><span className={pageStyles.title}>服务电话：</span>{op(data).get('user.telephone') || '-'}</div>
+                    <div><span className={pageStyles.title}>地点：</span><span className={pageStyles.overText}>{op(data).get('user.address') || '-'}</span></div>
                   </div>
-                  <div className={pageStyles['sub-card']}>
-                    <div className={pageStyles['card-item']}>
-                      <div><span className={pageStyles.title}>商家名称:</span>{op(data).get('user.name') || '-'}</div>
-                      <div><span className={pageStyles.title}>商家ID:</span>{op(data).get('user.id') || '-'}</div>
-                      <div><span className={pageStyles.title}>登录账号:</span>{op(data).get('user.account') || '-'}</div>
-                      <div><span className={pageStyles.title}>注册时间:</span>{op(data).get('user.createdAt') ? moment(op(data).get('user.createdAt')).format('YYYY-MM-DD HH:mm:ss') : '-'}</div>
-                      <div><span className={pageStyles.title}>联系人:</span>{op(data).get('user.contact') || '-'}</div>
-                      <div><span className={pageStyles.title}>手机号:</span>{op(data).get('user.mobile') || '-'}</div>
-                      <div><span className={pageStyles.title}>服务电话:</span>{op(data).get('user.telephone') || '-'}</div>
-                      <div><span className={pageStyles.title}>地点:</span><span className={pageStyles.overText}>{op(data).get('user.address') || '-'}</span></div>
-                    </div>
-                  </div>
-                </Card>
-                <Card className={pageStyles.card}>
-                  <div className={pageStyles.header}>
-                      <h1>上级商家详情</h1>
-                  </div>
-                  <div className={pageStyles['sub-card']}>
-                    <div className={pageStyles['card-item']}>
-                      <div><span className={pageStyles.title}>商家名称:</span>{op(data).get('assignedUser.name') || '-'}</div>
-                      <div><span className={pageStyles.title}>商家ID:</span>{op(data).get('assignedUser.id') || '-'}</div>
-                      <div><span className={pageStyles.title}>登录账号:</span>{op(data).get('assignedUser.account') || '-'}</div>
-                      <div><span className={pageStyles.title}>注册时间:</span>{moment(op(data).get('assignedUser.createdAt')).format('YYYY-MM-DD HH:mm:ss')}</div>
-                      <div><span className={pageStyles.title}>联系人:</span>{op(data).get('assignedUser.contact') || '-'}</div>
-                      <div><span className={pageStyles.title}>手机号:</span>{op(data).get('assignedUser.mobile') || '-'}</div>
-                      <div><span className={pageStyles.title}>服务电话:</span>{op(data).get('assignedUser.telephone') || '-'}</div>
-                      <div><span className={pageStyles.title}>地点:</span><span className={pageStyles.overText}>{op(data).get('assignedUser.address') || '-'}</span></div>
-                    </div>
-                  </div>
-                </Card>
-              </div> : null
+                </div>
+              </Card> : null
             }
-            
+            { 
+              !this.isFromBusiness ? <Card className={pageStyles.card}>
+                <div className={pageStyles.header}>
+                    <h1>上级运营商详情</h1>
+                </div>
+                <div className={pageStyles['sub-card']}>
+                  <div className={pageStyles['card-item']}>
+                    <div><span className={pageStyles.title}>商家名称：</span>{op(data).get('assignedUser.name') || '-'}</div>
+                    <div><span className={pageStyles.title}>商家ID：</span>{op(data).get('assignedUser.id') || '-'}</div>
+                    <div><span className={pageStyles.title}>登录账号：</span>{op(data).get('assignedUser.account') || '-'}</div>
+                    <div><span className={pageStyles.title}>注册时间：</span>{moment(op(data).get('assignedUser.createdAt')).format('YYYY-MM-DD HH:mm:ss')}</div>
+                    <div><span className={pageStyles.title}>联系人：</span>{op(data).get('assignedUser.contact') || '-'}</div>
+                    <div><span className={pageStyles.title}>手机号：</span>{op(data).get('assignedUser.mobile') || '-'}</div>
+                    <div><span className={pageStyles.title}>服务电话：</span>{op(data).get('assignedUser.telephone') || '-'}</div>
+                    <div><span className={pageStyles.title}>地点：</span><span className={pageStyles.overText}>{op(data).get('assignedUser.address') || '-'}</span></div>
+                  </div>
+                </div>
+              </Card> : null
+            }
           </Spin> : null
         }
       </div>
