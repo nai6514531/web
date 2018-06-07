@@ -10,8 +10,7 @@ import history from '../../../../utils/history'
 import { conversionUnit } from '../../../../utils/functions'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 
-import BILL from '../../../../constant/bill'
-import DEVICE from '../../../../constant/device'
+import TICKET from '../../../../constant/ticket'
 
 import styles from './index.pcss'
 
@@ -86,10 +85,13 @@ class App extends Component{
           return `${device.serial || '-' } / ${device.address || '-'}`
         }
       }, {
-        title: '服务类型',
+        title: '服务名',
         dataIndex: 'type',
-        render: (type) => {
-          return DEVICE.SERVICE_TYPE[type]
+        render: (type, record) => {
+          let names = (op(record).get('snapshot.modes') || []).map((mode) => {
+            return mode.name
+          })
+          return (names || []).join('/')
         }
       }, {
         title: '金额',
@@ -99,10 +101,10 @@ class App extends Component{
       },{
         title: '支付方式',
         render: (record) => {
-          return BILL.PAYMENT_TYPE[record.pay.type] || '-'
+          return TICKET.PAYMENT_TYPE[record.pay.type] || '-'
         }
       },{
-        title: '洗衣手机号',
+        title: '消费手机号',
         dataIndex: 'user',
         render: (user) => {
           return `${user.mobile}`
@@ -110,18 +112,21 @@ class App extends Component{
       }, {
         title: '下单时间',
         dataIndex: 'createdAt',
-        render:(date)=>{
+        render: (date) => {
           return moment(date).format('YYYY-MM-DD HH:mm:ss')
         }
       }, {
-        title: '状态',
+        title: '订单状态',
         dataIndex: 'status',
         render: (status) => {
           switch (status) {
-            case BILL.CONSUME_STATUS_IS_DEFAULT:
+            case TICKET.STATUS_IS_DELIVERED:
               return <span>正常</span>
               break;
-            case BILL.CONSUME_STATUS_IS_REFUND:
+            case TICKET.DRINKING_STATUS_IS_SETTLED:
+              return <span>正常</span>
+              break;
+            case TICKET.STATUS_IS_REFUND:
               return <span className={styles.refund}>已退款</span>
               break;
             default:
