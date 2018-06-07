@@ -35,9 +35,9 @@ class Consume extends Component {
     let search = transformUrl(location.search)
     let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_REFUND] :
-      [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_IS_DELIVERED]) :
-      ( isDrinkingWater ? '' : [TICKET.CONSUME_STATUS_IS_REFUND, TICKET.CONSUME_STATUS_DELIVERY_FAILURE, TICKET.CONSUME_STATUS_IS_DELIVERED])
+    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_STATUS_IS_SETTLED, TICKET.STATUS_IS_REFUND] :
+      [TICKET.STATUS_IS_REFUND, TICKET.STATUS_IS_DELIVERED]) :
+      ( isDrinkingWater ? '' : [TICKET.STATUS_IS_REFUND, TICKET.STATUS_DELIVERY_FAILURE, TICKET.STATUS_IS_DELIVERED])
     this.search = { ...search, status: (status || []).join(',') }
 
     this.columns = [
@@ -91,7 +91,7 @@ class Consume extends Component {
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
       { 
         title: '消费密码', 
-        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 1 : 0,
+        colSpan: isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1,
         dataIndex: 'token',
         key: 'token', 
         width: 100 ,
@@ -99,7 +99,7 @@ class Consume extends Component {
            return {
             children: `${token}`,
             props: {
-              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 1 : 0
+              colSpan: isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1
             }
           }
         }
@@ -121,7 +121,7 @@ class Consume extends Component {
       {
         title: '服务名',
         width: 50,
-        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0,
+        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !isDrinkingWater ? 1 : 0,
         render: (text, record) => {
           let names = (op(record).get('snapshot.modes') || []).map((mode) => {
             return mode.name
@@ -129,7 +129,7 @@ class Consume extends Component {
           return {
             children: <span>{names.join('/')}</span>,
             props: {
-              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') ? 1 : 0
+              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !isDrinkingWater ? 1 : 0
             }
           }
         }
@@ -151,7 +151,7 @@ class Consume extends Component {
       },
       {
         title: '下单时间',
-        width: 100,
+        width: 120,
         render: (text, record) => {
           return (
             `${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
@@ -171,10 +171,10 @@ class Consume extends Component {
           let showDetail = isVisible('TICKET_CONSUME:BUTTON:DETAIL')
           pathname = pathname.split('/')[1]
 
-          if (value === TICKET.CONSUME_STATUS_IS_REFUND) {
+          if (value === TICKET.STATUS_IS_REFUND) {
             suffix = <span style={{color: '#666'}}>已退款</span>
           }
-          if (!!~[TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED, TICKET.CONSUME_STATUS_IS_DELIVERED].indexOf(value) && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
+          if (!!~[TICKET.DRINKING_STATUS_IS_SETTLED, TICKET.STATUS_IS_DELIVERED].indexOf(value) && isVisible('TICKET_CONSUME:BUTTON:REFUND')) {
             if (!isBusiness || moment(createdAt).isSame(timestamp, 'day') && isBusiness) {
               suffix = <span>
                 <Popconfirm title='确认退款吗?' onConfirm={this.refund.bind(this, ticketId)} >

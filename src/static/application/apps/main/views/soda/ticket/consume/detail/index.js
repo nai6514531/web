@@ -64,8 +64,8 @@ class CrmConsumeDetail extends Component {
     })
   }
   render() {
-    const { consumeDetail: { data, parent, authHold }, loading  } = this.props
-    let isDrinkingWater = data.feature === DEVICE.FEATURE_IS_DRINKING_WATER
+    let { consumeDetail: { data, parent, authHold }, loading  } = this.props
+    let isDrinkingWater = op(data).get('device.feature.id') === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER
 
     return(
       <Spin
@@ -83,7 +83,7 @@ class CrmConsumeDetail extends Component {
                <div>
                 <span className={pageStyles.title}>订单状态：</span>
                   { 
-                    authHold.status === AUTH_HOLD.STATUS_IS_USING && op(data).get('status.value') !== TICKET.DRINKING_CONSUME_STATUS_IS_SETTLED ? <div className={styles.release}>
+                    authHold.status === AUTH_HOLD.STATUS_IS_USING && op(data).get('status.value') !== TICKET.DRINKING_STATUS_IS_SETTLED ? <div className={styles.release}>
                       <span>余额被冻结</span>
                       <Button
                         type='primary'

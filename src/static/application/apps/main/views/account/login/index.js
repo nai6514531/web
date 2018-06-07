@@ -169,22 +169,21 @@ class Login extends Component {
             </FormItem>
             <FormItem
               {...captchaHelp}>
-              {getFieldDecorator('code', {
-                initialValue: '',
-                rules: [
-                  {
-                    required: true, message: '请输入图形验证码',
-                  },
-                ],
-              })(
               <Row>
-                <Col span={17}>
+                <Col span={14}>
+                  {getFieldDecorator('code', {
+                    initialValue: '',
+                    rules: [
+                      {
+                        required: true, message: '请输入图形验证码',
+                      },
+                    ],
+                  })(
                   <Input
-                    size='large'
                     placeholder='请输入图形验证码'
-                    onPressEnter={this.handleOk}/>
+                    onPressEnter={this.handleOk}/>)}
                 </Col>
-                <Col span={7}>
+                <Col span={10}>
                   <img
                     className={styles.captcha}
                     src={captcha}
@@ -192,7 +191,7 @@ class Login extends Component {
                     />
                 </Col>
               </Row>
-              )}
+              
               {/* <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>*/}
             </FormItem>
             <Row className={styles.button}>
