@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import querystring from 'querystring'
 import { Table, message } from 'antd'
+import op from 'object-path'
 
 import DailyBillsService from '../../../../services/soda-manager/daily-bills'
 

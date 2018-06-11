@@ -44,7 +44,6 @@ export default {
       let { type } = data
       data = _.omit(data,  ['type'])
 
-      console.log(data)
       if (type === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER) {
         result = yield call(ticketService.drinkingTicketsList, data)
       } else {
