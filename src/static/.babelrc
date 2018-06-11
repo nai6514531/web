@@ -3,6 +3,6 @@
 	"plugins": [
 		"transform-decorators-legacy",
 		"add-module-exports", 
-		["import", { "libraryName": "antd", "style": "css" }]
+		["import", { "libraryName": "antd", "style": true }]
 	]
 }

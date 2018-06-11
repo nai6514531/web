@@ -3,6 +3,9 @@ const webpack = require('webpack')
 const path = require('path')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const config = require('config')
+const fs = require('fs')
+const lessToJs = require('less-vars-to-js')
+const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, '../theme.less'), 'utf8'))
 
 const pkg = require('../package.json')
 
@@ -32,16 +35,15 @@ module.exports = function (options) {
     },
     module: {
       loaders: [{
-        test: /\.vue?$/,
-        exclude: /node_modules/,
-        loader: 'vue',
-      }, {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel',
       }, {
         test: /\.css$/,
         loader: "style!css",
+      }, {
+        test: /\.less$/,
+        loader: `style!css!less?{modifyVars:${JSON.stringify(themeVariables)}}`,
       }, {
         test: /\.pcss$/,
         loader: `style!css?module&importLoaders=1!postcss`,
@@ -57,7 +59,7 @@ module.exports = function (options) {
       }]
     },
     resolve: {
-      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.vue'],
+      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.less'],
     },
     plugins: [
       new ProgressBarPlugin(),
