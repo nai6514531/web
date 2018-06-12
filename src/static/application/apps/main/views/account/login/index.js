@@ -26,7 +26,7 @@ class Login extends Component {
   }
 
   handleOk = () => {
-    const { form:{ validateFieldsAndScroll, resetFields }, dipatch, history , login: { captcha } } = this.props
+    const { form:{ validateFieldsAndScroll, resetFields }, dipatch, history , login: { captcha, showSmsCode } } = this.props
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
         return
@@ -35,6 +35,7 @@ class Login extends Component {
         type: 'login/login',
         payload: {
           data: {
+            showSmsCode: showSmsCode,
             account: values.account,
             password: md5(values.password),
             initPassword: values.password,
@@ -73,19 +74,24 @@ class Login extends Component {
   }
 
   handleClickCounter = () => {
-    const { form:{ getFieldValue }, dispatch, login: { userId, smsLoading } } = this.props
-
-    if (smsLoading) {
-      return
-    }
-    dispatch({
-      type: 'login/smsCode',
-      payload: {
-        data: {
-          motivation: MOTIVATION.LOGIN,
-          account: getFieldValue('account'),
-        }
+    const { form:{ validateFieldsAndScroll }, dispatch, login: { userId, smsLoading, captcha } } = this.props
+    validateFieldsAndScroll(['account', 'code'], (errors, values) => {
+      if (errors || smsLoading) {
+        return
       }
+      dispatch({
+        type: 'login/smsCode',
+        payload: {
+          data: {
+            motivation: MOTIVATION.LOGIN,
+            account: values.account,
+            captcha: {
+              code: values.code,
+              key: captcha && captcha.split("//")[1].match(/\/(.*)/)[0]
+            }
+          }
+        }
+      })
     })
   }
 
@@ -121,6 +127,33 @@ class Login extends Component {
                   onPressEnter={this.handleOk}
                 />
               )}
+            </FormItem>
+            <FormItem
+              {...captchaHelp}>
+              <Row>
+                <Col span={14}>
+                  {getFieldDecorator('code', {
+                    initialValue: '',
+                    rules: [
+                      {
+                        required: true, message: '请输入图形验证码',
+                      },
+                    ],
+                  })(
+                  <Input
+                    placeholder='请输入图形验证码'
+                    onPressEnter={this.handleOk}/>)}
+                </Col>
+                <Col span={10}>
+                  <img
+                    className={styles.captcha}
+                    src={captcha}
+                    onClick={this.changeCaptcha}
+                    />
+                </Col>
+              </Row>
+              
+              {/* <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>*/}
             </FormItem>
             {
               showSmsCode ?  <FormItem
@@ -166,33 +199,6 @@ class Login extends Component {
                   onPressEnter={this.handleOk}
                 />
               )}
-            </FormItem>
-            <FormItem
-              {...captchaHelp}>
-              <Row>
-                <Col span={14}>
-                  {getFieldDecorator('code', {
-                    initialValue: '',
-                    rules: [
-                      {
-                        required: true, message: '请输入图形验证码',
-                      },
-                    ],
-                  })(
-                  <Input
-                    placeholder='请输入图形验证码'
-                    onPressEnter={this.handleOk}/>)}
-                </Col>
-                <Col span={10}>
-                  <img
-                    className={styles.captcha}
-                    src={captcha}
-                    onClick={this.changeCaptcha}
-                    />
-                </Col>
-              </Row>
-              
-              {/* <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>*/}
             </FormItem>
             <Row className={styles.button}>
               <Button type='primary' size='large' onClick={this.handleOk} loading={loading}>

@@ -56,7 +56,7 @@ export default {
     },
     *smsCode ({ payload }, { put, call }) {
       yield put({ type: 'updateData', payload: { loading: true, errors: { smsCode: null } } })
-      let { status, data, message } = yield call(commonService.resetSms, payload.data)
+      let { status, data, message } = yield call(commonService.sms, payload.data)
       yield put({ type: 'updateData', payload: { loading: false } })
       if (status == 'OK' ) {
         yield put({ type: 'updateData', payload: { startedAt: +new Date(), mobile: data.mobile, isShowTip: true } })

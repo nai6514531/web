@@ -10,9 +10,6 @@ const commonService = {
   sms: (options) => {
     return request.post(`/sms/code`, options)
   },
-  resetSms: (options) => {
-    return request.post(`/sms/reset-code`, options)
-  },
   smsList: (data) => {
     let date = data.date ? data.date.replace(/-/g,'') : ''
     let url = `/sms/${ data.mobile }?offset=${data.offset || 0 }&limit=${data.limit || 10 }&date=${ date }`
