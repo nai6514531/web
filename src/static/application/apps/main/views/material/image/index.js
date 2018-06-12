@@ -158,10 +158,9 @@ class Image extends Component {
 
         let imageNode = document.querySelector('.ant-upload-list-item-thumbnail > img')
         values.name = trim(values.name)
-        values.format =  '.' + values.url.split(".")[1]
-        values.width = imageNode.width
-        values.height = imageNode.height
-
+        values.format = values.url.split(".")[1]
+        values.width = imageNode.naturalWidth
+        values.height = imageNode.naturalHeight
         this.props.dispatch({
           type: type,
           payload: {
