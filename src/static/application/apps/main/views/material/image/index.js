@@ -412,6 +412,8 @@ class Image extends Component {
               {getFieldDecorator('name', {
                 rules: [{
                   required: true, message: '请输入图片名!',
+                },{
+                  max: 20, message: '长度最多20个字符'
                 }],
                 initialValue: record.name
               })(
