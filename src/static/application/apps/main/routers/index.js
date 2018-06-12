@@ -12,6 +12,7 @@ import advertisement from './advertisement/'
 import platform from './platform/'
 import game from './game/'
 import soda from './soda/'
+import material from './material/'
 
 import Login from 'bundle-loader?lazy!../views/account/login'
 import ResetPassword from 'bundle-loader?lazy!../views/account/reset-password'
@@ -33,6 +34,7 @@ function RouterConfig({ history, app }) {
               { platform(app) }
               { game(app) }
               { soda(app) }
+              { material(app) }
           </Layout>
           <Route component={getComponent(NotFound)} />
         </Switch>
