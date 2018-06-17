@@ -6,6 +6,7 @@ import { connect } from 'dva'
 import Nav from './nav/'
 import SideBar from './sidebar/'
 import { storage } from '../../utils/storage.js'
+import { isSodaLife,isSodaApp } from '../../utils/debug.js'
 import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import './index.css'
@@ -45,7 +46,8 @@ class Wrapper extends React.Component {
   render() {
     const { common: { fold, navOpenKeys, userInfo, selectedKeys }, dispatch } = this.props
     const mode = fold ? 'vertical' : 'inline'
-    const imageUrl = fold ? require('../../assets/favicon.png') : require('../../assets/logo.png')
+    let logoFileName = isSodaLife ? "logo.png" : "lALPBbCc1eekZZzMls0BkA_400_150.png";
+    const imageUrl = fold ? require('../../assets/favicon.png') : require(`../../assets/${logoFileName}`)
     const wrapper = classNames('wrapper')
     const sideWrap = classNames({
       'side': true,

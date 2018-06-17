@@ -1,7 +1,7 @@
 import moment from 'moment'
 import querystring from 'querystring'
 import cookie from 'component-cookie'
-
+import _ from 'lodash';
 import platform from './platform'
 import { COOKIE } from '../constant/cookie'
 
@@ -30,8 +30,11 @@ if (isDebug || isDevelopment || isStaging) {
   .....----- ${env.PKG_NAME.replace(/./g, '=')} -----.....
   `)
 
-  
+
 }
+
+export const isSodaLife = _.includes(location.hostname,"sodalife");
+export const isSodaApp = _.includes(location.hostname,"sodaapp");
 
 // set eruda
 if (isDebug) {

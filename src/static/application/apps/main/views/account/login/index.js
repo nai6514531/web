@@ -3,15 +3,34 @@ import { Link } from 'react-router-dom'
 import { Button, Row, Col, Form, Input, Checkbox } from 'antd'
 import { connect } from 'dva'
 import md5 from 'md5'
+import _ from 'lodash';
 
 import { storage } from '../../../utils/storage.js'
+import { isSodaLife,isSodaApp } from '../../../utils/debug.js'
 
 import Throttle from '../../../components/throttle'
 import { MOTIVATION } from '../../../constant/sms'
 
 import styles from './index.pcss'
 
-const FormItem = Form.Item
+const FormItem = Form.Item;
+
+const hostName = isSodaLife ? 'erp.sodalife.xyz' :'mng.sodaapp.cn';
+
+const companyConfig={
+  "erp.sodalife.xyz":{
+    name:"苏打生活",
+    company:"深圳市华策网络科技有限公司",
+    beianPrefix:"粤ICP备",
+    beianNumber:"16090794号"
+  },
+  "mng.sodaapp.cn":{
+    name:"苏打校园",
+    company:"海南娱玩科技有限公司",
+    beianPrefix:"琼ICP备",
+    beianNumber:"16000779号-2"
+  }
+};
 
 class Login extends Component {
   constructor(props) {
@@ -101,7 +120,7 @@ class Login extends Component {
         <div className={styles.form}>
           <div className={styles.logo}>
             <img alt={'图片加载失败'} src={require('../../../assets/favicon.png')} />
-            <span>苏打管理系统</span>
+            <span>{companyConfig[hostName].name}管理系统</span>
           </div>
           <form>
             <FormItem
@@ -191,7 +210,7 @@ class Login extends Component {
                     />
                 </Col>
               </Row>
-              
+
               {/* <a href="#" onClick={this.changeCaptcha}>看不清楚?换一张</a>*/}
             </FormItem>
             <Row className={styles.button}>
@@ -213,9 +232,9 @@ class Login extends Component {
           </form>
         </div>
         <div className={styles.text}>
-          <p>Copyright © 2018 苏打生活. All Rights Reserved</p>
-          <p>客服电话:400-8678-884 粤ICP备<a href='http://www.miitbeian.gov.cn/state/outPortal/loginPortal.action;jsessionid=nU8rLzUPO4kyMeVHmviUQBcwFVqPJxbScSgxQYI55eT5XpjyRUHw!1069245859'>16090794号</a></p>
-          <p>深圳市华策网络科技有限公司</p>
+          <p>Copyright © 2018 {companyConfig[hostName].name}. All Rights Reserved</p>
+          <p>客服电话:400-8678-884 {companyConfig[hostName].beianPrefix}<a href='http://www.miitbeian.gov.cn/'>{companyConfig[hostName].beianNumber}</a></p>
+          <p>{companyConfig[hostName].company}</p>
         </div>
       </div>
     )
