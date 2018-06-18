@@ -78,7 +78,7 @@ class Device extends Component {
         }
       },
       {
-        title: '关联设备类型',
+        title: '关联设备',
         dataIndex: 'feature',
         width: 70,
         render: (feature) => {

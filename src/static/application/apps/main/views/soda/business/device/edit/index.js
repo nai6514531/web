@@ -132,7 +132,7 @@ class Edit extends Component {
       }
       let { data: device } = res
       this.getDeviceServiceAddress(device.user.id)
-      this.getDeviceModes(device) 
+      this.getDeviceModes(device)
     }).catch((err) => {
       this.setState({ loading: false })
       message.error(err.message || '服务器异常，刷新重试')
@@ -258,7 +258,7 @@ class Edit extends Component {
             mode = {
               ...mode,
               id: modesGroupByPulseId[pulseId].id
-            } 
+            }
           }
           return mode
         })
@@ -339,8 +339,8 @@ class Edit extends Component {
     let id = e.target.value
     let activeFeatureMap = _.findWhere(deviceTypes || [], { id: id }) || {}
     let activeReferenceId = featureId === id && featureId !== 0 ? referenceId : activeFeatureMap.references[0].id
-    this.setState({ 
-      activeFeatureId: id, 
+    this.setState({
+      activeFeatureId: id,
       activeReferenceId: activeReferenceId
     })
     setTimeout(() => {
@@ -394,7 +394,7 @@ class Edit extends Component {
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
-    let { 
+    let {
       loading, serviceAddresses, activeModal, deviceTypes, activeFeatureId, activeReferenceId, activeAddressId, activeSchoolId, schools, token,
       device: { id, serial, feature: { id: featureId, reference: { id: referenceId } } }, limit
     } = this.state
@@ -413,10 +413,10 @@ class Edit extends Component {
       <Breadcrumb items={isAdd ? addBreadItems : editBreadItems} />
       <Spin spinning={loading}>
         <Form>
-          { 
+          {
             isAdd ? <FormItem
               {...formItemLayout}
-              label="设备编号" 
+              label="设备编号"
               extra="可直接复制 excel 表中设备编号列的数据来批量添加设备" >
               {getFieldDecorator('serials', {
                 rules: [
@@ -461,7 +461,7 @@ class Edit extends Component {
                 {(schools || []).map((school) => {
                   return <Option key={school.id} value={school.id}>{school.name}</Option>
                 })}
-              </Select> 
+              </Select>
             )}
           </FormItem>
           <FormItem
@@ -482,7 +482,7 @@ class Edit extends Component {
                   onChange={this.changeAddress.bind(this)}
                   notFoundContent="搜索无结果">
                     <Option value="">请选择服务地点</Option>
-                    { 
+                    {
                       (activeSchoolsMap.objects || []).map((address) => {
                         return <Option key={address.id} value={address.id}>{address.school.address}</Option>
                       })
@@ -490,9 +490,9 @@ class Edit extends Component {
                 </Select>
               )}
               </Col>
-              { 
+              {
                 !this.isAssigned ? <Col xs={24} sm={{ span: 4, offset: 1 }}>
-                  <Button 
+                  <Button
                     type='primary'
                     className={styles.addressButton}
                     onClick={() => { this.props.history.push(`/${pathname}/business/device/address?fromDevice=true&id=${id}&isAssigned=${this.isAssigned}`)}}>地点管理</Button>
@@ -522,7 +522,7 @@ class Edit extends Component {
           }
           <FormItem
             {...formItemLayout}
-            label="关联设备类型">
+            label="关联设备">
             {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },
@@ -538,13 +538,13 @@ class Edit extends Component {
               </RadioGroup>
             )}
           </FormItem>
-          { 
+          {
             !_.isEmpty(activeModes) ? (activeModes || []).map((mode, index) => {
               return <Mode
               activeReferenceId={activeReferenceId}
               featureId={featureId}
               referenceId={referenceId}
-              mode={mode} 
+              mode={mode}
               index={index+1}
               key={mode.id}
               form={this.props.form} />
@@ -554,17 +554,17 @@ class Edit extends Component {
             !isAdd && featureId !== DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <FormItem
               {...formItemLayout}
               label="重置验证码">
-              { 
-                op(limit).get('password.isResettable') ? 
+              {
+                op(limit).get('password.isResettable') ?
                 <div>
                   <span>支持</span>
                   <Button style={{ marginLeft: '20px',  marginRight: '20px' }} type='danger' size='small' onClick={this.resetTokenConfirm.bind(this)}>获取</Button>
-                </div> : 
+                </div> :
                 <span>不支持</span>
               }
             </FormItem> : null
           }
-          { 
+          {
             token ?  <FormItem
               {...formItemLayout}
               label="验证码">
