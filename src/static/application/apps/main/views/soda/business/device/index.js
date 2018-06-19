@@ -167,7 +167,7 @@ class App extends Component {
           let isLock = !!~[...DEVICE.STATUS_IS_LOCK].indexOf(status.value)
           let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(status.value)
 
-          modes = _.filter(modes || [], (mode) => mode.serial === serial ) || []
+          modes = _.filter(modes || [], (mode) => mode.serial === serial && mode.value !== 0 ) || []
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>

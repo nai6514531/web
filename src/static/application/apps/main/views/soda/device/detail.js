@@ -119,9 +119,9 @@ class DeviceDetail extends Component {
                   <div><span className={pageStyles.title}>关联设备：</span>{op(reference).get('name') || '-'}</div>
                   <div>
                     <span className={pageStyles.title}>服务单价：</span>
-                    {(modes || []).map((mode) => {
+                    {_.chain(modes || []).filter((mode) => mode.value !== 0).map((mode) => {
                       return [`${conversionUnit(mode.value)}${suffix}`, `${mode.name}`].join(' ')
-                    }).join('，')}
+                    }).value().join('，') || '-'}
                   </div>
                   <div>
                     <span className={pageStyles.title}>服务地点：</span>
@@ -136,7 +136,7 @@ class DeviceDetail extends Component {
                     </div> : null
                   }
                   <div>
-                    <span className={pageStyles.title}>状态：</span><span className={styles.title}>{op(data).get('status.description') || '-' }</span>
+                    <span className={pageStyles.title}>状态：</span><span>{op(data).get('status.description') || '-' }</span>
                   </div>
                   {
                     featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER && false ? <div>

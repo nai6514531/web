@@ -131,7 +131,7 @@ class App extends Component {
         dataIndex: 'status',
         render: (status) => {
           let { value } = status
-          return <span className={cx({ [`${styles.hightlight}`]: !!~[...DEVICE.STATUS_IS_FREE].indexOf(value) })}>
+          return <span>
             {op(status).get('description') || '-'}
           </span>
         }
@@ -141,7 +141,7 @@ class App extends Component {
           let { serial, id } = record
           let { modes, actionLoading } = this.state
 
-          modes = _.filter(modes || [], (mode) => mode.serial === serial ) || []
+          modes = _.filter(modes || [], (mode) => mode.serial === serial && mode.value !== 0 ) || []
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>

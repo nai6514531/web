@@ -14,6 +14,8 @@ import SmsModel from 'bundle-loader?lazy!../../models/soda/sms/'
 import Device from 'bundle-loader?lazy!../../views/soda/device/'
 import OperationDetail from 'bundle-loader?lazy!../../views/soda/device/operation-detail.js'
 import DeviceDetail from 'bundle-loader?lazy!../../views/soda/device/detail.js'
+import DeviceReset from 'bundle-loader?lazy!../../views/soda/device/reset'
+import DeviceAssign from 'bundle-loader?lazy!../../views/soda/device/assign'
 import DeviceModel from 'bundle-loader?lazy!../../models/soda/device/'
 import DeviceDetailModel from 'bundle-loader?lazy!../../models/soda/device/detail.js'
 
@@ -95,6 +97,8 @@ export default function (app) {
       <Route exact path='/soda/sms' component={getComponent(Sms,app,SmsModel)} />
 
       <Route exact path='/soda/device' component={getComponent(Device,app,DeviceModel)} />
+      <Route exact path='/device/reset' component={getComponent(DeviceReset,app)} />
+      <Route exact path='/device/assign' component={getComponent(DeviceAssign,app)} />
       <Route exact path='/soda/device/operation/:id' component={getComponent(OperationDetail,app,DeviceModel)} />
       <Route exact path='/soda/device/:serial' component={getComponent(DeviceDetail,app,DeviceDetailModel)} />
 

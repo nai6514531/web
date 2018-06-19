@@ -9,6 +9,8 @@ import { Input, Icon } from 'antd'
 import { Scan } from '../../scan'
 import styles from './index.pcss'
 
+const DRINKING_URL_PATHNAME = '/sod.ac/d/'
+
 class InputClear extends Component {
   static propTypes = {
     value: PropTypes.string
@@ -68,11 +70,14 @@ class InputScan extends Component {
   }
   handleScanResult(value) {
     let serial = querystring.parse(urlParse(value).query).no
+    if (!serial) {
+      serial = (urlParse(value).pathname).split(DRINKING_URL_PATHNAME)[1]
+    }
     this.setState({
       value: serial
     })
     if (this.props.onChange) {
-      this.props.onChange({ target: { value: serial }})
+      this.props.onChange({ target: { value: serial, type: 'scan' }})
     }
   }
   render() {
