@@ -33,12 +33,12 @@ class Consume extends Component {
     super(props)
     let { isVisible, location: { pathname }, user } = this.props
     let search = transformUrl(location.search)
-    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
+    this.isDrinkingWater = !!~pathname.indexOf('soda-drinking')
     let isBusiness = user.id !== USER.ID_IS_ROOT_ADMIN && (user.parentId !== USER.ID_IS_ROOT_ADMIN || user.type === USER.TYPE_IS_DEFAULT)
-    let status = isBusiness ? ( isDrinkingWater ? [TICKET.DRINKING_STATUS_IS_SETTLED, TICKET.STATUS_IS_REFUND] :
+    let status = isBusiness ? ( this.isDrinkingWater ? [TICKET.DRINKING_STATUS_IS_SETTLED, TICKET.STATUS_IS_REFUND] :
       [TICKET.STATUS_IS_REFUND, TICKET.STATUS_IS_DELIVERED]) :
-      ( isDrinkingWater ? '' : [TICKET.STATUS_IS_REFUND, TICKET.STATUS_DELIVERY_FAILURE, TICKET.STATUS_IS_DELIVERED])
-    this.search = { ...search, status: (status || []).join(',') }
+      ( this.isDrinkingWater ? '' : [TICKET.STATUS_IS_REFUND, TICKET.STATUS_DELIVERY_FAILURE, TICKET.STATUS_IS_DELIVERED])
+    this.search = this.isDrinkingWater ? { ...search, status: (status || []).join(','), startAt: moment().format('YYYY-MM-DD')} : { ...search, status: (status || []).join(',') }
 
     this.columns = [
       { title: '订单编号', dataIndex: 'ticketId', key: 'ticketId',width: 150 },
@@ -91,7 +91,7 @@ class Consume extends Component {
       { title: '消费手机号', dataIndex: 'mobile',key: 'mobile', width: 100 },
       { 
         title: '消费密码', 
-        colSpan: isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1,
+        colSpan: this.isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1,
         dataIndex: 'token',
         key: 'token', 
         width: 100 ,
@@ -99,7 +99,7 @@ class Consume extends Component {
            return {
             children: `${token}`,
             props: {
-              colSpan: isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1
+              colSpan: this.isDrinkingWater || !isVisible('TICKET_CONSUME:TEXT:SHOW_PASSWORD') ? 0 : 1
             }
           }
         }
@@ -121,7 +121,7 @@ class Consume extends Component {
       {
         title: '服务名',
         width: 50,
-        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !isDrinkingWater ? 1 : 0,
+        colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !this.isDrinkingWater ? 1 : 0,
         render: (text, record) => {
           let names = (op(record).get('snapshot.modes') || []).map((mode) => {
             return mode.name
@@ -129,7 +129,7 @@ class Consume extends Component {
           return {
             children: <span>{names.join('/')}</span>,
             props: {
-              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !isDrinkingWater ? 1 : 0
+              colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_MODE_NAME') && !this.isDrinkingWater ? 1 : 0
             }
           }
         }
@@ -198,11 +198,11 @@ class Consume extends Component {
   componentDidMount() {
     const url = this.search
     const { customerMobile, keywords, deviceSerial, startAt, endAt, limit, offset } = url
-    if(!this.search.startAt || !this.search.endAt) {
+    if (!this.search.startAt || !this.search.endAt) {
       message.info('请选择日期')
       return
     }
-    if( !customerMobile && !keywords && !deviceSerial ) {
+    if (!customerMobile && !keywords && !deviceSerial && !this.isDrinkingWater) {
       // message.info('请选择筛选条件')
       return
     }
@@ -221,7 +221,7 @@ class Consume extends Component {
       message.info('请选择日期')
       return
     }
-    if (!customerMobile && !keywords && !deviceSerial ) {
+    if (!customerMobile && !keywords && !deviceSerial && !this.isDrinkingWater) {
       message.info('请选择筛选条件')
       return
     }
@@ -242,14 +242,13 @@ class Consume extends Component {
   }
   fetch = (url) => {
     let { location: { pathname } } = this.props
-    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
 
     this.props.dispatch({
       type: 'consume/list',
       payload: {
         data: { 
           ...url, 
-          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+          type: this.isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
         }
       }
     })
@@ -261,13 +260,12 @@ class Consume extends Component {
   export = () => {
     const { customerMobile, deviceSerial, keywords, endAt, startAt } = this.search
     let { location: { pathname } } = this.props
-    let isDrinkingWater = !!~pathname.indexOf('soda-drinking')
 
-    if(!startAt || !endAt) {
+    if (!startAt || !endAt) {
       message.info('请选择日期')
       return
     }
-    if( !customerMobile && !keywords && !deviceSerial ) {
+    if (!customerMobile && !keywords && !deviceSerial && !this.isDrinkingWater) {
       message.info('请先筛选再导出')
       return
     }
@@ -276,7 +274,7 @@ class Consume extends Component {
       payload: {
         data: { 
           ...this.search, 
-          type: isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
+          type: this.isDrinkingWater ? DEVICE.FEATURE_TYPE_IS_DRINKING_WATER : 0,
         }
       }
     })
