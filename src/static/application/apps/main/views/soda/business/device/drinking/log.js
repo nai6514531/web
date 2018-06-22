@@ -97,7 +97,7 @@ class App extends Component {
           return op(address).get('school.address') || '-'
         }
       }, {
-        title: '关联设备类型',
+        title: '关联设备',
         dataIndex: 'feature',
         render: (feature) => {
           let { deviceTypes } = this.state
@@ -147,7 +147,7 @@ class App extends Component {
     DeviceService.log({
       deviceTypes: DEVICE.FEATURE_TYPE_IS_DRINKING_WATER,
       serviceAddressIds: serviceAddressIds,
-      ..._.pick(search, 'startAt', 'endAt', 'serial', 'referenceId'), 
+      ..._.pick(search, 'startAt', 'endAt', 'serial', 'referenceId'),
       ..._.pick(pagination, 'limit', 'offset'),
     }).then((res) => {
       if (res.status !== 'OK') {
@@ -359,7 +359,7 @@ class App extends Component {
           {(schools || []).map((school) => {
             return <Option key={school.id} value={school.id}>{school.name}</Option>
           })}
-        </Select> 
+        </Select>
         <Select
             mode="multiple"
             value={!!serviceAddressIds ? serviceAddressIds.split(',') : []}
@@ -375,12 +375,12 @@ class App extends Component {
         <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择关联设备类型"
+          placeholder="请选择关联设备"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={referenceId === '' ? '' : +referenceId}
         >
-          <Option value="">请选择关联设备类型</Option>
+          <Option value="">请选择关联设备</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>

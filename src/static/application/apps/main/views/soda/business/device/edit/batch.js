@@ -96,7 +96,7 @@ class BatchMode extends Component {
 
     this.isAssigned = data.isAssigned === 'true' || false
     this.serials = data.serials
-    
+
     this.getDevices(this.serials)
     this.getDeviceType()
     this.getDeviceServiceAddress()
@@ -104,9 +104,9 @@ class BatchMode extends Component {
   getDevices(serials) {
     let isAssigned = this.isAssigned
     this.setState({ loading: true })
-    
-    DeviceService.list({ 
-      serials: serials, 
+
+    DeviceService.list({
+      serials: serials,
       isAssigned: isAssigned ? 1 : 0,
       offset: 0,
       limit: serials.split(',').length,
@@ -126,8 +126,8 @@ class BatchMode extends Component {
   getDevicesModes(devices, serials) {
     let isAssigned = this.isAssigned
     this.setState({ loading: true })
-    
-    DeviceService.deviceModeList({ 
+
+    DeviceService.deviceModeList({
       serials: serials
     }).then((res) => {
       if (res.status !== 'OK') {
@@ -201,7 +201,7 @@ class BatchMode extends Component {
     let { form: { setFieldsValue, resetFields } } = this.props
     let { active, featureId, deviceTypes } = this.state
     let { price: activePrice, name: activeName, duration: activeDuration } = active
-    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {} 
+    let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
     let value = e.target.checked
     this.setState({ active: {
       ...active,
@@ -220,11 +220,11 @@ class BatchMode extends Component {
         setFieldsValue({ referenceId: op(activeFeatureMap).get('references.0.id') })
       }, 0)
     }
-   
+
     // 选择服务名称、价格、时间选项，重置表单信息，避免再次渲染初始值为之前选项
     if (!!~['name', 'price', 'duration'].indexOf(key) && value) {
       // 切换类型 reset表单的内容
-      setTimeout(() => {      
+      setTimeout(() => {
         (activeFeatureMap.pulses || []).map((pulse, index) => {
           resetFields([`${key}-${index}`])
         })
@@ -246,15 +246,15 @@ class BatchMode extends Component {
         }
       })
     })
-    
+
   }
   toEdit() {
     let { form: { validateFields } } = this.props
     let { deviceTypes, featureId } = this.state
     let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
-    let { 
-      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration }, 
-      serviceAddresses, loading 
+    let {
+      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration },
+      serviceAddresses, loading
     } = this.state
     let serials = this.serials.split(',')
 
@@ -263,7 +263,7 @@ class BatchMode extends Component {
       if (errors || loading) {
         return
       }
-      
+
       if (activeAddress) {
         let addressId = parseInt(value.addressId, 10) || 0
         options = {
@@ -283,7 +283,7 @@ class BatchMode extends Component {
           }
         }
       }
-      
+
       let devices = (this.devices || []).map((device) => {
         let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
         if (activeName || activePrice || activeDuration) {
@@ -298,11 +298,11 @@ class BatchMode extends Component {
                   id: pulse.id,
                   name: pulse.name
                 },
-                name: activeName ? value[`name-${index}`] : 
+                name: activeName ? value[`name-${index}`] :
                   isEmpty ? pulse.name : mode.name,
-                value: activePrice ? +value[`price-${index}`] * 100 : 
+                value: activePrice ? +value[`price-${index}`] * 100 :
                   isEmpty ? 0 : mode.value,
-                duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
+                duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :
                   isEmpty ? 0 : mode.duration,
               }
             })
@@ -313,7 +313,7 @@ class BatchMode extends Component {
             ...options,
           }
         }
-        
+
       })
       this.updateDevice(devices)
     })
@@ -322,9 +322,9 @@ class BatchMode extends Component {
     let { form: { validateFields } } = this.props
     let { deviceTypes, featureId } = this.state
     let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
-    let { 
-      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration }, 
-      serviceAddresses, loading 
+    let {
+      active: { address: activeAddress, reference: activeReference, price: activePrice, name: activeName, duration: activeDuration },
+      serviceAddresses, loading
     } = this.state
 
     validateFields((errors, value) => {
@@ -336,7 +336,7 @@ class BatchMode extends Component {
       if (!activeAddress && !activeReference && !activeAddress && !activePrice && !activeName && !activeDuration) {
         return this.setState({ devices: this.devices, preview: { address: false, reference: false, price: false, name: false } })
       }
-      
+
       if (activeAddress) {
         let addressId = parseInt(value.addressId, 10) || 0
         let serviceAddress = _.findWhere(serviceAddresses, { id: addressId }) || {}
@@ -370,19 +370,19 @@ class BatchMode extends Component {
                 id: pulse.id,
                 name: pulse.name
               },
-              name: activeName ? value[`name-${index}`] : 
+              name: activeName ? value[`name-${index}`] :
                 isEmpty ? pulse.name : mode.name,
-              value: activePrice ? +value[`price-${index}`] * 100 : 
+              value: activePrice ? +value[`price-${index}`] * 100 :
                 isEmpty ? 0 : mode.value,
-              duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :  
+              duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :
                 isEmpty ? 0 : mode.duration,
             }
           })
         }
       })
-      this.setState({ 
-        preview: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration }, 
-        devices: devices 
+      this.setState({
+        preview: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration },
+        devices: devices
       })
     })
   }
@@ -422,8 +422,8 @@ class BatchMode extends Component {
   }
   render() {
     let { form: { getFieldDecorator } } = this.props
-    let { 
-      active: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration }, 
+    let {
+      active: { address: activeAddress, reference: activeReference, name: activeName, price: activePrice, duration: activeDuration },
       schools, devices, preview, deviceTypes, featureId, activeSchoolId, serviceAddresses
     } = this.state
     let count = devices.length
@@ -438,7 +438,7 @@ class BatchMode extends Component {
       <div className={styles.top}>
         <p>你将对<span className={styles.hightlight}>{count}</span>个设备进行修改,请选择需要修改的项目:</p>
         { !this.isAssigned ? <Checkbox onChange={this.toggleCheckbox.bind(this, 'address')}>服务地点</Checkbox> : null}
-        <Checkbox onChange={this.toggleCheckbox.bind(this, 'reference')}>关联设备类型</Checkbox>
+        <Checkbox onChange={this.toggleCheckbox.bind(this, 'reference')}>关联设备</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'name')}>服务名称</Checkbox>
         <Checkbox onChange={this.toggleCheckbox.bind(this, 'price')}>价格</Checkbox>
         { true ? null : <Checkbox onChange={this.toggleCheckbox.bind(this, 'duration')}>服务时间</Checkbox> }
@@ -467,13 +467,13 @@ class BatchMode extends Component {
                     {(schools || []).map((school) => {
                       return <Option key={school.id} value={school.id}>{school.name}</Option>
                     })}
-                  </Select> 
+                  </Select>
                 )}
               </FormItem>
             </Col>
           </Row> : null
         }
-        { 
+        {
           activeAddress ? <Row>
             <Col xs={{ span: 24 }} sm={{ span: 12, offset: 4 }}>
               <FormItem
@@ -490,21 +490,21 @@ class BatchMode extends Component {
                     placeholder="请选择服务地点"
                     notFoundContent="搜索无结果">
                       <Option value="">请选择服务地点</Option>
-                      { 
+                      {
                         (activeSchoolsMap.objects || []).map((address) => {
                           return <Option key={address.id} value={address.id}>{address.school.address}</Option>
                         })
                       }
                   </Select>
                 )}
-              </FormItem> 
+              </FormItem>
             </Col>
           </Row>: null
-        }      
+        }
         {
           activeReference ? <FormItem
             {...formItemLayout}
-            label="关联设备类型">
+            label="关联设备">
             {getFieldDecorator('referenceId', {
               rules: [
                 { required: true, message: '必填' },
@@ -569,7 +569,7 @@ class BatchMode extends Component {
                     })(
                       <Input
                       style={{ width: '80%' }}
-                      prefix={<Icon type="pay-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />} 
+                      prefix={<Icon type="pay-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />}
                       placeholder="价格" />
                     )}
                   </FormItem></Col>
@@ -594,7 +594,7 @@ class BatchMode extends Component {
                     })(
                       <Input
                       style={{ width: '80%' }}
-                      prefix={<Icon type="clock-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />} 
+                      prefix={<Icon type="clock-circle-o" style={{ color: 'rgba(0,0,0,.25)' }} />}
                       placeholder="时间" />
                     )}
                   </FormItem></Col>
@@ -605,11 +605,11 @@ class BatchMode extends Component {
         }
         <FormItem {...tailFormItemLayout}>
           <Button style={{ marginRight: 10 }} type="ghost" onClick={this.toPreview.bind(this)}>预览</Button>
-          { 
-            activeAddress || activeReference || activePrice || activeName || activeDuration ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null 
+          {
+            activeAddress || activeReference || activePrice || activeName || activeDuration ? <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认修改</Button> : null
           }
-        </FormItem> 
-      </Form> 
+        </FormItem>
+      </Form>
       <BatchTable
         isAssigned={this.isAssigned}
         devices={devices}

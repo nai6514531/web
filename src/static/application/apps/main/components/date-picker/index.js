@@ -13,7 +13,7 @@ class CustomDatePicker extends Component {
     let defaultStartDate, defaultEndDate
 
     if(this.props.defaultTime) {
-      defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
+      defaultStartDate = startAt ? moment(startAt, 'YYYY-MM-DD') : moment(new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000), 'YYYY-MM-DD')
       defaultEndDate = endAt ? moment(endAt, 'YYYY-MM-DD') : moment(date, 'YYYY-MM-DD')
       if(!startAt) {
         this.props.search.startAt = moment(defaultStartDate).format('YYYY-MM-DD')
