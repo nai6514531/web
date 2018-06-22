@@ -18,6 +18,7 @@ import DeviceAddressService from '../../../../../services/soda-manager/device-se
 
 import Mode from './mode'
 import Breadcrumb from '../../../../../components/layout/breadcrumb'
+import { Element } from '../../../../../components/element'
 import DEVICE from '../../../../../constant/device'
 
 import styles from '../index.pcss'
@@ -70,6 +71,7 @@ const tailFormItemLayout = {
   },
 }
 
+@Element()
 class Edit extends Component {
   constructor(props) {
     super(props)
@@ -393,7 +395,7 @@ class Edit extends Component {
     })
   }
   render() {
-    let { form: { getFieldDecorator } } = this.props
+    let { form: { getFieldDecorator }, isVisible } = this.props
     let {
       loading, serviceAddresses, activeModal, deviceTypes, activeFeatureId, activeReferenceId, activeAddressId, activeSchoolId, schools, token,
       device: { id, serial, feature: { id: featureId, reference: { id: referenceId } } }, limit
@@ -491,7 +493,7 @@ class Edit extends Component {
               )}
               </Col>
               {
-                !this.isAssigned ? <Col xs={24} sm={{ span: 4, offset: 1 }}>
+                !this.isAssigned && isVisible('DEVICE:BUTTON:ADDRESS') ? <Col xs={24} sm={{ span: 4, offset: 1 }}>
                   <Button
                     type='primary'
                     className={styles.addressButton}

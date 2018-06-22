@@ -182,11 +182,12 @@ class App extends Component {
           </Spin>)
           content = actionLoading ? loading : _.isEmpty(modes) ? '该设备无服务信息' : content
           return <span>
-            <Link to={`/soda/business/device/edit/${serial}?isAssigned=${!isMineDevice}`}>修改</Link>
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <Link to={`/soda/business/device/edit/${serial}?isAssigned=${!isMineDevice}`}>修改</Link> : null }
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <div className={styles.divider}></div> : null }
             <Popover placement="topLeft"
               onVisibleChange={this.getDeviceModes.bind(this, serial)}
               content={content}>
-              <div className={styles.divider}></div><a href="#">查看价格</a>
+              <a href="#">查看价格</a>
             </Popover>
             {
               isVisible("DEVICE:BUTTON:CANCEL") && isMineDevice ? <Popconfirm title="确认删除吗?" onConfirm={this.delete.bind(this, id)}>
@@ -648,13 +649,13 @@ class App extends Component {
           onClick={this.batchLock.bind(this)}>批量锁定</Button> : null
         }
         {
-          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD')? <Button
+          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD') ? <Button
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push(`/soda/business/device/add?isAssigned=false`) }}>添加新设备</Button> : null
         }
         {
-          tapActive === DEVICE_IS_MINE ? <Button
+          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADDRESS') ? <Button
           type='primary'
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push('/soda/business/device/address?fromDevice=true')}}>地点管理</Button> : null

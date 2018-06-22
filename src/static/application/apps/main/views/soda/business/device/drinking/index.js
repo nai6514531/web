@@ -19,6 +19,7 @@ import DeviceAddressService from '../../../../../services/soda-manager/device-se
 
 import Breadcrumb from '../../../../../components/layout/breadcrumb'
 import { InputScan, InputClear } from '../../../../../components/form/input'
+import { Element } from '../../../../../components/element'
 
 import DEVICE from '../../../../../constant/device'
 
@@ -57,6 +58,7 @@ const formItemLayout = {
   },
 }
 
+@Element()
 class App extends Component {
   constructor(props) {
     super(props)
@@ -154,13 +156,13 @@ class App extends Component {
           </Spin>)
           content = actionLoading ? loading : _.isEmpty(modes) ? '该设备无服务信息' : content
           return <span>
-            <Link to={`/soda-drinking/business/device/edit/${serial}`}>修改</Link>
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <Link to={`/soda-drinking/business/device/edit/${serial}`}>修改</Link> : null }
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <div className={styles.divider}></div> : null }
             <Popover placement="topLeft"
               onVisibleChange={this.getDeviceModes.bind(this, serial)}
               content={content}>
-              <div className={styles.divider}></div><a href="#">查看价格</a>
+              <a href="#">查看价格</a>
             </Popover>
-
           </span>
         }
       }
@@ -453,6 +455,7 @@ class App extends Component {
     }
   }
   render() {
+    let { isVisible } = this.props
     let { devices, users, schools, loading, selectedRowKeys, deviceTypes, search: { status, serials, schoolId, serviceAddressIds, referenceId } } = this.state
     let selectedCount = selectedRowKeys.length
     let hasSelected = selectedCount > 0
@@ -563,16 +566,17 @@ class App extends Component {
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push('/soda-drinking/business/device/address?fromDevice=true')}}>地点管理
         </Button>
-
       </Row> : null
       }
-      <Row>
-        <Button
-          type='primary'
-          style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={() => { this.props.history.push('/soda-drinking/business/device/address?fromDevice=true')}}>地点管理
-        </Button>
-      </Row>
+      { 
+        isVisible('DEVICE:BUTTON:ADDRESS') ? <Row>
+          <Button
+            type='primary'
+            style={{ marginRight: 10, marginBottom: 10 }}
+            onClick={() => { this.props.history.push('/soda-drinking/business/device/address?fromDevice=true')}}>地点管理
+          </Button>
+        </Row> : null
+      }
       {
         hasSelected ? <Row>
           <span style={{ marginLeft: 8, marginRight: 8, fontSize: 12 }}>
