@@ -3,18 +3,19 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Row, message } from 'antd'
-import DataTable from '../../../../components/data-table/'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import DataTable from '../../../../../components/data-table/'
+import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import moment from 'moment'
-import { transformUrl, toQueryString } from '../../../../utils/'
+import { transformUrl, toQueryString } from '../../../../../utils/'
 import { trim } from 'lodash'
 
-class DayConsume extends Component {
+class DayDetailConsume extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
     this.search = search
     this.month = this.props.match.params.month
+    this.day = this.props.match.params.day
     this.breadItems = [
       {
         title: '苏打生活'
@@ -24,7 +25,11 @@ class DayConsume extends Component {
         url: '/soda/statistics'
       },
       {
-        title: `${this.month}`
+        title: `${this.month}`,
+        url: `/soda/statistics/consume/${this.month}`
+      },
+      {
+        title: `${this.day}`
       }
     ]
     this.columns = [
@@ -34,17 +39,25 @@ class DayConsume extends Component {
         key: 'key'
       },
       {
-        title: '日期',
-        dataIndex: 'date',
-        key: 'date',
+        title: '编号/服务地点',
         render: (text, record, index) => {
-          return <Link to={`/soda/statistics/consume/${this.month}/${text}`}>{text}</Link>
+          if(record.device) {
+            if(record.totalAmount) {
+              return (
+               <span><Link to={`/soda/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>/{record.device.address || '-'}</span>
+              )
+            }
+            return (
+              `${record.device.serialNumber || '-'}/ ${record.device.address || '-'}`
+            )
+          }
+          return '-'
         },
       },
       {
-        title: '模块数',
-        dataIndex: 'totalDevice',
-        key: 'totalDevice'
+        title: '运营商名称',
+        dataIndex: 'owner.name',
+        key: 'owner.name'
       },
       {
         title: '单脱',
@@ -67,7 +80,7 @@ class DayConsume extends Component {
         key: 'totalMode4'
       },
       {
-        title: '消费金额',
+        title: '金额',
         dataIndex: 'totalAmount',
         key: 'totalAmount',
         render: (text, record) => {
@@ -76,30 +89,20 @@ class DayConsume extends Component {
           )
         }
       },
-      {
-        title: '退款金额',
-        dataIndex: 'totalRefund',
-        key: 'totalRefund',
-        render: (text, record) => {
-          return (
-            `${(record.totalRefund/100).toFixed(2)}元`
-          )
-        }
-      }
     ]
   }
   componentDidMount() {
     this.fetch(this.search)
   }
   fetch = (url) => {
-    const daysInMonth = moment(this.month).daysInMonth()
     this.props.dispatch({
-      type: 'businessStatistics/dayList',
+      type: 'businessStatistics/listByDevices',
       payload: {
         data: {
           ...url,
-          startAt: `${this.month}-01`,
-          endAt: `${this.month}-${daysInMonth}`
+          startAt: this.day,
+          endAt: this.day,
+          status: '7'
         }
       }
     })
@@ -139,4 +142,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(DayConsume)
+export default connect(mapStateToProps)(DayDetailConsume)

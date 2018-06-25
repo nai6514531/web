@@ -1,9 +1,9 @@
 import { message } from 'antd'
-import sodaStatisticsService from '../../../services/soda/statistics.js'
-import mngStatisticsService from '../../../services/soda-manager/statistic.js'
-import sodaService from '../../../services/soda/index.js'
+import sodaStatisticsService from '../../../../services/soda/statistics.js'
+import mngStatisticsService from '../../../../services/soda-manager/statistic.js'
+import sodaService from '../../../../services/soda/index.js'
 import { cloneDeep } from 'lodash'
-import { transformUrl } from '../../../utils/'
+import { transformUrl } from '../../../../utils/'
 import _ from 'lodash'
 
 const model = {

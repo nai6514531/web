@@ -3,19 +3,19 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Row, message } from 'antd'
-import DataTable from '../../../../components/data-table/'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import DataTable from '../../../../../components/data-table/'
+import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import moment from 'moment'
-import { transformUrl, toQueryString } from '../../../../utils/'
+import { transformUrl, toQueryString } from '../../../../../utils/'
 import { trim } from 'lodash'
 
-class DayDetailConsume extends Component {
+class DeviceSearchByDay extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
     this.search = search
     this.month = this.props.match.params.month
-    this.day = this.props.match.params.day
+    this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
         title: '苏打生活'
@@ -25,11 +25,7 @@ class DayDetailConsume extends Component {
         url: '/soda/statistics'
       },
       {
-        title: `${this.month}`,
-        url: `/soda/statistics/consume/${this.month}`
-      },
-      {
-        title: `${this.day}`
+        title: this.month
       }
     ]
     this.columns = [
@@ -39,25 +35,20 @@ class DayDetailConsume extends Component {
         key: 'key'
       },
       {
-        title: '编号/服务地点',
+        title: '日期',
         render: (text, record, index) => {
-          if(record.device) {
-            if(record.totalAmount) {
-              return (
-               <span><Link to={`/soda/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>/{record.device.address || '-'}</span>
-              )
-            }
-            return (
-              `${record.device.serialNumber || '-'}/ ${record.device.address || '-'}`
-            )
-          }
-          return '-'
+          return (
+            record.time
+          )
         },
       },
       {
-        title: '运营商名称',
-        dataIndex: 'owner.name',
-        key: 'owner.name'
+        title: '编号/服务地点',
+        render: (text, record, index) => {
+          return (
+            `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
+          )
+        },
       },
       {
         title: '单脱',
@@ -95,14 +86,17 @@ class DayDetailConsume extends Component {
     this.fetch(this.search)
   }
   fetch = (url) => {
+    const daysInMonth = moment(this.month).daysInMonth()
     this.props.dispatch({
-      type: 'businessStatistics/listByDevices',
+      type: 'businessStatistics/listByDates',
       payload: {
         data: {
           ...url,
-          startAt: this.day,
-          endAt: this.day,
-          status: '7'
+          startAt: `${this.month}-01`,
+          endAt: `${this.month}-${daysInMonth}`,
+          deviceSerial: this.deviceSerial,
+          status: '7',
+          period: 'date'
         }
       }
     })
@@ -142,4 +136,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(DayDetailConsume)
+export default connect(mapStateToProps)(DeviceSearchByDay)
