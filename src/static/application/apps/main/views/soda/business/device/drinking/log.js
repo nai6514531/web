@@ -84,16 +84,12 @@ class App extends Component {
         title: '学校',
         dataIndex: 'school',
         render: (address, record) => {
-          // let { serviceAddresses } = this.state
-          // address = _.findWhere(serviceAddresses || [], { id : op(record).get('serviceAddress.id') }) || {}
           return op(record).get('serviceAddress.school.name') || '-'
         }
       }, {
         title: '服务地点',
         dataIndex: 'serviceAddress',
         render: (address, record) => {
-          // let { serviceAddresses } = this.state
-          // address = _.findWhere(serviceAddresses || [], { id : op(address).get('id') }) || {}
           return op(address).get('school.address') || '-'
         }
       }, {
@@ -106,7 +102,7 @@ class App extends Component {
           return op(reference).get('name') || '-'
         }
       }, {
-        title: '故障时间',
+        title: '时间',
         dataIndex: 'createdAt',
         render: (createdAt) => {
           return moment(createdAt).format('YYYY-MM-DD HH:mm:ss')
@@ -419,6 +415,7 @@ class App extends Component {
         pagination={this.pagination()}
         onChange={this.handleTableChange.bind(this)}
         loading={loading}
+        bordered
       />
     </div>)
   }

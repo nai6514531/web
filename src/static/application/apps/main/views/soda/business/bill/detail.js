@@ -227,6 +227,7 @@ class Detail extends Component{
         pagination={this.pagination.call(this)}
         loading={loading}
         rowKey={record => record.id}
+        bordered
       />
     </section>)
   }

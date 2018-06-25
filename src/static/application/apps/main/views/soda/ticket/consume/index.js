@@ -12,6 +12,8 @@ import DataTable from '../../../../components/data-table'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 import { Element } from '../../../../components/element'
 import { transformUrl, toQueryString } from '../../../../utils'
+import { conversionUnit } from '../../../../utils/functions'
+
 import TICKET from '../../../../constant/ticket'
 import DEVICE from '../../../../constant/device'
 import USER from '../../../../constant/user'
@@ -106,9 +108,10 @@ class Consume extends Component {
       },
       {
         title: '消费金额',
+        dataIndex: 'value',
         width: 100,
-        render:(text, record) => {
-          return  `${(record.value/100).toFixed(2)}元`
+        render:(value, record) => {
+          return `${conversionUnit(value)}元`
         }
       },
       {
@@ -142,7 +145,7 @@ class Consume extends Component {
         key: 'payment.name',
         render: (name) => {
           return {
-            children: `${name}`,
+            children: `${name || '-'}`,
             props: {
               colSpan: isVisible('TICKET_CONSUME:TEXT:SHOW_PAYMENT_TYPE') ? 1 : 0
             }
