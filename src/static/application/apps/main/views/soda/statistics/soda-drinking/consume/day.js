@@ -3,29 +3,28 @@ import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Row, message } from 'antd'
-import DataTable from '../../../../components/data-table/'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import DataTable from '../../../../../components/data-table/'
+import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import moment from 'moment'
-import { transformUrl, toQueryString } from '../../../../utils/'
+import { transformUrl, toQueryString } from '../../../../../utils/'
 import { trim } from 'lodash'
 
-class DeviceSearchByDay extends Component {
+class DayConsume extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
     this.search = search
     this.month = this.props.match.params.month
-    this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
-        title: '苏打生活'
+        title: '苏打饮水'
       },
       {
         title: '统计报表',
-        url: '/soda/statistics'
+        url: '/soda-drinking/statistics'
       },
       {
-        title: this.month
+        title: `${this.month}`
       }
     ]
     this.columns = [
@@ -36,42 +35,24 @@ class DeviceSearchByDay extends Component {
       },
       {
         title: '日期',
+        dataIndex: 'date',
+        key: 'date',
         render: (text, record, index) => {
-          return (
-            record.time
-          )
+          return <Link to={`/soda-drinking/statistics/consume/${this.month}/${text}`}>{text}</Link>
         },
       },
       {
-        title: '编号/服务地点',
-        render: (text, record, index) => {
-          return (
-            `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
-          )
-        },
+        title: '消费设备数',
+        dataIndex: 'totalDevice',
+        key: 'totalDevice'
       },
       {
-        title: '单脱',
-        dataIndex: 'totalMode1',
-        key: 'totalMode1'
+        title: '消费订单数',
+        dataIndex: 'orderCount',
+        key: 'orderCount'
       },
       {
-        title: '快洗',
-        dataIndex: 'totalMode2',
-        key: 'totalMode2'
-      },
-      {
-        title: '标准洗',
-        dataIndex: 'totalMode3',
-        key: 'totalMode3'
-      },
-      {
-        title: '大物洗',
-        dataIndex: 'totalMode4',
-        key: 'totalMode4'
-      },
-      {
-        title: '金额',
+        title: '消费金额',
         dataIndex: 'totalAmount',
         key: 'totalAmount',
         render: (text, record) => {
@@ -80,6 +61,16 @@ class DeviceSearchByDay extends Component {
           )
         }
       },
+      {
+        title: '退款金额',
+        dataIndex: 'totalRefund',
+        key: 'totalRefund',
+        render: (text, record) => {
+          return (
+            `${(record.totalRefund/100).toFixed(2)}元`
+          )
+        }
+      }
     ]
   }
   componentDidMount() {
@@ -88,15 +79,12 @@ class DeviceSearchByDay extends Component {
   fetch = (url) => {
     const daysInMonth = moment(this.month).daysInMonth()
     this.props.dispatch({
-      type: 'businessStatistics/listByDates',
+      type: 'drinkingBusinessStatistics/dayList',
       payload: {
         data: {
           ...url,
           startAt: `${this.month}-01`,
-          endAt: `${this.month}-${daysInMonth}`,
-          deviceSerial: this.deviceSerial,
-          status: '7',
-          period: 'date'
+          endAt: `${this.month}-${daysInMonth}`
         }
       }
     })
@@ -106,7 +94,7 @@ class DeviceSearchByDay extends Component {
     this.fetch(url)
   }
   render() {
-    const { businessStatistics: { data: { objects, pagination } }, loading  } = this.props
+    const { drinkingBusinessStatistics: { data: { objects, pagination } }, loading  } = this.props
     pagination && (pagination.showSizeChanger = true)
     return(
       <div>
@@ -125,15 +113,15 @@ class DeviceSearchByDay extends Component {
     )
   }
   componentWillUnmount() {
-    this.props.dispatch({ type: 'businessStatistics/clear'})
+    this.props.dispatch({ type: 'drinkingBusinessStatistics/clear'})
   }
 }
 function mapStateToProps(state,props) {
   return {
-    businessStatistics: state.businessStatistics,
+    drinkingBusinessStatistics: state.drinkingBusinessStatistics,
     loading: state.loading.global,
     common: state.common,
     ...props
   }
 }
-export default connect(mapStateToProps)(DeviceSearchByDay)
+export default connect(mapStateToProps)(DayConsume)

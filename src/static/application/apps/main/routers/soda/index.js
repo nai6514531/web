@@ -38,17 +38,26 @@ import MngUserModel from 'bundle-loader?lazy!../../models/soda/user/mng/'
 import MngUserDetail from 'bundle-loader?lazy!../../views/soda/user/mng/detail/'
 import MngUserDetailModel from 'bundle-loader?lazy!../../models/soda/user/mng/detail/'
 
-import BusinessStatistics from 'bundle-loader?lazy!../../views/soda/statistics/'
-import BusinessStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/'
+import BusinessStatistics from 'bundle-loader?lazy!../../views/soda/statistics/soda/'
+import BusinessStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/soda/'
 
-import ConsumeSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/consume/day.js'
-import ConsumeSearchDayDetail from 'bundle-loader?lazy!../../views/soda/statistics/consume/day-detail.js'
-import ConsumeSearchDayDevice from 'bundle-loader?lazy!../../views/soda/statistics/consume/device-detail.js'
-import DeviceSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/device/day.js'
+import ConsumeSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/soda/consume/day.js'
+import ConsumeSearchDayDetail from 'bundle-loader?lazy!../../views/soda/statistics/soda/consume/day-detail.js'
+import ConsumeSearchDayDevice from 'bundle-loader?lazy!../../views/soda/statistics/soda/consume/device-detail.js'
+import DeviceSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/soda/device/day.js'
 
-import OperationStatisticsByDay from 'bundle-loader?lazy!../../views/soda/statistics/operation/day.js'
-import OperationStatisticsByMonth from 'bundle-loader?lazy!../../views/soda/statistics/operation/month.js'
-import OperationStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/operation.js'
+
+import DrinkingBusinessStatistics from 'bundle-loader?lazy!../../views/soda/statistics/soda-drinking/'
+import DrinkingBusinessStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/soda-drinking/'
+
+import DrinkingConsumeSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/soda-drinking/consume/day.js'
+import DrinkingConsumeSearchDayDetail from 'bundle-loader?lazy!../../views/soda/statistics/soda-drinking/consume/day-detail.js'
+import DrinkingConsumeSearchDayDevice from 'bundle-loader?lazy!../../views/soda/statistics/soda-drinking/consume/device-detail.js'
+import DrinkingDeviceSearchByDay from 'bundle-loader?lazy!../../views/soda/statistics/soda-drinking/device/day.js'
+
+import OperationStatisticsByDay from 'bundle-loader?lazy!../../views/soda/statistics/soda/operation/day.js'
+import OperationStatisticsByMonth from 'bundle-loader?lazy!../../views/soda/statistics/soda/operation/month.js'
+import OperationStatisticsModel from 'bundle-loader?lazy!../../models/soda/statistics/soda/operation.js'
 
 import Bill from 'bundle-loader?lazy!../../views/soda/business/bill'
 import BillDetailList from 'bundle-loader?lazy!../../views/soda/business/bill/detail'
@@ -108,11 +117,11 @@ export default function (app) {
 
       <Route exact path='/soda/walletlog/:mobile*' component={getComponent(WalletLog, app, WalletLogModel)} />
 
-      <Route exact path='/soda/statistics' component={getComponent(BusinessStatistics,app,BusinessStatisticsModel)} />
-      <Route exact path='/soda/statistics/consume/:month' component={getComponent(ConsumeSearchByDay,app,BusinessStatisticsModel)} />
-      <Route exact path='/soda/statistics/consume/:month/:day' component={getComponent(ConsumeSearchDayDetail,app,BusinessStatisticsModel)} />
-      <Route exact path='/soda/statistics/consume/:month/:day/:deviceSerial' component={getComponent(ConsumeSearchDayDevice,app,BusinessStatisticsModel)} />
-      <Route exact path='/soda/statistics/device/:month/:deviceSerial' component={getComponent(DeviceSearchByDay,app,BusinessStatisticsModel)} />
+      <Route exact path='/soda-drinking/statistics' component={getComponent(DrinkingBusinessStatistics,app,DrinkingBusinessStatisticsModel)} />
+      <Route exact path='/soda-drinking/statistics/consume/:month' component={getComponent(DrinkingConsumeSearchByDay,app,DrinkingBusinessStatisticsModel)} />
+      <Route exact path='/soda-drinking/statistics/consume/:month/:day' component={getComponent(DrinkingConsumeSearchDayDetail,app,DrinkingBusinessStatisticsModel)} />
+      <Route exact path='/soda-drinking/statistics/consume/:month/:day/:deviceSerial' component={getComponent(DrinkingConsumeSearchDayDevice,app,DrinkingBusinessStatisticsModel)} />
+      <Route exact path='/soda-drinking/statistics/device/:month/:deviceSerial' component={getComponent(DrinkingDeviceSearchByDay,app,DrinkingBusinessStatisticsModel)} />
 
       <Route exact path='/soda/operation-statistics' component={getComponent(OperationStatisticsByMonth,app,OperationStatisticsModel)} />
       <Route exact path='/soda/operation-statistics/:month' component={getComponent(OperationStatisticsByDay,app,OperationStatisticsModel)} />

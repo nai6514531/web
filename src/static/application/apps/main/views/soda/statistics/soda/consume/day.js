@@ -2,29 +2,19 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { connect } from 'dva'
-import op from 'object-path'
 import { Button, Row, message } from 'antd'
-import DataTable from '../../../../components/data-table/'
-import Breadcrumb from '../../../../components/layout/breadcrumb/'
+import DataTable from '../../../../../components/data-table/'
+import Breadcrumb from '../../../../../components/layout/breadcrumb/'
 import moment from 'moment'
-import { transformUrl, toQueryString } from '../../../../utils/'
+import { transformUrl, toQueryString } from '../../../../../utils/'
 import { trim } from 'lodash'
 
-const dict = {
-  '1' : 'firstPulseName',
-  '2' : 'secondPulseName',
-  '3' : 'thirdPulseName',
-  '4' : 'fourthPulseName',
-}
-
-class DayDeviceConsume extends Component {
+class DayConsume extends Component {
   constructor(props) {
     super(props)
     const search = transformUrl(location.search)
     this.search = search
     this.month = this.props.match.params.month
-    this.day = this.props.match.params.day
-    this.deviceSerial = this.props.match.params.deviceSerial
     this.breadItems = [
       {
         title: '苏打生活'
@@ -34,15 +24,7 @@ class DayDeviceConsume extends Component {
         url: '/soda/statistics'
       },
       {
-        title: `${this.month}`,
-        url: `/soda/statistics/consume/${this.month}`
-      },
-      {
-        title: `${this.day}`,
-        url: `/soda/statistics/consume/${this.month}/${this.day}`
-      },
-      {
-        title: `${this.deviceSerial}`
+        title: `${this.month}`
       }
     ]
     this.columns = [
@@ -52,55 +34,72 @@ class DayDeviceConsume extends Component {
         key: 'key'
       },
       {
-        title: '编号/服务地点',
+        title: '日期',
+        dataIndex: 'date',
+        key: 'date',
         render: (text, record, index) => {
-          return `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
+          return <Link to={`/soda/statistics/consume/${this.month}/${text}`}>{text}</Link>
         },
       },
       {
-        title: '洗衣金额',
-        dataIndex: 'value',
-        key: 'value',
+        title: '模块数',
+        dataIndex: 'totalDevice',
+        key: 'totalDevice'
+      },
+      {
+        title: '单脱',
+        dataIndex: 'totalMode1',
+        key: 'totalMode1'
+      },
+      {
+        title: '快洗',
+        dataIndex: 'totalMode2',
+        key: 'totalMode2'
+      },
+      {
+        title: '标准洗',
+        dataIndex: 'totalMode3',
+        key: 'totalMode3'
+      },
+      {
+        title: '大物洗',
+        dataIndex: 'totalMode4',
+        key: 'totalMode4'
+      },
+      {
+        title: '消费金额',
+        dataIndex: 'totalAmount',
+        key: 'totalAmount',
         render: (text, record) => {
           return (
-            `${(record.value/100).toFixed(2)}元`
+            `${(record.totalAmount/100).toFixed(2)}元`
           )
         }
       },
       {
-        title: '洗衣手机号',
-        dataIndex: 'mobile',
-        key: 'mobile'
-      },
-      {
-        title: '洗衣类型',
-        render: (text, record) => {
-          return op(record).get('snapshot.modes.0.name')
-        }
-      },
-      {
-        title: '下单时间',
+        title: '退款金额',
+        dataIndex: 'totalRefund',
+        key: 'totalRefund',
         render: (text, record) => {
           return (
-            `${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
+            `${(record.totalRefund/100).toFixed(2)}元`
           )
         }
-      },
+      }
     ]
   }
   componentDidMount() {
     this.fetch(this.search)
   }
   fetch = (url) => {
+    const daysInMonth = moment(this.month).daysInMonth()
     this.props.dispatch({
-      type: 'businessStatistics/consumptionsList',
+      type: 'businessStatistics/dayList',
       payload: {
         data: {
           ...url,
-          startAt: this.day,
-          endAt: this.day,
-          deviceSerial: this.deviceSerial,
-          status: 7
+          startAt: `${this.month}-01`,
+          endAt: `${this.month}-${daysInMonth}`
         }
       }
     })
@@ -140,4 +139,4 @@ function mapStateToProps(state,props) {
     ...props
   }
 }
-export default connect(mapStateToProps)(DayDeviceConsume)
+export default connect(mapStateToProps)(DayConsume)
