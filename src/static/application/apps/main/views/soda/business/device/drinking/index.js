@@ -595,6 +595,7 @@ class App extends Component {
         pagination={this.pagination()}
         onChange={this.handleTableChange.bind(this)}
         loading={loading}
+        bordered
       />
     </div>)
   }

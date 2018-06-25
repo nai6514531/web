@@ -253,6 +253,7 @@ class App extends Component {
           loading={this.state.loading}
           pagination={pagination}
           className={styles.table}
+          bordered
         />
       </div>
     )

@@ -548,6 +548,7 @@ class App extends Component {
             pagination={pagination}
             className={styles.table}
             scroll={{ x: 1000, y: 800 }}
+            bordered
           />
           <Modal
             title={null}

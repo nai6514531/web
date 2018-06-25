@@ -311,6 +311,7 @@ class App extends Component {
         dataSource={list}
         pagination={this.pagination.call(this)}
         loading={loading}
+        bordered
       />
       <p className={styles.tip}>注意：1. 入账金额=结算金额-手续费；2. 若有结账失败记录很有可能是收款账号和姓名不匹配，请检查后修改收款方式；</p>
     </section>)
