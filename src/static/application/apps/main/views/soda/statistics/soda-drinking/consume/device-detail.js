@@ -93,7 +93,7 @@ class DayDeviceConsume extends Component {
           startAt: this.day,
           endAt: this.day,
           deviceSerial: this.deviceSerial,
-          status: 7
+          status: 16
         }
       }
     })
