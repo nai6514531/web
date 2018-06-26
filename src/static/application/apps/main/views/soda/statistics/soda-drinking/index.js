@@ -184,11 +184,11 @@ class DeviceStatistics extends Component {
         },
       },
       {
-        title: '学校服务地点',
+        title: '服务地点',
         render: (text, record, index) => {
           if(record.device) {
             return (
-              `${record.device.address || '无'}`
+              `${record.device.serviceAddressName || '无'}`
             )
           }
           return '-'
