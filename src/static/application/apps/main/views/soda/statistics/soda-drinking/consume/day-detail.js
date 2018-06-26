@@ -67,7 +67,7 @@ class DayDetailConsume extends Component {
         },
       },
       {
-        title: '学校服务地点',
+        title: '学校-服务地点',
         render: (text, record, index) => {
           if(record.device) {
             return (
@@ -134,7 +134,7 @@ class DayDetailConsume extends Component {
           ...url,
           startAt: this.day,
           endAt: this.day,
-          status: '7'
+          status: '16'
         }
       }
     })

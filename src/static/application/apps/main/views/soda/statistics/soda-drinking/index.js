@@ -177,7 +177,7 @@ class DeviceStatistics extends Component {
         render: (text, record, index) => {
           if(record.device) {
             return (
-              `${record.device.serialNumber} || '无'}`
+              `${record.device.serialNumber || '无'}`
             )
           }
           return '-'
@@ -271,12 +271,13 @@ class DeviceStatistics extends Component {
       startAt = ''
       endAt = ''
     }
+    // 16-->成功 4-->已退款
     const data = {
        ...this.search,
       startAt,
       endAt,
       allDevices: 0,
-      status: '16',
+      status: '16,4',
       period: 'month'
     }
     return data
@@ -371,9 +372,9 @@ class BusinessStatistics extends Component {
           <TabPane tab='按月份统计' key='1'>
             { type == 1 ? <MonthStatistics {...this.props}/> : null }
           </TabPane>
-          {/* <TabPane tab='按模块统计' key='2'>
+          <TabPane tab='按模块统计' key='2'>
             { type == 2 ? <DeviceStatistics {...this.props}/> : null }
-          </TabPane> */}
+          </TabPane>
         </Tabs>
       </div>
     )

@@ -35,13 +35,8 @@ class DeviceSearchByDay extends Component {
         key: 'key'
       },
       {
-        title: '月份',
+        title: '日期',
         render: (text, record, index) => {
-          if(record.time && record.device && record.device.serialNumber) {
-            return (
-              <Link to={`/soda-drinking/statistics/device/${record.time}/${record.device.serialNumber}`}>{record.time}</Link>
-            )
-          }
           return (
             <span>{record.time || '-'}</span>
           )
@@ -52,7 +47,7 @@ class DeviceSearchByDay extends Component {
         render: (text, record, index) => {
           if(record.device) {
             return (
-              `{${record.device.serialNumber} || '无'}`
+              `${record.device.serialNumber || '无'}`
             )
           }
           return '-'
@@ -109,7 +104,7 @@ class DeviceSearchByDay extends Component {
           startAt: `${this.month}-01`,
           endAt: `${this.month}-${daysInMonth}`,
           deviceSerial: this.deviceSerial,
-          status: '16',
+          status: '16,4',
           period: 'date'
         }
       }
