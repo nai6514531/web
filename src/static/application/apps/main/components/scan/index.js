@@ -47,7 +47,6 @@ export class Scan extends Component {
       return WechatService.getQRCodeProxy()
         .then((proxy) => this.scanByProxy(proxy))
         .catch((err) => {
-          console.error(err)
           this.loading = false
           message.error(err.message)
         })

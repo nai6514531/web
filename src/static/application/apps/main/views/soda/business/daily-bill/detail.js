@@ -10,8 +10,6 @@ import history from '../../../../utils/history'
 import { conversionUnit } from '../../../../utils/functions'
 import Breadcrumb from '../../../../components/layout/breadcrumb'
 
-import TICKET from '../../../../constant/ticket'
-
 import styles from './index.pcss'
 
 const PAEG_SIZE = 10
@@ -80,9 +78,9 @@ class App extends Component{
         dataIndex: 'id',
       }, {
         title: '设备编号/服务地点',
-        dataIndex: 'device',
-        render: (device) => {
-          return `${device.serial || '-' } / ${device.address || '-'}`
+        dataIndex: 'serial',
+        render: (serial, record) => {
+          return `${serial || '-' } / ${op(record).get('device.serviceAddress.school.address') || '-'}`
         }
       }, {
         title: '服务名',
@@ -94,20 +92,24 @@ class App extends Component{
           return (names || []).join('/')
         }
       }, {
-        title: '金额',
-        render: (record) => {
-          return conversionUnit(record.pay.amount)
+        title: '消费金额',
+        dataIndex: 'value',
+        key:'value',
+        render: (value) => {
+          return `${conversionUnit(value)}元`
         }
       },{
         title: '支付方式',
-        render: (record) => {
-          return TICKET.PAYMENT_TYPE[record.pay.type] || '-'
+        dataIndex: 'payment.name',
+        key: 'payment.name',
+        render: (name) => {
+          return `${name || '-'}`
         }
       },{
         title: '消费手机号',
-        dataIndex: 'user',
-        render: (user) => {
-          return `${user.mobile}`
+        dataIndex: 'mobile',
+        render: (mobile) => {
+          return `${mobile}`
         }
       }, {
         title: '下单时间',
@@ -118,20 +120,8 @@ class App extends Component{
       }, {
         title: '订单状态',
         dataIndex: 'status',
-        render: (status) => {
-          switch (status) {
-            case TICKET.STATUS_IS_DELIVERED:
-              return <span>正常</span>
-              break;
-            case TICKET.DRINKING_STATUS_IS_SETTLED:
-              return <span>正常</span>
-              break;
-            case TICKET.STATUS_IS_REFUND:
-              return <span className={styles.refund}>已退款</span>
-              break;
-            default:
-              return '-'
-          }
+        render: (text, record) => {
+          return `${record.status.description}`
         }
       },{
         title: '是否结算',
@@ -249,6 +239,7 @@ class App extends Component{
         pagination={this.pagination.call(this)}
         loading={loading}
         rowKey={record => record.id}
+        bordered
       />
     </section>)
   }

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { connect } from 'dva'
 import { Button, Popconfirm, Input, Select, Row, DatePicker, Modal, message } from 'antd'
 const { Option } = Select
-import moment from 'moment'
 import { trim } from 'lodash'
 import _ from 'lodash'
 import op from 'object-path'
@@ -78,7 +77,7 @@ class Device extends Component {
         }
       },
       {
-        title: '关联设备类型',
+        title: '关联设备',
         dataIndex: 'feature',
         width: 70,
         render: (feature) => {
@@ -109,9 +108,11 @@ class Device extends Component {
                   <a href='javascript:void(0)'>锁定</a>
                 </Popconfirm>
               }
-              <Popconfirm title='确认删除吗?' onConfirm={this.reset.bind(this, Array(serial))}>
-                <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}删除</a>
-              </Popconfirm>
+              {
+                !record.limit.isRetrofited ? <Popconfirm title='确认回收吗?' onConfirm={this.reset.bind(this, Array(serial))}>
+                  <a href='javascript:void(0)'>{'\u00A0'}|{'\u00A0'}回收</a>
+                </Popconfirm> : null
+              }
               <Link to={`/soda/device/operation/${serial}?serials=${serials || ''}&keys=${keys || ''}`}>{'\u00A0'}|{'\u00A0'}操作详情</Link>
             </span>
           )
@@ -214,7 +215,7 @@ class Device extends Component {
       return
     }
     Modal.confirm({
-      content: `将有${checkList.length}个设备被删除，是否继续？`,
+      content: `将有${checkList.length}个设备被回收，是否继续？`,
       okText: '确认',
       cancelText: '取消',
       onOk() {
@@ -252,7 +253,7 @@ class Device extends Component {
           className={styles.button}
           onClick={this.batchReset.bind(this)}
           >
-          批量删除
+          批量回收
         </Button>
         <InputClear
           placeholder='运营商名称/账号'

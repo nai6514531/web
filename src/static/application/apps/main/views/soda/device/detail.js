@@ -116,12 +116,12 @@ class DeviceDetail extends Component {
               <div className={pageStyles['sub-card']}>
                 <div className={pageStyles['card-item']}>
                   <div><span className={pageStyles.title}>设备编号：</span>{data.serial || '-'}</div>
-                  <div><span className={pageStyles.title}>关联设备类型：</span>{op(reference).get('name') || '-'}</div>
+                  <div><span className={pageStyles.title}>关联设备：</span>{op(reference).get('name') || '-'}</div>
                   <div>
                     <span className={pageStyles.title}>服务单价：</span>
-                    {(modes || []).map((mode) => {
+                    {_.chain(modes || []).filter((mode) => mode.value !== 0).map((mode) => {
                       return [`${conversionUnit(mode.value)}${suffix}`, `${mode.name}`].join(' ')
-                    }).join('，')}
+                    }).value().join('，') || '-'}
                   </div>
                   <div>
                     <span className={pageStyles.title}>服务地点：</span>
@@ -129,14 +129,22 @@ class DeviceDetail extends Component {
                       _.without([op(data).get('serviceAddress.school.province.name'), op(data).get('serviceAddress.school.city.name'), op(data).get('serviceAddress.school.name'), op(data).get('serviceAddress.school.address')], '').join(' / ') || '-'
                     }
                   </div>
-                  <div><span className={pageStyles.title}>运行状态：</span><span className={styles.title}>{op(data).get('status.description') || '-' }</span></div>
-                  { 
+                  {
+                    featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
+                      <span className={pageStyles.title}>在线状态：</span>
+                      <span className={op(data).get('onlineStatus.value') == 1 ? styles.online : styles.offline}>{op(data).get('onlineStatus.description') || '-' }</span>
+                    </div> : null
+                  }
+                  <div>
+                    <span className={pageStyles.title}>状态：</span><span>{op(data).get('status.description') || '-' }</span>
+                  </div>
+                  {
                     featureId === DEVICE.FEATURE_TYPE_IS_DRINKING_WATER && false ? <div>
                     <span className={pageStyles.title}>制热状态：</span>
                     <span className={styles.title}>{op(data).get('config.status') ? '已开启' : '已关闭' }</span>
                     </div> : null
                   }
-                  { 
+                  {
                     featureId !== DEVICE.FEATURE_TYPE_IS_DRINKING_WATER ? <div>
                       <span className={pageStyles.title}>重置验证码：</span>
                       {op(data).get('limit.password.isResettable') ? '支持': '不支持' }
@@ -149,7 +157,7 @@ class DeviceDetail extends Component {
                 </div>
               </div>
             </Card>
-            { 
+            {
               !this.isFromBusiness || isDrinkingWater ? <Card className={pageStyles.card}>
                 <div className={pageStyles.header}>
                     <h1>运营商详情</h1>
@@ -168,7 +176,7 @@ class DeviceDetail extends Component {
                 </div>
               </Card> : null
             }
-            { 
+            {
               !this.isFromBusiness ? <Card className={pageStyles.card}>
                 <div className={pageStyles.header}>
                     <h1>上级运营商详情</h1>

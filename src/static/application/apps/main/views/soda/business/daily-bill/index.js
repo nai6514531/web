@@ -355,6 +355,7 @@ class App extends Component {
         pagination={pagination}
         rowKey={record => record.id}
         loading={this.state.loading}
+        bordered
        />
     </section>)
   }

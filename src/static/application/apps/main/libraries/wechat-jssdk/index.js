@@ -84,6 +84,7 @@ class Sdk {
               if (!res) {
                 return proxy.emit('reject', new Error('微信扫描失败，请手动输入'))
               }
+              console.log(res)
               proxy.emit('resolve', res.resultStr)
             },
             cancel: () => {

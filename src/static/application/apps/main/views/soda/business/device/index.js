@@ -99,7 +99,7 @@ class App extends Component {
           return <Link to={`/soda/business/device/${serial}` + this.props.location.search}>{serial}</Link>
         }
       }, {
-        title: '关联设备类型',
+        title: '关联设备',
         dataIndex: 'feature',
         render: (feature) => {
           let { deviceTypes } = this.state
@@ -144,10 +144,10 @@ class App extends Component {
             let { assignedUser: { id }, limit: { isRetrofited } } = record
             let { users } = this.state
             let user = _.findWhere(users, { id: id })
-            
-            let suffix = isRetrofited ? _.isEmpty(user) ? '是' 
+
+            let suffix = isRetrofited ? _.isEmpty(user) ? '是'
               :`${'是 ('+ user.name + '|' + user.mobile + ')'}` : '否'
-            
+
             return {
               children: <span className={cx({ [styles.hightlight]: isRetrofited })}>{suffix}</span>
             }
@@ -165,9 +165,9 @@ class App extends Component {
           let { modes, tapActive, actionLoading } = this.state
           let isMineDevice = tapActive === DEVICE_IS_MINE
           let isLock = !!~[...DEVICE.STATUS_IS_LOCK].indexOf(status.value)
-          let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(status.value)  
+          let isUsing = !!~[...DEVICE.STATUS_IS_USING].indexOf(status.value)
 
-          modes = _.filter(modes || [], (mode) => mode.serial === serial ) || []
+          modes = _.filter(modes || [], (mode) => mode.serial === serial && mode.value !== 0 ) || []
           let content = (<div key={serial}>
             {(modes || []).map((mode) => {
               return <p key={mode.id}>
@@ -182,24 +182,25 @@ class App extends Component {
           </Spin>)
           content = actionLoading ? loading : _.isEmpty(modes) ? '该设备无服务信息' : content
           return <span>
-            <Link to={`/soda/business/device/edit/${serial}?isAssigned=${!isMineDevice}`}>修改</Link>
-            <Popover placement="topLeft" 
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <Link to={`/soda/business/device/edit/${serial}?isAssigned=${!isMineDevice}`}>修改</Link> : null }
+            { isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <div className={styles.divider}></div> : null }
+            <Popover placement="topLeft"
               onVisibleChange={this.getDeviceModes.bind(this, serial)}
               content={content}>
-              <div className={styles.divider}></div><a href="#">查看价格</a>
+              <a href="#">查看价格</a>
             </Popover>
-            { 
+            {
               isVisible("DEVICE:BUTTON:CANCEL") && isMineDevice ? <Popconfirm title="确认删除吗?" onConfirm={this.delete.bind(this, id)}>
                 <div className={styles.divider}></div><a href="#">删除</a>
               </Popconfirm> : null
             }
-            { 
+            {
               isLock ? <Popconfirm title="确认取消锁定吗?" onConfirm={this.unLock.bind(this, serial)}>
                 <div className={styles.divider}></div><a href="#">取消锁定</a>
-              </Popconfirm> : 
+              </Popconfirm> :
               isUsing ? <Popconfirm title="确认取消占用?" onConfirm={this.unLock.bind(this, serial)}>
                 <div className={styles.divider}></div><a href="#">取消占用</a>
-              </Popconfirm> : 
+              </Popconfirm> :
               <Popconfirm title="确认锁定吗?" onConfirm={this.lock.bind(this, Array(serial))}>
                 <div className={styles.divider}></div><a href="#">锁定</a>
               </Popconfirm>
@@ -238,8 +239,8 @@ class App extends Component {
     DeviceService.list({
       deviceTypes: [DEVICE.FEATURE_TYPE_IS_PASSWORD, DEVICE.FEATURE_TYPE_IS_CHARGING, DEVICE.FEATURE_TYPE_IS_GPRS].join(','),
       serviceAddressIds: serviceAddressIds,
-      ..._.pick(search, 'keys', 'serials', 'referenceId'), 
-      ..._.pick(pagination, 'limit', 'offset'), 
+      ..._.pick(search, 'keys', 'serials', 'referenceId'),
+      ..._.pick(pagination, 'limit', 'offset'),
       isAssigned: tapActive === DEVICE_IS_MINE ? 0 : 1
     }).then((res) => {
       if (res.status !== 'OK') {
@@ -339,7 +340,7 @@ class App extends Component {
         users: _.uniq([ ...users, ...objects ], (user) => user.id )
       })
       return objects
-    }).catch((err) => {   
+    }).catch((err) => {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -379,7 +380,7 @@ class App extends Component {
       this.setState({ actionLoading: false })
       this.list()
     }).catch((err) => {
-      this.setState({ actionLoading: false })      
+      this.setState({ actionLoading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -450,9 +451,9 @@ class App extends Component {
         throw new Error(res.message)
       }
       this.list()
-      this.setState({ actionLoading: false })      
+      this.setState({ actionLoading: false })
     }).catch((err) => {
-      this.setState({ actionLoading: false })      
+      this.setState({ actionLoading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -470,9 +471,9 @@ class App extends Component {
         throw new Error(res.message)
       }
       this.list()
-      this.setState({ actionLoading: false })      
+      this.setState({ actionLoading: false })
     }).catch((err) => {
-      this.setState({ actionLoading: false })      
+      this.setState({ actionLoading: false })
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
@@ -489,13 +490,13 @@ class App extends Component {
           title: `设备类型相同才可批量修改，请检查`
         })
       }
-      this.props.history.push(`/soda/business/device/edit?isAssigned=${isAssigned}&serials=${serials}`) 
+      this.props.history.push(`/soda/business/device/edit?isAssigned=${isAssigned}&serials=${serials}`)
     }
   }
   changeTab (key) {
-    let options = { 
+    let options = {
       tapActive: key,
-      search: { 
+      search: {
         keys: '',
         serials: '',
         schoolId: '',
@@ -559,7 +560,7 @@ class App extends Component {
 
     return (<div>
       <Breadcrumb items={breadItems} location={this.props.location} />
-      <Tabs 
+      <Tabs
         activeKey={String(tapActive)}
         onChange={this.changeTab.bind(this)}>
         <TabPane tab="我的设备" key={DEVICE_IS_MINE}></TabPane>
@@ -573,10 +574,10 @@ class App extends Component {
           onChange={this.changeInput.bind(this, 'serials')}
           onPressEnter={this.search.bind(this)}
         />
-        { 
+        {
           tapActive === DEVICE_IS_ASSIGNED ? <InputClear
             style={{ width: 180 , marginRight: 10, marginBottom: 10 }}
-            placeholder="请输入运营商名称/账号" 
+            placeholder="请输入运营商名称/账号"
             value={keys}
             onChange={this.changeInput.bind(this, 'keys')}
             onPressEnter={this.search.bind(this)}
@@ -608,17 +609,17 @@ class App extends Component {
             {(activeSchoolsMap.objects || []).map((item) => {
               return <Option key={item.id} value={String(item.id)}>{item.school.address}</Option>
             })}
-          </Select> : null 
+          </Select> : null
         }
          <Select
           showSearch
           style={{ width: 160, marginRight: 10, marginBottom: 10 }}
-          placeholder="请选择关联设备类型"
+          placeholder="请选择关联设备"
           optionFilterProp="children"
           onChange={this.changeReferenceId.bind(this)}
           value={+referenceId === 0 ? '' : +referenceId}
         >
-          <Option value="">请选择关联设备类型</Option>
+          <Option value="">请选择关联设备</Option>
           {(deviceTypes || []).map((feature) => {
             return (feature.references || []).map((reference) => {
               return <Option key={reference.id} value={reference.id}>{reference.name}</Option>
@@ -628,39 +629,39 @@ class App extends Component {
         <Button type='primary' onClick={this.search.bind(this)}>筛选</Button>
       </Row>
       <Row>
-        { 
-          tapActive === DEVICE_IS_MINE ? <Button 
+        {
+          tapActive === DEVICE_IS_MINE ? <Button
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.setState({ modalActive: 'ASSIGNED'}) }}>批量分配</Button>: null
         }
-        <Button 
+        <Button
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={this.edit.bind(this, 'ALL')}>批量修改</Button>
-        { 
-          tapActive === DEVICE_IS_MINE ? <Button 
+        {
+          tapActive === DEVICE_IS_MINE ? <Button
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={this.batchLock.bind(this)}>批量锁定</Button> : null
         }
-        { 
-          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD')? <Button 
+        {
+          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADD') ? <Button
           type='primary'　
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push(`/soda/business/device/add?isAssigned=false`) }}>添加新设备</Button> : null
         }
         {
-          tapActive === DEVICE_IS_MINE ? <Button 
+          tapActive === DEVICE_IS_MINE && isVisible('DEVICE:BUTTON:ADDRESS') ? <Button
           type='primary'
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.props.history.push('/soda/business/device/address?fromDevice=true')}}>地点管理</Button> : null
         }
       </Row>
-      { 
+      {
         hasSelected ? <Row>
           <span style={{ marginLeft: 8, marginRight: 8, fontSize: 12 }}>
             已选 {selectedCount} 设备
@@ -678,6 +679,7 @@ class App extends Component {
         pagination={this.pagination()}
         onChange={this.handleTableChange.bind(this)}
         loading={loading}
+        bordered
       />
       <Assigned
         visible={modalActive === 'ASSIGNED'}
