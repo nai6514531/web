@@ -52,6 +52,26 @@ class DayConsume extends Component {
         key: 'orderCount'
       },
       {
+        title: '冷水量',
+        dataIndex: 'coldAmount',
+        key: 'coldAmount',
+        render: (text, record) => {
+          return (
+            `${(record.coldAmount/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
+        title: '热水量',
+        dataIndex: 'hotAmount',
+        key: 'hotAmount',
+        render: (text, record) => {
+          return (
+            `${(record.hotAmount/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
         title: '消费金额',
         dataIndex: 'totalAmount',
         key: 'totalAmount',

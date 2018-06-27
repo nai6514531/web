@@ -18,26 +18,45 @@ class DayDeviceConsume extends Component {
     this.month = this.props.match.params.month
     this.day = this.props.match.params.day
     this.deviceSerial = this.props.match.params.deviceSerial
-    this.breadItems = [
-      {
-        title: '苏打饮水'
-      },
-      {
-        title: '统计报表',
-        url: '/soda/statistics'
-      },
-      {
-        title: `${this.month}`,
-        url: `/soda/statistics/consume/${this.month}`
-      },
-      {
-        title: `${this.day}`,
-        url: `/soda/statistics/consume/${this.month}/${this.day}`
-      },
-      {
-        title: `${this.deviceSerial}`
-      }
-    ]
+    if( this.search.from === 'device' ) {
+      this.breadItems = [
+        {
+          title: '苏打饮水'
+        },
+        {
+          title: '统计报表',
+          url: '/soda-drinking/statistics'
+        },
+        {
+          title: `${this.month}`,
+          url: `/soda-drinking/statistics/device/${this.month}/${this.deviceSerial}`
+        },
+        {
+          title: `${this.deviceSerial}`
+        }
+      ]
+    } else {
+      this.breadItems = [
+        {
+          title: '苏打饮水'
+        },
+        {
+          title: '统计报表',
+          url: '/soda-drinking/statistics'
+        },
+        {
+          title: `${this.month}`,
+          url: `/soda-drinking/statistics/consume/${this.month}`
+        },
+        {
+          title: `${this.day}`,
+          url: `/soda-drinking/statistics/consume/${this.month}/${this.day}`
+        },
+        {
+          title: `${this.deviceSerial}`
+        }
+      ]
+    }
     this.columns = [
       {
         title: '序号',
@@ -45,40 +64,90 @@ class DayDeviceConsume extends Component {
         key: 'key'
       },
       {
-        title: '编号/服务地点',
+        title: '设备编号',
+        dataIndex: 'snapshot.device.serial',
+        key: 'snapshot.device.serial',
         render: (text, record, index) => {
-          return `${record.deviceSerial || '-'}/ ${record.device.address || '-'}`
+          return `${text || '无'}`
         },
       },
       {
-        title: '洗衣金额',
-        dataIndex: 'value',
-        key: 'value',
-        render: (text, record) => {
-          return (
-            `${(record.value/100).toFixed(2)}元`
-          )
-        }
+        title: '订单号',
+        dataIndex: 'ticketId',
+        key: 'ticketId'
       },
       {
-        title: '洗衣手机号',
+        title: '消费手机号',
         dataIndex: 'mobile',
         key: 'mobile'
       },
       {
-        title: '洗衣类型',
-        render: (text, record) => {
-          return op(record).get('snapshot.modes.0.name')
-        }
+        title: '服务地点',
+        render: (text, record, index) => {
+          if(record.device && record.device.serviceAddress) {
+            return (
+              `${record.device.serviceAddress.school.address || '无'}`
+            )
+          }
+          return '-'
+        },
       },
       {
-        title: '下单时间',
+        title: '运营商名称',
+        dataIndex: 'owner.name',
+        key: 'owner.name'
+      },
+      {
+        title: '冷水量',
+        dataIndex: 'cold.amount',
+        key: 'cold.amount',
         render: (text, record) => {
           return (
-            `${moment(record.createdAt).format('YYYY-MM-DD HH:mm:ss')}`
+            `${(text/1000).toFixed(2)}升`
           )
         }
       },
+      {
+        title: '热水量',
+        dataIndex: 'hot.amount',
+        key: 'hot.amount',
+        render: (text, record) => {
+          return (
+            `${(text/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
+        title: '总量',
+        render: (text, record) => {
+          if(record.hot && record.cold) {
+            return (
+              `${((record.hot.amount + record.cold.amount)/1000).toFixed(2)}升`
+            )
+          }
+          return '-'
+        }
+      },
+      {
+        title: '消费金额',
+        dataIndex: 'value',
+        key: 'value',
+        render: (text, record) => {
+          return (
+            `${(text/100).toFixed(2)}元`
+          )
+        }
+      },
+      {
+        title: '状态',
+        dataIndex: 'status.description',
+        key: 'status.description',
+        render: (text, record) => {
+          return (
+            `${text}`
+          )
+        }
+      }
     ]
   }
   componentDidMount() {
@@ -93,7 +162,7 @@ class DayDeviceConsume extends Component {
           startAt: this.day,
           endAt: this.day,
           deviceSerial: this.deviceSerial,
-          status: 16
+          status: '16,4'
         }
       }
     })
