@@ -46,11 +46,16 @@ class DeviceSearchByDay extends Component {
         title: '设备编号',
         render: (text, record, index) => {
           if(record.device) {
-            return (
-              `${record.device.serialNumber || '无'}`
-            )
-          }
-          return '-'
+              if(record.totalValue) {
+                return (
+                 <Link to={`/soda-drinking/statistics/consume/${this.month}/${record.time}/${record.device.serialNumber}?from=device`}>{record.device.serialNumber || '-'}</Link>
+                )
+              }
+              return (
+                `${record.device.serialNumber || '-'}`
+              )
+            }
+            return '-'
         },
       },
       {
@@ -68,6 +73,26 @@ class DeviceSearchByDay extends Component {
         title: '消费订单数',
         dataIndex: 'orderCount',
         key: 'orderCount'
+      },
+      {
+        title: '冷水量',
+        dataIndex: 'coldAmount',
+        key: 'coldAmount',
+        render: (text, record) => {
+          return (
+            `${(record.coldAmount/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
+        title: '热水量',
+        dataIndex: 'hotAmount',
+        key: 'hotAmount',
+        render: (text, record) => {
+          return (
+            `${(record.hotAmount/1000).toFixed(2)}升`
+          )
+        }
       },
       {
         title: '消费金额',

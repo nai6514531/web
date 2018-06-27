@@ -53,12 +53,12 @@ class DayDetailConsume extends Component {
         title: '设备编号',
         render: (text, record, index) => {
           if(record.device) {
-            // 屏蔽进入按设备统计日消费详情
-            // if(record.totalAmount) {
-            //   return (
-            //    <Link to={`/soda-drinking/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>
-            //   )
-            // }
+          //   // 屏蔽进入按设备统计日消费详情
+            if(record.totalValue) {
+              return (
+               <Link to={`/soda-drinking/statistics/consume/${this.month}/${this.day}/${record.device.serialNumber}`}>{record.device.serialNumber || '-'}</Link>
+              )
+            }
             return (
               `${record.device.serialNumber || '-'}`
             )
@@ -77,9 +77,9 @@ class DayDetailConsume extends Component {
         }
       },
       {
-        title: '运营商名称',
-        dataIndex: 'owner.name',
-        key: 'owner.name'
+        title: '消费订单数',
+        dataIndex: 'orderCount',
+        key: 'orderCount'
       },
       {
         title: '冷水量',
@@ -102,22 +102,22 @@ class DayDetailConsume extends Component {
         }
       },
       {
-        title: '总量',
-        dataIndex: 'totalAmount',
-        key: 'totalAmount',
-        render: (text, record) => {
-          return (
-            `${(record.totalAmount/1000).toFixed(2)}升`
-          )
-        }
-      },
-      {
-        title: '金额',
+        title: '消费金额',
         dataIndex: 'totalValue',
         key: 'totalValue',
         render: (text, record) => {
           return (
             `${(record.totalValue/100).toFixed(2)}元`
+          )
+        }
+      },
+      {
+        title: '退款金额',
+        dataIndex: 'totalRefund',
+        key: 'totalRefund',
+        render: (text, record) => {
+          return (
+            `${(record.totalRefund/100).toFixed(2)}元`
           )
         }
       }
