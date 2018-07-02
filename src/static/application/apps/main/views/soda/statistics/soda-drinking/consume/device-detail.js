@@ -121,8 +121,10 @@ class DayDeviceConsume extends Component {
         title: '总量',
         render: (text, record) => {
           if(record.hot && record.cold) {
+            let coldAmount= Number((record.cold.amount/1000).toFixed(2))
+            let hotAmount= Number((record.hot.amount/1000).toFixed(2))
             return (
-              `${((record.hot.amount + record.cold.amount)/1000).toFixed(2)}升`
+              `${(coldAmount + hotAmount).toFixed(2)}升`
             )
           }
           return '-'
