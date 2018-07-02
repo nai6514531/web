@@ -1,17 +1,18 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row, Select } from 'antd'
+import { Popconfirm, Button, Modal, Form, Input, Checkbox, Col, Row, Select, TreeSelect } from 'antd'
 import { connect } from 'dva'
 import DataTable from '../../../../components/data-table/'
 import Breadcrumb from '../../../../components/layout/breadcrumb/'
 import { transformUrl, toQueryString } from '../../../../utils/'
-// import RoleModal from './roleModal.js'
+import PasswordModal from './passwordModal.js'
 import styles from '../../../../assets/css/search-bar.pcss'
 
 const Search = Input.Search
-const Option = Select.Option
 const FormItem = Form.Item
+const Option = Select.Option
+const TreeNode = TreeSelect.TreeNode
 const formItemLayout = {
   labelCol: { span: 14 },
   wrapperCol: { span: 10 },
@@ -78,21 +79,27 @@ class User extends Component {
         dataIndex: 'address',
         key: 'address',
       },
-      // {
-      //   title: '操作',
-      //   key: 'operation',
-      //   render: (text, record, index) => {
-      //     return (
-      //       <span>
-      //         <Link to={`/admin/settings/user/${record.id}`}>编辑</Link> |
-      //         <Popconfirm title='确认删除?' onConfirm={ this.delete.bind(this,record.id) } >
-      //           <a href='javascript:void(0)'>{'\u00A0'}删除</a>
-      //         </Popconfirm>
-      //         {/* <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}配置角色</a> */}
-      //       </span>
-      //     )
-      //   }
-      // }
+      {
+        title: '操作',
+        key: 'operation',
+        render: (text, record, index) => {
+          return (
+            <span>
+              <a href='javascript:void(0)' onClick={ this.show.bind(this,record.id) }>{'\u00A0'}修改密码</a> |
+              <Link to={`/admin/settings/user/${record.id}`}>{'\u00A0'}修改信息{'\u00A0'}</Link>
+              {
+                record.status === 0
+                ? <Popconfirm title='确定要拉黑该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 1) } >
+                      | <a href='javascript:void(0)'>{'\u00A0'}拉黑账号</a>
+                  </Popconfirm>
+                : <Popconfirm title='确定要恢复该账号?' onConfirm={ this.changeStatus.bind(this,record.id, 0) } >
+                        | <a href='javascript:void(0)'>{'\u00A0'}恢复账号</a>
+                  </Popconfirm>
+              }
+            </span>
+          )
+        }
+      }
     ]
   }
   componentDidMount() {
@@ -106,7 +113,7 @@ class User extends Component {
         search: url
       }
     })
-    this.fetch(this.search)
+    this.fetch(url)
     this.fetchRole()
   }
   fetch = (params) => {
@@ -122,37 +129,24 @@ class User extends Component {
       type: 'adminUser/roles'
     })
   }
-  delete = (id) => {
-    const url = transformUrl(location.search)
+  changeStatus = (id, status) => {
     this.props.dispatch({
-      type: 'adminUser/delete',
+      type: 'adminUser/changeStatus',
       payload: {
-        data: url,
-        id: id
+        data: this.search,
+        id: id,
+        status
       }
     })
   }
   show = (id) => {
     this.id = id
     this.props.dispatch({
-      type: 'adminUser/roles',
-      payload: {
-        id: id
-      }
+      type: 'adminUser/showModal'
     })
   }
   changeHandler =  (type, e) => {
     this.search = { ...this.search, [type]: e.target.value }
-  }
-  searchClick = () => {
-    this.search.offset = 0
-    this.search.limit = transformUrl(location.search).limit || 10
-    const queryString = toQueryString({ ...this.search })
-    this.props.dispatch({
-      type: 'common/resetIndex'
-    })
-    this.props.history.push(`${location.pathname}?${queryString}`)
-    this.fetch(this.search)
   }
   selectHandler =  (type, value) => {
     this.props.dispatch({
@@ -168,14 +162,25 @@ class User extends Component {
     }
     this.search = { ...this.search, [type]: value }
   }
+  searchClick = () => {
+    this.search.offset = 0
+    this.search.limit = transformUrl(location.search).limit || 10
+    const queryString = toQueryString({ ...this.search })
+    this.props.dispatch({
+      type: 'common/resetIndex'
+    })
+    this.props.history.push(`${location.pathname}?${queryString}`)
+    this.fetch(this.search)
+  }
   change = (url) => {
-   this.fetch(url)
+    this.search = { ...this.search, ...url }
+    this.fetch(url)
   }
   render() {
-    const { form: { getFieldDecorator }, user: { data: { objects, pagination }, key, visible, roleData }, loading, common: { search } } = this.props
+    let { form: { getFieldDecorator }, common: { search }, adminUser: { data: { objects, pagination }, key, visible, roleTree }, loading, location: { pathname } } = this.props
     return(
       <div>
-        <Breadcrumb items={breadItems} />
+        <Breadcrumb items={breadItems} location={this.props.location} />
         <Input
           placeholder='请输入用户名搜索'
           className={styles.input}
@@ -184,33 +189,22 @@ class User extends Component {
           defaultValue={this.search.name}
          />
         <Input
-          placeholder='请输入用户id搜索'
-          className={styles.input}
-          onChange={this.changeHandler.bind(this, 'id')}
-          onPressEnter={this.searchClick}
-          defaultValue={this.search.id}
-         />
-        <Input
-          placeholder='请输入账号搜索'
+          placeholder='请输入登录账号搜索'
           className={styles.input}
           onChange={this.changeHandler.bind(this, 'account')}
           onPressEnter={this.searchClick}
           defaultValue={this.search.account}
          />
-        <Select
-          value={ search.roleId }
+        <TreeSelect
           allowClear
+          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+          value={search.roleId}
           className={styles.input}
-          placeholder='请选择角色搜索'
-          onChange={this.selectHandler.bind('this','roleId')}>
-            {
-              roleData.map(value => {
-                return (
-                  <Option value={value.id + ''} key={value.id}>{value.name}</Option>
-                )
-              })
-            }
-        </Select>
+          treeData={roleTree}
+          placeholder="请选择角色搜索"
+          treeDefaultExpandAll
+          onChange={this.selectHandler.bind('this','roleId')}
+        />
         <Button
           type='primary'
           onClick={this.searchClick}
@@ -218,14 +212,14 @@ class User extends Component {
           >
           搜索
         </Button>
-        {/* <Link
+        <Link
           to={`/admin/settings/user/new`}>
           <Button
             type='primary'
             className={styles.button}>
-              添加用户
+              新增账号
           </Button>
-        </Link> */}
+        </Link>
         <DataTable
           scroll={{ x: 700 }}
           dataSource={objects || []}
@@ -234,7 +228,7 @@ class User extends Component {
           pagination={pagination}
           change={this.change}
         />
-        {/* { visible ? <RoleModal {...this.props} id={this.id}/> : null } */}
+        <PasswordModal {...this.props} id={this.id}/>
       </div>
     )
   }
@@ -245,9 +239,9 @@ class User extends Component {
 }
 function mapStateToProps(state,props) {
   return {
-    user: state.adminUser,
-    loading: state.loading.global,
+    adminUser: state.adminUser,
     common: state.common,
+    loading: state.loading.global,
     ...props
   }
 }
