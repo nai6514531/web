@@ -32,9 +32,14 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(function (config) {
+  const methods = ["delete", "patch", "put"]
   let token = storage.val('token')
   if (token) {
     config.headers.Authorization = 'Bearer ' + token
+  }
+  if (!!~(methods).indexOf(config.method)) {
+    config.headers['X-HTTP-Method-Override'] = (config.method).toUpperCase()
+    config.method = 'post'
   }
   if (!!~(config.url).indexOf('http')) {
     config.withCredentials = false

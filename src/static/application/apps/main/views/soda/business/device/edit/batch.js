@@ -225,7 +225,7 @@ class BatchMode extends Component {
     if (!!~['name', 'price', 'duration'].indexOf(key) && value) {
       // 切换类型 reset表单的内容
       setTimeout(() => {
-        (activeFeatureMap.pulses || []).map((pulse, index) => {
+        (op(activeFeatureMap).get('modes')|| []).map((value, index) => {
           resetFields([`${key}-${index}`])
         })
       }, 0)
@@ -285,21 +285,18 @@ class BatchMode extends Component {
       }
 
       let devices = (this.devices || []).map((device) => {
-        let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.presetId })
         if (activeName || activePrice || activeDuration) {
           return {
             ..._.pick(device, 'serial'),
             ...options,
-            modes: (activeFeatureMap.pulses || []).map((pulse, index) => {
-              let isEmpty = _.isEmpty(modesArray[pulse.id])
-              let mode = isEmpty ? {} : modesArray[pulse.id][0]
+            modes: (op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
+              let isEmpty = _.isEmpty(modesArray[modePreset.presetId])
+              let mode = isEmpty ? {} : modesArray[modePreset.presetId][0]
               return {
-                pulse: {
-                  id: pulse.id,
-                  name: pulse.name
-                },
+                presetId: modePreset.presetId,
                 name: activeName ? value[`name-${index}`] :
-                  isEmpty ? pulse.name : mode.name,
+                  isEmpty ? modePreset.name : mode.name,
                 value: activePrice ? +value[`price-${index}`] * 100 :
                   isEmpty ? 0 : mode.value,
                 duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :
@@ -358,20 +355,17 @@ class BatchMode extends Component {
       }
 
       let devices = (this.devices || []).map((device) => {
-        let modesArray = _.groupBy(device.modes, (mode) => { return mode.pulse.id })
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.presetId })
         return {
           ...device,
           ...options,
-          modes: (activeFeatureMap.pulses || []).map((pulse, index) => {
-            let isEmpty = _.isEmpty(modesArray[pulse.id])
-            let mode = isEmpty ? {} : modesArray[pulse.id][0]
+          modes: (op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
+            let isEmpty = _.isEmpty(modesArray[modePreset.presetId])
+            let mode = isEmpty ? {} : modesArray[modePreset.presetId][0]
             return {
-              pulse: {
-                id: pulse.id,
-                name: pulse.name
-              },
+              presetId: modePreset.presetId,
               name: activeName ? value[`name-${index}`] :
-                isEmpty ? pulse.name : mode.name,
+                isEmpty ? modePreset.name : mode.name,
               value: activePrice ? +value[`price-${index}`] * 100 :
                 isEmpty ? 0 : mode.value,
               duration: activeDuration ? +(+value[`duration-${index}`] * 60).toFixed() :
@@ -400,23 +394,6 @@ class BatchMode extends Component {
       message.error(err.message || '服务器异常，刷新重试')
     })
   }
-  // changeReferenceId(e) {
-  //   let { form: { resetFields } } = this.props
-  //   let { deviceTypes, active: { name: activeName, price: activePrice, duration: activeDuration } } = this.state
-  //   let type = e.target.value
-  //   // 切换前选择设备类型下的设备
-  //   let activeFeatureMap = _.findWhere(deviceTypes, { type: type }) || {}
-
-  //   this.setState({ activeFeatureType: type })
-  //   // 切换类型 reset表单的内容
-  //   setTimeout(() => {
-  //     (activeFeatureMap.pulse || []).map((pulse, index) => {
-  //       activeName ? resetFields([`name-${index}`]) : null
-  //       activePrice ? resetFields([`price-${index}`]) : null
-  //       activeDuration ? resetFields([`duration-${index}`]) : null
-  //     })
-  //   }, 0)
-  // }
   changeSchool(value) {
     this.setState({ activeSchoolId: value })
   }
@@ -526,14 +503,14 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>服务名称</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureMap.pulses || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`name-${index}`}><FormItem>
+                {(op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
+                  return <Col sm={Math.floor(24/op(activeFeatureMap).get('modes').length)} xs={24} key={`name-${index}`}><FormItem>
                     {getFieldDecorator(`name-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
                         { max: 20, message: '不超过二十个字' },
                       ],
-                      initialValue: pulse.name
+                      initialValue: modePreset.name
                     })(
                       <Input
                       style={{ width: '80%' }}
@@ -550,8 +527,8 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>价格(无服务填0)</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureMap.pulses || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`price-${index}`}><FormItem>
+                {(op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
+                  return <Col sm={Math.floor(24/op(activeFeatureMap).get('modes').length)} xs={24} key={`price-${index}`}><FormItem>
                     {getFieldDecorator(`price-${index}`, {
                       rules: [
                         { required: true, message: '必填' },
@@ -583,8 +560,8 @@ class BatchMode extends Component {
             <Col xs={24} sm={4}><span className={styles.label}>服务时间(分钟)</span></Col>
             <Col xs={24} sm={20}>
               <Row>
-                {(activeFeatureMap.pulses || []).map((pulse, index) => {
-                  return <Col sm={Math.floor(24/activeFeatureMap.pulses.length)} xs={24} key={`duration-${index}`}><FormItem>
+                {(op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
+                  return <Col sm={Math.floor(24/op(activeFeatureMap).get('modes').length)} xs={24} key={`duration-${index}`}><FormItem>
                     {getFieldDecorator(`duration-${index}`, {
                       rules: [
                         { required: true, message: '必填' },

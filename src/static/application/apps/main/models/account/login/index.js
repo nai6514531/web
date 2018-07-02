@@ -96,7 +96,7 @@ export default {
         const help = { accountHelp, passwordHelp, captchaHelp, smsCodeHelp, startedAt: 0 }
         yield put({ type: 'updateData', payload: help })
         storage.val('token', data.data)
-        payload.history.push('/admin')
+         window.location.href = "/" 
       } else {
         if (data.status === 'NOT_FOUND_ENTITY') {
           accountHelp = {

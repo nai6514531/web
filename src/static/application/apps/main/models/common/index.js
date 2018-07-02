@@ -78,7 +78,7 @@ export default {
         storage.clear('token')
         // storage.clear('userInfo')
         session.clear()
-        payload.history.push('/')
+        payload.history.push('/login')
       } else {
         message.error(result.message)
       }

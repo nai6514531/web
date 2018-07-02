@@ -39,7 +39,7 @@ class Login extends Component {
 
   componentWillMount() {
     if(storage.val('token')) {
-      this.props.history.push('/admin')
+      this.props.history.push('/')
     }
     this.changeCaptcha()
   }
