@@ -636,11 +636,13 @@ class App extends Component {
           style={{ marginRight: 10, marginBottom: 10 }}
           onClick={() => { this.setState({ modalActive: 'ASSIGNED'}) }}>批量分配</Button>: null
         }
-        <Button
+        {
+          isVisible('DEVICE:BUTTON:EDIT_DEVICE') ? <Button
           type='primary'
           disabled={!hasSelected}
           style={{ marginRight: 10, marginBottom: 10 }}
-          onClick={this.edit.bind(this, 'ALL')}>批量修改</Button>
+          onClick={this.edit.bind(this, 'ALL')}>批量修改</Button> : null
+        } 
         {
           tapActive === DEVICE_IS_MINE ? <Button
           type='primary'

@@ -35,7 +35,7 @@ class Mode extends Component {
     }
   }
   componentDidMount() {
-    let {  mode: { id }, form: { resetFields } } = this.props
+    let { mode: { id }, form: { resetFields } } = this.props
     // 切换类型 reset表单的内容
     resetFields([`${id}_NAME`, `${id}_VALUE`, `${id}_DURATION`])
   }

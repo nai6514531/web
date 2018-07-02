@@ -222,7 +222,7 @@ class Edit extends Component {
     let { device: { modes }, loading, deviceTypes, activeFeatureId, activeReferenceId } = this.state
     let activeFeatureMap = _.findWhere(deviceTypes, { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
-      return mode.pulse.id
+      return mode.presetId
     })
 
     let isAdd = this.isAdd
@@ -243,23 +243,20 @@ class Edit extends Component {
           id: parseInt(value.addressId, 10) || 0
         },
         feature: isAdd ? feature : _.omit(feature, 'id'),
-        modes: (activeFeatureMap.pulses || []).map((pulse) => {
-          let { id: pulseId } = pulse
-          let isNew = _.isEmpty(modesGroupByPulseId[pulseId])
+        modes: (op(activeFeatureMap).get('modes') || []).map((modePreset) => {
+          let { presetId } = modePreset
+          let isNew = _.isEmpty(modesGroupByPulseId[presetId])
           let mode = {
-            pulse: {
-              id: pulseId,
-              name: pulse.name,
-            },
-            name: value[`${activeReferenceId}-${pulseId}_NAME`],
-            duration: +(+value[`${activeReferenceId}-${pulseId}_DURATION`] * 60).toFixed() || 0,
-            value: +(+value[`${activeReferenceId}-${pulseId}_VALUE`] * 100).toFixed()
+            presetId: presetId,
+            name: value[`${activeReferenceId}-${presetId}_NAME`],
+            duration: +(+value[`${activeReferenceId}-${presetId}_DURATION`] * 60).toFixed() || 0,
+            value: +(+value[`${activeReferenceId}-${presetId}_VALUE`] * 100).toFixed()
           }
           // 模式新增下
           if (!isNew) {
             mode = {
               ...mode,
-              id: modesGroupByPulseId[pulseId].id
+              id: modesGroupByPulseId[presetId].presetId
             }
           }
           return mode
@@ -366,19 +363,16 @@ class Edit extends Component {
 
     let activeFeatureMap = _.findWhere(deviceTypes || [], { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
-      return mode.pulse.id
+      return mode.presetId
     })
 
-    let activeModes = (activeFeatureMap.pulses || []).map((pulse) => {
-      let mode = modesGroupByPulseId[pulse.id]
+    let activeModes = (op(activeFeatureMap).get('modes') || []).map((modePreset) => {
+      let mode = modesGroupByPulseId[modePreset.presetId]
       let isEmpty = _.isEmpty(mode) || activeReferenceId !== referenceId
       return {
-        id: activeReferenceId + '-' + pulse.id,
-        pulse: {
-          id: pulse.id,
-          name: pulse.name,
-        },
-        name: isEmpty ? pulse.name : mode.name,
+        id: activeReferenceId + '-' + modePreset.presetId,
+        presetId: modePreset.presetId,
+        name: isEmpty ? modePreset.name : mode.name,
         duration: isEmpty ? 0 : mode.duration,
         value: isEmpty ? 0 : mode.value,
         status: isEmpty ? 'NEW' : mode.status,

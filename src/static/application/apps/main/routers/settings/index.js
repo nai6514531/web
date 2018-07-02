@@ -44,10 +44,6 @@ import LogModel from 'bundle-loader?lazy!../../models/settings/log.js'
 export default function (app) {
   return (
     <Switch>
-      {/*默认登录后首页/admin*/}
-      <Route exact path='/admin' render={() => <div />} />
-      {/* 管理员 */}
-      <Route exact path='/admin' render={() => <div />} />
       <Route exact path='/admin/settings/user' component={getComponent(AdminUser,app,adminUserModel)} />
       <Route exact path='/admin/settings/user/:id' component={getComponent(AdminUserEdit,app,adminUserModel)} />
       <Route exact path='/admin/settings/role' component={getComponent(AdminRole,app,adminRoleModel)} />

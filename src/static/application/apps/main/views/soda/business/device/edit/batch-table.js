@@ -74,13 +74,10 @@ class BatchTable extends Component {
     let { devices, featureType, deviceTypes, featureId } = this.props
     let { preview: { feature: isPreviewFeatureType, featureType: activeFeatureType } } = this.props
     let activeFeatureMap = _.findWhere(deviceTypes, { id: featureId }) || {}
-    let columns = (activeFeatureMap.pulses || []).map((pulse, index) => {
+    let columns = (op(activeFeatureMap).get('modes') || []).map((value, index) => {
       return {
         title: `服务 ${index+1}`,
         render: (record) => {
-          let modesGroupByPulseId = _.indexBy(record.modes, (mode) => {
-            return mode.pulse.id
-          })
           let { preview: { price: priceHighlight, name: nameHighlight, duration: durationHighlight } } = this.props
           let mode = record.modes[`${index}`] || {}
           let name = op(mode).get('name') || '-'

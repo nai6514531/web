@@ -16,7 +16,7 @@ const { Sider } = Layout
 class Wrapper extends React.Component {
   componentDidMount() {
     if(!storage.val('token')) {
-      this.props.history.push('/')
+      this.props.history.push('/login')
     } else {
       // 获取用户信息
       this.props.dispatch({ type: 'common/info' })
@@ -72,7 +72,7 @@ class Wrapper extends React.Component {
           collapsed={fold}
           trigger={null}
           >
-          <div className={logoWrap}><Link to='/admin' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link></div>
+          <div className={logoWrap}><Link to='/' onClick={this.clickHandler}><img src={imageUrl} className={logo}/></Link></div>
           <SideBar
             {...this.props}
             mode={mode}
