@@ -108,6 +108,16 @@ class DayDeviceConsume extends Component {
         }
       },
       {
+        title: '冰水量',
+        dataIndex: 'ice.amount',
+        key: 'ice.amount',
+        render: (text, record) => {
+          return (
+            `${(text/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
         title: '热水量',
         dataIndex: 'hot.amount',
         key: 'hot.amount',

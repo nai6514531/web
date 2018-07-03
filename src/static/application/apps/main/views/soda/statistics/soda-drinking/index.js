@@ -210,6 +210,16 @@ class DeviceStatistics extends Component {
         }
       },
       {
+        title: '冰水量',
+        dataIndex: 'iceAmount',
+        key: 'iceAmount',
+        render: (text, record) => {
+          return (
+            `${(record.iceAmount/1000).toFixed(2)}升`
+          )
+        }
+      },
+      {
         title: '热水量',
         dataIndex: 'hotAmount',
         key: 'hotAmount',
