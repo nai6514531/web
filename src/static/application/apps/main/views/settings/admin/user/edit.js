@@ -121,11 +121,18 @@ class UserEdit extends Component {
   }
   changeHandler = (roleId) => {
     // 获取不同角色对应的权限
+    if(roleId !== undefined) {
+      this.fetchAssignedPermission(roleId)
+    } else {
+      this.props.dispatch({
+        type: 'adminUser/updateData',
+        payload: { permissionData: []}
+      })
+    }
     this.props.dispatch({
       type: 'adminUser/updateData',
       payload: { activeKey: ""}
     })
-    this.fetchAssignedPermission(roleId)
   }
   collapseHandler = (activeKey) => {
     this.props.dispatch({
@@ -304,7 +311,7 @@ class UserEdit extends Component {
           >
             {getFieldDecorator('address', {
               rules: [{
-                max: 50, message: '长度最多0个字符'
+                max: 50, message: '长度最多50个字符'
               }],
               initialValue: detail.address
             })(
@@ -318,6 +325,8 @@ class UserEdit extends Component {
             {getFieldDecorator('telephone', {
               rules: [{
                 required: true, message: '请输入服务电话',
+              },{
+                max: 20, message: '长度最多20个字符'
               }],
               initialValue: detail.telephone
             })(
