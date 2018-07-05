@@ -56,7 +56,7 @@ const deviceService = {
     return request.get(`/mng/devices-types`, { params: options })
   },
   log: (options) => {
-    return request.get(`/mng/devices-log`, { params: options })
+    return request.get(`/mng/devices-runtime-logs`, { params: options })
   },
   status: (options) => {
     return request.get(`/mng/device/${options.deviceType}/status`)
