@@ -222,7 +222,7 @@ class Edit extends Component {
     let { device: { modes }, loading, deviceTypes, activeFeatureId, activeReferenceId } = this.state
     let activeFeatureMap = _.findWhere(deviceTypes, { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
-      return mode.presetId
+      return mode.modeId
     })
 
     let isAdd = this.isAdd
@@ -244,19 +244,19 @@ class Edit extends Component {
         },
         feature: isAdd ? feature : _.omit(feature, 'id'),
         modes: (op(activeFeatureMap).get('modes') || []).map((modePreset) => {
-          let { presetId } = modePreset
-          let isNew = _.isEmpty(modesGroupByPulseId[presetId])
+          let { modeId } = modePreset
+          let isNew = _.isEmpty(modesGroupByPulseId[modeId])
           let mode = {
-            presetId: presetId,
-            name: value[`${activeReferenceId}-${presetId}_NAME`],
-            duration: +(+value[`${activeReferenceId}-${presetId}_DURATION`] * 60).toFixed() || 0,
-            value: +(+value[`${activeReferenceId}-${presetId}_VALUE`] * 100).toFixed()
+            modeId: modeId,
+            name: value[`${activeReferenceId}-${modeId}_NAME`],
+            duration: +(+value[`${activeReferenceId}-${modeId}_DURATION`] * 60).toFixed() || 0,
+            value: +(+value[`${activeReferenceId}-${modeId}_VALUE`] * 100).toFixed()
           }
           // 模式新增下
           if (!isNew) {
             mode = {
               ...mode,
-              id: modesGroupByPulseId[presetId].presetId
+              id: modesGroupByPulseId[modeId].modeId
             }
           }
           return mode
@@ -363,15 +363,15 @@ class Edit extends Component {
 
     let activeFeatureMap = _.findWhere(deviceTypes || [], { id: activeFeatureId }) || {}
     let modesGroupByPulseId = _.indexBy(modes || [], (mode) => {
-      return mode.presetId
+      return mode.modeId
     })
 
     let activeModes = (op(activeFeatureMap).get('modes') || []).map((modePreset) => {
-      let mode = modesGroupByPulseId[modePreset.presetId]
+      let mode = modesGroupByPulseId[modePreset.modeId]
       let isEmpty = _.isEmpty(mode) || activeReferenceId !== referenceId
       return {
-        id: activeReferenceId + '-' + modePreset.presetId,
-        presetId: modePreset.presetId,
+        id: activeReferenceId + '-' + modePreset.modeId,
+        modeId: modePreset.modeId,
         name: isEmpty ? modePreset.name : mode.name,
         duration: isEmpty ? 0 : mode.duration,
         value: isEmpty ? 0 : mode.value,

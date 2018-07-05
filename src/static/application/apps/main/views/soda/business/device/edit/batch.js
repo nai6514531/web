@@ -285,16 +285,16 @@ class BatchMode extends Component {
       }
 
       let devices = (this.devices || []).map((device) => {
-        let modesArray = _.groupBy(device.modes, (mode) => { return mode.presetId })
-        if (activeName || activePrice || activeDuration) {
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.modeId })
+        if (activeReference || activeName || activePrice || activeDuration) {
           return {
             ..._.pick(device, 'serial'),
             ...options,
             modes: (op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
-              let isEmpty = _.isEmpty(modesArray[modePreset.presetId])
-              let mode = isEmpty ? {} : modesArray[modePreset.presetId][0]
+              let isEmpty = _.isEmpty(modesArray[modePreset.modeId])
+              let mode = isEmpty ? {} : modesArray[modePreset.modeId][0]
               return {
-                presetId: modePreset.presetId,
+                modeId: modePreset.modeId,
                 name: activeName ? value[`name-${index}`] :
                   isEmpty ? modePreset.name : mode.name,
                 value: activePrice ? +value[`price-${index}`] * 100 :
@@ -355,15 +355,15 @@ class BatchMode extends Component {
       }
 
       let devices = (this.devices || []).map((device) => {
-        let modesArray = _.groupBy(device.modes, (mode) => { return mode.presetId })
+        let modesArray = _.groupBy(device.modes, (mode) => { return mode.modeId })
         return {
           ...device,
           ...options,
           modes: (op(activeFeatureMap).get('modes') || []).map((modePreset, index) => {
-            let isEmpty = _.isEmpty(modesArray[modePreset.presetId])
-            let mode = isEmpty ? {} : modesArray[modePreset.presetId][0]
+            let isEmpty = _.isEmpty(modesArray[modePreset.modeId])
+            let mode = isEmpty ? {} : modesArray[modePreset.modeId][0]
             return {
-              presetId: modePreset.presetId,
+              modeId: modePreset.modeId,
               name: activeName ? value[`name-${index}`] :
                 isEmpty ? modePreset.name : mode.name,
               value: activePrice ? +value[`price-${index}`] * 100 :

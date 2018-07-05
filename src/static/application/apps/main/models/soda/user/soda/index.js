@@ -59,7 +59,7 @@ export default {
         if(object) {
           const deviceInfo = object.device
           result.data.recentAddress = deviceInfo.address
-          result.data.lastTicketResume = `${DEVICE.FEATURE[op(object).get('device.feature.id')] + '业务'}-${op(object).get('snapshot.modes.0.name') || '-'}-${object.serial || '-'}-${(object.value / 100).toFixed(2)}元（密码:${object.token || '-'}）`
+          result.data.lastTicketResume = `${DEVICE.REFERENCE[op(object).get('deviceReferenceId')] + '业务'}-${op(object).get('snapshot.modes.0.name') || '-'}-${object.serial || '-'}-${(object.value / 100).toFixed(2)}元（密码:${object.token || '-'}）`
           yield put({ type: 'updateData', payload: { data: result.data } })
         }
       } else {
